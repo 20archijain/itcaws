@@ -83,11 +83,11 @@ if (isset($isLocalServer) && $isLocalServer && constant("DB_HOSTNAME") == "local
 // LOCAL FILES
 if (isset($isLocalServer) && $isLocalServer) {
     // For file include/upload
-    $SITE_PATH = 'C:/xampp/htdocs/work/appilary';
+    $SITE_PATH = 'C:/xampp/htdocs/work/itcawsportal';
     $LOG_PATH = $SITE_PATH . '/itcph2/dist/services/logs_data';
 
     // for file display/download
-    $SITE_URL = 'http://localhost:80/work/appilary/uproots';
+    $SITE_URL = 'http://localhost:80/work/itcawsportal/uproots';
 } else {
     // PROD FILES
 

@@ -1,2 +1,0 @@
-[03-Jul-2025 01:11:38 Asia/Calcutta] PHP Deprecated:  DateTime::__construct(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/itcawsportal/public_html/uproots/mobile_services/api/custom/get_route_tracker_data.php on line 39
-[03-Jul-2025 01:16:52 Asia/Calcutta] PHP Deprecated:  DateTime::__construct(): Passing null to parameter #1 ($datetime) of type string is deprecated in /home/itcawsportal/public_html/uproots/mobile_services/api/custom/get_route_tracker_data.php on line 39
