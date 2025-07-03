@@ -1,0 +1,33 @@
+<app-card cardTitle="{{ 'app.client.add.heading' | translate }}" [options]="false">
+  <form (ngSubmit)="addClient()" [formGroup]="form" novalidate>
+    <div class="row">
+      <div class="col-sm-4 col-md-3 col-xl-2">
+        <app-file-upload (onSelect)="onSelect($event)" [group]="form" controlName="logo"
+          [errorMessages]="errorMessages.logo"></app-file-upload>
+      </div>
+
+      <div class="col-sm-8 col-md-9 col-xl-10">
+        <div class="row">
+          <div class="col-sm-6 col-md-5 col-xl-4">
+            <app-input label="app.client.add.name" placeholder="{{ 'app.client.add.name' | translate }}" [group]="form"
+              controlName="name" [isRequired]="true" [errorMessages]="errorMessages.name" [autocompleteOff]="true">
+            </app-input>
+          </div>
+
+          <div class="col-sm-6 col-md-5 col-xl-4">
+            <app-textarea label="app.client.add.desc" placeholder="{{ 'app.client.add.desc' | translate }}"
+              [group]="form" controlName="desc" [errorMessages]="errorMessages.desc"></app-textarea>
+          </div>
+        </div>
+
+        <div class="row">
+          <div [ngClass]="{'col-9 col-sm-7 col-md-5 col-xl-4': isDisabled, 'col-4 col-sm-3 col-md-2': !isDisabled}">
+            <app-button type="submit" text="button.add" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="form"
+              [showSpinner]="isDisabled" spinnerText="spinnerText.adding">
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-card>

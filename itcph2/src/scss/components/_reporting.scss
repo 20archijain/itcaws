@@ -1,0 +1,82 @@
+$red-bg-color: #b93127;
+$white-color: #fff;
+$viewmore-color: #fbfafc;
+$green-bg-color: #11c15b;
+$blue-bg-color: #4680ff;
+$purple-color: #7b5ff8;
+$vertical-border-color: #ddd;
+
+.listing-row {
+  &.bg-red {
+    .card-body {
+      &:not(.no-bg):first-child {
+        background-color: $red-bg-color;
+        color: $white-color;
+
+        .view-more {
+          color: $viewmore-color;
+        }
+      }
+    }
+  }
+
+  &.bg-green {
+    .card-body {
+      &:not(.no-bg):first-child {
+        background-color: $green-bg-color;
+        color: $white-color;
+
+        .view-more {
+          color: $viewmore-color;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    &:not(.no-bg-on-hover):first-child {
+      &:hover {
+        background-color: $blue-bg-color;
+        color: $white-color;
+
+        .view-more {
+          color: $viewmore-color;
+        }
+      }
+    }
+  }
+
+  .listing-row-content {
+    .heading {
+      font-size: 15px;
+      font-weight: 700;
+    }
+  }
+
+  .view-more {
+    color: $purple-color;
+    font-weight: 700;
+  }
+
+  .v-border {
+    border-right: 1px solid $vertical-border-color;
+  }
+
+  .listing-actions {
+    display: flex;
+    flex-direction: row;
+
+    .first {
+      margin-right: 5px;
+    }
+
+    @media screen and (min-width: 768px) {
+      flex-direction: column;
+
+      .first {
+        margin-bottom: 5px;
+        margin-right: 0;
+      }
+    }
+  }
+}

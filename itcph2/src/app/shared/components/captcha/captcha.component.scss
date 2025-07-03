@@ -1,0 +1,14 @@
+.captcha-container {
+  display: flex;
+  flex-direction: column;
+
+  .captcha-box {
+    align-items: center;
+    display: flex;
+    margin-bottom: 10px;
+
+    .captcha-image {
+      margin-right: 15px;
+    }
+  }
+}

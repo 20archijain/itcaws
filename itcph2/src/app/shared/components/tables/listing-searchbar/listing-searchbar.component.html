@@ -1,0 +1,53 @@
+<!-- Search bar -->
+<app-card blockClass="table-border-style" [options]="false">
+  <div class="row">
+    <div class="col-sm-12">
+      <form (ngSubmit)="onSebarAction(3)" [formGroup]="searchGroup" novalidate>
+        <ng-template [ngTemplateOutlet]="searchTemplate || defaultSearchTemplate"></ng-template>
+
+        <ng-template #defaultSearchTemplate>
+          <div class="row">
+            <div class="col-xs-12 col-sm-7 col-md-5 col-lg-4">
+              <app-date [group]="searchGroup" controlName="date" groupClassName="row"
+                labelClassName="form-label col-sm-4 col-xl-3" [isHorizontalForm]="true"
+                placeholder="{{ 'placeholder.date' | translate }}">
+              </app-date>
+            </div>
+            <div class="col-xs-6 col-sm-3 col-md-2">
+              <app-button type="submit" text="button.search"></app-button>
+            </div>
+          </div>
+        </ng-template>
+      </form>
+    </div>
+  </div>
+</app-card>
+
+<!-- Table controls -->
+<div class="row m-b-5">
+  <div class="col-sm-5 col-md-4 col-xl-3" [class.col-md-3]="!(sortOptions && sortOptions.length > 0)"
+    *ngIf="showPagination">
+    <app-dropdown [group]="group" controlName="limit" [options]="limitOptions" label="listing.limitRecordsList"
+      labelKey="" valueKey="" (onChange)="onSebarAction(1)" [showValidationState]="false" [isHorizontalForm]="true"
+      groupClassName="row" labelClassName="form-label col-3 col-sm-4 col-lg-3 col-xl-4"
+      sizeClass="col-7 col-sm-8 col-xl-7">
+    </app-dropdown>
+  </div>
+
+  <div class="col-sm-7 col-md-8 col-xl-9">
+    <div class="row justify-content-end">
+      <div class="col-sm-5 col-xl-4" *ngIf="selectedRecords && selectedRecords.length && actions?.length">
+        <app-dropdown [group]="group" controlName="action" [options]="actions | filter: true: 'allowMulti': true"
+          label="listing.action.heading" labelKey="name" valueKey="" (onChange)="onSebarAction(4)"
+          [showValidationState]="false" labelClassName="form-label d-sm-none d-md-block col-3 col-md-4"
+          [isHorizontalForm]="true" groupClassName="row" sizeClass="col-7 col-sm-12 col-md-8 col-xl-8">
+        </app-dropdown>
+      </div>
+      <div class="col-sm-7 col-lg-6 col-xl-4" *ngIf="sortOptions && sortOptions.length > 0">
+        <app-dropdown [group]="group" controlName="sort" [options]="sortOptions" label="listing.sortRecordsList"
+          (onChange)="onSebarAction(2)" [showValidationState]="false" [isHorizontalForm]="true" groupClassName="row"
+          labelClassName="form-label col-3 col-sm-4 col-md-3" sizeClass="col-7 col-sm-8"></app-dropdown>
+      </div>
+    </div>
+  </div>
+</div>

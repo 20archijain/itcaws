@@ -1,0 +1,70 @@
+$loader-bg-color: rgba(0, 0, 0, 0);
+$parent-bg-color: rgba(26, 188, 156, .8);
+
+.sk-line-material {
+  margin: auto;
+  position: relative;
+  top: 0;
+  width: 100%;
+
+  .sk-child {
+    -webkit-animation: sk-line-material 2s ease-in-out 0s infinite both;
+    animation: sk-line-material 2s ease-in-out 0s infinite both;
+    display: inline-block;
+    height: 4px;
+    position: absolute;
+    top: 0;
+    transform-origin: 0% 0%;
+    width: 100%;
+  }
+}
+
+@-webkit-keyframes sk-line-material {
+
+  0%,
+  80%,
+  100% {
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+  }
+
+  40% {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+  }
+}
+
+@keyframes sk-line-material {
+  0% {
+    -webkit-transform: scaleX(0);
+    transform: scaleX(0);
+  }
+
+  100% {
+    -webkit-transform: scaleX(1);
+    transform: scaleX(1);
+  }
+}
+
+.http-loader {
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.loader-bg {
+  background-color: $loader-bg-color;
+  filter: alpha(opacity=70);
+  height: 100%;
+  opacity: 1;
+  position: absolute;
+  width: 100%;
+}
+
+.colored-parent,
+.colored>div {
+  background-color: $parent-bg-color;
+}

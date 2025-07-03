@@ -1,0 +1,24 @@
+<!-- FIXED HEADER -->
+<app-navbar class="navbar pcoded-header navbar-expand-lg navbar-light"
+  (onNavCollapse)="this.navCollapsed = !this.navCollapsed;" (onNavHeaderMobCollapse)="navMobClick()"></app-navbar>
+
+<!-- ASIDE -->
+<app-navigation class="pcoded-navbar"
+  [ngClass]="{'navbar-collapsed' : navCollapsed, 'theme-horizontal': this.nextConfig['layout'] === 'horizontal', 'mob-open' : navCollapsedMob}"
+  (onNavMobCollapse)="navMobClick()"></app-navigation>
+
+<div class="pcoded-main-container">
+  <div class="pcoded-wrapper"
+    [ngClass]="{'container': this.nextConfig.layout === 'horizontal' && this.nextConfig.subLayout === 'horizontal-2'}">
+    <div class="pcoded-content">
+      <div class="pcoded-inner-content">
+        <div class="main-body">
+          <div class="page-wrapper mt-5">
+            <app-breadcrumb></app-breadcrumb>
+            <ng-template appDynamicComponent></ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

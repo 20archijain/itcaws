@@ -1,0 +1,26 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+    <div class="{{ sizeClass }}">
+      <ng-container *ngTemplateOutlet="dropdownBox"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #nonHorizontalForm>
+    <ng-container *ngTemplateOutlet="dropdownBox"></ng-container>
+  </ng-template>
+
+  <ng-template #dropdownBox>
+    <select class="form-control form-control-default" name="{{ controlName }}" id="{{ controlName }}"
+      [formControlName]="controlName" [class.is-invalid]="showValidationState && isTouched && inputField.invalid"
+      (focus)="onFocusIn($event)" (change)="onOptionChange($event)" (blur)="onFocusOut($event)">
+      <option value="" *ngIf="showBlankOption">{{ blankOptionLabel | translate }}</option>
+      <option *ngFor="let option of options" [value]="getValue(option)">
+        {{ getLabel(option) }}
+      </option>
+    </select>
+    <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+      class="text-justify small form-text invalid-feedback">{{ errorMessage }}</label>
+  </ng-template>
+</div>

@@ -1,0 +1,76 @@
+<app-card cardTitle="{{ 'app.reporting.activeUSers.heading' | translate }}" [options]="false">
+  <app-table-listing checkKey="id" [url]="url" [header]="header" [body]="body" [isSelectable]="isSelectable"
+    [sortOptions]="sortOptions" [searchTemplate]="searchTemplate" [searchGroup]="form">
+  </app-table-listing>
+</app-card>
+
+
+<ng-template #searchTemplate>
+  <!-- If Superadmin or Admin Login -->
+  <div *ngIf="branchFilter" class="row ml-1 filter-container">
+    <!-- <div class="col-sm-3 col-lg-2">
+      <app-date [group]="form" controlName="dateFrom" sizeClass="col-sm-12"
+        placeholder="{{ 'placeholder.from' | translate }}" [maxDate]="form.get('dateTo').value">
+      </app-date>
+    </div>
+    <div class="col-sm-3 col-lg-2">
+      <app-date [group]="form" controlName="dateTo" sizeClass="col-sm-12"
+        placeholder="{{ 'placeholder.to' | translate }}" [minDate]="form.get('dateFrom').value">
+      </app-date>
+    </div> -->
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="district" [options]="districtOptions" [multiple]="true"
+        placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="branch" [options]="branchOptions" [multiple]="true"
+        placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="circle" [options]="circleOptions" [multiple]="true"
+        placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="section" [options]="sectionOptions" [multiple]="true"
+        placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+        placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" [multiple]="true">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="wdMarket" [options]="wdMarketOptions" [multiple]="true"
+        placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select [group]="form" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
+        placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select placeholder="{{ 'app.reporting.activeUSers.dsType' | translate }}" [group]="form" controlName="dsType"
+        [options]="teamTypeOptions" (onChange)="getTeamsName()" [multiple]="true">
+      </app-select>
+    </div>
+    <div class="w-2 m-1">
+      <app-select placeholder="{{ 'app.reporting.activeUSers.dsName' | translate }}" [group]="form" controlName="dsName"
+        [options]="teamOptions" [multiple]="true">
+      </app-select>
+    </div>
+    <div class="m-1">
+      <app-button type="submit" text="button.search"></app-button>
+      <app-button type="submit" [showIconInButton]="true" colorClass="btn-info" btnClass="m-l-5"
+        iconName="icon-download" btnTitle="button.download" (onClick)="exportTeams()"
+        [isDisabled]="isExportBtnDisabled">
+      </app-button>
+      <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+        (onClick)="clearForm()"></app-button>
+    </div>
+  </div>
+</ng-template>

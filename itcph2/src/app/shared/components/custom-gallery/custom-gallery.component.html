@@ -1,0 +1,134 @@
+<div class="custom-gallery" [class.min-max-w]="limitWidth">
+  <!-- Thumbnails -->
+  <div class="cg-thumbnails" [class.no-wrap]="thumbnailNoWrap">
+    <ng-container *ngIf="!showAsUserCard; else userCardTemplate">
+      <span class="cg-thumbnail" [class.card]="showAsCard" [style.max-width]="config?.thumbnailMaxWidth"
+        [style.max-height]="config?.thumbnailMaxHeight" *ngFor="let image of images; let i = index">
+        <a class="link cg-thumbnail-img-section" (click)="togglePreview(true, i)">
+          <img class="cg-thumbnail-img {{ thumbnailClass }}" [src]="image[config.thumbnailImageKey]"
+            [alt]="image[config?.thumbnailAltTextKey] ? image[config?.thumbnailAltTextKey] : ''">
+        </a>
+
+        <!-- Thumbnail text -->
+        <span class="cg-thumbnail-text-section" *ngIf="config?.showThumbnailText">
+          <span class="cg-thumbnail-title" *ngIf="image[config?.thumbnailTitleKey]">
+            {{ image[config?.thumbnailTitleKey] }}
+          </span>
+          <span class="cg-thumbnail-content" *ngIf="image[config?.thumbnailContentKey]">
+            {{ image[config?.thumbnailContentKey] }}
+          </span>
+        </span>
+      </span>
+    </ng-container>
+
+    <ng-template #userCardTemplate>
+      <ng-container *ngFor="let image of images; let i = index">
+        <app-card [hidHeader]="true" cardClass="btn-page user-card user-card-3 support-bar1 m-r-5">
+          <div class="text-center w-100px">
+            <img class="img-radius img-fluid {{ config?.thumbnailSizeClass}}" [src]="image[config.thumbnailImageKey]"
+              [alt]="image[config?.thumbnailAltTextKey] ? image[config?.thumbnailAltTextKey] : ''">
+            <ng-container *ngIf="config?.showThumbnailText">
+              <h4 class="mb-1 mt-2 f-w-400 text-ellipsis">{{ image[config?.thumbnailTitleKey] }}</h4>
+              <p class="mb-0 text-muted">{{ image[config?.thumbnailContentKey] }}</p>
+            </ng-container>
+          </div>
+          <div class="hover-data text-white">
+            <div class="">
+              <h4 class="text-white">{{ 'text.actions' | translate }}</h4>
+              <button type="button" class="btn waves-effect waves-light btn-warning" (click)="togglePreview(true, i)">
+                {{ 'button.preview' | translate }} <i class="feather icon-eye"></i>
+              </button>
+              <button type="button" *ngIf="hasDeletePermission" class="btn waves-effect waves-light btn-danger"
+                (click)="onPreviewActionClick(hasDeletePermission.id, null, i)">
+                {{ 'icon.delete' | translate }} <i class="feather icon-trash"></i>
+              </button>
+              <button *ngIf="image?.latitude" type="button" class="btn waves-effect waves-light btn-primary"
+                (click)="openGoogleMaps(image.latitude, image.longitude)">
+                {{ 'icon.goTo' | translate }} <i class="feather icon-map"></i>
+              </button>
+            </div>
+          </div>
+        </app-card>
+      </ng-container>
+    </ng-template>
+  </div>
+
+  <!-- Preview -->
+  <div class="cg-preview" *ngIf="config?.showPreviewOnClick && currentImage">
+    <!-- Backdrop effect -->
+    <div class="cg-preview-backdrop" [class.in]="isPreviewOpen"></div>
+
+    <!-- Preview full Image container -->
+    <div class="cg-preview-outer" [class.in]="isPreviewOpen">
+
+      <!-- Top actions of preview -->
+      <div class="cg-preview-actions">
+        <div class="cg-preview-counter">
+          <span id="lg-counter-current">{{ currentImageIndex + 1 }}</span>
+          &nbsp;/&nbsp;
+          <span id="lg-counter-all">{{ totalImages }}</span>
+        </div>
+
+        <div class="cg-preview-icons">
+          <i *ngIf="config?.previewActions?.rotate" class="cg-preview-icon fa fa-undo" aria-hidden="true"
+            (click)="onPreviewActionClick(0, 'rotateLeft')"></i>
+          <i *ngIf="config?.previewActions?.rotate" class="cg-preview-icon fa fa-redo" aria-hidden="true"
+            (click)="onPreviewActionClick(0, 'rotateRight')"></i>
+          <i *ngIf="config?.previewActions?.zoom" class="cg-preview-icon fa fa-search-minus" aria-hidden="true"
+            (click)="onPreviewActionClick(0, 'zoomOut')"></i>
+          <i *ngIf="config?.previewActions?.zoom" class="cg-preview-icon fa fa-search-plus" aria-hidden="true"
+            (click)="onPreviewActionClick(0, 'zoomIn')"></i>
+
+          <ng-container *ngIf="actions && actions.length > 0">
+            <ng-container *ngFor="let action of actions">
+              <!-- Download Icon -->
+              <a *ngIf="action.id === userAction.DWN_IMG" (click)="downloadImage()">
+                <i class="cg-preview-icon fa fa-{{ action.icon }}" aria-hidden="true"></i>
+              </a>
+
+              <!-- Delete Icon -->
+              <i *ngIf="action.id === userAction.DEL_IMG" class="cg-preview-icon fa fa-{{ action.icon }}"
+                aria-hidden="true" (click)="onPreviewActionClick(action.id)"></i>
+            </ng-container>
+          </ng-container>
+          <i class="cg-preview-icon fa fa-times" (click)="togglePreview(false)" aria-hidden="true"></i>
+        </div>
+      </div>
+
+      <!-- Preview full Image -->
+      <div class="cg-preview-inner-container" #previewContainer>
+        <div class="cg-preview-inner">
+
+          <!-- preview arrow -->
+          <i *ngIf="totalImages > 1" class="cg-preview-icon fa fa-arrow-left" aria-hidden="true"
+            (click)="showPrevious()"></i>
+
+          <!-- preview full image -->
+          <div class="cg-preview-image-wrap">
+            <img class="cg-preview-image" [src]="currentImage[config?.previewImageKey]" [ngStyle]="previewStyle"
+              [alt]="currentImage[config?.thumbnailAltTextKey]">
+
+            <!-- Image text -->
+            <div class="cg-preview-text" *ngIf="config?.showPreviewText">
+              <span>
+                {{ currentImage[config?.previewTextKey] }}
+              </span>
+            </div>
+          </div>
+
+          <!-- next arrow -->
+          <i *ngIf="totalImages > 1" class="cg-preview-icon fa fa-arrow-right" aria-hidden="true"
+            (click)="showNext()"></i>
+        </div>
+      </div>
+
+      <!-- Other images thumbnails -->
+      <div class="cg-preview-thumbnails">
+        <div class="cg-preview-thumbnail" *ngFor="let image of images; let i = index"
+          [class.active]="isThumbnailActive(i)" (click)="setCurrentImage(i)">
+          <img class="cg-preview-thumbnail-image" [src]="image[config.thumbnailImageKey]">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

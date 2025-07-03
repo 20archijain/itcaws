@@ -1,0 +1,1124 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchFilter": true,
+    "attCardData": {
+      "allTeams": "32",
+      "morningAttData": "18",
+      "percentAttendance": 56.25,
+      "notPresent": "14"
+    },
+    "beatAdherenceCardData": {
+      "todayActiveDS": "18",
+      "adherence": "16",
+      "unAdherence": "3",
+      "avgCompRoute": 88.8900000000000005684341886080801486968994140625
+    },
+    "qualifiedAttData": {
+      "todayActiveDS": "18",
+      "qualifiedCount": 0,
+      "UnqualifiedCount": 19,
+      "avgQualified": 0
+    },
+    "outletVisitedCardData": {
+      "totalShopsVisitedTillDate": 1791,
+      "supposedShopCounts": "2937",
+      "totalSellinShopsTillDate": "1582",
+      "focusBilled": 1481
+    },
+    "todayOutletVisitedCardData": {
+      "totalShopsVisitedToday": 10,
+      "supposedShop": "884",
+      "totalSellinShopsToday": 9
+    },
+    "focusVisitTillDateAmountCardData": {
+      "totalFocusBilled": 1,
+      "minimumSupposedShop": "5856"
+    },
+    "slideCardData": [
+      {
+        "value1": "474",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 56,
+        "text2": "Visited",
+        "value2Class": "text-c-black",
+        "value3": "11.81 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Outlets Visited",
+        "color": "light-grey",
+        "color1": ""
+      },
+      {
+        "value1": "474",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 53,
+        "text2": " Billed",
+        "value2Class": "text-c-black",
+        "value3": "11.18 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Outlets Billed",
+        "color": "light-grey",
+        "color1": ""
+      },
+      {
+        "value1": "474",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 27,
+        "text2": " Billed",
+        "value2Class": "text-c-black",
+        "value3": "5.7 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Focus Brands Billed",
+        "color": "text-black",
+        "color1": ""
+      }
+    ],
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "circleList": [
+      {
+        "value": "CA1",
+        "label": "CA1"
+      },
+      {
+        "value": "CAV",
+        "label": "CAV"
+      },
+      {
+        "value": "CO1",
+        "label": "CO1"
+      },
+      {
+        "value": "CO2",
+        "label": "CO2"
+      },
+      {
+        "value": "CO3",
+        "label": "CO3"
+      },
+      {
+        "value": "JAK",
+        "label": "JAK"
+      },
+      {
+        "value": "LU4",
+        "label": "LU4"
+      },
+      {
+        "value": "LUC_CFP",
+        "label": "LUC_CFP"
+      },
+      {
+        "value": "NAM",
+        "label": "NAM"
+      },
+      {
+        "value": "NAV",
+        "label": "NAV"
+      },
+      {
+        "value": "PAM",
+        "label": "PAM"
+      }
+    ],
+    "sectionList": [
+      {
+        "value": "CA1004",
+        "label": "CA1004"
+      },
+      {
+        "value": "CAV001",
+        "label": "CAV001"
+      },
+      {
+        "value": "CAV005",
+        "label": "CAV005"
+      },
+      {
+        "value": "CO100A",
+        "label": "CO100A"
+      },
+      {
+        "value": "CO200B",
+        "label": "CO200B"
+      },
+      {
+        "value": "CO3007",
+        "label": "CO3007"
+      },
+      {
+        "value": "JAK001",
+        "label": "JAK001"
+      },
+      {
+        "value": "LU4002",
+        "label": "LU4002"
+      },
+      {
+        "value": "LU4004",
+        "label": "LU4004"
+      },
+      {
+        "value": "LUC003_CFP",
+        "label": "LUC003_CFP"
+      },
+      {
+        "value": "NAM001",
+        "label": "NAM001"
+      },
+      {
+        "value": "NAV002",
+        "label": "NAV002"
+      },
+      {
+        "value": "NAV003",
+        "label": "NAV003"
+      },
+      {
+        "value": "NAV004",
+        "label": "NAV004"
+      },
+      {
+        "value": "PAM004",
+        "label": "PAM004"
+      },
+      {
+        "value": "PAM007",
+        "label": "PAM007"
+      },
+      {
+        "value": "PAM010",
+        "label": "PAM010"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "value": "CA3469",
+        "label": "CA3469"
+      },
+      {
+        "value": "CA3520",
+        "label": "CA3520"
+      },
+      {
+        "value": "CA3684",
+        "label": "CA3684"
+      },
+      {
+        "value": "CO4034",
+        "label": "CO4034"
+      },
+      {
+        "value": "CO4043",
+        "label": "CO4043"
+      },
+      {
+        "value": "CO4097",
+        "label": "CO4097"
+      },
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      },
+      {
+        "value": "LU3999",
+        "label": "LU3999"
+      },
+      {
+        "value": "LU4001",
+        "label": "LU4001"
+      },
+      {
+        "value": "LU4077",
+        "label": "LU4077"
+      },
+      {
+        "value": "NG2241",
+        "label": "NG2241"
+      },
+      {
+        "value": "NG2957",
+        "label": "NG2957"
+      },
+      {
+        "value": "NG3104",
+        "label": "NG3104"
+      },
+      {
+        "value": "NG3141",
+        "label": "NG3141"
+      },
+      {
+        "value": "PA208910",
+        "label": "PA208910"
+      },
+      {
+        "value": "PA2714",
+        "label": "PA2714"
+      },
+      {
+        "value": "PA2774",
+        "label": "PA2774"
+      }
+    ],
+    "monthList": [
+      {
+        "label": "January",
+        "value": "01"
+      },
+      {
+        "label": "February",
+        "value": "02"
+      },
+      {
+        "label": "March",
+        "value": "03"
+      },
+      {
+        "label": "April",
+        "value": "04"
+      },
+      {
+        "label": "May",
+        "value": "05"
+      },
+      {
+        "label": "June",
+        "value": "06"
+      },
+      {
+        "label": "July",
+        "value": "07"
+      },
+      {
+        "label": "August",
+        "value": "08"
+      },
+      {
+        "label": "September",
+        "value": "09"
+      },
+      {
+        "label": "October",
+        "value": "10"
+      },
+      {
+        "label": "November",
+        "value": "11"
+      },
+      {
+        "label": "December",
+        "value": "12"
+      }
+    ],
+    "yearList": [
+      {
+        "label": 2024,
+        "value": 2024
+      },
+      {
+        "label": 2025,
+        "value": 2025
+      }
+    ],
+    "teamList": [
+      {
+        "value": "1260",
+        "label": "Akash Jawanjad"
+      },
+      {
+        "value": "1131",
+        "label": "ANURAG"
+      },
+      {
+        "value": "8",
+        "label": "Asif"
+      },
+      {
+        "value": "1851",
+        "label": "Asif Mirza"
+      },
+      {
+        "value": "19044",
+        "label": "Bikash Kumar"
+      },
+      {
+        "value": "944",
+        "label": "CHANDAN_EX CG SWD DS"
+      },
+      {
+        "value": "1067",
+        "label": "Kartick2"
+      },
+      {
+        "value": "638",
+        "label": "KOUSHIK ROY"
+      },
+      {
+        "value": "15940",
+        "label": "M MUTHUKRISHNAN"
+      },
+      {
+        "value": "1867",
+        "label": "Mahadeo Sonkusare1"
+      },
+      {
+        "value": "639",
+        "label": "MRINAL ROY"
+      },
+      {
+        "value": "1068",
+        "label": "Narayan"
+      },
+      {
+        "value": "965",
+        "label": "Naushad2"
+      },
+      {
+        "value": "15950",
+        "label": "P STEPHEN"
+      },
+      {
+        "value": "926",
+        "label": "PRAMOD KUMAR"
+      },
+      {
+        "value": "1589",
+        "label": "PRATAP ROY2"
+      },
+      {
+        "value": "1532",
+        "label": "Rajeev"
+      },
+      {
+        "value": "2",
+        "label": "Ram Ds"
+      },
+      {
+        "value": "946",
+        "label": "RANJAN EX CG SWD DS"
+      },
+      {
+        "value": "15960",
+        "label": "RUBAN"
+      },
+      {
+        "value": "1069",
+        "label": "Santu"
+      },
+      {
+        "value": "1591",
+        "label": "SAYAN PAIN"
+      },
+      {
+        "value": "59",
+        "label": "SHIVAM VAN DS"
+      },
+      {
+        "value": "1480",
+        "label": "SUJAN DAS"
+      },
+      {
+        "value": "1168",
+        "label": "Sunil2"
+      },
+      {
+        "value": "1167",
+        "label": "Sunny"
+      },
+      {
+        "value": "19075",
+        "label": "Sunny"
+      },
+      {
+        "value": "1070",
+        "label": "Tapas Das"
+      },
+      {
+        "value": "1224",
+        "label": "TULSI KUMAR WHOLESALE DS"
+      },
+      {
+        "value": "1866",
+        "label": "TUSHAR"
+      },
+      {
+        "value": "19076",
+        "label": "Tushar"
+      },
+      {
+        "value": "1158",
+        "label": "UTTAM"
+      }
+    ],
+    "teamType": [
+      {
+        "label": "VAN DS",
+        "value": 0
+      },
+      {
+        "label": "Hybrid",
+        "value": 1
+      },
+      {
+        "label": "Town SWD",
+        "value": 2
+      }
+    ],
+    "graphs": {
+      "outletVisitedMonthlyComparisonData": {
+        "salesData": {
+          "seriesData": [
+            {
+              "data": [
+                299,
+                52,
+                258,
+                287,
+                284,
+                348,
+                248,
+                332,
+                27,
+                302,
+                287,
+                252,
+                278,
+                294,
+                289,
+                56,
+                299,
+                292,
+                203,
+                261,
+                231,
+                251,
+                102,
+                260,
+                275,
+                265,
+                302,
+                268
+              ]
+            },
+            {
+              "data": [
+                289,
+                58,
+                262,
+                251,
+                241,
+                293,
+                332,
+                65
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastMonthName": "February 2025",
+          "currentMonthName": "March 2025"
+        },
+        "height": "800px"
+      },
+      "getOutletBilledComparisonData": {
+        "billedData": {
+          "seriesData": [
+            {
+              "data": [
+                261,
+                308,
+                523,
+                761,
+                1002,
+                1288,
+                1511,
+                1786,
+                1806,
+                2065,
+                2306,
+                2516,
+                2731,
+                2963,
+                3222,
+                3274,
+                3533,
+                3780,
+                3959,
+                4199,
+                4407,
+                4632,
+                4712,
+                4943,
+                5180,
+                5417,
+                5677,
+                5907
+              ]
+            },
+            {
+              "data": [
+                273,
+                327,
+                566,
+                769,
+                975,
+                1239,
+                1523,
+                1582
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastMonthName": "February 2025",
+          "currentMonthName": "March 2025"
+        },
+        "height": "800px"
+      },
+      "getShopVisitedSPLYComparisonData": {
+        "visitData": {
+          "seriesData": [
+            {
+              "data": [
+                66,
+                80,
+                18,
+                69,
+                66,
+                74,
+                61,
+                77,
+                72,
+                15,
+                70,
+                66,
+                68,
+                56,
+                67,
+                68,
+                19,
+                77,
+                66,
+                67,
+                56,
+                66,
+                67,
+                38,
+                0,
+                70,
+                70,
+                79
+              ]
+            },
+            {
+              "data": [
+                289,
+                58,
+                262,
+                251,
+                241,
+                293,
+                332,
+                65
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastYearMonthName": "March 2024",
+          "currentYearMonthName": "March 2025"
+        },
+        "height": "800px"
+      },
+      "getShopVisitedYTDLYTDComparisonDataMonthly": {
+        "ytdlytdVisit": {
+          "seriesData": [
+            {
+              "data": [
+                1885,
+                1864,
+                1849,
+                2026,
+                1925,
+                1816,
+                2202,
+                2457,
+                2272,
+                2329,
+                2107,
+                1251
+              ]
+            },
+            {
+              "data": [
+                5098,
+                6902,
+                1791
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+          ],
+          "lastYear": "2024",
+          "currentYear": "2025"
+        },
+        "height": "800px"
+      },
+      "getShopBilledSPLYComparisonData": {
+        "billedSPLYData": {
+          "seriesData": [
+            {
+              "data": [
+                66,
+                146,
+                164,
+                232,
+                298,
+                372,
+                433,
+                509,
+                581,
+                596,
+                666,
+                732,
+                800,
+                856,
+                923,
+                991,
+                1010,
+                1087,
+                1153,
+                1220,
+                1276,
+                1342,
+                1409,
+                1447,
+                1447,
+                1517,
+                1587,
+                1666
+              ]
+            },
+            {
+              "data": [
+                273,
+                327,
+                566,
+                769,
+                975,
+                1239,
+                1523,
+                1582
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastYearMonthName": "March 2024",
+          "currentYearMonthName": "March 2025"
+        },
+        "height": "800px"
+      },
+      "getShopBilledYTDLYTDComparisonData": {
+        "ytdlytdBilled": {
+          "seriesData": [
+            {
+              "data": [
+                1881,
+                3744,
+                5591,
+                7614,
+                9538,
+                11352,
+                13522,
+                15847,
+                18007,
+                20257,
+                22328,
+                23542
+              ]
+            },
+            {
+              "data": [
+                4314,
+                10221,
+                11803
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec"
+          ],
+          "lastYear": "2024",
+          "currentYear": "2025"
+        },
+        "height": "800px"
+      },
+      "getFocusCMLMOutletBilledComparisonData": {
+        "focusbilledData": {
+          "seriesData": [
+            {
+              "data": [
+                244,
+                291,
+                492,
+                718,
+                954,
+                1226,
+                1439,
+                1706,
+                1726,
+                1979,
+                2218,
+                2423,
+                2630,
+                2849,
+                3101,
+                3151,
+                3402,
+                3640,
+                3818,
+                4045,
+                4240,
+                4460,
+                4530,
+                4757,
+                4987,
+                5214,
+                5462,
+                5686
+              ]
+            },
+            {
+              "data": [
+                261,
+                304,
+                531,
+                721,
+                917,
+                1165,
+                1428,
+                1481
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastMonthName": "February 2025",
+          "currentMonthName": "March 2025"
+        },
+        "height": "800px"
+      },
+      "getFocusSPLYOutletBilledComparisonData": {
+        "focusSPLYbilledData": {
+          "seriesData": [
+            {
+              "data": [
+                44,
+                103,
+                120,
+                168,
+                215,
+                270,
+                308,
+                366,
+                416,
+                430,
+                482,
+                530,
+                579,
+                618,
+                666,
+                713,
+                732,
+                790,
+                836,
+                884,
+                922,
+                970,
+                1019,
+                1040,
+                1040,
+                1090,
+                1143,
+                1202
+              ]
+            },
+            {
+              "data": [
+                261,
+                304,
+                531,
+                721,
+                917,
+                1165,
+                1428,
+                1481
+              ]
+            }
+          ],
+          "xAxisLabels": [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26,
+            27,
+            28,
+            29,
+            30,
+            31
+          ],
+          "lastYearMonthName": "March 2024",
+          "currentYearMonthName": "March 2025"
+        },
+        "height": "800px"
+      }
+    }
+  },
+  "hidePopup": true
+}

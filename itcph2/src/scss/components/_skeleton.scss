@@ -1,0 +1,24 @@
+$primary-color: #ddd;
+$moving-color: #eee;
+
+.skeleton {
+  animation: progress 1.1s linear infinite;
+  background-color: $primary-color;
+  background-image: linear-gradient(90deg, $primary-color, $moving-color, $primary-color);
+  background-repeat: no-repeat;
+  background-size: 200px;
+  border-radius: 7px;
+  display: inline-block;
+  height: 16px;
+  width: 100%;
+}
+
+@keyframes progress {
+  0% {
+    background-position: -200px;
+  }
+
+  100% {
+    background-position: calc(200px + 100%);
+  }
+}

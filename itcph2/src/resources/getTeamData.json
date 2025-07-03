@@ -1,0 +1,349 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "projectList": [
+      {
+        "value": "1",
+        "label": "Van DS"
+      }
+    ],
+    "branchList": [
+      {
+        "value": "18",
+        "label": "Bihar"
+      },
+      {
+        "value": "7",
+        "label": "E-AP"
+      },
+      {
+        "value": "8",
+        "label": "E-Assam"
+      },
+      {
+        "value": "13",
+        "label": "E-Cal"
+      },
+      {
+        "value": "9",
+        "label": "E-Meghalaya"
+      },
+      {
+        "value": "10",
+        "label": "E-Mizoram"
+      },
+      {
+        "value": "11",
+        "label": "E-Naga Mani"
+      },
+      {
+        "value": "17",
+        "label": "E-Orissa"
+      },
+      {
+        "value": "12",
+        "label": "E-Tripura"
+      },
+      {
+        "value": "14",
+        "label": "E-Viz"
+      },
+      {
+        "value": "15",
+        "label": "EBEN"
+      },
+      {
+        "value": "3",
+        "label": "HARYANA"
+      },
+      {
+        "value": "5",
+        "label": "Jaipur"
+      },
+      {
+        "value": "6",
+        "label": "Jammu"
+      },
+      {
+        "value": "19",
+        "label": "Jharkhand"
+      },
+      {
+        "value": "4",
+        "label": "NLUC"
+      },
+      {
+        "value": "2",
+        "label": "NSAH"
+      },
+      {
+        "value": "30",
+        "label": "PUNJAB"
+      },
+      {
+        "value": "33",
+        "label": "SBLR"
+      },
+      {
+        "value": "34",
+        "label": "SCHE"
+      },
+      {
+        "value": "35",
+        "label": "SCOI"
+      },
+      {
+        "value": "36",
+        "label": "SERN"
+      },
+      {
+        "value": "37",
+        "label": "SHYD"
+      },
+      {
+        "value": "39",
+        "label": "SKAR"
+      },
+      {
+        "value": "32",
+        "label": "SRAY"
+      },
+      {
+        "value": "1",
+        "label": "UP East"
+      },
+      {
+        "value": "24",
+        "label": "W-Goa"
+      },
+      {
+        "value": "23",
+        "label": "W-MH"
+      },
+      {
+        "value": "26",
+        "label": "W-NAG-CG"
+      },
+      {
+        "value": "25",
+        "label": "W-NAG-MH"
+      },
+      {
+        "value": "28",
+        "label": "WAHM"
+      },
+      {
+        "value": "27",
+        "label": "WBHO"
+      },
+      {
+        "value": "31",
+        "label": "WMUM"
+      }
+    ],
+    "circleList": [
+      {
+        "value": "CA1",
+        "label": "CA1"
+      },
+      {
+        "value": "CAV",
+        "label": "CAV"
+      },
+      {
+        "value": "CO1",
+        "label": "CO1"
+      },
+      {
+        "value": "CO2",
+        "label": "CO2"
+      },
+      {
+        "value": "CO3",
+        "label": "CO3"
+      },
+      {
+        "value": "JAK",
+        "label": "JAK"
+      },
+      {
+        "value": "LU4",
+        "label": "LU4"
+      },
+      {
+        "value": "LUC_CFP",
+        "label": "LUC_CFP"
+      },
+      {
+        "value": "NAM",
+        "label": "NAM"
+      },
+      {
+        "value": "NAV",
+        "label": "NAV"
+      },
+      {
+        "value": "PAM",
+        "label": "PAM"
+      },
+      {
+        "value": "",
+        "label": "NULL"
+      }
+    ],
+    "sectionList": [
+      {
+        "value": "CA1004",
+        "label": "CA1004"
+      },
+      {
+        "value": "CAV001",
+        "label": "CAV001"
+      },
+      {
+        "value": "CAV005",
+        "label": "CAV005"
+      },
+      {
+        "value": "CO100A",
+        "label": "CO100A"
+      },
+      {
+        "value": "CO200B",
+        "label": "CO200B"
+      },
+      {
+        "value": "CO3007",
+        "label": "CO3007"
+      },
+      {
+        "value": "JAK001",
+        "label": "JAK001"
+      },
+      {
+        "value": "LU4002",
+        "label": "LU4002"
+      },
+      {
+        "value": "LU4004",
+        "label": "LU4004"
+      },
+      {
+        "value": "LUC003_CFP",
+        "label": "LUC003_CFP"
+      },
+      {
+        "value": "NAM001",
+        "label": "NAM001"
+      },
+      {
+        "value": "NAV002",
+        "label": "NAV002"
+      },
+      {
+        "value": "NAV003",
+        "label": "NAV003"
+      },
+      {
+        "value": "NAV004",
+        "label": "NAV004"
+      },
+      {
+        "value": "PAM004",
+        "label": "PAM004"
+      },
+      {
+        "value": "PAM007",
+        "label": "PAM007"
+      },
+      {
+        "value": "PAM010",
+        "label": "PAM010"
+      },
+      {
+        "value": "",
+        "label": "NULL"
+      }
+    ],
+    "aeNameList": [
+      {
+        "value": "NULL",
+        "label": "NULL"
+      },
+      {
+        "value": "",
+        "label": "NULL"
+      }
+    ],
+    "dsTypeList": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      }
+    ],
+    "separatorList": [
+      {
+        "label": "Space",
+        "value": "1"
+      },
+      {
+        "label": "Hyphen (-)",
+        "value": "2"
+      },
+      {
+        "label": "Underscore (_)",
+        "value": "3"
+      }
+    ],
+    "jsonIdList": [
+      {
+        "label": "DS App",
+        "value": "99"
+      },
+      {
+        "label": "WD App",
+        "value": "100"
+      },
+      {
+        "label": "AE App",
+        "value": "101"
+      }
+    ],
+    "sortOptions": [
+      {
+        "label": "Team Name",
+        "value": "a.team_name"
+      },
+      {
+        "label": "Branch Name",
+        "value": "b.branch_name"
+      },
+      {
+        "label": "Username",
+        "value": "c.username"
+      },
+      {
+        "label": "Date Created - ASC",
+        "value": "a.rdt"
+      }
+    ],
+    "viewHeader": [
+      "app.team.view.teamId",
+      "app.team.add.name",
+      "app.team.add.branch",
+      "app.team.view.wdCode",
+      "auth.login.form.mobile",
+      "app.team.add.json"
+    ],
+    "viewBody": [
+      "id",
+      "teamName",
+      "branchName",
+      "wdCode",
+      "mobile",
+      "json"
+    ]
+  },
+  "hidePopup": true
+}

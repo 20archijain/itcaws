@@ -1,0 +1,66 @@
+<app-card cardTitle="{{ 'app.profile.heading' | translate }}" cardClass="tab-card" [options]="false">
+  <ul ngbNav #nav="ngbNav" [(activeId)]="active" (activeIdChange)="clearForm()" class="nav-tabs">
+    <!-- Personal Details -->
+    <li [ngbNavItem]="1">
+      <a ngbNavLink>{{ 'app.profile.personalDetails' | translate }}</a>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-xs-10 col-sm-6 col-md-4 col-xl-3">
+            <form (ngSubmit)="editProfile()" [formGroup]="personalForm">
+              <app-input label="app.profile.form.name" [group]="personalForm" controlName="name"
+                placeholder="{{ 'app.profile.form.name' | translate }}" [isRequired]="true"
+                [errorMessages]="errorMessages.name" [autocompleteOff]="true">
+              </app-input>
+
+              <app-input type="email" label="app.profile.form.email"
+                placeholder="{{ 'app.profile.form.email' | translate }}" [group]="personalForm" controlName="email"
+                [errorMessages]="errorMessages.email"></app-input>
+
+              <div class="form-group">
+                <app-button type="submit" text="button.save" [isDisabled]="personalForm.invalid || isDisabled"
+                  [showSpinner]="isDisabled" spinnerText="spinnerText.saving">
+                </app-button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+
+    <!-- Change Password -->
+    <li [ngbNavItem]="2">
+      <a ngbNavLink>{{ 'app.profile.changePassword' | translate }}</a>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-xs-10 col-sm-6 col-md-4 col-xl-3">
+            <form autocomplete="off" (ngSubmit)="changePassword()" [formGroup]="passwordForm">
+              <app-input type="password" label="app.profile.form.currentPassword" [group]="passwordForm"
+                controlName="currentPassword" placeholder="{{ 'app.profile.form.currentPassword' | translate }}"
+                [isRequired]="true" [errorMessages]="errorMessages.currentPassword"></app-input>
+
+              <app-input type="password" label="app.profile.form.newPassword"
+                placeholder="{{ 'app.profile.form.newPassword' | translate }}" [isRequired]="true"
+                [group]="passwordForm" controlName="newPassword" [errorMessages]="errorMessages.newPassword"
+                [tooltipContent]="passwordTooltip">
+              </app-input>
+
+              <app-input type="password" label="app.profile.form.confirmNewPassword"
+                placeholder="{{ 'app.profile.form.confirmNewPassword' | translate }}" [isRequired]="true"
+                [group]="passwordForm" controlName="confirmNewPassword"
+                [errorMessages]="errorMessages.confirmNewPassword"></app-input>
+
+              <div class="form-group">
+                <app-button type="submit" text="button.change" [isDisabled]="isDisabled"
+                  [appScrollToFirstInvalidInput]="passwordForm" [showSpinner]="isDisabled"
+                  spinnerText="spinnerText.changing">
+                </app-button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+  </ul>
+
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
+</app-card>

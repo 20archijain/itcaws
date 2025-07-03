@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH2=/home/itcawsportal/public_html/itcph2/
+    - /bin/cp -R itcph2/dist/* $DEPLOYPATH2

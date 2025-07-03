@@ -1,0 +1,730 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "teamList": [
+      {
+        "value": "1260",
+        "label": "Akash Jawanjad"
+      },
+      {
+        "value": "1131",
+        "label": "ANURAG"
+      },
+      {
+        "value": "8",
+        "label": "Asif"
+      },
+      {
+        "value": "1851",
+        "label": "Asif Mirza"
+      },
+      {
+        "value": "19044",
+        "label": "Bikash Kumar"
+      },
+      {
+        "value": "944",
+        "label": "CHANDAN_EX CG SWD DS"
+      },
+      {
+        "value": "1067",
+        "label": "Kartick2"
+      },
+      {
+        "value": "638",
+        "label": "KOUSHIK ROY"
+      },
+      {
+        "value": "15940",
+        "label": "M MUTHUKRISHNAN"
+      },
+      {
+        "value": "1867",
+        "label": "Mahadeo Sonkusare1"
+      },
+      {
+        "value": "639",
+        "label": "MRINAL ROY"
+      },
+      {
+        "value": "1068",
+        "label": "Narayan"
+      },
+      {
+        "value": "965",
+        "label": "Naushad2"
+      },
+      {
+        "value": "15950",
+        "label": "P STEPHEN"
+      },
+      {
+        "value": "926",
+        "label": "PRAMOD KUMAR"
+      },
+      {
+        "value": "1589",
+        "label": "PRATAP ROY2"
+      },
+      {
+        "value": "1532",
+        "label": "Rajeev"
+      },
+      {
+        "value": "2",
+        "label": "Ram Ds"
+      },
+      {
+        "value": "946",
+        "label": "RANJAN EX CG SWD DS"
+      },
+      {
+        "value": "15960",
+        "label": "RUBAN"
+      },
+      {
+        "value": "1069",
+        "label": "Santu"
+      },
+      {
+        "value": "1591",
+        "label": "SAYAN PAIN"
+      },
+      {
+        "value": "59",
+        "label": "SHIVAM VAN DS"
+      },
+      {
+        "value": "1480",
+        "label": "SUJAN DAS"
+      },
+      {
+        "value": "1168",
+        "label": "Sunil2"
+      },
+      {
+        "value": "1167",
+        "label": "Sunny"
+      },
+      {
+        "value": "19075",
+        "label": "Sunny"
+      },
+      {
+        "value": "1070",
+        "label": "Tapas Das"
+      },
+      {
+        "value": "1224",
+        "label": "TULSI KUMAR WHOLESALE DS"
+      },
+      {
+        "value": "1866",
+        "label": "TUSHAR"
+      },
+      {
+        "value": "19076",
+        "label": "Tushar"
+      },
+      {
+        "value": "1158",
+        "label": "UTTAM"
+      }
+    ],
+    "teamType": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      }
+    ],
+    "circleList": [
+      {
+        "value": "CA1",
+        "label": "CA1"
+      },
+      {
+        "value": "CAV",
+        "label": "CAV"
+      },
+      {
+        "value": "CO1",
+        "label": "CO1"
+      },
+      {
+        "value": "CO2",
+        "label": "CO2"
+      },
+      {
+        "value": "CO3",
+        "label": "CO3"
+      },
+      {
+        "value": "JAK",
+        "label": "JAK"
+      },
+      {
+        "value": "LU4",
+        "label": "LU4"
+      },
+      {
+        "value": "LUC_CFP",
+        "label": "LUC_CFP"
+      },
+      {
+        "value": "NAM",
+        "label": "NAM"
+      },
+      {
+        "value": "NAV",
+        "label": "NAV"
+      },
+      {
+        "value": "PAM",
+        "label": "PAM"
+      }
+    ],
+    "sectionList": [
+      {
+        "value": "CA1004",
+        "label": "CA1004"
+      },
+      {
+        "value": "CAV001",
+        "label": "CAV001"
+      },
+      {
+        "value": "CAV005",
+        "label": "CAV005"
+      },
+      {
+        "value": "CO100A",
+        "label": "CO100A"
+      },
+      {
+        "value": "CO200B",
+        "label": "CO200B"
+      },
+      {
+        "value": "CO3007",
+        "label": "CO3007"
+      },
+      {
+        "value": "JAK001",
+        "label": "JAK001"
+      },
+      {
+        "value": "LU4002",
+        "label": "LU4002"
+      },
+      {
+        "value": "LU4004",
+        "label": "LU4004"
+      },
+      {
+        "value": "LUC003_CFP",
+        "label": "LUC003_CFP"
+      },
+      {
+        "value": "NAM001",
+        "label": "NAM001"
+      },
+      {
+        "value": "NAV002",
+        "label": "NAV002"
+      },
+      {
+        "value": "NAV003",
+        "label": "NAV003"
+      },
+      {
+        "value": "NAV004",
+        "label": "NAV004"
+      },
+      {
+        "value": "PAM004",
+        "label": "PAM004"
+      },
+      {
+        "value": "PAM007",
+        "label": "PAM007"
+      },
+      {
+        "value": "PAM010",
+        "label": "PAM010"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "value": "CA3469",
+        "label": "CA3469"
+      },
+      {
+        "value": "CA3520",
+        "label": "CA3520"
+      },
+      {
+        "value": "CA3684",
+        "label": "CA3684"
+      },
+      {
+        "value": "CO4034",
+        "label": "CO4034"
+      },
+      {
+        "value": "CO4043",
+        "label": "CO4043"
+      },
+      {
+        "value": "CO4097",
+        "label": "CO4097"
+      },
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      },
+      {
+        "value": "LU3999",
+        "label": "LU3999"
+      },
+      {
+        "value": "LU4001",
+        "label": "LU4001"
+      },
+      {
+        "value": "LU4077",
+        "label": "LU4077"
+      },
+      {
+        "value": "NG2241",
+        "label": "NG2241"
+      },
+      {
+        "value": "NG2957",
+        "label": "NG2957"
+      },
+      {
+        "value": "NG3104",
+        "label": "NG3104"
+      },
+      {
+        "value": "NG3141",
+        "label": "NG3141"
+      },
+      {
+        "value": "PA208910",
+        "label": "PA208910"
+      },
+      {
+        "value": "PA2714",
+        "label": "PA2714"
+      },
+      {
+        "value": "PA2774",
+        "label": "PA2774"
+      }
+    ],
+    "branchFilter": true,
+    "columnSize": 12,
+    "repeatMapBy": 1,
+    "markers": [
+      {
+        "date": "2025-03-08 10:25:48",
+        "latitude": "27.1386708",
+        "longitude": "83.5464351",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b>Attendance<\/b><br> Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 10:25:48 AM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 10:37:27",
+        "latitude": "27.1387031",
+        "longitude": "83.5464677",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b>Attendance<\/b><br> Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 10:37:27 AM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:00:26",
+        "latitude": "25.2542915",
+        "longitude": "82.0886676",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b>Attendance<\/b><br> Date - 2025-03-08<br><\/p> <p class='attendance-label'>SHIVAM VAN DS<br>Time - 01:00:26 PM<br> Branch - NEUP<br>Circle - LU4<br>Section - LU4004<br>WDCode - LU4001<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:46:03",
+        "latitude": "27.1227455",
+        "longitude": "83.4780653",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Narendra kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:46:03 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:47:32",
+        "latitude": "27.1225862",
+        "longitude": "83.4778255",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Vinod kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:47:32 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:53:04",
+        "latitude": "27.1215179",
+        "longitude": "83.4742632",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - sailesh kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:53:04 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:54:57",
+        "latitude": "27.119981",
+        "longitude": "83.4670228",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Sanjay kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:54:57 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:57:16",
+        "latitude": "27.1189191",
+        "longitude": "83.4607393",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Krishna Kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:57:16 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:58:09",
+        "latitude": "27.1184434",
+        "longitude": "83.4598375",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Mahesh kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:58:09 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 13:59:38",
+        "latitude": "27.1174013",
+        "longitude": "83.4530104",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Sagar tafee <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 01:59:38 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:00:44",
+        "latitude": "27.1173363",
+        "longitude": "83.452883",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Natwarlal kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:00:44 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:05:12",
+        "latitude": "27.1171497",
+        "longitude": "83.4381434",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Jhink kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:05:12 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:14:12",
+        "latitude": "27.1164115",
+        "longitude": "83.3979556",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - aaryan kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:14:12 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:33:55",
+        "latitude": "27.1137212",
+        "longitude": "83.379474",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Mahendra kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:33:55 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:38:52",
+        "latitude": "27.4228589",
+        "longitude": "83.6930813",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - ashok pan<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 02:38:52 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:51:49",
+        "latitude": "27.1127874",
+        "longitude": "83.371057",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Arun kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:51:49 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 14:59:34",
+        "latitude": "27.1123889",
+        "longitude": "83.3696003",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Jaganath <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 02:59:34 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 15:29:36",
+        "latitude": "27.4299905",
+        "longitude": "83.6934251",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - shonu kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 03:29:36 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 15:30:15",
+        "latitude": "27.429959",
+        "longitude": "83.6934292",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - AMIT KIRA STOR<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 03:30:15 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 15:31:09",
+        "latitude": "27.4299279",
+        "longitude": "83.6934139",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - AMIT KIRA STOR<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 03:31:09 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 15:36:22",
+        "latitude": "27.0834927",
+        "longitude": "83.3712819",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Shubham kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 03:36:22 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:12:22",
+        "latitude": "27.4269236",
+        "longitude": "83.6931766",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - murari kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:12:22 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:14:37",
+        "latitude": "27.4261816",
+        "longitude": "83.6932584",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - ridisidhi kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:14:37 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:16:31",
+        "latitude": "27.425976",
+        "longitude": "83.6932709",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - shau kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:16:31 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:17:03",
+        "latitude": "27.4257717",
+        "longitude": "83.6931467",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - shoni belarsh<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:17:03 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:17:55",
+        "latitude": "27.4258601",
+        "longitude": "83.6932721",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - ashok pan<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:17:55 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:18:29",
+        "latitude": "27.4258863",
+        "longitude": "83.6931421",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - shonu kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:18:29 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:19:16",
+        "latitude": "27.425825",
+        "longitude": "83.693155",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - malasmi kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:19:16 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:19:58",
+        "latitude": "27.4260247",
+        "longitude": "83.6932746",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - sanjya kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:19:58 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:23:42",
+        "latitude": "27.0807567",
+        "longitude": "83.3742448",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Rajkumar Kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 04:23:42 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:32:11",
+        "latitude": "27.4145073",
+        "longitude": "83.6944957",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - nigam tedash<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:32:11 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:32:30",
+        "latitude": "27.1137067",
+        "longitude": "83.3790041",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Gupta Kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 04:32:30 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:32:56",
+        "latitude": "27.4144934",
+        "longitude": "83.6944864",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - ASWAN PROVISION<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:32:56 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:33:53",
+        "latitude": "27.4144934",
+        "longitude": "83.6944864",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - subash kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:33:53 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:34:47",
+        "latitude": "27.4144934",
+        "longitude": "83.6944864",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - GUPTA ENTERPRISES<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:34:47 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:35:32",
+        "latitude": "27.4004788",
+        "longitude": "83.7021447",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - anjli bekarsh<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:35:32 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:36:18",
+        "latitude": "27.3892931",
+        "longitude": "83.7052972",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - nigam bardrs<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:36:18 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:37:14",
+        "latitude": "27.3892931",
+        "longitude": "83.7052972",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - riseekesh kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:37:14 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 16:56:18",
+        "latitude": "27.3136995",
+        "longitude": "83.7275832",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - aastha kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 04:56:18 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:05:54",
+        "latitude": "27.1169224",
+        "longitude": "83.4416482",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Sohan kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 05:05:54 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:06:43",
+        "latitude": "27.1168343",
+        "longitude": "83.4429647",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Anand kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 05:06:43 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:09:39",
+        "latitude": "27.3123442",
+        "longitude": "83.7265144",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - arbind kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 05:09:39 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:11:47",
+        "latitude": "27.1226298",
+        "longitude": "83.4779189",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - Deelip kirana <\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunny<br>Time - 05:11:47 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:24:10",
+        "latitude": "27.3121231",
+        "longitude": "83.7263246",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - rajesh kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 05:24:10 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "date": "2025-03-08 17:39:44",
+        "latitude": "27.3068289",
+        "longitude": "83.7183021",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'><b> Outlet Name - jyswal kirana<\/b> <br>Date - 2025-03-08<br><\/p> <p class='attendance-label'>Sunil2<br>Time - 05:39:44 PM<br> Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      }
+    ]
+  },
+  "hidePopup": true
+}

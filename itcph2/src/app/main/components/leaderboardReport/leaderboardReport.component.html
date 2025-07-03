@@ -1,0 +1,94 @@
+<app-card cardTitle="{{ 'app.download.downloadLeaderBoardReport' | translate }}" [options]="false">
+  <form (ngSubmit)="downloadData()" [formGroup]="group" novalidate>
+
+    <!-- Admin and Superadmin login  -->
+    <div *ngIf="branchFilter" class="row">
+      <div class="col-sm-3 col-lg-2">
+        <app-date [group]="group" controlName="dateFrom" sizeClass="col-sm-12" label="From"
+          [errorMessages]="errorMessages.dateFrom" [isRequired]="true"
+          placeholder="{{ 'placeholder.from' | translate }}" [maxDate]="group.get('dateTo').value">
+        </app-date>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-date [group]="group" controlName="dateTo" sizeClass="col-sm-12" label="To" isRequired="true"
+          [errorMessages]="errorMessages.dateTo" [isRequired]="true" placeholder="{{ 'placeholder.to' | translate }}"
+          [minDate]="group.get('dateFrom').value">
+        </app-date>
+      </div>
+      <div class="col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="branch" [options]="branchOptions" [multiple]="true"
+          label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()"
+          groupBy="mainBranch">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+          label="app.team.add.circle" placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+          label="app.team.add.section" placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          label="app.team.add.wdCode" placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select placeholder="{{ 'app.reporting.activeUSers.dsType' | translate }}" [group]="group"
+          controlName="dsType" label="app.team.add.dsType" [options]="teamTypeOptions" (onChange)="getTeams()">
+        </app-select>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select placeholder="{{ 'app.reporting.activeUSers.dsName' | translate }}" [group]="group"
+          controlName="dsName" label="app.team.add.dsName" [options]="teamOptions" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="col-sm-4 col-md-2">
+        <app-button type="submit" text="button.download" [appScrollToFirstInvalidInput]="group" btnClass="m-t-30"
+          [isDisabled]="isDownloading">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Regional Login  -->
+    <div *ngIf="!branchFilter" class="row">
+      <div class="col-sm-3 col-lg-2">
+        <app-date [group]="group" controlName="dateFrom" sizeClass="col-sm-12" label="From"
+          [errorMessages]="errorMessages.dateFrom" [isRequired]="true"
+          placeholder="{{ 'placeholder.from' | translate }}" [maxDate]="group.get('dateTo').value">
+        </app-date>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-date [group]="group" controlName="dateTo" sizeClass="col-sm-12" label="To"
+          [errorMessages]="errorMessages.dateFrom" [isRequired]="true" placeholder="{{ 'placeholder.to' | translate }}"
+          [minDate]="group.get('dateFrom').value">
+        </app-date>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" [multiple]="true"
+          label="app.team.add.wdCode">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="dsType" placeholder="{{ 'app.team.add.dsType' | translate }}"
+          label="app.team.add.dsType" [options]="teamTypeOptions" (onChange)="getTeams()">
+        </app-select>
+      </div>
+
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group" controlName="dsName" placeholder="{{ 'app.team.add.dsName' | translate }}"
+          label="app.team.add.dsName" [options]="teamOptions" [errorMessages]="errorMessages.team" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="col-sm-4 col-md-2">
+        <app-button type="submit" text="button.download" [appScrollToFirstInvalidInput]="group" btnClass="m-t-30"
+          [isDisabled]="isDownloading">
+        </app-button>
+      </div>
+    </div>
+  </form>
+</app-card>

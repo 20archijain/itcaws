@@ -1,0 +1,3623 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "tilesData": [
+      {
+        "label": "Van Salesman Attendance",
+        "icon": "ri-truck-line",
+        "hoverData": {
+          "resultArray": [
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "Test Van",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "LHTBNI 145 VAN",
+              "branch_name": "BENI",
+              "wd_code": "LHTBNI"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "HAMKSM 143 VAN",
+              "branch_name": "KUSMA",
+              "wd_code": "HAMKSM"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "ASEMDI 211 VAN",
+              "branch_name": "MADI",
+              "wd_code": "ASEMDI"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "SREPSA 10 VAN",
+              "branch_name": "PARSA",
+              "wd_code": "SREPSA"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "TLTSVN 15 VAN",
+              "branch_name": "SHIVANAGAR",
+              "wd_code": "TLTSVN"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM03",
+              "team_name": "NKDBID 307 VAN",
+              "branch_name": "RASUWA",
+              "wd_code": "NKDBID"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM04",
+              "team_name": "ARSGUR 212 VAN",
+              "branch_name": "GAUR",
+              "wd_code": "ARSGUR"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM04",
+              "team_name": "SWECNP 24 VAN",
+              "branch_name": "CHAPUR",
+              "wd_code": "SWECNP"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM01",
+              "team_name": "SIVBDP 293 VAN",
+              "branch_name": "BHADRAPUR",
+              "wd_code": "SIVBDP"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM01",
+              "team_name": "ASHKVT 292 VAN",
+              "branch_name": "DHULABARI",
+              "wd_code": "ASHKVT"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM01",
+              "team_name": "NETARJ 297 VAN",
+              "branch_name": "KHUDUNABARI",
+              "wd_code": "NETARJ"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM01",
+              "team_name": "SRTKVT 296 VAN",
+              "branch_name": "KAKARVITTA",
+              "wd_code": "SRTKVT"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM01",
+              "team_name": "RSTSRG 177 VAN",
+              "branch_name": "SURUNGA",
+              "wd_code": "RSTSRG"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM02",
+              "team_name": "PRSFKL 179 VAN",
+              "branch_name": "FIKKAL",
+              "wd_code": "PRSFKL"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM02",
+              "team_name": "PKTTPL 294 VAN",
+              "branch_name": "TAPLEJUNG",
+              "wd_code": "PKTTPL"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM02",
+              "team_name": "SNSILM 181 VAN",
+              "branch_name": "ILAM",
+              "wd_code": "SUSILM"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM04",
+              "team_name": "NPMITH 192 VAN",
+              "branch_name": "ITAHARI",
+              "wd_code": "NPMITH"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM05",
+              "team_name": "HIMDHR 203 VAN",
+              "branch_name": "DHARAN",
+              "wd_code": "HIMDHR"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM06",
+              "team_name": "AJTMKJ 300 VAN",
+              "branch_name": "MIKLAJUNG",
+              "wd_code": "AJTMKJ"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM06",
+              "team_name": "SHRGAR 298 VAN",
+              "branch_name": "GAURADAHA",
+              "wd_code": "SHRGAR"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM06",
+              "team_name": "SOEURL 172 VAN",
+              "branch_name": "URLABARI",
+              "wd_code": "SOEURL"
+            },
+            {
+              "circle": "KTA",
+              "section": "KTAM01",
+              "team_name": "ABCANM 102 VAN",
+              "branch_name": "BHIMSENGOLA",
+              "wd_code": "ABCANM"
+            },
+            {
+              "circle": "KTA",
+              "section": "KTAM03",
+              "team_name": "GTMKLN 120 VAN",
+              "branch_name": "LAGAN",
+              "wd_code": "GTMKLN"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM01",
+              "team_name": "ARIPNT 33 VAN",
+              "branch_name": "PANAUTI",
+              "wd_code": "ARNPNT"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM01",
+              "team_name": "ARIPNT 34 VAN",
+              "branch_name": "PANAUTI",
+              "wd_code": "ARNPNT"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM02",
+              "team_name": "DASJRI 40 VAN",
+              "branch_name": "CHARIKOT",
+              "wd_code": "DASJRI"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM02",
+              "team_name": "SMSKDC 223 VAN",
+              "branch_name": "BARABISE",
+              "wd_code": "SMSKDC"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "KCTBRD 47 VAN",
+              "branch_name": "BARDIBAS",
+              "wd_code": "KCTBRD"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "PGBBHT 225 VAN",
+              "branch_name": "BARATHAWA",
+              "wd_code": "PGBBHT"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "PRBMLG 51 VAN",
+              "branch_name": "MALANGWA",
+              "wd_code": "PRBMLG"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "SSEDLK 55 VAN",
+              "branch_name": "DHALKEBAR",
+              "wd_code": "SSEDLK"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "DKPRGP 46 VAN",
+              "branch_name": "RAGHUNATHPUR",
+              "wd_code": "DKPRGP"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM04",
+              "team_name": "PRESKU 63 VAN",
+              "branch_name": "SANKHU",
+              "wd_code": "PRESKU"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM01",
+              "team_name": "DRGPTK 149 VAN",
+              "branch_name": "PARASI",
+              "wd_code": "DRGPTK"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM01",
+              "team_name": "LTCPRT 153 VAN",
+              "branch_name": "PHARSATIKAR",
+              "wd_code": "LTCPRT"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM01",
+              "team_name": "PTTSNL 209 VAN",
+              "branch_name": "SUNWAL",
+              "wd_code": "PTTSNL"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM01",
+              "team_name": "SSSRPN 208 VAN",
+              "branch_name": "MANIGRAM",
+              "wd_code": "SSSRPN"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM02",
+              "team_name": "KBTRBS 161 VAN",
+              "branch_name": "RANIBAS ",
+              "wd_code": "KBTRBS"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "SMBPRD 169 VAN",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "MBSSDK 306 VAN",
+              "branch_name": "ARGAKHACHI",
+              "wd_code": "MBSSDK"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "MBSSDK 305 VAN",
+              "branch_name": "ARGAKHACHI",
+              "wd_code": "MBSSDK"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "SRVKRS 304 VAN",
+              "branch_name": "KRISHNANAGAR",
+              "wd_code": "SRVKRS"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "SDPSAN 156 VAN",
+              "branch_name": "GORUSINGE",
+              "wd_code": "SDPSAN"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "SDPSAN 157 VAN",
+              "branch_name": "GORUSINGE",
+              "wd_code": "SDPSAN"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM01",
+              "team_name": "OSTKHL 75 VAN",
+              "branch_name": "KOHALPUR",
+              "wd_code": "OSTKHL"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM01",
+              "team_name": "OSSBSG 73 VAN",
+              "branch_name": "BANSGADI",
+              "wd_code": "OSSBSG"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM01",
+              "team_name": "KNHRJP 291 VAN",
+              "branch_name": "RAJAPUR",
+              "wd_code": "KNHRJP"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "BGSMLK 308 VAN",
+              "branch_name": "MEHELKUNA",
+              "wd_code": "BGSMLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "PNPDLK 309 VAN",
+              "branch_name": "DAILEKH CHUPRA",
+              "wd_code": "PNPDLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "RGSJML 80 VAN",
+              "branch_name": "JUMLA",
+              "wd_code": "RGSJML"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "KGSDLK 79 VAN",
+              "branch_name": "DAILEKH",
+              "wd_code": "KGSDLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM03",
+              "team_name": "CTCBDR 303 VAN",
+              "branch_name": "BUDAR",
+              "wd_code": "CTCBDR"
+            }
+          ],
+          "excelHeader": [
+            {
+              "circle": "Circle Name",
+              "section": "Section",
+              "wd_code": "WD Code",
+              "branch_name": "Branch Name",
+              "team_name": "Team Name"
+            }
+          ],
+          "absentHeading": "Absent People (Van)"
+        },
+        "subCounter": {
+          "counter": "",
+          "decimals": "\/",
+          "suffix": "124",
+          "prefix": "71",
+          "downData": "(57.26%)"
+        }
+      },
+      {
+        "label": "Counter Attendance",
+        "icon": "ri-store-2-line",
+        "hoverData": {
+          "resultArray": [
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "Test GK",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "SYANGJA COUNTER",
+              "branch_name": "SYANGJA",
+              "wd_code": "RKSSNG"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "KUSMA COUNTER",
+              "branch_name": "KUSMA",
+              "wd_code": "HAMKSM"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "BENI COUNTER",
+              "branch_name": "BENI",
+              "wd_code": "LHTBNI"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "SHIVANAGAR COUNTER",
+              "branch_name": "SHIVANAGAR",
+              "wd_code": "TLTSVN"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "MADI COUNTER",
+              "branch_name": "MADI",
+              "wd_code": "ASEMDI"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM03",
+              "team_name": "RASUWA COUNTER",
+              "branch_name": "RASUWA",
+              "wd_code": "NKDBID"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM03",
+              "team_name": "MALEKHU COUNTER",
+              "branch_name": "MALEKHU",
+              "wd_code": "PKDKTR"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM04",
+              "team_name": "CHAPUR COUNTER",
+              "branch_name": "CHAPUR",
+              "wd_code": "SWECNP"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "BARDIBAS COUNTER",
+              "branch_name": "BARDIBAS",
+              "wd_code": "KCTBRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "TULSIPUR COUNTER",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "KRISHNANAGAR COUNTER",
+              "branch_name": "KRISHNANAGAR",
+              "wd_code": "SRVKRS"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "GORUSINGE COUNTER",
+              "branch_name": "GORUSINGE",
+              "wd_code": "SDPSAN"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "ARGAKHACHI COUNTER",
+              "branch_name": "ARGAKHACHI",
+              "wd_code": "MBSSDK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "MEHELKUNA COUNTER",
+              "branch_name": "MEHELKUNA",
+              "wd_code": "BGSMLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "JUMLA COUNTER",
+              "branch_name": "JUMLA",
+              "wd_code": "RGSJML"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "DAILEKH COUNTER",
+              "branch_name": "DAILEKH",
+              "wd_code": "KGSDLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM02",
+              "team_name": "DAILEKH CHUPRA COUNTER",
+              "branch_name": "DAILEKH CHUPRA",
+              "wd_code": "PNPDLK"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM03",
+              "team_name": "BUDAR COUNTER",
+              "branch_name": "BUDAR",
+              "wd_code": "CTCBDR"
+            }
+          ],
+          "excelHeader": [
+            {
+              "circle": "Circle Name",
+              "section": "Section",
+              "wd_code": "WD Code",
+              "branch_name": "Branch Name",
+              "team_name": "Team Name"
+            }
+          ],
+          "absentHeading": "Absent People (Counter)"
+        },
+        "subCounter": {
+          "counter": "",
+          "decimals": "\/",
+          "suffix": "138",
+          "prefix": "119",
+          "downData": "(86.23%)"
+        }
+      },
+      {
+        "label": "DSS Attendance",
+        "icon": "ri-riding-line",
+        "hoverData": {
+          "resultArray": [
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "ANISHA KARKI : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "GOVINDA DAHAL : DSS ",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "SHYAM PRASAD DUNGRE : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "SURAJ PANDEY : DSS",
+              "branch_name": "SRIJANA CHOWK",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "KAMAL SUBEDI : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "TUL PRASAD ACHARYA : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "RUDRA ACHARYA : DSS",
+              "branch_name": "SRIJANA CHOWK",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "RANJEET SHAH : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "LEKHNATH ACHARYA : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "KHIRERAM GURUNG : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "GANESH MAHAT : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "HARISH CHANDRA ADHIKARI : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "SHIVA POUDEL : DSS",
+              "branch_name": "SRIJANA CHOWK",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "BIKASH GURUNG : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "TIL PRASAD POUDEL : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "KAMAL BASNET : DSS",
+              "branch_name": "SRIJANA CHOWK",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "JHALAK BASTOLA : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "SANTOSH NEUPANE : DSS",
+              "branch_name": "BIJAYPUR",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "BINOD BHANDARI : DSS",
+              "branch_name": "SRIJANA CHOWK",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "HARIKRISHNA SUBEDI : DSS",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM01",
+              "team_name": "BALRAM ADHIKARI : DSS ",
+              "branch_name": "MAHENDRAPUL",
+              "wd_code": "KRBPKR"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "BIKASH SHAH : DSS",
+              "branch_name": "BENI",
+              "wd_code": "LHTBNI"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "RAHUL PARAGULI : DSS",
+              "branch_name": "SYANGJA",
+              "wd_code": "RKSSNG"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "BIMAL PANGENI : DSS",
+              "branch_name": "SYANGJA",
+              "wd_code": "RKSSNG"
+            },
+            {
+              "circle": "CTH",
+              "section": "CTHM03",
+              "team_name": "PRAKASH GAUTAM : DSS",
+              "branch_name": "KUSMA",
+              "wd_code": "HAMKSM"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "MADAN GODAR : DSS",
+              "branch_name": "SHIVANAGAR",
+              "wd_code": "TLTSVN"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "KRISHNA PANDEY TLT : DSS",
+              "branch_name": "SHIVANAGAR",
+              "wd_code": "TLTSVN"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM01",
+              "team_name": "GOVINDA CHAUDHARY : DSS",
+              "branch_name": "MADI",
+              "wd_code": "ASEMDI"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM03",
+              "team_name": "KRISHNA : DSS",
+              "branch_name": "MALEKHU",
+              "wd_code": "PKDKTR"
+            },
+            {
+              "circle": "CTT",
+              "section": "CTTM04",
+              "team_name": "BIDUR FUYAL : DSS",
+              "branch_name": "CHAPUR",
+              "wd_code": "SWECNP"
+            },
+            {
+              "circle": "ETC",
+              "section": "ETCM03",
+              "team_name": "DHARBENDRA CHAUDHARY : DSS",
+              "branch_name": "GAIGHAT",
+              "wd_code": "PSTGAI"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "SANJAYA CHAUDHARY : DSS",
+              "branch_name": "BARDIBAS",
+              "wd_code": "KCTBRD"
+            },
+            {
+              "circle": "KTB",
+              "section": "KTBM03",
+              "team_name": "RAM EKBAL MAHATO : DSS",
+              "branch_name": "BARDIBAS",
+              "wd_code": "KCTBRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "TEK BDR BUDHA MAGAR : DSS",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "DEVRAJ OLI : DSS",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "JAGURAM CHAUDHARY : DSS",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "GAURILAL CHAUDHARY : DSS",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM03",
+              "team_name": "TULSIRAM OLI : DSS",
+              "branch_name": "TULSIPUR",
+              "wd_code": "SMBPRD"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "SHREEDHAR BHUSAL:DSS",
+              "branch_name": "ARGAKHACHI",
+              "wd_code": "MBSSDK"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "RUPESH CHAUDHARI : DSS",
+              "branch_name": "GORUSINGE",
+              "wd_code": "SDPSAN"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "SURESH MAURIYA :DSS",
+              "branch_name": "KRISHNANAGAR",
+              "wd_code": "SRVKRS"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "DHARMENDRA KUMAR CHETTRI :DSS",
+              "branch_name": "KRISHNANAGAR",
+              "wd_code": "SRVKRS"
+            },
+            {
+              "circle": "MWC",
+              "section": "MWCM04",
+              "team_name": "BHESHRAJ ARYAL : DSS",
+              "branch_name": "GORUSINGE",
+              "wd_code": "SDPSAN"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM01",
+              "team_name": "MAN PYARU THARU : DSS",
+              "branch_name": "RAJAPUR",
+              "wd_code": "KNHRJP"
+            },
+            {
+              "circle": "WTC",
+              "section": "WTCM01",
+              "team_name": "OM PRAKASH THARU : DSS",
+              "branch_name": "RAJAPUR",
+              "wd_code": "KNHRJP"
+            }
+          ],
+          "excelHeader": [
+            {
+              "circle": "Circle Name",
+              "section": "Section",
+              "wd_code": "WD Code",
+              "branch_name": "Branch Name",
+              "team_name": "DSS Name"
+            }
+          ],
+          "absentHeading": "Absent People (Cycle DSS)"
+        },
+        "subCounter": {
+          "counter": "",
+          "decimals": "\/",
+          "suffix": "561",
+          "prefix": "516",
+          "downData": "(91.98%)"
+        }
+      }
+    ],
+    "monthlySalesData": {
+      "MonthsAndYears": [
+        "Feb 2025",
+        "Jan 2025",
+        "Dec 2024",
+        "Nov 2024",
+        "Oct 2024",
+        "Sep 2024",
+        "Aug 2024",
+        "Jul 2024",
+        "Jun 2024",
+        "May 2024",
+        "Apr 2024",
+        "Mar 2024"
+      ],
+      "CircleData": [
+        {
+          "circle_id": "9",
+          "circle": "NEUP",
+          "circleLevelSale": {
+            "Feb 2025": 47335.9,
+            "Jan 2025": 52341.76,
+            "Dec 2024": 51601.66,
+            "Nov 2024": 50426.07,
+            "Oct 2024": 47297.54,
+            "Sep 2024": 62119.7,
+            "Aug 2024": 52175.49,
+            "Jul 2024": 41476.58,
+            "Jun 2024": 56807.36,
+            "May 2024": 62147.98,
+            "Apr 2024": 57210.32,
+            "Mar 2024": 55627.08
+          }
+        },
+        {
+          "circle_id": "10",
+          "circle": "NJPR",
+          "circleLevelSale": {
+            "Feb 2025": 58171.85,
+            "Jan 2025": 77125.06,
+            "Dec 2024": 81328.88,
+            "Nov 2024": 77588.43,
+            "Oct 2024": 87388.1,
+            "Sep 2024": 70811.94,
+            "Aug 2024": 70272.98,
+            "Jul 2024": 56689.35,
+            "Jun 2024": 89545.24,
+            "May 2024": 89113.86,
+            "Apr 2024": 76747.66,
+            "Mar 2024": 70928.75
+          },
+          "sectionData": [
+            {
+              "section_id": "23",
+              "sectionName": "JAK001",
+              "sectionLevelSale": {
+                "Feb 2025": 21474.22,
+                "Jan 2025": 29268.91,
+                "Dec 2024": 26889.73,
+                "Nov 2024": 28207.96,
+                "Oct 2024": 31000.6,
+                "Sep 2024": 27857.12,
+                "Aug 2024": 27461.42,
+                "Jul 2024": 21449.79,
+                "Jun 2024": 31299.92,
+                "May 2024": 30043.27,
+                "Apr 2024": 28474.15,
+                "Mar 2024": 25451.84
+              },
+              "wdData": [
+                {
+                  "wd_id": "533",
+                  "wdCode": "JA6051",
+                  "wdLevelSale": {
+                    "Feb 2025": 250.8,
+                    "Jan 2025": 52.2,
+                    "Dec 2024": 33.8,
+                    "Nov 2024": 44.5,
+                    "Oct 2024": 553,
+                    "Sep 2024": 44.5,
+                    "Aug 2024": 99.8,
+                    "Jul 2024": 673.1,
+                    "Jun 2024": 665.8,
+                    "May 2024": 0,
+                    "Apr 2024": 0,
+                    "Mar 2024": 0
+                  }
+                },
+                {
+                  "wd_id": "35",
+                  "wdCode": "JA6056",
+                  "wdLevelSale": {
+                    "Feb 2025": 250.8,
+                    "Jan 2025": 520.2,
+                    "Dec 2024": 330.8,
+                    "Nov 2024": 44.5,
+                    "Oct 2024": 553,
+                    "Sep 2024": 44.5,
+                    "Aug 2024": 99.8,
+                    "Jul 2024": 673.1,
+                    "Jun 2024": 665.8,
+                    "May 2024": 374.5,
+                    "Apr 2024": 635.8,
+                    "Mar 2024": 55.2
+                  }
+                },
+                {
+                  "wd_id": "36",
+                  "wdCode": "JA6053",
+                  "wdLevelSale": {
+                    "Feb 2025": 250.8,
+                    "Jan 2025": 52.2,
+                    "Dec 2024": 33.8,
+                    "Nov 2024": 44.5,
+                    "Oct 2024": 553,
+                    "Sep 2024": 44.5,
+                    "Aug 2024": 99.8,
+                    "Jul 2024": 673.1,
+                    "Jun 2024": 665.8,
+                    "May 2024": 374.5,
+                    "Apr 2024": 635.8,
+                    "Mar 2024": 55.2
+                  }
+                },
+                {
+                  "wd_id": "37",
+                  "wdCode": "JA6055",
+                  "wdLevelSale": {
+                    "Feb 2025": 250.8,
+                    "Jan 2025": 52.2,
+                    "Dec 2024": 33.8,
+                    "Nov 2024": 44.5,
+                    "Oct 2024": 553,
+                    "Sep 2024": 44.5,
+                    "Aug 2024": 99.8,
+                    "Jul 2024": 673.1,
+                    "Jun 2024": 665.8,
+                    "May 2024": 374.5,
+                    "Apr 2024": 635.8,
+                    "Mar 2024": 55.2
+                  }
+                },
+                {
+                  "wd_id": "38",
+                  "wdCode": "JA6057",
+                  "wdLevelSale": {
+                    "Feb 2025": 2540.8,
+                    "Jan 2025": 524.2,
+                    "Dec 2024": 335.8,
+                    "Nov 2024": 446.5,
+                    "Oct 2024": 5533,
+                    "Sep 2024": 441.5,
+                    "Aug 2024": 992.8,
+                    "Jul 2024": 673.1,
+                    "Jun 2024": 665.8,
+                    "May 2024": 374.5,
+                    "Apr 2024": 635.8,
+                    "Mar 2024": 55.2
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "circle_id": "11",
+          "circle": "NJAM",
+          "circleLevelSale": {
+            "Feb 2025": 59964.03,
+            "Jan 2025": 67160.05,
+            "Dec 2024": 64975.98,
+            "Nov 2024": 65490.73,
+            "Oct 2024": 66665.73,
+            "Sep 2024": 64785.09,
+            "Aug 2024": 54361.2,
+            "Jul 2024": 45440.84,
+            "Jun 2024": 78776.37,
+            "May 2024": 68183.02,
+            "Apr 2024": 43055.09,
+            "Mar 2024": 41476.58
+          },
+          "sectionData": [
+            {
+              "section_id": "26",
+              "sectionName": "ETCM01",
+              "sectionLevelSale": {
+                "G.Magh 2081": 9795.31,
+                "F.Poush 2081": 7825.97,
+                "E.Mangsir 2081": 7820.15,
+                "D.Kartik 2081": 10695.79,
+                "C.Ashwin 2081": 9240.04,
+                "B.Bhadra 2081": 10042.36,
+                "A.Shrawan 2081": 7595.79,
+                "L.Asar 2081": 5559.88,
+                "K.Jestha 2081": 12635.28,
+                "J.Baisakh 2081": 11823.46,
+                "I.Chaitra 2080": 11209.58,
+                "H.Falgun 2080": 10096.83,
+                "G.Magh 2080": 8005.39
+              },
+              "wdData": [
+                {
+                  "wd_id": "694",
+                  "wdCode": "ASHKVT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1716.96,
+                    "F.Poush 2081": 248.5
+                  }
+                },
+                {
+                  "wd_id": "49",
+                  "wdCode": "MDIBMD",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2416.33,
+                    "F.Poush 2081": 5823.67,
+                    "E.Mangsir 2081": 5745.84,
+                    "D.Kartik 2081": 7449.09,
+                    "C.Ashwin 2081": 6754.76,
+                    "B.Bhadra 2081": 5551.76,
+                    "A.Shrawan 2081": 4148.99,
+                    "L.Asar 2081": 3513.48,
+                    "K.Jestha 2081": 9811.23,
+                    "J.Baisakh 2081": 9553.86,
+                    "I.Chaitra 2080": 9629.88,
+                    "H.Falgun 2080": 8158.36,
+                    "G.Magh 2080": 6974.75
+                  }
+                },
+                {
+                  "wd_id": "705",
+                  "wdCode": "NETARJ",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1080.8,
+                    "F.Poush 2081": 31
+                  }
+                },
+                {
+                  "wd_id": "52",
+                  "wdCode": "RSTSRG",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1364.4,
+                    "F.Poush 2081": 1720.6,
+                    "E.Mangsir 2081": 2074.31,
+                    "D.Kartik 2081": 3246.7,
+                    "C.Ashwin 2081": 2485.28,
+                    "B.Bhadra 2081": 4490.6,
+                    "A.Shrawan 2081": 3446.8,
+                    "L.Asar 2081": 2046.4,
+                    "K.Jestha 2081": 2824.05,
+                    "J.Baisakh 2081": 2269.6,
+                    "I.Chaitra 2080": 1579.7,
+                    "H.Falgun 2080": 1938.47,
+                    "G.Magh 2080": 1030.64
+                  }
+                },
+                {
+                  "wd_id": "695",
+                  "wdCode": "SIVBDP",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1158.98
+                  }
+                },
+                {
+                  "wd_id": "704",
+                  "wdCode": "SRTKVT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2057.84,
+                    "F.Poush 2081": 2.2
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "27",
+              "sectionName": "ETCM02",
+              "sectionLevelSale": {
+                "G.Magh 2081": 1428.1,
+                "F.Poush 2081": 488.7,
+                "E.Mangsir 2081": 809.7,
+                "D.Kartik 2081": 925.2,
+                "C.Ashwin 2081": 1418.6,
+                "B.Bhadra 2081": 1493.65,
+                "A.Shrawan 2081": 651.6,
+                "L.Asar 2081": 1479.4,
+                "K.Jestha 2081": 6248.7,
+                "J.Baisakh 2081": 2086.7,
+                "I.Chaitra 2080": 2746.49,
+                "H.Falgun 2080": 1043.84,
+                "G.Magh 2080": 750.8
+              },
+              "wdData": [
+                {
+                  "wd_id": "702",
+                  "wdCode": "PKTTPL",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 142.2
+                  }
+                },
+                {
+                  "wd_id": "53",
+                  "wdCode": "PRSFKL",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 871.1,
+                    "F.Poush 2081": 350.7,
+                    "E.Mangsir 2081": 383.4,
+                    "D.Kartik 2081": 584,
+                    "C.Ashwin 2081": 964.4,
+                    "B.Bhadra 2081": 566.9,
+                    "A.Shrawan 2081": 485.6,
+                    "L.Asar 2081": 439,
+                    "K.Jestha 2081": 808.3,
+                    "J.Baisakh 2081": 269.7,
+                    "I.Chaitra 2080": 539.5,
+                    "H.Falgun 2080": 643,
+                    "G.Magh 2080": 443.5
+                  }
+                },
+                {
+                  "wd_id": "54",
+                  "wdCode": "SUSILM",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 414.8,
+                    "F.Poush 2081": 138,
+                    "E.Mangsir 2081": 426.3,
+                    "D.Kartik 2081": 341.2,
+                    "C.Ashwin 2081": 454.2,
+                    "B.Bhadra 2081": 926.75,
+                    "A.Shrawan 2081": 166,
+                    "L.Asar 2081": 1040.4,
+                    "K.Jestha 2081": 5440.4,
+                    "J.Baisakh 2081": 1817,
+                    "I.Chaitra 2080": 2206.99,
+                    "H.Falgun 2080": 400.84,
+                    "G.Magh 2080": 307.3
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "28",
+              "sectionName": "ETCM03",
+              "sectionLevelSale": {
+                "G.Magh 2081": 14649.28,
+                "F.Poush 2081": 9299.7,
+                "E.Mangsir 2081": 10189.88,
+                "D.Kartik 2081": 11564.63,
+                "C.Ashwin 2081": 9316.68,
+                "B.Bhadra 2081": 9303.02,
+                "A.Shrawan 2081": 5767.4,
+                "L.Asar 2081": 4985.94,
+                "K.Jestha 2081": 9004.11,
+                "J.Baisakh 2081": 7441.83,
+                "I.Chaitra 2080": 6240.88,
+                "H.Falgun 2080": 7216,
+                "G.Magh 2080": 6946.86
+              },
+              "wdData": [
+                {
+                  "wd_id": "709",
+                  "wdCode": "DBSMIR",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 7201.5,
+                    "F.Poush 2081": 344.1
+                  }
+                },
+                {
+                  "wd_id": "55",
+                  "wdCode": "DOKLHN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1904.58,
+                    "F.Poush 2081": 2345.1,
+                    "E.Mangsir 2081": 2679.28,
+                    "D.Kartik 2081": 2897.9,
+                    "C.Ashwin 2081": 2438.88,
+                    "B.Bhadra 2081": 3344.42,
+                    "A.Shrawan 2081": 2313.8,
+                    "L.Asar 2081": 2163.4,
+                    "K.Jestha 2081": 4141.1,
+                    "J.Baisakh 2081": 2934.2,
+                    "I.Chaitra 2080": 2473,
+                    "H.Falgun 2080": 3418.1,
+                    "G.Magh 2080": 3861.32
+                  }
+                },
+                {
+                  "wd_id": "56",
+                  "wdCode": "FTLBLT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1161,
+                    "F.Poush 2081": 1626.9,
+                    "E.Mangsir 2081": 1606.2,
+                    "D.Kartik 2081": 1701.43,
+                    "C.Ashwin 2081": 1356.5,
+                    "B.Bhadra 2081": 1177.3,
+                    "A.Shrawan 2081": 872.2,
+                    "L.Asar 2081": 1059.8,
+                    "K.Jestha 2081": 1100.1,
+                    "J.Baisakh 2081": 1423.31,
+                    "I.Chaitra 2080": 1646.8,
+                    "H.Falgun 2080": 2011.7,
+                    "G.Magh 2080": 1909.14
+                  }
+                },
+                {
+                  "wd_id": "57",
+                  "wdCode": "PSTGAI",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1286.2,
+                    "F.Poush 2081": 1323.3,
+                    "E.Mangsir 2081": 1677.9,
+                    "D.Kartik 2081": 2494.4,
+                    "C.Ashwin 2081": 1713.8,
+                    "B.Bhadra 2081": 1797.3,
+                    "A.Shrawan 2081": 1240.2,
+                    "L.Asar 2081": 917.44,
+                    "K.Jestha 2081": 2734.02,
+                    "J.Baisakh 2081": 1346.32,
+                    "I.Chaitra 2080": 1111.6,
+                    "H.Falgun 2080": 475.2,
+                    "G.Magh 2080": 435.1
+                  }
+                },
+                {
+                  "wd_id": "58",
+                  "wdCode": "RJAKTR",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3096,
+                    "F.Poush 2081": 3660.3,
+                    "E.Mangsir 2081": 4226.5,
+                    "D.Kartik 2081": 4470.9,
+                    "C.Ashwin 2081": 3807.5,
+                    "B.Bhadra 2081": 2984,
+                    "A.Shrawan 2081": 1341.2,
+                    "L.Asar 2081": 845.3,
+                    "K.Jestha 2081": 1028.89,
+                    "J.Baisakh 2081": 1738,
+                    "I.Chaitra 2080": 1009.48,
+                    "H.Falgun 2080": 1311,
+                    "G.Magh 2080": 741.3
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "29",
+              "sectionName": "ETCM04",
+              "sectionLevelSale": {
+                "G.Magh 2081": 13686.02,
+                "F.Poush 2081": 24598.42,
+                "E.Mangsir 2081": 18101.5,
+                "D.Kartik 2081": 16042.33,
+                "C.Ashwin 2081": 21403.77,
+                "B.Bhadra 2081": 17268.36,
+                "A.Shrawan 2081": 16568.84,
+                "L.Asar 2081": 15409.24,
+                "K.Jestha 2081": 20461.98,
+                "J.Baisakh 2081": 21611.94,
+                "I.Chaitra 2080": 22618.92,
+                "H.Falgun 2080": 16734.91,
+                "G.Magh 2080": 16072.81
+              },
+              "wdData": [
+                {
+                  "wd_id": "59",
+                  "wdCode": "AYMBRT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 4782.38,
+                    "F.Poush 2081": 6713.12,
+                    "E.Mangsir 2081": 6699.94,
+                    "D.Kartik 2081": 6525.42,
+                    "C.Ashwin 2081": 7279.18,
+                    "B.Bhadra 2081": 6657.04,
+                    "A.Shrawan 2081": 6802.36,
+                    "L.Asar 2081": 6100.1,
+                    "K.Jestha 2081": 7746.68,
+                    "J.Baisakh 2081": 9783.52,
+                    "I.Chaitra 2080": 7770.8,
+                    "H.Falgun 2080": 7896.14,
+                    "G.Magh 2080": 7303.7
+                  }
+                },
+                {
+                  "wd_id": "60",
+                  "wdCode": "NPMITH",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 5564.14,
+                    "F.Poush 2081": 13264.84,
+                    "E.Mangsir 2081": 7450.9,
+                    "D.Kartik 2081": 5883.58,
+                    "C.Ashwin 2081": 8810.12,
+                    "B.Bhadra 2081": 6056.62,
+                    "A.Shrawan 2081": 7339.68,
+                    "L.Asar 2081": 6082.87,
+                    "K.Jestha 2081": 7476.37,
+                    "J.Baisakh 2081": 8371.4,
+                    "I.Chaitra 2080": 8902.78,
+                    "H.Falgun 2080": 7334.53,
+                    "G.Magh 2080": 7362.71
+                  }
+                },
+                {
+                  "wd_id": "703",
+                  "wdCode": "OMTINW",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 425,
+                    "F.Poush 2081": 41.2
+                  }
+                },
+                {
+                  "wd_id": "61",
+                  "wdCode": "PTVDHB",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1573.1,
+                    "F.Poush 2081": 2288,
+                    "E.Mangsir 2081": 1572.6,
+                    "D.Kartik 2081": 2274.42,
+                    "C.Ashwin 2081": 3167.54,
+                    "B.Bhadra 2081": 2456.1,
+                    "A.Shrawan 2081": 529.8,
+                    "L.Asar 2081": 1529.9,
+                    "K.Jestha 2081": 2196.93,
+                    "J.Baisakh 2081": 2107.34,
+                    "I.Chaitra 2080": 2368.86,
+                    "H.Falgun 2080": 1352.1,
+                    "G.Magh 2080": 829.2
+                  }
+                },
+                {
+                  "wd_id": "63",
+                  "wdCode": "VNEBLB",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1341.4,
+                    "F.Poush 2081": 2291.26,
+                    "E.Mangsir 2081": 2378.06,
+                    "D.Kartik 2081": 1358.91,
+                    "C.Ashwin 2081": 2146.93,
+                    "B.Bhadra 2081": 2098.6,
+                    "A.Shrawan 2081": 1897,
+                    "L.Asar 2081": 1696.37,
+                    "K.Jestha 2081": 3042,
+                    "J.Baisakh 2081": 1349.68,
+                    "I.Chaitra 2080": 3576.48,
+                    "H.Falgun 2080": 152.14,
+                    "G.Magh 2080": 577.2
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "30",
+              "sectionName": "ETCM05",
+              "sectionLevelSale": {
+                "G.Magh 2081": 12029,
+                "F.Poush 2081": 14937.26,
+                "E.Mangsir 2081": 16271.89,
+                "D.Kartik 2081": 14755.42,
+                "C.Ashwin 2081": 16941.24,
+                "B.Bhadra 2081": 16136.54,
+                "A.Shrawan 2081": 11901.63,
+                "L.Asar 2081": 8988.02,
+                "K.Jestha 2081": 18668.58,
+                "J.Baisakh 2081": 14598.09,
+                "I.Chaitra 2080": 12207.63,
+                "H.Falgun 2080": 11698.24,
+                "G.Magh 2080": 9048.82
+              },
+              "wdData": [
+                {
+                  "wd_id": "64",
+                  "wdCode": "CDNKHN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 979.9,
+                    "F.Poush 2081": 1133.1,
+                    "E.Mangsir 2081": 1551.28,
+                    "D.Kartik 2081": 1364.57,
+                    "C.Ashwin 2081": 1262.76,
+                    "B.Bhadra 2081": 2008.5,
+                    "A.Shrawan 2081": 602.5,
+                    "L.Asar 2081": 420.5,
+                    "K.Jestha 2081": 3313.69,
+                    "J.Baisakh 2081": 433.8,
+                    "I.Chaitra 2080": 303.25,
+                    "H.Falgun 2080": 240.3,
+                    "G.Magh 2080": 418.5
+                  }
+                },
+                {
+                  "wd_id": "65",
+                  "wdCode": "HIMDHR",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 4962.88,
+                    "F.Poush 2081": 6422.26,
+                    "E.Mangsir 2081": 7128.01,
+                    "D.Kartik 2081": 6894.27,
+                    "C.Ashwin 2081": 8536.08,
+                    "B.Bhadra 2081": 7011.66,
+                    "A.Shrawan 2081": 7263.73,
+                    "L.Asar 2081": 5604.32,
+                    "K.Jestha 2081": 7277.45,
+                    "J.Baisakh 2081": 8698.89,
+                    "I.Chaitra 2080": 7659.08,
+                    "H.Falgun 2080": 7546.74,
+                    "G.Magh 2080": 7060.12
+                  }
+                },
+                {
+                  "wd_id": "66",
+                  "wdCode": "HKTJMK",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2758.8,
+                    "F.Poush 2081": 3892.9,
+                    "E.Mangsir 2081": 3733.8,
+                    "D.Kartik 2081": 3190.2,
+                    "C.Ashwin 2081": 3820.1,
+                    "B.Bhadra 2081": 3669.98,
+                    "A.Shrawan 2081": 2802.4,
+                    "L.Asar 2081": 2372,
+                    "K.Jestha 2081": 4464,
+                    "J.Baisakh 2081": 4724.6,
+                    "I.Chaitra 2080": 4122.7,
+                    "H.Falgun 2080": 3838.6,
+                    "G.Magh 2080": 1511.2
+                  }
+                },
+                {
+                  "wd_id": "707",
+                  "wdCode": "SASBJP",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 475.3,
+                    "F.Poush 2081": 47
+                  }
+                },
+                {
+                  "wd_id": "67",
+                  "wdCode": "SHTKHN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2852.12,
+                    "F.Poush 2081": 3442,
+                    "E.Mangsir 2081": 3858.8,
+                    "D.Kartik 2081": 3306.38,
+                    "C.Ashwin 2081": 3322.3,
+                    "B.Bhadra 2081": 3446.4,
+                    "A.Shrawan 2081": 1233,
+                    "L.Asar 2081": 591.2,
+                    "K.Jestha 2081": 3613.44,
+                    "J.Baisakh 2081": 740.8,
+                    "I.Chaitra 2080": 122.6,
+                    "H.Falgun 2080": 72.6,
+                    "G.Magh 2080": 59
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "157",
+              "sectionName": "ETCM06",
+              "sectionLevelSale": {
+                "G.Magh 2081": 8376.32,
+                "F.Poush 2081": 10010,
+                "E.Mangsir 2081": 11782.86,
+                "D.Kartik 2081": 11507.36,
+                "C.Ashwin 2081": 8345.4,
+                "B.Bhadra 2081": 10541.16,
+                "A.Shrawan 2081": 11875.94,
+                "L.Asar 2081": 9018.36,
+                "K.Jestha 2081": 11757.72,
+                "J.Baisakh 2081": 10621,
+                "I.Chaitra 2080": 8963.1,
+                "H.Falgun 2080": 8871.1,
+                "G.Magh 2080": 8411.77
+              },
+              "wdData": [
+                {
+                  "wd_id": "708",
+                  "wdCode": "AJTMKJ",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 477,
+                    "F.Poush 2081": 135
+                  }
+                },
+                {
+                  "wd_id": "51",
+                  "wdCode": "MSTDMK",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2706,
+                    "F.Poush 2081": 3333.6,
+                    "E.Mangsir 2081": 3599,
+                    "D.Kartik 2081": 4144.1,
+                    "C.Ashwin 2081": 3655.2,
+                    "B.Bhadra 2081": 4435,
+                    "A.Shrawan 2081": 4212.8,
+                    "L.Asar 2081": 3212.6,
+                    "K.Jestha 2081": 3537,
+                    "J.Baisakh 2081": 4365.2,
+                    "I.Chaitra 2080": 4068.62,
+                    "H.Falgun 2080": 3971.14,
+                    "G.Magh 2080": 3668.02
+                  }
+                },
+                {
+                  "wd_id": "706",
+                  "wdCode": "SHRGAR",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 112.8
+                  }
+                },
+                {
+                  "wd_id": "50",
+                  "wdCode": "SOEURL",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2116,
+                    "F.Poush 2081": 3330.4,
+                    "E.Mangsir 2081": 3850.6,
+                    "D.Kartik 2081": 2724.24,
+                    "C.Ashwin 2081": 1768,
+                    "B.Bhadra 2081": 2201.3,
+                    "A.Shrawan 2081": 4317.5,
+                    "L.Asar 2081": 1716.1,
+                    "K.Jestha 2081": 3260.5,
+                    "J.Baisakh 2081": 2150.6,
+                    "I.Chaitra 2080": 1478.6,
+                    "H.Falgun 2080": 1402.6,
+                    "G.Magh 2080": 1195
+                  }
+                },
+                {
+                  "wd_id": "62",
+                  "wdCode": "SRNBRC",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2964.52,
+                    "F.Poush 2081": 3211,
+                    "E.Mangsir 2081": 4333.26,
+                    "D.Kartik 2081": 4639.02,
+                    "C.Ashwin 2081": 2922.2,
+                    "B.Bhadra 2081": 3904.86,
+                    "A.Shrawan 2081": 3345.64,
+                    "L.Asar 2081": 4089.66,
+                    "K.Jestha 2081": 4960.22,
+                    "J.Baisakh 2081": 4105.2,
+                    "I.Chaitra 2080": 3415.88,
+                    "H.Falgun 2080": 3497.36,
+                    "G.Magh 2080": 3548.75
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "circle_id": "12",
+          "circle": "WNAG",
+          "circleLevelSale": {
+            "Feb 2025": 83811.41,
+            "Jan 2025": 151782.94,
+            "Dec 2024": 155799.81,
+            "Nov 2024": 121714.79,
+            "Oct 2024": 168705.74,
+            "Sep 2024": 110844.32,
+            "Aug 2024": 149319.51,
+            "Jul 2024": 147023.72,
+            "Jun 2024": 176835.15,
+            "May 2024": 179291.2,
+            "Apr 2024": 17243.65,
+            "Mar 2024": 15169.84
+          },
+          "sectionData": [
+            {
+              "section_id": "31",
+              "sectionName": "KTAM01",
+              "sectionLevelSale": {
+                "G.Magh 2081": 17982.04,
+                "F.Poush 2081": 26358.94,
+                "E.Mangsir 2081": 26666.14,
+                "D.Kartik 2081": 21453.54,
+                "C.Ashwin 2081": 31380.33,
+                "B.Bhadra 2081": 27900.56,
+                "A.Shrawan 2081": 27776.86,
+                "L.Asar 2081": 23237.61,
+                "K.Jestha 2081": 35373,
+                "J.Baisakh 2081": 30797.89,
+                "I.Chaitra 2080": 32327.32,
+                "H.Falgun 2080": 28844.65,
+                "G.Magh 2080": 25956.85
+              },
+              "wdData": [
+                {
+                  "wd_id": "68",
+                  "wdCode": "ABCANM",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 17982.04,
+                    "F.Poush 2081": 26358.94,
+                    "E.Mangsir 2081": 26666.14,
+                    "D.Kartik 2081": 21453.54,
+                    "C.Ashwin 2081": 31380.33,
+                    "B.Bhadra 2081": 27900.56,
+                    "A.Shrawan 2081": 27776.86,
+                    "L.Asar 2081": 23237.61,
+                    "K.Jestha 2081": 35373,
+                    "J.Baisakh 2081": 30797.89,
+                    "I.Chaitra 2080": 32327.32,
+                    "H.Falgun 2080": 28844.65,
+                    "G.Magh 2080": 25956.85
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "32",
+              "sectionName": "KTAM02",
+              "sectionLevelSale": {
+                "G.Magh 2081": 21846.23,
+                "F.Poush 2081": 42423.55,
+                "E.Mangsir 2081": 40576.02,
+                "D.Kartik 2081": 34465.52,
+                "C.Ashwin 2081": 46751.64,
+                "B.Bhadra 2081": 40391.51,
+                "A.Shrawan 2081": 38387.32,
+                "L.Asar 2081": 31560,
+                "K.Jestha 2081": 47837.28,
+                "J.Baisakh 2081": 52088.65,
+                "I.Chaitra 2080": 42629.46,
+                "H.Falgun 2080": 38973.1,
+                "G.Magh 2080": 37917.32
+              },
+              "wdData": [
+                {
+                  "wd_id": "69",
+                  "wdCode": "BLSTKH",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1630.7,
+                    "F.Poush 2081": 2603.9,
+                    "E.Mangsir 2081": 2597.3,
+                    "D.Kartik 2081": 2593.4,
+                    "C.Ashwin 2081": 2592.3,
+                    "B.Bhadra 2081": 1888.2,
+                    "A.Shrawan 2081": 2368.9,
+                    "L.Asar 2081": 2118.9,
+                    "K.Jestha 2081": 2437.8,
+                    "J.Baisakh 2081": 2109.26,
+                    "I.Chaitra 2080": 2332.12,
+                    "H.Falgun 2080": 2117.39,
+                    "G.Magh 2080": 2004.92
+                  }
+                },
+                {
+                  "wd_id": "70",
+                  "wdCode": "STKBLJ",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 20215.53,
+                    "F.Poush 2081": 39819.65,
+                    "E.Mangsir 2081": 37978.72,
+                    "D.Kartik 2081": 31872.12,
+                    "C.Ashwin 2081": 44159.34,
+                    "B.Bhadra 2081": 38503.31,
+                    "A.Shrawan 2081": 36018.42,
+                    "L.Asar 2081": 29441.1,
+                    "K.Jestha 2081": 45399.48,
+                    "J.Baisakh 2081": 49979.39,
+                    "I.Chaitra 2080": 40297.34,
+                    "H.Falgun 2080": 36855.71,
+                    "G.Magh 2080": 35912.4
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "33",
+              "sectionName": "KTAM03",
+              "sectionLevelSale": {
+                "G.Magh 2081": 14307.71,
+                "F.Poush 2081": 27577.76,
+                "E.Mangsir 2081": 31332.82,
+                "D.Kartik 2081": 21338.05,
+                "C.Ashwin 2081": 30250.78,
+                "B.Bhadra 2081": 26200.77,
+                "A.Shrawan 2081": 24864.51,
+                "L.Asar 2081": 20040.04,
+                "K.Jestha 2081": 30128.36,
+                "J.Baisakh 2081": 31449.54,
+                "I.Chaitra 2080": 28511.15,
+                "H.Falgun 2080": 25983.38,
+                "G.Magh 2080": 25927.59
+              },
+              "wdData": [
+                {
+                  "wd_id": "71",
+                  "wdCode": "ABGKTP",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 4045.6,
+                    "F.Poush 2081": 6385.12,
+                    "E.Mangsir 2081": 7176.32,
+                    "D.Kartik 2081": 6317.38,
+                    "C.Ashwin 2081": 6928.6,
+                    "B.Bhadra 2081": 6818.89,
+                    "A.Shrawan 2081": 6665.26,
+                    "L.Asar 2081": 5821.02,
+                    "K.Jestha 2081": 7442,
+                    "J.Baisakh 2081": 7632.62,
+                    "I.Chaitra 2080": 6982.18,
+                    "H.Falgun 2080": 6504.28,
+                    "G.Magh 2080": 6670.18
+                  }
+                },
+                {
+                  "wd_id": "72",
+                  "wdCode": "GTMKLN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 10262.11,
+                    "F.Poush 2081": 21192.64,
+                    "E.Mangsir 2081": 24156.5,
+                    "D.Kartik 2081": 15020.67,
+                    "C.Ashwin 2081": 23322.18,
+                    "B.Bhadra 2081": 19381.88,
+                    "A.Shrawan 2081": 18199.25,
+                    "L.Asar 2081": 14219.02,
+                    "K.Jestha 2081": 22686.36,
+                    "J.Baisakh 2081": 23816.92,
+                    "I.Chaitra 2080": 21528.97,
+                    "H.Falgun 2080": 19479.1,
+                    "G.Magh 2080": 19257.41
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "156",
+              "sectionName": "KTAM04",
+              "sectionLevelSale": {
+                "G.Magh 2081": 12641.45,
+                "F.Poush 2081": 24486.8,
+                "E.Mangsir 2081": 27358.09,
+                "D.Kartik 2081": 18057.24,
+                "C.Ashwin 2081": 27809.62,
+                "B.Bhadra 2081": 23619.8,
+                "A.Shrawan 2081": 22331.62,
+                "L.Asar 2081": 18062.99,
+                "K.Jestha 2081": 29106,
+                "J.Baisakh 2081": 29719.19,
+                "I.Chaitra 2080": 22228.22,
+                "H.Falgun 2080": 23203.22,
+                "G.Magh 2080": 22261.48
+              },
+              "wdData": [
+                {
+                  "wd_id": "195",
+                  "wdCode": "MAXBDH",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 12641.45,
+                    "F.Poush 2081": 24486.8,
+                    "E.Mangsir 2081": 27358.09,
+                    "D.Kartik 2081": 18057.24,
+                    "C.Ashwin 2081": 27809.62,
+                    "B.Bhadra 2081": 23619.8,
+                    "A.Shrawan 2081": 22331.62,
+                    "L.Asar 2081": 18062.99,
+                    "K.Jestha 2081": 29106,
+                    "J.Baisakh 2081": 29719.19,
+                    "I.Chaitra 2080": 22228.22,
+                    "H.Falgun 2080": 23203.22,
+                    "G.Magh 2080": 22261.48
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "34",
+              "sectionName": "KTAM05",
+              "sectionLevelSale": {
+                "G.Magh 2081": 17033.98,
+                "F.Poush 2081": 30935.89,
+                "E.Mangsir 2081": 29866.74,
+                "D.Kartik 2081": 26400.44,
+                "C.Ashwin 2081": 32513.37,
+                "B.Bhadra 2081": 31206.87,
+                "A.Shrawan 2081": 33663.41,
+                "L.Asar 2081": 17943.68,
+                "K.Jestha 2081": 34390.51,
+                "J.Baisakh 2081": 35235.93,
+                "I.Chaitra 2080": 33851.82,
+                "H.Falgun 2080": 29443.39,
+                "G.Magh 2080": 28298.29
+              },
+              "wdData": [
+                {
+                  "wd_id": "73",
+                  "wdCode": "RBTPTN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 17033.98,
+                    "F.Poush 2081": 30935.89,
+                    "E.Mangsir 2081": 29866.74,
+                    "D.Kartik 2081": 26400.44,
+                    "C.Ashwin 2081": 32513.37,
+                    "B.Bhadra 2081": 31206.87,
+                    "A.Shrawan 2081": 33663.41,
+                    "L.Asar 2081": 17943.68,
+                    "K.Jestha 2081": 34390.51,
+                    "J.Baisakh 2081": 35235.93,
+                    "I.Chaitra 2080": 33851.82,
+                    "H.Falgun 2080": 29443.39,
+                    "G.Magh 2080": 28298.29
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "circle_id": "13",
+          "circle": "EBEN",
+          "circleLevelSale": {
+            "Feb 2025": 53067.8,
+            "Jan 2025": 70786.15,
+            "Dec 2024": 71935.75,
+            "Nov 2024": 56047.59,
+            "Oct 2024": 81145.31,
+            "Sep 2024": 71329.77,
+            "Aug 2024": 66996.29,
+            "Jul 2024": 53399.25,
+            "Jun 2024": 87477.25,
+            "May 2024": 78409.94,
+            "Apr 2024": 80530.44,
+            "Mar 2024": 7688.16
+          },
+          "sectionData": [
+            {
+              "section_id": "35",
+              "sectionName": "KTBM01",
+              "sectionLevelSale": {
+                "G.Magh 2081": 16463.79,
+                "F.Poush 2081": 25219.75,
+                "E.Mangsir 2081": 23287.12,
+                "D.Kartik 2081": 19470.46,
+                "C.Ashwin 2081": 28039.62,
+                "B.Bhadra 2081": 25898.26,
+                "A.Shrawan 2081": 22041.92,
+                "L.Asar 2081": 21882.94,
+                "K.Jestha 2081": 33130.8,
+                "J.Baisakh 2081": 36350.62,
+                "I.Chaitra 2080": 28160.33,
+                "H.Falgun 2080": 27186.47,
+                "G.Magh 2080": 26707.71
+              },
+              "wdData": [
+                {
+                  "wd_id": "74",
+                  "wdCode": "ARNPNT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3623.6,
+                    "F.Poush 2081": 6729.78,
+                    "E.Mangsir 2081": 4965.24,
+                    "D.Kartik 2081": 3124.7,
+                    "C.Ashwin 2081": 4638.74,
+                    "B.Bhadra 2081": 6620.36,
+                    "A.Shrawan 2081": 5664.17,
+                    "L.Asar 2081": 5237.66,
+                    "K.Jestha 2081": 8343.5,
+                    "J.Baisakh 2081": 9004.02,
+                    "I.Chaitra 2080": 7688.16,
+                    "H.Falgun 2080": 5706.76,
+                    "G.Magh 2080": 6675.44
+                  }
+                },
+                {
+                  "wd_id": "75",
+                  "wdCode": "KVRBNP",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 12840.19,
+                    "F.Poush 2081": 18489.97,
+                    "E.Mangsir 2081": 18321.88,
+                    "D.Kartik 2081": 16345.76,
+                    "C.Ashwin 2081": 23400.88,
+                    "B.Bhadra 2081": 19277.9,
+                    "A.Shrawan 2081": 16377.75,
+                    "L.Asar 2081": 16645.28,
+                    "K.Jestha 2081": 24787.3,
+                    "J.Baisakh 2081": 27346.6,
+                    "I.Chaitra 2080": 20472.17,
+                    "H.Falgun 2080": 21479.71,
+                    "G.Magh 2080": 20032.27
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "36",
+              "sectionName": "KTBM02",
+              "sectionLevelSale": {
+                "G.Magh 2081": 8438.54,
+                "F.Poush 2081": 6974.13,
+                "E.Mangsir 2081": 7477.8,
+                "D.Kartik 2081": 6611.8,
+                "C.Ashwin 2081": 7838.4,
+                "B.Bhadra 2081": 6501.2,
+                "A.Shrawan 2081": 6173.3,
+                "L.Asar 2081": 3822.8,
+                "K.Jestha 2081": 10143.7,
+                "J.Baisakh 2081": 8245.3,
+                "I.Chaitra 2080": 5482.62,
+                "H.Falgun 2080": 6553.2,
+                "G.Magh 2080": 6927.86
+              },
+              "wdData": [
+                {
+                  "wd_id": "76",
+                  "wdCode": "DASJRI",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2821.8,
+                    "F.Poush 2081": 3005,
+                    "E.Mangsir 2081": 3000.5,
+                    "D.Kartik 2081": 3270.2,
+                    "C.Ashwin 2081": 3203.4,
+                    "B.Bhadra 2081": 2452.6,
+                    "A.Shrawan 2081": 3486.4,
+                    "L.Asar 2081": 2337.6,
+                    "K.Jestha 2081": 4561.4,
+                    "J.Baisakh 2081": 3641.3,
+                    "I.Chaitra 2080": 2208.8,
+                    "H.Falgun 2080": 3176,
+                    "G.Magh 2080": 2892.12
+                  }
+                },
+                {
+                  "wd_id": "77",
+                  "wdCode": "DRESDL",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2181.2,
+                    "F.Poush 2081": 1200.4,
+                    "E.Mangsir 2081": 1550.7,
+                    "D.Kartik 2081": 880.1,
+                    "C.Ashwin 2081": 1635.4,
+                    "B.Bhadra 2081": 1394,
+                    "A.Shrawan 2081": 478.1,
+                    "L.Asar 2081": 106.2,
+                    "K.Jestha 2081": 345.3,
+                    "J.Baisakh 2081": 544.8,
+                    "I.Chaitra 2080": 455.42,
+                    "H.Falgun 2080": 592.3,
+                    "G.Magh 2080": 1018.5
+                  }
+                },
+                {
+                  "wd_id": "78",
+                  "wdCode": "GSCMAN",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 2092.14,
+                    "F.Poush 2081": 2623.53,
+                    "E.Mangsir 2081": 2926.6,
+                    "D.Kartik 2081": 2461.5,
+                    "C.Ashwin 2081": 2999.6,
+                    "B.Bhadra 2081": 2654.6,
+                    "A.Shrawan 2081": 2208.8,
+                    "L.Asar 2081": 1379,
+                    "K.Jestha 2081": 5237,
+                    "J.Baisakh 2081": 4059.2,
+                    "I.Chaitra 2080": 2818.4,
+                    "H.Falgun 2080": 2784.9,
+                    "G.Magh 2080": 3017.24
+                  }
+                },
+                {
+                  "wd_id": "699",
+                  "wdCode": "SMSKDC",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1343.4,
+                    "F.Poush 2081": 145.2
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "37",
+              "sectionName": "KTBM03",
+              "sectionLevelSale": {
+                "G.Magh 2081": 9223.08,
+                "F.Poush 2081": 8896.02,
+                "E.Mangsir 2081": 11531.84,
+                "D.Kartik 2081": 9923.21,
+                "C.Ashwin 2081": 11222.54,
+                "B.Bhadra 2081": 9741.21,
+                "A.Shrawan 2081": 10522.28,
+                "L.Asar 2081": 6847.58,
+                "K.Jestha 2081": 5967.02,
+                "J.Baisakh 2081": 5039.9,
+                "I.Chaitra 2080": 6571.26,
+                "H.Falgun 2080": 7394.84,
+                "G.Magh 2080": 6778.42
+              },
+              "wdData": [
+                {
+                  "wd_id": "79",
+                  "wdCode": "DKPRGP",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 120.4,
+                    "F.Poush 2081": 110.4,
+                    "E.Mangsir 2081": 134.28,
+                    "D.Kartik 2081": 120.4,
+                    "C.Ashwin 2081": 113.8,
+                    "B.Bhadra 2081": 59.1,
+                    "A.Shrawan 2081": 97.68,
+                    "L.Asar 2081": 6,
+                    "I.Chaitra 2080": 15.8,
+                    "H.Falgun 2080": 25.4
+                  }
+                },
+                {
+                  "wd_id": "81",
+                  "wdCode": "JKIJNK",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 1585.58,
+                    "F.Poush 2081": 1670.72,
+                    "E.Mangsir 2081": 1789.46,
+                    "D.Kartik 2081": 1377.41,
+                    "C.Ashwin 2081": 1574.86,
+                    "B.Bhadra 2081": 1743.1,
+                    "A.Shrawan 2081": 1584.72,
+                    "L.Asar 2081": 3585.54,
+                    "K.Jestha 2081": 1942.22,
+                    "J.Baisakh 2081": 1952.52,
+                    "I.Chaitra 2080": 2085.9,
+                    "H.Falgun 2080": 1731.86,
+                    "G.Magh 2080": 1728.86
+                  }
+                },
+                {
+                  "wd_id": "700",
+                  "wdCode": "PGBBHT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 456.9,
+                    "F.Poush 2081": 22
+                  }
+                },
+                {
+                  "wd_id": "82",
+                  "wdCode": "PRBMLG",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3175,
+                    "F.Poush 2081": 4437,
+                    "E.Mangsir 2081": 5054,
+                    "D.Kartik 2081": 3410.2,
+                    "C.Ashwin 2081": 4620.98,
+                    "B.Bhadra 2081": 2783.32,
+                    "A.Shrawan 2081": 3061,
+                    "L.Asar 2081": 119.4,
+                    "K.Jestha 2081": 139.4,
+                    "J.Baisakh 2081": 115.4,
+                    "I.Chaitra 2080": 104.5,
+                    "H.Falgun 2080": 922.8,
+                    "G.Magh 2080": 360.76
+                  }
+                },
+                {
+                  "wd_id": "83",
+                  "wdCode": "RHLLLB",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3578.4,
+                    "F.Poush 2081": 2556.6,
+                    "E.Mangsir 2081": 4192,
+                    "D.Kartik 2081": 4657.8,
+                    "C.Ashwin 2081": 4497.4,
+                    "B.Bhadra 2081": 3725.15,
+                    "A.Shrawan 2081": 4252.49,
+                    "L.Asar 2081": 3097,
+                    "K.Jestha 2081": 3885.4,
+                    "J.Baisakh 2081": 2948.2,
+                    "I.Chaitra 2080": 3770,
+                    "H.Falgun 2080": 4559.6,
+                    "G.Magh 2080": 4688.8
+                  }
+                },
+                {
+                  "wd_id": "84",
+                  "wdCode": "SSEDLK",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 306.8,
+                    "F.Poush 2081": 99.3,
+                    "E.Mangsir 2081": 109.5,
+                    "D.Kartik 2081": 98,
+                    "C.Ashwin 2081": 167.8,
+                    "B.Bhadra 2081": 754,
+                    "A.Shrawan 2081": 1060,
+                    "J.Baisakh 2081": 23.78,
+                    "I.Chaitra 2080": 263.16,
+                    "H.Falgun 2080": 114.28
+                  }
+                },
+                {
+                  "wd_id": "80",
+                  "wdCode": "KCTBRD",
+                  "wdLevelSale": {
+                    "E.Mangsir 2081": 252.6,
+                    "D.Kartik 2081": 259.4,
+                    "C.Ashwin 2081": 247.7,
+                    "B.Bhadra 2081": 676.54,
+                    "A.Shrawan 2081": 466.39,
+                    "L.Asar 2081": 39.64,
+                    "I.Chaitra 2080": 331.9,
+                    "H.Falgun 2080": 40.9
+                  }
+                }
+              ]
+            },
+            {
+              "section_id": "38",
+              "sectionName": "KTBM04",
+              "sectionLevelSale": {
+                "G.Magh 2081": 18942.39,
+                "F.Poush 2081": 29696.25,
+                "E.Mangsir 2081": 29638.99,
+                "D.Kartik 2081": 20042.12,
+                "C.Ashwin 2081": 34044.75,
+                "B.Bhadra 2081": 29189.1,
+                "A.Shrawan 2081": 28258.79,
+                "L.Asar 2081": 20845.93,
+                "K.Jestha 2081": 38235.73,
+                "J.Baisakh 2081": 28774.12,
+                "I.Chaitra 2080": 31695.79,
+                "H.Falgun 2080": 31505.74,
+                "G.Magh 2080": 31797.85
+              },
+              "wdData": [
+                {
+                  "wd_id": "85",
+                  "wdCode": "BTHBKT",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 11561.51,
+                    "F.Poush 2081": 19927.44,
+                    "E.Mangsir 2081": 20191.37,
+                    "D.Kartik 2081": 12854.2,
+                    "C.Ashwin 2081": 23515.81,
+                    "B.Bhadra 2081": 19314.24,
+                    "A.Shrawan 2081": 19660.83,
+                    "L.Asar 2081": 12170.58,
+                    "K.Jestha 2081": 26896.29,
+                    "J.Baisakh 2081": 16269.74,
+                    "I.Chaitra 2080": 19954.06,
+                    "H.Falgun 2080": 20730.43,
+                    "G.Magh 2080": 19783.06
+                  }
+                },
+                {
+                  "wd_id": "86",
+                  "wdCode": "PRESKU",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3643.65,
+                    "F.Poush 2081": 5253.52,
+                    "E.Mangsir 2081": 4677.42,
+                    "D.Kartik 2081": 3184.12,
+                    "C.Ashwin 2081": 5149.02,
+                    "B.Bhadra 2081": 4154.48,
+                    "A.Shrawan 2081": 4155.62,
+                    "L.Asar 2081": 5041.91,
+                    "K.Jestha 2081": 5937.18,
+                    "J.Baisakh 2081": 6489.36,
+                    "I.Chaitra 2080": 5807.41,
+                    "H.Falgun 2080": 5023.11,
+                    "G.Magh 2080": 5430.19
+                  }
+                },
+                {
+                  "wd_id": "87",
+                  "wdCode": "YDEKDH",
+                  "wdLevelSale": {
+                    "G.Magh 2081": 3737.23,
+                    "F.Poush 2081": 4515.29,
+                    "E.Mangsir 2081": 4770.2,
+                    "D.Kartik 2081": 4003.8,
+                    "C.Ashwin 2081": 5379.92,
+                    "B.Bhadra 2081": 5720.38,
+                    "A.Shrawan 2081": 4442.34,
+                    "L.Asar 2081": 3633.44,
+                    "K.Jestha 2081": 5402.26,
+                    "J.Baisakh 2081": 6015.02,
+                    "I.Chaitra 2080": 5934.32,
+                    "H.Falgun 2080": 5752.2,
+                    "G.Magh 2080": 6584.6
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "TotalSum": {
+        "Feb 2025": 372325.29,
+        "Jan 2025": 500900.73,
+        "Dec 2024": 503303.7,
+        "Nov 2024": 455379.03,
+        "Oct 2024": 528514.48,
+        "Sep 2024": 495547.39,
+        "Aug 2024": 469674.88,
+        "Jul 2024": 363914.1,
+        "Jun 2024": 561638.47,
+        "May 2024": 579242.53,
+        "Apr 2024": 521725.49,
+        "Mar 2024": 495547.39
+      },
+      "Title": "Monthly Sales in M (Cigarettes)"
+    },
+    "chartsData": {
+      "OutletCovered": {
+        "chartData": [
+          {
+            "name": "DSS Sale",
+            "data": [
+              "344",
+              "530",
+              "560",
+              "543",
+              "558",
+              "568",
+              "557",
+              "575",
+              "562",
+              "566",
+              "38",
+              "596",
+              "562",
+              "571",
+              "560",
+              "556",
+              "542",
+              "60",
+              "563",
+              "578",
+              "43"
+            ]
+          },
+          {
+            "name": "SW Route Sale",
+            "data": [
+              "210",
+              "548",
+              "552",
+              "663",
+              "1109",
+              "908",
+              "830",
+              "972",
+              "475",
+              "451",
+              "116",
+              "673",
+              "579",
+              "763",
+              "604",
+              "459",
+              "482",
+              "97",
+              "631",
+              "591",
+              "167"
+            ]
+          }
+        ],
+        "title": "Total Outlets Covered",
+        "xAxisLabel1": [
+          "1 G.Magh 2081",
+          "2 G.Magh 2081",
+          "3 G.Magh 2081",
+          "4 G.Magh 2081",
+          "6 G.Magh 2081",
+          "7 G.Magh 2081",
+          "8 G.Magh 2081",
+          "9 G.Magh 2081",
+          "10 G.Magh 2081",
+          "11 G.Magh 2081",
+          "12 G.Magh 2081",
+          "13 G.Magh 2081",
+          "14 G.Magh 2081",
+          "15 G.Magh 2081",
+          "16 G.Magh 2081",
+          "17 G.Magh 2081",
+          "18 G.Magh 2081",
+          "19 G.Magh 2081",
+          "20 G.Magh 2081",
+          "21 G.Magh 2081",
+          "22 G.Magh 2081"
+        ],
+        "xAxisLabel2": []
+      },
+      "DSSAttendance": {
+        "chartData": [
+          {
+            "name": "DSS Present",
+            "data": [
+              "350",
+              "510",
+              "545",
+              "543",
+              "0",
+              "553",
+              "543",
+              "553",
+              "551",
+              "549",
+              "543",
+              "48",
+              "553",
+              "537",
+              "549",
+              "554",
+              "553",
+              "539",
+              "68",
+              "553",
+              "525",
+              "516"
+            ]
+          },
+          {
+            "name": "DSS Required Stock",
+            "data": [
+              "322",
+              "484",
+              "499",
+              "500",
+              "0",
+              "518",
+              "507",
+              "515",
+              "514",
+              "524",
+              "513",
+              "38",
+              "525",
+              "519",
+              "519",
+              "512",
+              "528",
+              "504",
+              "60",
+              "529",
+              "515",
+              "43"
+            ]
+          }
+        ],
+        "title": "Daily DSS Attendance",
+        "xAxisLabel1": [
+          "1 G.Magh 2081",
+          "2 G.Magh 2081",
+          "3 G.Magh 2081",
+          "4 G.Magh 2081",
+          "5 G.Magh 2081",
+          "6 G.Magh 2081",
+          "7 G.Magh 2081",
+          "8 G.Magh 2081",
+          "9 G.Magh 2081",
+          "10 G.Magh 2081",
+          "11 G.Magh 2081",
+          "12 G.Magh 2081",
+          "13 G.Magh 2081",
+          "14 G.Magh 2081",
+          "15 G.Magh 2081",
+          "16 G.Magh 2081",
+          "17 G.Magh 2081",
+          "18 G.Magh 2081",
+          "19 G.Magh 2081",
+          "20 G.Magh 2081",
+          "21 G.Magh 2081",
+          "22 G.Magh 2081"
+        ],
+        "xAxisLabel2": []
+      },
+      "DailySWCoverage": {
+        "chartData": [
+          {
+            "name": "Total SW Coverage F.Poush",
+            "data": [
+              "376",
+              "448",
+              "474",
+              "327",
+              "414",
+              "59",
+              "617",
+              "384",
+              "478",
+              "482",
+              "306",
+              "416",
+              "74",
+              "551",
+              "548",
+              "457",
+              "455",
+              "417",
+              "347",
+              "96",
+              "565",
+              "380",
+              "435",
+              "448",
+              "371",
+              "545",
+              "58",
+              "673",
+              "728",
+              0,
+              0,
+              0
+            ]
+          },
+          {
+            "name": "Total SW Coverage G.Magh",
+            "data": [
+              "210",
+              "548",
+              "552",
+              "663",
+              0,
+              "1109",
+              "908",
+              "830",
+              "972",
+              "475",
+              "451",
+              "116",
+              "673",
+              "579",
+              "763",
+              "604",
+              "459",
+              "482",
+              "97",
+              "631",
+              "591",
+              "167",
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0
+            ]
+          }
+        ],
+        "title": "Daily SW Coverage",
+        "xAxisLabel1": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
+        ],
+        "xAxisLabel2": []
+      },
+      "TodayCigaretteWiseSale": {
+        "chartData": [
+          {
+            "name": "Today",
+            "data": [
+              4721.8,
+              821.2,
+              3085.4,
+              815.2
+            ]
+          }
+        ],
+        "title": "Today Cigarettes Sales (M)",
+        "xAxisLabel1": [
+          "Cigarette",
+          "KSFT",
+          "RSFT",
+          "Plain"
+        ],
+        "xAxisLabel2": []
+      },
+      "TodayCategoryWiseSale": {
+        "chartData": [
+          {
+            "name": "Today",
+            "data": [
+              50.626,
+              42.45,
+              289.198
+            ]
+          }
+        ],
+        "title": "Today Category Wise Total Sales",
+        "xAxisLabel1": [
+          "Confec (Kg)",
+          "Biscuit (Kg)",
+          "MDAG (M)"
+        ],
+        "xAxisLabel2": []
+      },
+      "CategoryWiseSale": {
+        "chartData": [
+          {
+            "name": "E.Mangsir V",
+            "group": "Current",
+            "data": [
+              1780.372,
+              2805.525,
+              2245.422
+            ]
+          },
+          {
+            "name": "F.Poush V",
+            "group": "Previous",
+            "data": [
+              1234.262,
+              4287.3,
+              3463.8
+            ]
+          },
+          {
+            "name": "G.Magh V",
+            "group": "Month",
+            "data": [
+              1956.217,
+              3806.07,
+              30428.572
+            ]
+          },
+          {
+            "name": "E.Mangsir DSS",
+            "group": "Current",
+            "data": [
+              8842.759,
+              6372.525,
+              4219.59
+            ]
+          },
+          {
+            "name": "F.Poush DSS",
+            "group": "Previous",
+            "data": [
+              8469.86,
+              7791.615,
+              5146.294
+            ]
+          },
+          {
+            "name": "G.Magh DSS",
+            "group": "Month",
+            "data": [
+              10151.787,
+              6327.33,
+              15662.672
+            ]
+          }
+        ],
+        "title": "Category Wise Total Sales",
+        "xAxisLabel1": [
+          "Confec (Kg)",
+          "Biscuit (Kg)",
+          "MDAG (M)"
+        ],
+        "xAxisLabel2": []
+      },
+      "CategoryWiseSaleNew": {
+        "chartData": [
+          {
+            "name": "Cigarette",
+            "data": [
+              99014.865
+            ]
+          },
+          {
+            "name": "KSFT",
+            "data": [
+              24937.535
+            ]
+          },
+          {
+            "name": "RSFT",
+            "data": [
+              61637.87
+            ]
+          },
+          {
+            "name": "Plain",
+            "data": [
+              12439.46
+            ]
+          }
+        ],
+        "title": "Sales Of Cigarettes",
+        "xAxisLabel1": [
+          "W1",
+          "W2",
+          "W3"
+        ],
+        "xAxisLabel2": []
+      },
+      "CigaretteWiseSale": {
+        "chartData": [
+          {
+            "name": "E.Mangsir V",
+            "group": "Current",
+            "data": [
+              205124.7854,
+              41988.2654,
+              135571.2,
+              27565.32
+            ]
+          },
+          {
+            "name": "F.Poush V",
+            "group": "Previous",
+            "data": [
+              185490.69,
+              42714.06,
+              113569.03,
+              29207.6
+            ]
+          },
+          {
+            "name": "G.Magh V",
+            "group": "Month",
+            "data": [
+              225855.7604,
+              51764.3404,
+              139419.72,
+              34671.7
+            ]
+          },
+          {
+            "name": "E.Mangsir DSS",
+            "group": "Current",
+            "data": [
+              154276.744,
+              53991.98,
+              91249.364,
+              9035.4
+            ]
+          },
+          {
+            "name": "F.Poush DSS",
+            "group": "Previous",
+            "data": [
+              151539.8514,
+              53882.7114,
+              88389.89,
+              9267.25
+            ]
+          },
+          {
+            "name": "G.Magh DSS",
+            "group": "Month",
+            "data": [
+              146469.5121,
+              50523.7571,
+              85961.265,
+              9984.49
+            ]
+          }
+        ],
+        "title": "Cigarettes Sales (M)",
+        "xAxisLabel1": [
+          "Cigarette",
+          "KSFT",
+          "RSFT",
+          "Plain"
+        ],
+        "xAxisLabel2": []
+      },
+      "OutletCoveredByWD": {
+        "chartData": [
+          {
+            "name": "Outlet Covered",
+            "data": [
+              47,
+              23,
+              0,
+              0,
+              6,
+              0,
+              0,
+              16,
+              53,
+              0,
+              3,
+              3,
+              33,
+              0,
+              0,
+              8,
+              0,
+              42,
+              0,
+              35,
+              0,
+              0,
+              0,
+              0,
+              28,
+              19,
+              54,
+              0,
+              28,
+              0,
+              65,
+              17,
+              39,
+              20,
+              51,
+              56,
+              60,
+              36,
+              20,
+              45,
+              21,
+              76,
+              34,
+              35,
+              0,
+              0,
+              28,
+              0,
+              27,
+              47,
+              0,
+              0,
+              74,
+              49,
+              0,
+              0,
+              29,
+              0,
+              0,
+              0,
+              0,
+              61,
+              6,
+              74,
+              104,
+              0,
+              38,
+              28,
+              0,
+              30,
+              5,
+              14,
+              0,
+              27,
+              48,
+              16,
+              2,
+              2,
+              0,
+              36,
+              42,
+              36,
+              3,
+              27,
+              33,
+              0,
+              0,
+              31,
+              10,
+              0,
+              19,
+              25,
+              19,
+              0,
+              31,
+              0,
+              31,
+              33,
+              42,
+              42,
+              41,
+              0,
+              66,
+              24,
+              48,
+              22,
+              48,
+              50,
+              0,
+              17,
+              0,
+              29,
+              11,
+              0,
+              36,
+              47,
+              0,
+              6,
+              32,
+              0,
+              0,
+              26,
+              0,
+              0,
+              81,
+              11,
+              0,
+              0,
+              13,
+              27,
+              0,
+              51,
+              5,
+              7,
+              4,
+              0,
+              85,
+              8,
+              66,
+              64,
+              37,
+              46,
+              0,
+              13,
+              35,
+              0,
+              0,
+              0,
+              27,
+              19,
+              62,
+              0,
+              14,
+              5
+            ]
+          },
+          {
+            "name": "Remaining Outlets",
+            "data": [
+              15,
+              5,
+              1,
+              1,
+              3,
+              1,
+              1,
+              1,
+              2,
+              30,
+              8,
+              4,
+              6,
+              15,
+              1,
+              1,
+              1,
+              6,
+              1,
+              2,
+              1,
+              1,
+              1,
+              13,
+              1,
+              1,
+              5,
+              1,
+              9,
+              16,
+              1,
+              4,
+              1,
+              1,
+              1,
+              1,
+              14,
+              1,
+              1,
+              5,
+              1,
+              6,
+              3,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              2,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              8,
+              24,
+              17,
+              1,
+              1,
+              2,
+              7,
+              68,
+              4,
+              1,
+              4,
+              1,
+              1,
+              6,
+              12,
+              32,
+              1,
+              10,
+              4,
+              1,
+              21,
+              16,
+              1,
+              1,
+              4,
+              1,
+              8,
+              3,
+              7,
+              28,
+              1,
+              2,
+              4,
+              10,
+              1,
+              1,
+              1,
+              1,
+              5,
+              1,
+              1,
+              10,
+              1,
+              1,
+              10,
+              18,
+              5,
+              3,
+              3,
+              1,
+              1,
+              1,
+              1,
+              8,
+              1,
+              1,
+              1,
+              1,
+              4,
+              2,
+              1,
+              6,
+              1,
+              1,
+              31,
+              9,
+              1,
+              1,
+              7,
+              1,
+              1,
+              1,
+              5,
+              3,
+              1,
+              10,
+              6,
+              1,
+              1,
+              1,
+              2,
+              2,
+              6,
+              26,
+              9,
+              1,
+              1,
+              7,
+              2,
+              1,
+              1,
+              1,
+              9,
+              2,
+              1,
+              1,
+              1,
+              1
+            ]
+          }
+        ],
+        "title": "SW Outlet Coverage by WD",
+        "xAxisLabel1": [
+          "ABCANM",
+          "ABGKTP",
+          "ADHGMP",
+          "ADTMRN",
+          "AJTMKJ",
+          "AKESMG",
+          "AKPSMT",
+          "ANJIBD",
+          "ARNPNT",
+          "ARSGUR",
+          "ASEMDI",
+          "ASHKVT",
+          "AYMBRT",
+          "BGSMLK",
+          "BKSRPR",
+          "BLSTKH",
+          "BNTTLH",
+          "BTHBKT",
+          "BVSTMG",
+          "CDNKHN",
+          "CPSPLG",
+          "CRGRGL",
+          "CSCBTB",
+          "CTCBDR",
+          "DASJRI",
+          "DBSMIR",
+          "DBTBTR",
+          "DDLSYA",
+          "DKIKLY",
+          "DKPRGP",
+          "DOKLHN",
+          "DRESDL",
+          "DRGPTK",
+          "DTASRK",
+          "FTLBLT",
+          "GLBRJP",
+          "GMCGLR",
+          "GSCMAN",
+          "GTLDPL",
+          "GTMKLN",
+          "HAMKSM",
+          "HIDNGT",
+          "HIMDHR",
+          "HKTJMK",
+          "HRBKLT",
+          "HSSRKM",
+          "HTCBHR",
+          "JENSBG",
+          "JJENPG",
+          "JKIJNK",
+          "JMBACM",
+          "JSLBJG",
+          "JTLGRH",
+          "JTSBSH",
+          "JVNDRC",
+          "KBSKLG",
+          "KBTRBS",
+          "KCTBRD",
+          "KGSDLK",
+          "KHSRLP",
+          "KKSDNI",
+          "KLPDDL",
+          "KNHRJP",
+          "KRBPKR",
+          "KVRBNP",
+          "LBKHNG",
+          "LHTBNI",
+          "LTCPRT",
+          "LXMOKL",
+          "MAXBDH",
+          "MBSSDK",
+          "MDIBMD",
+          "MLSBJN",
+          "MLTBGL",
+          "MSSBSH",
+          "MSTDMK",
+          "NETARJ",
+          "NKDBID",
+          "NKPMUG",
+          "NPMITH",
+          "NPSNPG",
+          "NSVDHG",
+          "OMTINW",
+          "OSSBSG",
+          "OSTKHL",
+          "PGBBHT",
+          "PHTRAM",
+          "PKDKTR",
+          "PKTTPL",
+          "PNPDLK",
+          "PRBMLG",
+          "PRESKU",
+          "PRSFKL",
+          "PRTAGT",
+          "PSTGAI",
+          "PTSJLG",
+          "PTTSNL",
+          "PTVDHB",
+          "RBNKPR",
+          "RBSKWS",
+          "RBTPTN",
+          "RGSJML",
+          "RHBPYU",
+          "RHLLLB",
+          "RJAKTR",
+          "RJETND",
+          "RKSSNG",
+          "RMSPLP",
+          "RSSKLT",
+          "RSTSRG",
+          "RSWPPT",
+          "RTCNGD",
+          "SASBJP",
+          "SBSRBJ",
+          "SDPSAN",
+          "SFLNBS",
+          "SHLKKT",
+          "SHRGAR",
+          "SHTKHN",
+          "SIDPDM",
+          "SIVBDP",
+          "SJNGJR",
+          "SLEDNI",
+          "SLTCHP",
+          "SMBPRD",
+          "SMSKDC",
+          "SNAKUN",
+          "SNHCCH",
+          "SOEURL",
+          "SREPSA",
+          "SRIRKM",
+          "SRNBRC",
+          "SRTKVT",
+          "SRVKRS",
+          "SSEDLK",
+          "SSKJLS",
+          "SSPHTD",
+          "SSSRPN",
+          "SSTGRK",
+          "STKBLJ",
+          "STRBRG",
+          "STSJIT",
+          "SUEMTI",
+          "SUSILM",
+          "SWECNP",
+          "SWKDTL",
+          "TGSDRC",
+          "THTMAG",
+          "TLSBWL",
+          "TLTSVN",
+          "TPSKHT",
+          "TSDDNI",
+          "VNEBLB",
+          "YDEKDH"
+        ],
+        "xAxisLabel2": {
+          "height": 400,
+          "background": "white",
+          "stackType": "100%",
+          "showDownloadExcelButton": true
+        }
+      },
+      "SalesByTeams": {
+        "chartData": [
+          {
+            "name": "Avg Sales\/Teams",
+            "data": [
+              361.25,
+              276.5,
+              0,
+              0,
+              0,
+              0,
+              0,
+              430.5,
+              466.83,
+              0,
+              25.75,
+              428,
+              365.75,
+              0,
+              0,
+              185,
+              0,
+              455.8,
+              0,
+              84,
+              0,
+              0,
+              0,
+              0,
+              1205,
+              2340.5,
+              1110,
+              0,
+              186.25,
+              0,
+              667.5,
+              761.5,
+              480.25,
+              284.75,
+              310.5,
+              729.75,
+              477.75,
+              564,
+              1140.5,
+              864.25,
+              533.25,
+              625,
+              330,
+              383.25,
+              0,
+              0,
+              597.75,
+              0,
+              835.75,
+              228.75,
+              0,
+              0,
+              727.75,
+              855,
+              0,
+              0,
+              71,
+              0,
+              0,
+              0,
+              0,
+              2679.5,
+              14,
+              481.08,
+              943,
+              0,
+              197.75,
+              0,
+              0,
+              333.4,
+              0,
+              150.25,
+              0,
+              236.5,
+              384.67,
+              488.5,
+              653.5,
+              22,
+              0,
+              553.5,
+              295.2,
+              1003.25,
+              14,
+              742,
+              1632.75,
+              0,
+              0,
+              691,
+              125,
+              0,
+              639.25,
+              708.5,
+              118.5,
+              0,
+              158.75,
+              0,
+              230.75,
+              232.75,
+              156.5,
+              561,
+              261.13,
+              0,
+              822.25,
+              862.5,
+              949.25,
+              510.5,
+              661.83,
+              534.25,
+              0,
+              0,
+              0,
+              162.75,
+              161.5,
+              0,
+              504.33,
+              1055.75,
+              0,
+              0,
+              909.25,
+              0,
+              0,
+              699,
+              0,
+              0,
+              1087,
+              928,
+              0,
+              0,
+              12.75,
+              616.5,
+              0,
+              493,
+              736,
+              540.5,
+              61.5,
+              0,
+              613.25,
+              82.5,
+              1629,
+              911.19,
+              1216.5,
+              520.75,
+              0,
+              88.25,
+              394.75,
+              0,
+              0,
+              0,
+              383.75,
+              198,
+              352.25,
+              0,
+              344.75,
+              509
+            ]
+          }
+        ],
+        "title": "AVG Sale\/Team By WD (Van)",
+        "xAxisLabel1": [
+          "ABCANM",
+          "ABGKTP",
+          "ADHGMP",
+          "ADTMRN",
+          "AJTMKJ",
+          "AKESMG",
+          "AKPSMT",
+          "ANJIBD",
+          "ARNPNT",
+          "ARSGUR",
+          "ASEMDI",
+          "ASHKVT",
+          "AYMBRT",
+          "BGSMLK",
+          "BKSRPR",
+          "BLSTKH",
+          "BNTTLH",
+          "BTHBKT",
+          "BVSTMG",
+          "CDNKHN",
+          "CPSPLG",
+          "CRGRGL",
+          "CSCBTB",
+          "CTCBDR",
+          "DASJRI",
+          "DBSMIR",
+          "DBTBTR",
+          "DDLSYA",
+          "DKIKLY",
+          "DKPRGP",
+          "DOKLHN",
+          "DRESDL",
+          "DRGPTK",
+          "DTASRK",
+          "FTLBLT",
+          "GLBRJP",
+          "GMCGLR",
+          "GSCMAN",
+          "GTLDPL",
+          "GTMKLN",
+          "HAMKSM",
+          "HIDNGT",
+          "HIMDHR",
+          "HKTJMK",
+          "HRBKLT",
+          "HSSRKM",
+          "HTCBHR",
+          "JENSBG",
+          "JJENPG",
+          "JKIJNK",
+          "JMBACM",
+          "JSLBJG",
+          "JTLGRH",
+          "JTSBSH",
+          "JVNDRC",
+          "KBSKLG",
+          "KBTRBS",
+          "KCTBRD",
+          "KGSDLK",
+          "KHSRLP",
+          "KKSDNI",
+          "KLPDDL",
+          "KNHRJP",
+          "KRBPKR",
+          "KVRBNP",
+          "LBKHNG",
+          "LHTBNI",
+          "LTCPRT",
+          "LXMOKL",
+          "MAXBDH",
+          "MBSSDK",
+          "MDIBMD",
+          "MLSBJN",
+          "MLTBGL",
+          "MSSBSH",
+          "MSTDMK",
+          "NETARJ",
+          "NKDBID",
+          "NKPMUG",
+          "NPMITH",
+          "NPSNPG",
+          "NSVDHG",
+          "OMTINW",
+          "OSSBSG",
+          "OSTKHL",
+          "PGBBHT",
+          "PHTRAM",
+          "PKDKTR",
+          "PKTTPL",
+          "PNPDLK",
+          "PRBMLG",
+          "PRESKU",
+          "PRSFKL",
+          "PRTAGT",
+          "PSTGAI",
+          "PTSJLG",
+          "PTTSNL",
+          "PTVDHB",
+          "RBNKPR",
+          "RBSKWS",
+          "RBTPTN",
+          "RGSJML",
+          "RHBPYU",
+          "RHLLLB",
+          "RJAKTR",
+          "RJETND",
+          "RKSSNG",
+          "RMSPLP",
+          "RSSKLT",
+          "RSTSRG",
+          "RSWPPT",
+          "RTCNGD",
+          "SASBJP",
+          "SBSRBJ",
+          "SDPSAN",
+          "SFLNBS",
+          "SHLKKT",
+          "SHRGAR",
+          "SHTKHN",
+          "SIDPDM",
+          "SIVBDP",
+          "SJNGJR",
+          "SLEDNI",
+          "SLTCHP",
+          "SMBPRD",
+          "SMSKDC",
+          "SNAKUN",
+          "SNHCCH",
+          "SOEURL",
+          "SREPSA",
+          "SRIRKM",
+          "SRNBRC",
+          "SRTKVT",
+          "SRVKRS",
+          "SSEDLK",
+          "SSKJLS",
+          "SSPHTD",
+          "SSSRPN",
+          "SSTGRK",
+          "STKBLJ",
+          "STRBRG",
+          "STSJIT",
+          "SUEMTI",
+          "SUSILM",
+          "SWECNP",
+          "SWKDTL",
+          "TGSDRC",
+          "THTMAG",
+          "TLSBWL",
+          "TLTSVN",
+          "TPSKHT",
+          "TSDDNI",
+          "VNEBLB",
+          "YDEKDH"
+        ],
+        "xAxisLabel2": {
+          "height": 400
+        }
+      },
+      "ContributionData": {
+        "chartData": [
+          22511,
+          270642,
+          23223,
+          9784,
+          277065
+        ],
+        "title": "Contribution by Channel",
+        "xAxisLabel1": [
+          "Counter Sale",
+          "DSS Sale",
+          "Other Sale",
+          "Retail Sale",
+          "SW Route Sale"
+        ],
+        "xAxisLabel2": {
+          "height": 440
+        }
+      }
+    },
+    "showSajanamNepaliCalendar": false
+  },
+  "hidePopup": true
+}

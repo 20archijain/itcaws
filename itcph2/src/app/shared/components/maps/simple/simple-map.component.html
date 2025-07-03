@@ -1,0 +1,21 @@
+<ng-container *ngIf="useGoogleMapWrapper; else markerTemplate">
+  <google-map *ngIf="markers?.length > 0" width="100%" [zoom]="defaultZoom" [center]="center" [options]="mapOptions">
+    <ng-container *ngFor="let marker of markers; let first = first; let last = last">
+      <map-marker #mapMarker="mapMarker" [position]="getMarkerPosition(marker)"
+        [options]="getMarkerOptions(marker, first, last)" (mapClick)="openInfoWindow(mapMarker, marker)" />
+    </ng-container>
+    <map-info-window>
+      <div [innerHTML]="infoWindowContent"></div>
+    </map-info-window>
+  </google-map>
+</ng-container>
+
+<ng-template #markerTemplate>
+  <ng-container *ngFor="let marker of markers; let first = first; let last = last">
+    <map-marker #mapMarker="mapMarker" [position]="getMarkerPosition(marker)"
+      [options]="getMarkerOptions(marker, first, last)" (mapClick)="openInfoWindow(mapMarker, marker)" />
+  </ng-container>
+  <map-info-window>
+    <div [innerHTML]="infoWindowContent"></div>
+  </map-info-window>
+</ng-template>

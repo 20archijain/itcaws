@@ -1,0 +1,11 @@
+<div #alert class="alert fade show" role="alert" [class.alert-success]="response?.status === requestEnum.SUCCESS"
+  [class.alert-danger]="response?.status === requestEnum.FAILED"
+  [class.alert-warning]="response?.status === requestEnum.WARNING" [class.alert-dismissible]="allowDismiss"
+  *ngIf="response">
+  <p class="m-b-0" *ngFor="let message of response?.message">
+    {{ message }}
+  </p>
+  <button *ngIf="allowDismiss" (click)="dismissAlert(alert)" type="button" class="btn-close" data-bs-dismiss="alert"
+    aria-label="Close">
+  </button>
+</div>

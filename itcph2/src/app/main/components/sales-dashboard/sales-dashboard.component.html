@@ -1,0 +1,310 @@
+<app-card [options]="false">
+
+  <form (ngSubmit)="getCardData()" [formGroup]="group" novalidate class="form-content">
+    <!-- Superadmin and Admin Login -->
+    <div *ngIf="branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="branch" [options]="branchOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdMarket" [options]="wdMarketOptions"
+          placeholder="{{ 'app.wdMapping.wd_market' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+          placeholder="{{ 'app.wdMapping.wd_pop_group' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="category" [options]="categoryOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.category' | translate }}" (onChange)="getProduct()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="product" [options]="productOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.product' | translate }}">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" [multiple]="true" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Regional Login -->
+    <div *ngIf="!branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Footer Section with Buttons -->
+    <!-- <div class="footer-buttons">
+      <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+        colorClass="btn-info" btnTitle="button.search"></app-button>
+      <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+        (onClick)="clearForm()">
+      </app-button> -->
+    <!-- <app-button type="button" text="Close" colorClass="btn-outline-dark" btnTitle="button.close"
+        (click)="toggleSidebar()">&times;>
+      </app-button> -->
+    <!-- </div> -->
+  </form>
+</app-card>
+
+<div class="dashboard-cards">
+  <!-- Card 1 -->
+  <div class="card">
+    <div class="card-content">
+      <div class="icon">
+        <i class="f-18 fa fa-chart-line"></i>
+      </div>
+      <div class="info">
+        <h6>Today's Survey</h6>
+        <h2>{{ todaySaleDone }}</h2>
+        <p>Survey Qty (M)</p>
+      </div>
+      <!-- <div class="change negative">
+            <span>{{ salePercentage }}</span>
+          </div> -->
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="card">
+    <div class="card-content">
+      <div class="icon"><i class="fa fa-clipboard"></i></div>
+      <div class="info">
+        <h6>Today's Survey Amount</h6>
+        <h2>&#8377; {{ todaySaleAmount }}</h2>
+        <p>Amount</p>
+      </div>
+      <!-- <div class="change positive">
+            <span>+3.58%</span>
+          </div> -->
+    </div>
+  </div>
+
+  <!-- Card 3 -->
+  <div class="card">
+    <div class="card-content">
+      <div class="icon"><i class="f-18 fa fa-chart-line"></i></div>
+      <div class="info">
+        <h6>MTD Survey</h6>
+        <h2>{{ tillDateSaleDone }}</h2>
+        <p>Survey Qty (M)</p>
+      </div>
+      <!-- <div class="change negative">
+            <span>{{ salePercentage }}</span>
+          </div> -->
+    </div>
+  </div>
+
+  <!-- Card 4 -->
+  <div class="card">
+    <div class="card-content">
+      <div class="icon"><i class="fa fa-clipboard"></i></div>
+      <div class="info">
+        <h6>MTD Survey Amount</h6>
+        <h2>&#8377; {{ tillDateSaleAmount }}</h2>
+        <p>Amount</p>
+      </div>
+      <!-- <div class="change negative">
+            <span>-10.35%</span>
+          </div> -->
+    </div>
+  </div>
+</div>
+
+
+<app-color-accordion [monthlySalesData]="monthlySalesData"></app-color-accordion>
+<!-- <app-outlet-visit-accordion [outletVisitedTableData]="outletVisitedTableData"></app-outlet-visit-accordion> -->
+
+<div class="row">
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="month" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getcurrentAndLastMonthSale()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="monthSaleLineChartData" [xAxisLabel]="'Date'" [yAxisLabel]="'Survey Qty (M)'"
+          [heading]="'Survey Comparison CM/LM'" class="w-100" style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="month1" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getcurrentAndLastMonthFocusSale()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="monthFocusSaleLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Survey Qty (M)'" [heading]="'Focus Survey Comparison CM/LM'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+</div>
+
+<!-- Row 2 -->
+<div class="row g-3 mt-4">
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="month2" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getcurrentAndLastYearMonthSale()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="monthAndYearLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Survey Qty (M)'" [heading]="'Survey Comparison SPLY'" class="w-100" style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="month3" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}"
+            (onChange)="getcurrentAndLastYearMonthFocusSale()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="monthAndYearFocusLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Survey Qty (M)'" [heading]="'Focus Survey Comparison SPLY'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+</div>
+
+<!-- Row 3 -->
+<div class="row g-3 mt-4">
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="year" groupClassName="row" sizeClass="col-sm-12"
+            [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
+            (onChange)="getCurrentYearLastYearMonthlySales()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="currentAndLastYearLineChartData" [xAxisLabel]="'Month'"
+          [yAxisLabel]="'Survey Qty (M)'" [heading]="'Survey Comparison LYTD/CYTD'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group" controlName="year1" groupClassName="row" sizeClass="col-sm-12"
+            [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
+            (onChange)="getCurrentYearLastYearMonthlyFocusSales()">
+          </app-select>
+        </div>
+      </div>
+      <!-- Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="currentAndLastYearFocusLineChartData" [xAxisLabel]="'Month'"
+          [yAxisLabel]="'Survey Qty (M)'" [heading]="'Focus Survey Comparison LYTD/CYTD'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+</div>
+<!-- </div> -->

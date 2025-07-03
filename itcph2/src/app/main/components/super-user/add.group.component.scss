@@ -1,0 +1,45 @@
+$border-color: #eee;
+
+.modules {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+
+  .list {
+    flex: 0 0 100%;
+
+    @media screen and (min-width: 540px) {
+      flex-basis: 49%;
+
+      &:nth-child(2n + 1) {
+        margin-right: 2%;
+      }
+    }
+
+    @media screen and (min-width: 1200px) {
+      flex-basis: 31%;
+
+      &:nth-child(2n + 1) {
+        margin-right: 0;
+      }
+
+      &:not(:nth-child(3n + 3)) {
+        margin-right: 2%;
+      }
+    }
+
+    .item {
+      display: flex;
+
+      &.first {
+        justify-content: space-between;
+        width: 100%;
+
+        &.h-line {
+          border-bottom: 1px solid $border-color;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}

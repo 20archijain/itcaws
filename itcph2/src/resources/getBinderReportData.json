@@ -1,0 +1,75 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "branchFilter": true,
+    "userBranch": "",
+    "dsType": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      }
+    ],
+    "circleList": [
+      {
+        "value": "JAK",
+        "label": "JAK"
+      }
+    ],
+    "sectionList": [
+      {
+        "value": "JAK001",
+        "label": "JAK001"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      }
+    ],
+    "teamList": [
+      {
+        "value": "2",
+        "label": "Ram Ds"
+      }
+    ]
+  },
+  "hidePopup": true
+}

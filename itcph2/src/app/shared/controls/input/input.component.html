@@ -1,0 +1,35 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}"
+    [ngClass]="{'d-flex justify-content-between align-items-center': tooltipContent}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+    <span *ngIf="tooltipContent" class="feather icon-info" [placement]="tooltipDirection"
+      ngbTooltip="{{ tooltipContent | translate }}"></span>
+  </label>
+  <ng-container *ngIf="showIcon; else nonIcon">
+    <div class="input-group">
+      <span class="input-group-text"><i class="feather" [ngClass]="icon"></i></span>
+      <ng-container *ngTemplateOutlet="inputBox"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #nonIcon>
+    <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+      <div class="{{ sizeClass }}">
+        <ng-container *ngTemplateOutlet="inputBox"></ng-container>
+      </div>
+    </ng-container>
+    <ng-template #nonHorizontalForm>
+      <ng-container *ngTemplateOutlet="inputBox"></ng-container>
+    </ng-template>
+  </ng-template>
+
+  <!-- Input box control -->
+  <ng-template #inputBox>
+    <input [type]="type" class="form-control {{ inputClass }}" [placeholder]="placeholder"
+      [formControlName]="controlName" [attr.id]="controlName + id" name="{{ controlName }}"
+      [attr.autocomplete]="autocompleteOff ? 'off' : 'on'"
+      [class.is-invalid]="showValidationState && isTouched && inputField.invalid" (keyup)="onKeyup($event)"
+      (blur)="onFocusOut($event)" (focus)="onFocusIn($event)">
+    <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+      class="text-justify small form-text invalid-feedback">{{ errorMessage }}</label>
+  </ng-template>
+</div>

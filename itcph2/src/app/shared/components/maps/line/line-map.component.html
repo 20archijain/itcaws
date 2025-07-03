@@ -1,0 +1,7 @@
+<google-map *ngIf="markers?.length > 0" width="100%" [zoom]="defaultZoom" [center]="center" [options]="mapOptions">
+  <map-polyline [path]="paths" [options]="polylineOptions" />
+  <ng-container *ngIf="showMarkers">
+    <app-simple-map [markers]="markers" [useGoogleMapWrapper]="false" [useDifferentIconForFirstLastBetweenMarker]="true"
+      [firstMarkerUrl]="firstMarkerUrl" [betweenMarkerUrl]="betweenMarkerUrl" [lastMarkerUrl]="lastMarkerUrl" />
+  </ng-container>
+</google-map>

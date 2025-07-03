@@ -1,0 +1,39 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
+  <label class="{{ labelClassName }}" for="{{ controlName }}" *ngIf="label || labelTemplate">
+    <span [class.required]="isRequired" *ngIf="label">{{ label | translate }}</span>
+    <ng-container *ngIf="labelTemplate" [ngTemplateOutlet]="labelTemplate"></ng-container>
+  </label>
+
+  <div class="{{ sizeClass }}">
+    <section *ngIf="hasFiles(); else dummyImg">
+      <ng-container *ngIf="isImageFile(); else nonImageFile">
+        <img [src]="defaultSelcted || selectedFile" class="dummy-image m-b-5 {{ thumbnailClass }}"
+          [class.small]="smallSizeThumbnail" *ngIf="showPreview">
+      </ng-container>
+      <ng-template #nonImageFile>
+        <p>{{ files[0].name }}</p>
+      </ng-template>
+    </section>
+    <ng-template #dummyImg>
+      <section *ngIf="showDummyImageIfNoImageSelected">
+        <img [src]="dummyImage" class="dummy-image m-b-5 {{ thumbnailClass }}" [class.small]="smallSizeThumbnail">
+      </section>
+    </ng-template>
+
+    <label class="btn btn-primary control-label text-white" for="{{ controlName }}"
+      *ngIf="((chooseLabel && !hasFiles()) || (changeLabel && hasFiles()))">
+      <span *ngIf="chooseLabel && !hasFiles() && !hasFileSizeOrFileTypeError">{{ chooseLabel | translate }}</span>
+      <span *ngIf="changeLabel && (hasFiles() || hasFileSizeOrFileTypeError)">{{ changeLabel | translate }}</span>
+    </label>
+    <input type="file" (change)="onChange($event)" [multiple]="multiple" [accept]="accept" class="btn hidden"
+      [ngClass]="fileControlClass" id="{{ controlName }}" [formControlName]="controlName"
+      [class.is-invalid]="isTouched && (inputField.invalid || isInvalid)" (click)="checkError()">
+    <label class="btn btn-danger control-label text-white m-l-5"
+      *ngIf="cancelLabel && (hasFiles() || hasFileSizeOrFileTypeError)" (click)="clear()">
+      {{ cancelLabel | translate }}
+    </label>
+    <label class="text-justify small form-text invalid-feedback" *ngIf="isTouched && (inputField.invalid || isInvalid)">
+      {{ errorMessage }}
+    </label>
+  </div>
+</div>

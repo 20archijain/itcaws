@@ -1,0 +1,92 @@
+{
+  "appConfig": {
+    "id": 101,
+    "version": 2,
+    "app_version": "1.1.1",
+    "relDate": "2024-05-11",
+    "themeConfig": {
+      "formBackgroundColor": "#FFFFFF",
+      "formTextColor": "#000000",
+      "formSubtextColor": "#000011",
+      "headerBackgroundColor": "#FFEEEE",
+      "headerTextColor": "#000000"
+    },
+    "logoConfig": {
+      "splashScreenUrl": "http://upimg.btlmonitor.com/assets/drawable/splash.png",
+      "clientLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/client-logo.png",
+      "projectLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/company_logo.png"
+    },
+    "fontsConfig": {
+      "fontSize": "XLARGE",
+      "fontStyle": "arial",
+      "formTextFontSize": "LARGE",
+      "formTextFontStyle": "arial",
+      "formSubtextFontSize": "MEDIUM",
+      "formSubtextFontStyle": "monospace"
+    },
+    "buttons": {
+      "report": {
+        "label": "Report",
+        "hide": 0
+      },
+      "upload": {
+        "label": "Upload",
+        "hide": 0
+      },
+      "home": {
+        "label": "Home",
+        "hide": 0
+      },
+      "settings": {
+        "label": "Settings",
+        "hide": 0
+      },
+      "assign": {
+        "label": "Assign",
+        "hide": 0
+      }
+    },
+    "apiUrls": {
+      "surveyUploadUrl": "https://upimg.radardashboard.com/mobile_services/api/data.php",
+      "imageUploadUrl": "https://upimg.radardashboard.com/mobile_services/api/file.php",
+      "jsonUpdateUrl": "https://upimg.radardashboard.com/mobile_services/api/jsonUpdate.php",
+      "statsUrl": "https://upimg.radardashboard.com/mobile_services/api/summary.php",
+      "custom": {
+        "getStockProductsSellingPriceApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php",
+        "getNotificationApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_notification.php",
+        "getRouteTrackerApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_route_tracker_data.php",
+        "getMasterRouteApi": "https://upimg.radardashboard.com/mobile_services/api/custom/ae_app_master_data.php"
+      }
+    }
+  },
+  "appForms": [
+    {
+      "id": 1,
+      "title": "Net Rate",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Products Net Rate",
+          "optype": 1001,
+          "dtype": 1,
+          "subtype": 4,
+          "optCol": [
+            "Base Price",
+            "Net Rate"
+          ],
+          "validations": {
+            "mn": 1,
+            "len": "1-7",
+            "vtype": 13
+          },
+          "validationsMsg": {
+            "mn": "Products Net Rate is required",
+            "len": "Net Rate should be 1-7 digit long",
+            "vtype": "Please enter valid Net Rate"
+          }
+        }
+      ]
+    }
+  ]
+}

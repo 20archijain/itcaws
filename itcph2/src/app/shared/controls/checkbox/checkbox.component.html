@@ -1,0 +1,12 @@
+<div *ngIf="!hide" class="form-group" [class.no-margin]="noMargin">
+  <div class="checkbox checkbox-info d-inline">
+    <!-- .ng-invalid is required to display error when user click button -->
+    <input type="checkbox" name="{{ controlName }}" [checked]="isChecked" class="form-control"
+      id="{{ controlName }} - {{ id }}" [class.ng-invalid]="showValidationState && group.get(controlName)?.invalid"
+      [class.is-invalid]="showValidationState && isTouched && isInvalid && group.get(controlName)?.invalid">
+    <label for="{{ controlName }}" (click)="onChange($event)" class="cr">{{ label }}</label>
+    <label *ngIf="showValidationState && isTouched && isInvalid && group.get(controlName)?.invalid && errorMessage"
+      id="validation-{{ controlName }}-error" class="text-justify small form-text invalid-feedback">
+      {{ errorMessage }}</label>
+  </div>
+</div>

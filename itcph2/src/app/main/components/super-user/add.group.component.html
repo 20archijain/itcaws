@@ -1,0 +1,53 @@
+<app-card
+  cardTitle="{{ isEdit ?  ('app.user.group.editHeading' | translate) : ('app.user.group.addHeading' | translate) }}"
+  [options]="false">
+  <div class="row">
+    <div class="col-md-12">
+      <form [formGroup]="group" (ngSubmit)="addGroup()" novalidate>
+        <!-- Group Name -->
+        <app-input [group]="group" controlName="name" label="app.user.group.form.groupName" groupClassName="row"
+          labelClassName="form-label col-sm-12" sizeClass="col-10 col-sm-6 col-md-4 col-xl-3"
+          [errorMessages]="errorMessages.name" placeholder="{{ 'app.user.group.form.groupName' | translate }}"
+          [isHorizontalForm]="true" [autocompleteOff]="true" [isRequired]="true">
+        </app-input>
+
+        <div class="modules">
+          <ng-container *ngFor="let list of moduleList; let index = index">
+            <div class="list card bg-light">
+              <div class="card-body">
+                <ng-container *ngFor="let module of list; let first = first;">
+                  <span class="item first" [class.h-line]="list.length > 1" *ngIf="first">
+                    <span>
+                      <app-checkbox [tableData]="list" [checkKey]="checkKey" [isChecked]="isChecked(module, index)"
+                        [value]="module" [selectedRecords]="selectedRecords[index]"
+                        (emitSelectedRecords)="emitSelectedRecords($event, index)" label="{{ module.label }}">
+                      </app-checkbox>
+                    </span>
+                    <span>
+                      <app-checkbox [tableData]="list" [checkKey]="checkKey" [isChecked]="module.isChecked"
+                        [selectAll]="true" [selectedRecords]="selectedRecords[index]"
+                        (emitSelectedRecords)="emitSelectedRecords($event, index, true)"
+                        label="{{ 'text.all' | translate }}"></app-checkbox>
+                    </span>
+                  </span>
+
+                  <span class="item other" *ngIf="!first">
+                    <app-checkbox [tableData]="list" [checkKey]="checkKey" [isChecked]="isChecked(module, index)"
+                      [value]="module" [selectedRecords]="selectedRecords[index]"
+                      (emitSelectedRecords)="emitSelectedRecords($event, index)" label="{{ module.label }}">
+                    </app-checkbox>
+                  </span>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <app-button type="submit" [text]="isEdit ? 'button.save' : 'button.create'"
+          [isDisabled]="group.invalid || isDisabled" [showSpinner]="isDisabled"
+          [spinnerText]="isEdit ? 'spinnerText.saving' : 'spinnerText.adding'">
+        </app-button>
+      </form>
+    </div>
+  </div>
+</app-card>

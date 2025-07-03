@@ -1,0 +1,41 @@
+<div *ngIf="dynamicControl && !hide" [formGroup]="group">
+  <div class="row" [formArrayName]="controlName" *ngFor="let control of dynamicControl.controls; let i = index;">
+    <ng-container [formGroupName]="i">
+      <div class="col-10" *ngFor="let config of inputConfig; let ci = index; let last = last"
+        [ngClass]="{'col-sm-5 col-md-3': last && dynamicControl?.controls?.length > 1, 'col-sm-6 col-md-4 col-xl-3': !last || dynamicControl?.controls?.length === 1}">
+        <ng-container [ngSwitch]="config.type">
+          <!-- Input Box -->
+          <ng-container *ngSwitchCase="typeConfig.INPUT_BOX">
+            <app-input [label]="config?.label" placeholder="{{ config?.label | translate }}" [group]="control"
+              [controlName]="config.controlName" [isRequired]="config?.required" [errorMessages]="config?.errorMessages"
+              [id]="i">
+            </app-input>
+          </ng-container>
+          <!-- Select Box -->
+          <ng-container *ngSwitchCase="typeConfig.SELECT_BOX">
+            <app-select [group]="control" [controlName]="config.controlName" [label]="config?.label"
+              [options]="config?.options" [errorMessages]="config?.errorMessages" [isRequired]="config?.required"
+              placeholder="{{ config.label | translate}}" [id]="i"
+              (onChange)="onChangeOption(i, ci, config.controlName, config?.disableOption)">
+            </app-select>
+          </ng-container>
+        </ng-container>
+      </div>
+    </ng-container>
+
+    <!-- Delete Button -->
+    <div class="col-2 col-sm-1" *ngIf="dynamicControl?.controls?.length > 1">
+      <app-button [showIconOnly]="true" iconName="icon-trash d-inline-block m-t-35" btnClass="align-icon-xxl"
+        (onClick)="removeControl(i)">
+      </app-button>
+    </div>
+  </div>
+
+  <div class="row">
+    <!-- Add more button -->
+    <div class="col-sm-4">
+      <app-button text="button.addMore" btnClass="m-b-10" colorClass="btn-info" (onClick)="addMoreControl()">
+      </app-button>
+    </div>
+  </div>
+</div>

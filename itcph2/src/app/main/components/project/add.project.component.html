@@ -1,0 +1,47 @@
+<app-card cardTitle="{{ 'app.project.add.heading' | translate }}" [options]="false">
+  <form (ngSubmit)="addProject()" [formGroup]="form" novalidate>
+    <div class="row">
+      <div class="col-10 col-sm-6 col-md-4 col-xl-3">
+        <app-select [group]="form" controlName="client" label="app.client.add.name" [options]="clientOptions"
+          [errorMessages]="errorMessages.client" [isRequired]="true"
+          placeholder="{{ 'app.client.add.name' | translate}}">
+        </app-select>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-xl-3">
+        <app-input label="app.project.add.name" placeholder="{{ 'app.project.add.name' | translate }}" [group]="form"
+          controlName="projectName" [isRequired]="true" [errorMessages]="errorMessages.projectName"
+          [autocompleteOff]="true">
+        </app-input>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-10 col-sm-6 col-md-4 col-xl-3">
+        <app-select [group]="form" controlName="landingPage" label="app.user.user.add.landingPage"
+          [options]="landingPageOptions" [errorMessages]="errorMessages.landingPage" [isRequired]="true"
+          placeholder="{{ 'app.user.user.add.landingPage' | translate}}">
+        </app-select>
+      </div>
+    </div>
+
+    <div class="row" *ngIf="checkboxOptions?.length">
+      <div class="col-sm-12">
+        <ng-container *ngFor="let option of checkboxOptions; let i = index; let l = last">
+          <app-checkbox [group]="form" controlName="checkboxList" [tableData]="checkboxOptions" [checkKey]="checkKey"
+            [value]="option" label="{{ option.label }}" [isChecked]="isChecked(option)" [id]="i"
+            [selectedRecords]="selectedRecords" (emitSelectedRecords)="emitSelectedRecords($event)">
+          </app-checkbox>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="row">
+      <div [ngClass]="{'col-9 col-sm-5 col-md-4 col-xl-3': isDisabled, 'col-4 col-sm-3 col-md-2': !isDisabled}">
+        <app-button type="submit" text="button.add" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="form"
+          [showSpinner]="isDisabled" spinnerText="spinnerText.adding">
+        </app-button>
+      </div>
+    </div>
+  </form>
+</app-card>

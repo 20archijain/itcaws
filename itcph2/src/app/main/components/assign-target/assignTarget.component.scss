@@ -1,0 +1,69 @@
+$white: #fff;
+$green: #767676;
+$whitish1: #f9f9f9;
+$whitish2: #ddd;
+$lightgray: #d3d3d3;
+$steelblue: #4682b4;
+
+.fixed-header {
+  background-color: $white;
+  left: 0;
+  position: sticky;
+  z-index: 2;
+}
+
+.fixed-column {
+  background-color: $white;
+  left: 0;
+  position: sticky;
+  z-index: 1;
+}
+
+.fixed-table-header {
+  .table {
+    th {
+      &.highlight {
+        background-color: $green !important;
+        color: $white;
+      }
+    }
+  }
+}
+
+.table> :not(caption)>*>* {
+  padding: 0.3rem 0.6rem !important;
+}
+
+
+.bg-light-gray {
+  background-color: #ecf0f2ca;
+  /* Light gray */
+}
+
+.bg-white {
+  background-color: white;
+}
+
+.fix-width {
+  max-width: 200px;
+  min-width: 200px;
+  width: 200px;
+}
+
+.fix-width2 {
+  max-width: 120px;
+  min-width: 120px;
+  width: 120px;
+}
+
+.fix-width3 {
+  max-width: 100px;
+  min-width: 100px;
+  width: 100px;
+}
+
+.fix-width4 {
+  max-width: 120px;
+  min-width: 120px;
+  width: 120px;
+}

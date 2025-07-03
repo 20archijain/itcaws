@@ -1,0 +1,155 @@
+<app-card cardTitle="{{ 'app.team.add.heading' | translate }}" [options]="false">
+  <app-alert [response]="addResponse"></app-alert>
+
+  <form (ngSubmit)="addTeam()" [formGroup]="form" autocomplete="off" novalidate>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.project.add.name" placeholder="{{ 'app.project.add.name' | translate }}" [group]="form"
+          [isRequired]="true" controlName="project" [options]="projectOptions" [errorMessages]="errorMessages.project">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.accessType" placeholder="{{ 'app.team.add.accessType' | translate }}"
+          [group]="form" controlName="accessType" [options]="accessOptions" [errorMessages]="errorMessages.accessType"
+          [isRequired]="true">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form"
+          (onChange)="getCircle()" [isRequired]="true" controlName="branch" [options]="branchOptions"
+          [errorMessages]="errorMessages.branch">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.circle" placeholder="{{ 'app.team.add.circle' | translate }}" [group]="form"
+          (onChange)="getSection()" controlName="circle" [options]="circleOptions">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.section" placeholder="{{ 'app.team.add.section' | translate }}" [group]="form"
+          (onChange)="getWdCode()" controlName="section" [options]="sectionOptions">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2"
+        *ngIf="form.get('accessType')?.value === '1' || form.get('accessType')?.value === '2'">
+        <app-select label="app.team.view.wdCode" placeholder="{{ 'app.team.view.wdCode' | translate }}" [group]="form"
+          controlName="wdCode" [options]="wdCodeOptions" [errorMessages]="errorMessages.wdCode" [isRequired]="true"
+          [multiple]="true" (onChange)="getTeamType()">
+        </app-select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3 col-lg-2" *ngIf="form.get('accessType')?.value === '2'">
+        <app-select label="app.team.add.dsType" placeholder="{{ 'app.team.add.dsType' | translate }}" [group]="form"
+          controlName="dsType" [isRequired]="true" [options]="dsTypeOptions" [errorMessages]="errorMessages.dsType"
+          [multiple]="true" (onChange)="getTeams()">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2" *ngIf="form.get('accessType')?.value === '2'">
+        <app-select label="app.team.add.name" placeholder="{{ 'app.team.add.name' | translate }}" [group]="form"
+          controlName="team" [options]="teamOptions" [multiple]="true">
+        </app-select>
+      </div>
+
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.aeName" placeholder="{{ 'app.team.add.aeName' | translate }}" [group]="form"
+          [options]="aeNameOptions" controlName="aeName">
+        </app-select>
+
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.jsonId" placeholder="{{ 'app.team.add.jsonId' | translate }}" [group]="form"
+          (onChange)="getJsonName()" [options]="jsonIdOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.jsonId" controlName="jsonId">
+        </app-select>
+
+      </div>
+      <!--
+      <div class="col-sm-3 col-lg-2">
+        <app-input label="app.team.add.aeNumber" placeholder="{{ 'app.team.add.aeNumber' | translate }}" [group]="form"
+          [errorMessages]="errorMessages.aeNumber" controlName="aeNumber">
+        </app-input>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.amName" placeholder="{{ 'app.team.add.amName' | translate }}" [group]="form"
+          [options]="amNameOptions" controlName="amName">
+        </app-select>
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-input label="app.team.add.amNumber" placeholder="{{ 'app.team.add.amNumber' | translate }}" [group]="form"
+          [errorMessages]="errorMessages.amNumber" controlName="amNumber">
+        </app-input>
+      </div> -->
+    </div>
+
+    <div class="row">
+      <div class="col-sm-3 col-lg-2">
+        <app-input label="app.team.add.json" placeholder="{{ 'app.team.add.json' | translate }}" [group]="form"
+          controlName="json" [isRequired]="true" [errorMessages]="errorMessages.json">
+        </app-input>
+      </div>
+
+
+      <div class="col-sm-3 col-lg-2">
+        <app-input label="auth.login.form.password" placeholder="{{ 'auth.login.form.password' | translate }}"
+          [group]="form" controlName="password" [errorMessages]="errorMessages.password"
+          [tooltipContent]="passwordTooltip">
+        </app-input>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-7 col-sm-4 col-md-3 col-xl-2">
+        <app-radio [isRequired]="true" label="app.team.add.addMethod" [group]="form" [options]="addMethodList"
+          (onChange)="resetControls($event)" controlName="addMethodType"></app-radio>
+      </div>
+    </div>
+
+    <app-input-dynamic [group]="form" controlName="teams" [inputConfig]="teamsConfig"
+      [hide]="controlVisibility.hideTeamsUsingName"></app-input-dynamic>
+
+    <div class="row">
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.team.add.name" placeholder="{{ 'app.team.add.name' | translate }}" [group]="form"
+          controlName="dsName" [validators]="validators.dsName" [hide]="controlVisibility.hideTeamsUsingIndex"
+          [isRequired]="true" [errorMessages]="errorMessages.dsName"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.team.add.startIndex" placeholder="{{ 'app.team.add.startIndex' | translate }}"
+          [group]="form" controlName="startIndex" [validators]="validators.index"
+          [hide]="controlVisibility.hideTeamsUsingIndex" [isRequired]="true" [errorMessages]="errorMessages.startIndex">
+        </app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.team.add.endIndex" placeholder="{{ 'app.team.add.endIndex' | translate }}" [group]="form"
+          controlName="endIndex" [validators]="validators.index" [hide]="controlVisibility.hideTeamsUsingIndex"
+          [isRequired]="true" [errorMessages]="errorMessages.endIndex"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-dropdown [group]="form" controlName="separator" [options]="separatorList" label="app.team.add.separator"
+          [hide]="controlVisibility.hideTeamsUsingIndex" [isRequired]="true" [validators]="validators.separator"
+          [errorMessages]="errorMessages.separator">
+        </app-dropdown>
+      </div>
+    </div>
+
+    <div class="row">
+      <div [ngClass]="{'col-9 col-sm-5 col-md-4 col-xl-3': isDisabled, 'col-4 col-sm-3 col-md-2': !isDisabled}">
+        <app-button type="submit" text="button.add" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="form"
+          [showSpinner]="isDisabled" spinnerText="spinnerText.adding">
+        </app-button>
+      </div>
+    </div>
+
+  </form>
+</app-card>

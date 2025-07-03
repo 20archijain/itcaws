@@ -1,0 +1,11 @@
+<div id="main-search" class="main-search open">
+  <form (ngSubmit)="search()" [formGroup]="group">
+    <div class="input-group">
+      <input type="text" id="m-search" class="form-control" placeholder="{{ 'header.search' | translate }}"
+        [style.width]="'130px'" formControlName="search">
+      <span class="search-btn btn btn-primary">
+        <i class="feather icon-search input-group-text"></i>
+      </span>
+    </div>
+  </form>
+</div>

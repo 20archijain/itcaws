@@ -1,0 +1,32 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "data0": [
+      {
+        "name": "Branch Access",
+        "id": "4",
+        "modules": "My Profile | Logout | Home Page | Route Data | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance"
+      },
+      {
+        "name": "WD Access",
+        "id": "3",
+        "modules": "My Profile | Logout | Home Page | Route Data | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Dashboard | Sales Dashboard | Attendance"
+      },
+      {
+        "name": "HO Access",
+        "id": "2",
+        "modules": "My Profile | Logout | Home Page | Route (Outlet Master) | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance | Outlet Universe"
+      },
+      {
+        "name": "Superadmin",
+        "id": "1",
+        "modules": "My Profile | Logout | Home Page | Project Management | Add Client | View Clients | Edit Client | Delete Client | Add Project | View Project | Edit Project | Delete Project | Add Team | View Team | Edit Team | Delete Team | Super User | Add Group | View Groups | Edit Group | Delete Group | Add User | View Users | Edit User | Delete User | Add Module | View Modules | Edit Module | Delete Module | Unlock User | Route Data | Route (Outlet Master) | Upload Route Data | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Edit Product Price | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance | Actionable | Outlet Universe"
+      },
+      {
+        "total": 4
+      }
+    ]
+  },
+  "hidePopup": true
+}

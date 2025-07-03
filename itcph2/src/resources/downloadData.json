@@ -1,0 +1,38 @@
+{
+  "status": 200,
+  "message": [
+    "Downloading File. Please wait..."
+  ],
+  "data": {
+    "fileName": "Team_details_2020_06_03_19_46_48",
+    "header": [
+      [
+        "Project Name",
+        "Team Name",
+        "City",
+        "Agency",
+        "Username",
+        "Password"
+      ]
+    ],
+    "body": [
+      [
+        "Project 1",
+        "Team-7",
+        "",
+        "Impact",
+        "itc_team-7",
+        "itc_12345"
+      ],
+      [
+        "Project 1",
+        "Team 7",
+        "",
+        "Impact",
+        "itc_team7",
+        "itc_12346"
+      ]
+    ]
+  },
+  "hidePopup": false
+}

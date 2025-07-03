@@ -1,0 +1,16 @@
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({
+  name: 'slice'
+})
+export class SlicePipe implements PipeTransform {
+
+  transform(items: any[], startIndex: number, endIndex?: number) {
+    if (!items || items.length === 0) {
+      return [];
+    }
+
+    return items.slice(startIndex, endIndex + 1);
+  }
+
+}

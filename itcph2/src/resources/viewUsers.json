@@ -1,0 +1,192 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "data0": [
+      {
+        "id": "245",
+        "name": "ITC HO",
+        "username": "itcho.admin",
+        "type": "2",
+        "userType": "Client Level",
+        "landingPageId": "72",
+        "landingPage": "Van DS Reporting",
+        "groupId": "2",
+        "group": "HO Access",
+        "client": [
+          "1"
+        ],
+        "project": [],
+        "branch": [],
+        "wdCode": [],
+        "isAccountLocked": false
+      },
+      {
+        "id": "244",
+        "name": "NAV003",
+        "username": "NAV003.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG3141"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "243",
+        "name": "NAM001",
+        "username": "NAM001.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG3104"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "242",
+        "name": "NAV004",
+        "username": "NAV004.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG2957"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "241",
+        "name": "NAV002",
+        "username": "NAV002.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG2241"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "240",
+        "name": "NG3141",
+        "username": "NG3141.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG3141"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "239",
+        "name": "NG3104",
+        "username": "NG3104.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG3104"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "238",
+        "name": "NG2957",
+        "username": "NG2957.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG2957"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "237",
+        "name": "NG2241",
+        "username": "NG2241.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "NG2241"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "id": "236",
+        "name": "LU4004",
+        "username": "LU4004.login",
+        "type": "5",
+        "userType": "WD Code Level",
+        "landingPageId": "51",
+        "landingPage": "Attendance Tracker",
+        "groupId": "3",
+        "group": "WD Access",
+        "client": [],
+        "project": [],
+        "branch": [],
+        "wdCode": [
+          "LU4001"
+        ],
+        "isAccountLocked": false
+      },
+      {
+        "total": 215
+      }
+    ]
+  },
+  "hidePopup": true
+}

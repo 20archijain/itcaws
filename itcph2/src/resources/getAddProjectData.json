@@ -1,0 +1,219 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "clientList": [
+      {
+        "value": "1",
+        "label": "ITC"
+      }
+    ],
+    "landingPageList": [
+      {
+        "value": "84",
+        "label": "Actionable"
+      },
+      {
+        "value": "80",
+        "label": "Active DSs"
+      },
+      {
+        "value": "81",
+        "label": "Active Variants"
+      },
+      {
+        "value": "12",
+        "label": "Add Client"
+      },
+      {
+        "value": "32",
+        "label": "Add Group"
+      },
+      {
+        "value": "40",
+        "label": "Add Module"
+      },
+      {
+        "value": "16",
+        "label": "Add Project"
+      },
+      {
+        "value": "20",
+        "label": "Add Team"
+      },
+      {
+        "value": "36",
+        "label": "Add User"
+      },
+      {
+        "value": "83",
+        "label": "Attendance"
+      },
+      {
+        "value": "52",
+        "label": "Attendance Locator"
+      },
+      {
+        "value": "51",
+        "label": "Attendance Tracker"
+      },
+      {
+        "value": "78",
+        "label": "Dashboard"
+      },
+      {
+        "value": "15",
+        "label": "Delete Client"
+      },
+      {
+        "value": "35",
+        "label": "Delete Group"
+      },
+      {
+        "value": "43",
+        "label": "Delete Module"
+      },
+      {
+        "value": "19",
+        "label": "Delete Project"
+      },
+      {
+        "value": "23",
+        "label": "Delete Team"
+      },
+      {
+        "value": "39",
+        "label": "Delete User"
+      },
+      {
+        "value": "74",
+        "label": "Downloads"
+      },
+      {
+        "value": "14",
+        "label": "Edit Client"
+      },
+      {
+        "value": "34",
+        "label": "Edit Group"
+      },
+      {
+        "value": "42",
+        "label": "Edit Module"
+      },
+      {
+        "value": "77",
+        "label": "Edit Product Price"
+      },
+      {
+        "value": "18",
+        "label": "Edit Project"
+      },
+      {
+        "value": "22",
+        "label": "Edit Team"
+      },
+      {
+        "value": "38",
+        "label": "Edit User"
+      },
+      {
+        "value": "3",
+        "label": "Home Page"
+      },
+      {
+        "value": "85",
+        "label": "Leaderboard Data"
+      },
+      {
+        "value": "62",
+        "label": "Locations Covered"
+      },
+      {
+        "value": "2",
+        "label": "Logout"
+      },
+      {
+        "value": "1",
+        "label": "My Profile"
+      },
+      {
+        "value": "86",
+        "label": "Outlet Universe"
+      },
+      {
+        "value": "76",
+        "label": "Productivity Report"
+      },
+      {
+        "value": "11",
+        "label": "Project Management"
+      },
+      {
+        "value": "48",
+        "label": "Route (Outlet Master)"
+      },
+      {
+        "value": "47",
+        "label": "Route Data"
+      },
+      {
+        "value": "63",
+        "label": "Route Tracker"
+      },
+      {
+        "value": "79",
+        "label": "Sales Dashboard"
+      },
+      {
+        "value": "31",
+        "label": "Super User"
+      },
+      {
+        "value": "44",
+        "label": "Unlock User"
+      },
+      {
+        "value": "75",
+        "label": "UOB Report"
+      },
+      {
+        "value": "49",
+        "label": "Upload Route Data"
+      },
+      {
+        "value": "72",
+        "label": "Van DS Reporting"
+      },
+      {
+        "value": "73",
+        "label": "Van DS Reporting Map"
+      },
+      {
+        "value": "13",
+        "label": "View Clients"
+      },
+      {
+        "value": "33",
+        "label": "View Groups"
+      },
+      {
+        "value": "41",
+        "label": "View Modules"
+      },
+      {
+        "value": "17",
+        "label": "View Project"
+      },
+      {
+        "value": "21",
+        "label": "View Team"
+      },
+      {
+        "value": "37",
+        "label": "View Users"
+      }
+    ]
+  },
+  "hidePopup": true
+}

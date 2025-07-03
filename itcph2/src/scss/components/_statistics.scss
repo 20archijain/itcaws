@@ -1,0 +1,18 @@
+.statistics {
+  .cus-chart {
+    overflow-x: auto;
+    width: 100%;
+
+    &.no-overflow {
+      overflow: hidden;
+
+      .legend-wrap {
+        .legend-labels {
+          &.horizontal-legend {
+            white-space: normal;
+          }
+        }
+      }
+    }
+  }
+}

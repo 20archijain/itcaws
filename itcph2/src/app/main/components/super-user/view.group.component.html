@@ -1,0 +1,19 @@
+<app-card cardTitle="{{ 'app.user.group.listing.heading' | translate }}" [options]="false">
+  <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
+    [searchTemplate]="searchTemplate" [searchGroup]="group" [columnWrap]="true" [inlineEdit]="false"
+    editUrl="/app/SU02/SU01" [smallTable]="false">
+  </app-table-listing>
+</app-card>
+
+<ng-template #searchTemplate>
+  <div class="row">
+    <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'app.user.group.form.groupName' | translate }}" [group]="group" controlName="name"
+        [autocompleteOff]="true">
+      </app-input>
+    </div>
+    <div class="col-sm-3 col-md-2">
+      <app-button type="submit" text="button.search"></app-button>
+    </div>
+  </div>
+</ng-template>

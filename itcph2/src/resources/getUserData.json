@@ -1,0 +1,447 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "loginTypeList": [
+      {
+        "label": "Admin Level",
+        "value": "1"
+      },
+      {
+        "label": "Client Level",
+        "value": "2"
+      },
+      {
+        "label": "Project Level",
+        "value": "3"
+      },
+      {
+        "label": "Branch Level",
+        "value": "4"
+      },
+      {
+        "label": "WD Code Level",
+        "value": "5"
+      }
+    ],
+    "clientList": [
+      {
+        "value": "1",
+        "label": "ITC"
+      }
+    ],
+    "projectList": [
+      {
+        "value": "1",
+        "label": "Van DS"
+      }
+    ],
+    "branchList": [
+      {
+        "value": "18",
+        "label": "Bihar"
+      },
+      {
+        "value": "7",
+        "label": "E-AP"
+      },
+      {
+        "value": "8",
+        "label": "E-Assam"
+      },
+      {
+        "value": "13",
+        "label": "E-Cal"
+      },
+      {
+        "value": "9",
+        "label": "E-Meghalaya"
+      },
+      {
+        "value": "10",
+        "label": "E-Mizoram"
+      },
+      {
+        "value": "11",
+        "label": "E-Naga Mani"
+      },
+      {
+        "value": "17",
+        "label": "E-Orissa"
+      },
+      {
+        "value": "12",
+        "label": "E-Tripura"
+      },
+      {
+        "value": "14",
+        "label": "E-Viz"
+      },
+      {
+        "value": "15",
+        "label": "EBEN"
+      },
+      {
+        "value": "3",
+        "label": "HARYANA"
+      },
+      {
+        "value": "5",
+        "label": "Jaipur"
+      },
+      {
+        "value": "6",
+        "label": "Jammu"
+      },
+      {
+        "value": "19",
+        "label": "Jharkhand"
+      },
+      {
+        "value": "4",
+        "label": "NLUC"
+      },
+      {
+        "value": "2",
+        "label": "NSAH"
+      },
+      {
+        "value": "30",
+        "label": "PUNJAB"
+      },
+      {
+        "value": "33",
+        "label": "SBLR"
+      },
+      {
+        "value": "34",
+        "label": "SCHE"
+      },
+      {
+        "value": "35",
+        "label": "SCOI"
+      },
+      {
+        "value": "36",
+        "label": "SERN"
+      },
+      {
+        "value": "37",
+        "label": "SHYD"
+      },
+      {
+        "value": "39",
+        "label": "SKAR"
+      },
+      {
+        "value": "32",
+        "label": "SRAY"
+      },
+      {
+        "value": "1",
+        "label": "UP East"
+      },
+      {
+        "value": "24",
+        "label": "W-Goa"
+      },
+      {
+        "value": "23",
+        "label": "W-MH"
+      },
+      {
+        "value": "26",
+        "label": "W-NAG-CG"
+      },
+      {
+        "value": "25",
+        "label": "W-NAG-MH"
+      },
+      {
+        "value": "28",
+        "label": "WAHM"
+      },
+      {
+        "value": "27",
+        "label": "WBHO"
+      },
+      {
+        "value": "31",
+        "label": "WMUM"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "value": "CA3469",
+        "label": "CA3469"
+      },
+      {
+        "value": "CA3520",
+        "label": "CA3520"
+      },
+      {
+        "value": "CA3684",
+        "label": "CA3684"
+      },
+      {
+        "value": "CO4034",
+        "label": "CO4034"
+      },
+      {
+        "value": "CO4043",
+        "label": "CO4043"
+      },
+      {
+        "value": "CO4097",
+        "label": "CO4097"
+      },
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      },
+      {
+        "value": "LU3999",
+        "label": "LU3999"
+      },
+      {
+        "value": "LU4001",
+        "label": "LU4001"
+      },
+      {
+        "value": "LU4077",
+        "label": "LU4077"
+      },
+      {
+        "value": "NG2241",
+        "label": "NG2241"
+      },
+      {
+        "value": "NG2957",
+        "label": "NG2957"
+      },
+      {
+        "value": "NG3104",
+        "label": "NG3104"
+      },
+      {
+        "value": "NG3141",
+        "label": "NG3141"
+      },
+      {
+        "value": "null",
+        "label": "null"
+      },
+      {
+        "value": "PA208910",
+        "label": "PA208910"
+      },
+      {
+        "value": "PA2714",
+        "label": "PA2714"
+      },
+      {
+        "value": "PA2774",
+        "label": "PA2774"
+      }
+    ],
+    "groupList": [
+      {
+        "value": "4",
+        "label": "Branch Access"
+      },
+      {
+        "value": "2",
+        "label": "HO Access"
+      },
+      {
+        "value": "1",
+        "label": "Superadmin"
+      },
+      {
+        "value": "3",
+        "label": "WD Access"
+      }
+    ],
+    "landingPageList": [
+      {
+        "value": "84",
+        "label": "Actionable"
+      },
+      {
+        "value": "80",
+        "label": "Active DSs"
+      },
+      {
+        "value": "81",
+        "label": "Active Variants"
+      },
+      {
+        "value": "12",
+        "label": "Add Client"
+      },
+      {
+        "value": "32",
+        "label": "Add Group"
+      },
+      {
+        "value": "40",
+        "label": "Add Module"
+      },
+      {
+        "value": "16",
+        "label": "Add Project"
+      },
+      {
+        "value": "20",
+        "label": "Add Team"
+      },
+      {
+        "value": "36",
+        "label": "Add User"
+      },
+      {
+        "value": "83",
+        "label": "Attendance"
+      },
+      {
+        "value": "52",
+        "label": "Attendance Locator"
+      },
+      {
+        "value": "51",
+        "label": "Attendance Tracker"
+      },
+      {
+        "value": "78",
+        "label": "Dashboard"
+      },
+      {
+        "value": "74",
+        "label": "Downloads"
+      },
+      {
+        "value": "77",
+        "label": "Edit Product Price"
+      },
+      {
+        "value": "3",
+        "label": "Home Page"
+      },
+      {
+        "value": "85",
+        "label": "Leaderboard Data"
+      },
+      {
+        "value": "62",
+        "label": "Locations Covered"
+      },
+      {
+        "value": "86",
+        "label": "Outlet Universe"
+      },
+      {
+        "value": "76",
+        "label": "Productivity Report"
+      },
+      {
+        "value": "11",
+        "label": "Project Management"
+      },
+      {
+        "value": "48",
+        "label": "Route (Outlet Master)"
+      },
+      {
+        "value": "47",
+        "label": "Route Data"
+      },
+      {
+        "value": "63",
+        "label": "Route Tracker"
+      },
+      {
+        "value": "79",
+        "label": "Sales Dashboard"
+      },
+      {
+        "value": "31",
+        "label": "Super User"
+      },
+      {
+        "value": "75",
+        "label": "UOB Report"
+      },
+      {
+        "value": "49",
+        "label": "Upload Route Data"
+      },
+      {
+        "value": "72",
+        "label": "Van DS Reporting"
+      },
+      {
+        "value": "13",
+        "label": "View Clients"
+      },
+      {
+        "value": "33",
+        "label": "View Groups"
+      },
+      {
+        "value": "41",
+        "label": "View Modules"
+      },
+      {
+        "value": "17",
+        "label": "View Project"
+      },
+      {
+        "value": "21",
+        "label": "View Team"
+      },
+      {
+        "value": "37",
+        "label": "View Users"
+      }
+    ],
+    "sortOptions": [
+      {
+        "label": "Full Name",
+        "value": "a.usr_fullname"
+      },
+      {
+        "label": "Group Name",
+        "value": "b.group_name"
+      },
+      {
+        "label": "Username",
+        "value": "a.auth_name"
+      },
+      {
+        "label": "User Created - ASC",
+        "value": "a.rdt"
+      }
+    ],
+    "viewHeader": [
+      "app.user.user.view.userId",
+      "app.user.user.add.fullname",
+      "auth.login.form.username",
+      "app.user.user.add.userType",
+      "app.user.user.add.landingPage",
+      "app.user.group.form.groupName"
+    ],
+    "viewBody": [
+      "id",
+      "name",
+      "username",
+      "userType",
+      "landingPage",
+      "group"
+    ],
+    "unlockCondition": [
+      "isAccountLocked",
+      false
+    ]
+  },
+  "hidePopup": true
+}

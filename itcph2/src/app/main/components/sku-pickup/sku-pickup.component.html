@@ -1,0 +1,81 @@
+<app-card cardTitle="{{ 'app.attendance.skuPickUp' | translate }}" [options]="false">
+  <div class="row mb-3">
+    <div class="col-sm-12">
+      <form (ngSubmit)="getTableData()" [formGroup]="group" novalidate>
+        <div class="row">
+          <div class="col-sm-4 col-md-3 col-xl-2">
+            <app-date label="placeholder.from" placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
+              controlName="dateFrom" [maxDate]="group.get('dateTo').value" [isRequired]="true">
+            </app-date>
+          </div>
+          <div class="col-sm-4 col-md-3 col-xl-2">
+            <app-date label="placeholder.to" placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
+              controlName="dateTo" [minDate]="group.get('dateFrom').value" [isRequired]="true">
+            </app-date>
+          </div>
+          <div class="col-sm-4 col-xl-2 col-md-3 mt-sm-btn-align">
+            <app-button type="submit" text="button.search" [appScrollToFirstInvalidInput]="group">
+            </app-button>
+            <app-button [appScrollToFirstInvalidInput]="group" type="submit" iconName="icon-download"
+              (onClick)="downloadSkuPickup()" [showIconInButton]="true" [isDisabled]="isDisabled"
+              btnTitle="button.download" btnClass="ml-1"></app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <app-card *ngIf="totalPresent || totalTeams" cardTitle="{{ 'app.attendance.totalAttendance' | translate }}"
+    [options]="false" headerClass="text-center">
+    <h6 class="text-muted text-center">{{ totalPresent }} / {{ totalTeams }}</h6>
+  </app-card>
+
+  <div class="mt-5" class="table-responsive custom-scrollbar fixed-table-header" *ngIf="getUniqueDates()?.length">
+    <table class="table table-striped">
+      <thead class="fixed-header">
+        <tr>
+          <th class="fixed-column"></th>
+          <ng-container *ngFor="let date of getUniqueDates()">
+            <th class="text-center" colspan="2"
+              style="background-color: #002d62; color: white;border-right: 1px solid #fff;">{{ date }}</th>
+          </ng-container>
+        </tr>
+        <tr>
+          <th class="text-center fixed-column pt-1 pb-1">{{ 'app.readystockPickup.productName' | translate }}</th>
+          <ng-container *ngFor="let date of getUniqueDates()">
+            <th class="text-center pt-1 pb-1">{{ 'app.readystockPickup.csrPicked' | translate }}</th>
+            <th class="text-center pt-1 pb-1">{{ 'app.readystockPickup.stockPicked' | translate }}</th>
+          </ng-container>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop through each product -->
+        <ng-container *ngFor="let product of getProductNames();let pIndex = index">
+          <tr>
+            <td class="text-center fixed-column pt-1 pb-1" style="padding-top: 5px; padding-bottom: 5px;">{{ product }}
+            </td>
+            <!-- Loop through each unique date -->
+            <ng-container *ngFor="let date of getUniqueDates();let dIndex = index">
+              <td class="text-center pt-1 pb-1" [ngClass]="{ 'alternate-row': dIndex % 2 !== 0 }">
+                {{ skupickupList[dIndex]?.productList[pIndex]?.csrPicked }}</td>
+              <td class="text-center pt-1 pb-1" [ngClass]="{ 'alternate-row': dIndex % 2 !== 0 }">
+                {{ skupickupList[dIndex]?.productList[pIndex]?.stockPicked }}</td>
+            </ng-container>
+          </tr>
+        </ng-container>
+
+        <tr>
+          <th class="text-center fixed-header pt-1 pb-1">{{ 'app.readystockPickup.grandtotalOfStockIssued' | translate
+            }}</th>
+          <!-- Display grandTotalStockPicked at the end of each date -->
+          <ng-container *ngFor="let date of getUniqueDates();let dIndex = index">
+            <td [ngClass]="{ 'alternate-row': dIndex % 2 !== 0 }"></td>
+            <td class="text-center pt-1 pb-1" [ngClass]="{ 'alternate-row': dIndex % 2 !== 0 }">
+              {{ skupickupList[dIndex]?.grandTotalStockPicked }}
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</app-card>

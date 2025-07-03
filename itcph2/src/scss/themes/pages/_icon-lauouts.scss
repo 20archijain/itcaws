@@ -1,0 +1,76 @@
+// Icon layouts css start
+$ico-col: #4680ff, #6610f2, #6f42c1, #e83e8c, #ff5252, #fd7e14, #ffa21d, #11c15b, #20c997, #00acc1;
+$border-color: #f1f1f1;
+
+.i-main {
+  .i-block {
+    align-items: center;
+    border: 1px solid $border-color;
+    cursor: pointer;
+    display: inline-flex;
+    height: 70px;
+    justify-content: center;
+    margin: 5px;
+    position: relative;
+    width: 70px;
+
+    i {
+      font-size: 30px;
+    }
+
+    label {
+      display: none;
+      margin-bottom: 0;
+    }
+
+    span {
+      &.ic-badge {
+        bottom: 0;
+        position: absolute;
+        right: 0;
+      }
+    }
+
+    .flag-icon-background {
+      height: 40px;
+      width: 40px;
+    }
+  }
+}
+
+.sample-icon {
+  .i-block {
+    align-items: center;
+    border: 1px solid $border-color;
+    border-radius: 50%;
+    cursor: pointer;
+    display: inline-flex;
+    height: 70px;
+    justify-content: center;
+    margin: 5px;
+    position: relative;
+    width: 70px;
+
+    i {
+      font-size: 28px;
+    }
+
+    $i: 1;
+    $t: 1;
+    @while $t < 5 {
+      @each $value in $ico-col {
+        &:nth-child(#{$i}) {
+          background: transparentize($value, 0.9);
+          border-color: $value;
+
+          i {
+            color: $value;
+          }
+          $i: $i + 1;
+        }
+      }
+      $t: $t + 1;
+    }
+  }
+}
+// Icon layouts css end

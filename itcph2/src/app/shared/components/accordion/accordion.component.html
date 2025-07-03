@@ -1,0 +1,90 @@
+<ng-container *ngIf="monthlySalesData?.Title">
+  <app-card headerTitleClass="m-0 fs-14 container " cardTitle="{{monthlySalesData.Title}}" style="font-size: 12px;">
+    <div class="items-center justify-content-center">
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr class="table-header text-center size-13">
+              <th class="size-13 p-1">Branch</th>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                <th class="size-13 p-1">{{ monthYear }}</th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Loop through Branch Data -->
+            <ng-container *ngFor="let branch of monthlySalesData.BranchData">
+              <tr class="text-center">
+                <td class="size-13 nested-table branch-cell">
+                  <i class="fas fa-caret-{{ branch.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                    (click)="toggleExpand(branch)" style="cursor: pointer;">{{ branch.branch_name }}</i>
+                </td>
+                <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                  <td class="size-13 nested-table branch-cell">{{ branch.branchLevelSale[monthYear] || 0 }}</td>
+                </ng-container>
+              </tr>
+
+              <!-- Loop through Circles inside each Branch -->
+              <ng-container *ngIf="branch?.isExpanded">
+                <tr class="table-header text-center m-0 section-row">
+                  <td colspan="14">Circle</td>
+                </tr>
+                <ng-container *ngFor="let circle of branch.circleData">
+                  <tr class="text-center">
+                    <td class="size-13 nested-table2 circle-cell">
+                      <!-- <i class="fa-solid fa-caret-down"></i> -->
+                      <i class="fas fa-caret-{{ circle.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                        (click)="toggleExpand(circle)" style="cursor: pointer;">{{ circle.circle }}</i>
+                    </td>
+                    <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                      <td class="size-13 nested-table2 circle-cell">{{ circle.circleLevelSale[monthYear] || 0 }}</td>
+                    </ng-container>
+                  </tr>
+
+                  <!-- Loop through Sections inside each Circle -->
+                  <ng-container *ngIf="circle?.isExpanded">
+                    <tr class="table-header text-center section-row">
+                      <td colspan="14">Section</td>
+                    </tr>
+                    <ng-container *ngFor="let section of circle.sectionData">
+                      <tr class="text-center">
+                        <td class="size-13 second-nested">
+                          <i class="fas fa-caret-{{ section.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                            (click)="toggleExpand(section)" style="cursor: pointer;">{{ section.section }}</i>
+                        </td>
+                        <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                          <td class="size-13 second-nested">{{ section.sectionLevelSale[monthYear] || 0 }}</td>
+                        </ng-container>
+                      </tr>
+
+                      <!-- Loop through WD Codes inside each Section -->
+                      <ng-container *ngIf="section?.isExpanded">
+                        <tr class="table-header text-center section-row">
+                          <td colspan="14">WD Code</td>
+                        </tr>
+                        <tr *ngFor="let wdData of section.wdData" class="text-center">
+                          <td class="size-13 wd-td">{{ wdData.wdCode }}</td>
+                          <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                            <td class="size-13 wd-td">{{ wdData.wdLevelSale[monthYear] || 0 }}</td>
+                          </ng-container>
+                        </tr>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+            <!-- Total Sales Row -->
+            <tr class="table-header text-center">
+              <td class="size-13">Total</td>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears">
+                <td class="size-13">{{ monthlySalesData?.TotalSum[monthYear] || 0 }}</td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </app-card>
+</ng-container>

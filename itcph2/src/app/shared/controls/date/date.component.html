@@ -1,0 +1,32 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngIf="showIcon; else nonIcon">
+    <div class="input-group">
+      <span class="input-group-text" (click)="d.toggle()"><i class="feather" [ngClass]="icon"></i></span>
+      <ng-container *ngTemplateOutlet="dateBox"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #nonIcon>
+    <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+      <div class="{{ sizeClass }}">
+        <ng-container *ngTemplateOutlet="dateBox"></ng-container>
+      </div>
+    </ng-container>
+    <ng-template #nonHorizontalForm>
+      <ng-container *ngTemplateOutlet="dateBox"></ng-container>
+    </ng-template>
+  </ng-template>
+
+  <!-- Date box control -->
+  <ng-template #dateBox>
+    <input class="form-control" [class.is-invalid]="showValidationState && isTouched && isInvalid" autocomplete="off"
+      [placeholder]="placeholder" [formControlName]="controlName" name="{{ controlName }}" ngbDatepicker
+      #d="ngbDatepicker" (click)="d.toggle()" [minDate]="ngbMinDate" [maxDate]="ngbMaxDate" (closed)="onClosed($event)"
+      [attr.id]="controlName" outsideDays="visible" [startDate]="ngbMinDate" [markDisabled]="markDisabledFn"
+      (blur)="onBlur($event)">
+    <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+      class="error text-justify small form-text invalid-feedback">{{ errorMessage }}</label>
+  </ng-template>
+</div>

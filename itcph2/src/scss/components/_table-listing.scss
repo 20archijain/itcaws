@@ -1,0 +1,32 @@
+$size: 5px;
+$sort-color: rgba(0, 0, 0, .3);
+
+.table-listing {
+  .card-header {
+    padding: 0;
+  }
+
+  .wrap-normal {
+    white-space: normal;
+  }
+}
+
+.sort {
+  &::after {
+    border: $size solid transparent;
+    border-bottom: $size solid $sort-color;
+    content: "";
+    display: inline-block;
+    height: 0;
+    margin-bottom: 2px;
+    width: 0;
+  }
+
+  &.desc {
+    &::after {
+      -webkit-transform: rotate(-180deg);
+      margin-bottom: -2px;
+      transform: rotate(-180deg);
+    }
+  }
+}

@@ -1,0 +1,80 @@
+<app-modal #editModal [containerClick]="false" [dialogClass]="modalSize">
+  <div class="app-modal-header">
+    <h3 class="modal-title">
+      {{ editLabel | translate }}
+    </h3>
+  </div>
+  <div class="app-modal-body" *ngIf="isFormLoaded && editConfig?.length">
+    <app-alert [response]="editResponse"></app-alert>
+
+    <div class="row">
+      <ng-container *ngFor="let config of editConfig; let index = index">
+        <div class="col-sm-6"
+          [ngClass]="{'col-lg-4': modalSize === 'modal-lg' && !config?.hide, 'col-lg-3': modalSize === 'modal-xl' && !config?.hide}"
+          *ngIf="config.type !== typeConfig.REC_ID" [class.d-none]="config?.hide">
+          <ng-container [ngSwitch]="config.type">
+            <!-- Input Box -->
+            <ng-container *ngSwitchCase="typeConfig.INPUT_BOX">
+              <app-input [type]="config?.subtype || 'text'" [group]="group" [label]="config?.label"
+                placeholder="{{ config.label | translate }}" [controlName]="config.controlName"
+                [isRequired]="config?.required" [errorMessages]="config?.errorMessages"
+                [validators]="config?.validators">
+              </app-input>
+            </ng-container>
+
+            <!-- Desc box -->
+            <ng-container *ngSwitchCase="typeConfig.DESC_BOX">
+              <app-textarea [group]="group" [label]="config?.label" placeholder="{{ config?.label | translate }}"
+                [controlName]="config.controlName" [isRequired]="config?.required"
+                [errorMessages]="config?.errorMessages" [validators]="config?.validators">
+              </app-textarea>
+            </ng-container>
+
+            <!-- Select box -->
+            <ng-container *ngSwitchCase="typeConfig.SELECT_BOX">
+              <app-select [group]="group" [label]="config.label"
+                placeholder="{{ (config?.placeholder | translate) || (config.label | translate) }}"
+                [bindLabel]="config?.labelKey || 'label'" [bindValue]="config?.valueKey || 'value'"
+                [controlName]="config.controlName" [options]="list[index] ? list[index].options : []"
+                [errorMessages]="config?.errorMessages" [isRequired]="config?.required" [groupBy]="config?.groupBy"
+                (onChange)="onChange(index, config.controlName, config?.onDropdownChange, config?.isPreDefinedCall)"
+                [multiple]="config?.multiple" [validators]="config?.validators" [hide]="config?.hide"></app-select>
+            </ng-container>
+
+            <!-- Dropdown box -->
+            <ng-container *ngSwitchCase="typeConfig.DROPDOWN_BOX">
+              <app-dropdown [group]="group" [label]="config.label" [controlName]="config.controlName"
+                [options]="config?.options" [isRequired]="config?.required" [labelKey]="config?.labelKey || 'label'"
+                [valueKey]="config?.valueKey || 'value'" [errorMessages]="config?.errorMessages"
+                [validators]="config?.validators"></app-dropdown>
+            </ng-container>
+
+            <!-- Date box -->
+            <ng-container *ngSwitchCase="typeConfig.DATE_BOX">
+              <app-date [group]="group" [controlName]="config.controlName" [label]="config?.label"
+                [errorMessages]="config?.errorMessages"
+                placeholder="{{ (config?.placeholder | translate) || (config.label | translate) }}"
+                [isRequired]="config?.required">
+              </app-date>
+            </ng-container>
+
+            <!-- Radio buttons -->
+            <ng-container *ngSwitchCase="typeConfig.RADIO_BOX">
+              <ng-container *ngIf="(config?.onChange && config.onChange(group)) || true">
+                <app-radio [group]="group" [label]="config?.label" [controlName]="config.controlName"
+                  [options]="config?.options" (onChange)="config?.onChange && config.onChange(group)">
+                </app-radio>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+  <div class="app-modal-footer btn-page">
+    <button type="button" (click)="onClick(false)" data-dismiss="modal" class="btn btn-secondary">{{ 'button.cancel' |
+      translate }}</button>
+    <app-button text="button.save" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="group"
+      colorClass="btn-primary" (onClick)="onClick(true)"></app-button>
+  </div>
+</app-modal>

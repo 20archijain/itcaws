@@ -1,0 +1,142 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "data0": [
+      {
+        "id": "62",
+        "name": "Locations Covered",
+        "modc": "SOM02",
+        "pmodc": "ATN01",
+        "moduleComponent": "LocationsCoveredComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-map-pin",
+        "url": "sites-on-map\/location.php",
+        "sort": "4",
+        "breadcrumb": 0
+      },
+      {
+        "id": "63",
+        "name": "Route Tracker",
+        "modc": "SOM03",
+        "pmodc": "ATN01",
+        "moduleComponent": "RouteTrackerComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-map-pin",
+        "url": "sites-on-map\/tracker.php",
+        "sort": "3",
+        "breadcrumb": 0
+      },
+      {
+        "id": "86",
+        "name": "Outlet Universe",
+        "modc": "SOM05",
+        "pmodc": "ATN01",
+        "moduleComponent": "UniverseDataComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-map-pin",
+        "url": "sites-on-map\/universe-data.php",
+        "sort": "5",
+        "breadcrumb": 0
+      },
+      {
+        "id": "47",
+        "name": "Route Data",
+        "modc": "RD01",
+        "pmodc": "0",
+        "moduleComponent": null,
+        "moduleActionCode": "VIEW",
+        "modulePos": "navbar",
+        "icon": "icon-map",
+        "url": "",
+        "sort": "41",
+        "breadcrumb": 0
+      },
+      {
+        "id": "48",
+        "name": "Route (Outlet Master)",
+        "modc": "DWN08",
+        "pmodc": "DWN01",
+        "moduleComponent": "RouteDataDownloadComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": null,
+        "url": "master-data-download\/master-data-download.php",
+        "sort": "6",
+        "breadcrumb": 0
+      },
+      {
+        "id": "49",
+        "name": "Upload Route Data",
+        "modc": "RD03",
+        "pmodc": "RD01",
+        "moduleComponent": "RouteDataUploadComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": null,
+        "url": "route-data-upload\/routeDataUpload.php",
+        "sort": "2",
+        "breadcrumb": 0
+      },
+      {
+        "id": "51",
+        "name": "Attendance Tracker",
+        "modc": "ATN02",
+        "pmodc": "ATN01",
+        "moduleComponent": "AttendanceTrackerComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-clock",
+        "url": "attendance\/tracker.php",
+        "sort": "1",
+        "breadcrumb": 0
+      },
+      {
+        "id": "52",
+        "name": "Attendance Locator",
+        "modc": "ATN03",
+        "pmodc": "ATN01",
+        "moduleComponent": "AttendanceLocatorComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-clock",
+        "url": "attendance\/locator.php",
+        "sort": "2",
+        "breadcrumb": 0
+      },
+      {
+        "id": "73",
+        "name": "Van DS Reporting Map",
+        "modc": "DWN03",
+        "pmodc": "DWN02",
+        "moduleComponent": null,
+        "moduleActionCode": "MAP",
+        "modulePos": "actionbar",
+        "icon": "",
+        "url": "",
+        "sort": "1",
+        "breadcrumb": 0
+      },
+      {
+        "id": "41",
+        "name": "View Modules",
+        "modc": "SU11",
+        "pmodc": "SU01",
+        "moduleComponent": "ViewModuleComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "",
+        "url": "user\/module.php",
+        "sort": "6",
+        "breadcrumb": 0
+      },
+      {
+        "total": 51
+      }
+    ]
+  },
+  "hidePopup": true
+}

@@ -1,0 +1,431 @@
+<app-card [options]="false">
+
+  <form (ngSubmit)="getDashboardData()" [formGroup]="group" novalidate class="form-content">
+    <!-- Superadmin and Admin Login -->
+    <div *ngIf="branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="district" [options]="districtOptions"
+          [multiple]="true" placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="branch" [options]="branchOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="wdMarket" [options]="wdMarketOptions"
+          placeholder="{{ 'app.wdMapping.wd_market' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+          placeholder="{{ 'app.wdMapping.wd_pop_group' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="category" [options]="categoryOptions"
+          [multiple]="true" placeholder="{{ 'app.team.add.category' | translate }}" (onChange)="getProduct()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="product" [options]="productOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.product' | translate }}">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" [multiple]="true" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Regional Login -->
+    <div *ngIf="!branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Footer Section with Buttons -->
+
+  </form>
+</app-card>
+
+<app-card>
+  <!-- Tabs Navigation -->
+  <ul class="nav nav-tabs" id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" [class.active]="currentTab === 'Today'" id="home-tab" type="button" role="tab"
+        (click)="setTab('Today')" aria-controls="home" [attr.aria-selected]="currentTab === 'Today'">
+        Today
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" [class.active]="currentTab === 'MTD'" id="profile-tab" type="button" role="tab"
+        (click)="setTab('MTD')" aria-controls="profile" [attr.aria-selected]="currentTab === 'MTD'">
+        MTD
+      </button>
+    </li>
+  </ul>
+  <!-- Tabs Content -->
+  <div [ngStyle]="{'background-color': currentTab === 'Today' ? '#f5f5f5' : '#e0f7fa'}">
+    <div class="mt-2">
+      <div class="tab-content" id="myTabContent">
+        <div class="tab-pane fade" [class.show]="currentTab === 'Today'" [class.active]="currentTab === 'Today'"
+          role="tabpanel" aria-labelledby="today-tab">
+          <!-- Today Tab Content -->
+
+          <div cardClass="statstic-card">
+            <div class="row">
+              <!-- Attendance Section -->
+              <div class="col stat-card">
+                <div class="stat-header">
+                  <i class="fas fa-users"></i>
+                  <strong>Total DS: {{ AttCardData?.allTeams }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Present:</p> <strong>{{ AttCardData?.morningAttData }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Absent:</p> <strong>{{ AttCardData?.notPresent }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Percent:</p> <strong>{{ AttCardData?.percentAttendance }}%</strong>
+                </div>
+              </div>
+
+              <!-- Beat Adherence Section -->
+              <div class="col stat-card">
+                <div class="stat-header">
+                  <i class="fas fa-route"></i>
+                  <strong>{{ 'app.dashboard.beatAdherence' | translate }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Compliance:</p> <strong>{{ BeatAdherenceCardData?.adherence }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Unadhered:</p> <strong>{{ BeatAdherenceCardData?.unAdherence }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Percent:</p> <strong>{{ BeatAdherenceCardData?.avgCompRoute }}%</strong>
+                </div>
+              </div>
+
+              <!-- Qualified Attendance Section -->
+              <div class="col stat-card">
+                <div class="stat-header">
+                  <i class="far fa-calendar-check"></i>
+                  <strong>{{ 'app.dashboard.qualifiedAttendance' | translate }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Qualified:</p> <strong>{{ QualifiedAttData?.qualifiedCount }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Unqualified:</p> <strong>{{ QualifiedAttData?.UnqualifiedCount }}</strong>
+                </div>
+                <div class="stat-item">
+                  <p>Percent:</p> <strong>{{ QualifiedAttData?.avgQualified }}%</strong>
+                </div>
+              </div>
+
+              <!-- Dynamic Data Section -->
+              <ng-container *ngFor="let card of slideCardData">
+                <div class="col stat-card">
+                  <div class="stat-header">
+                    <i [class]="card.iconClass"></i>
+                    <strong>{{ card.title }}</strong>
+                  </div>
+                  <div class="stat-item">
+                    <p>{{ card.text1 }}:</p> <strong>{{ card.value1 }}</strong>
+                  </div>
+                  <div class="stat-item">
+                    <p>{{ card.text2 }}:</p> <strong>{{ card.value2 }}</strong>
+                  </div>
+                  <div class="stat-item">
+                    <p>{{ card.text3 }}:</p> <strong>{{ card.value3 }}</strong>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane fade" [class.show]="currentTab === 'MTD'" [class.active]="currentTab === 'MTD'"
+          role="tabpanel" aria-labelledby="mtd-tab">
+          <!-- MTD Tab Content -->
+          <div class="row">
+            <div class="col-xl-4 col-md-12">
+              <app-card [hidHeader]="true" cardClass="analytic-card bg-c-green">
+                <div class="row align-items-center m-b-25">
+                  <div class="col-auto">
+                    <i class="fas icon feather icon-eye text-c-green f-18 analytic-icon"></i>
+                  </div>
+                  <div class="col text-right">
+                    <h3 class="m-b-5 text-white">Outlet Visited</h3>
+                  </div>
+                </div>
+                <h6 class="m-b-0  text-white d-inline-block">Target : </h6>
+                <h5 class=" text-white d-inline-block m-b-0 m-l-10">{{ OutletVisitedCardData?.supposedShopCounts }}
+                </h5>
+                <h6 class="m-b-0 d-inline-block  text-white float-right">Visited: {{
+                  OutletVisitedCardData?.totalShopsVisitedTillDate }}</h6>
+              </app-card>
+            </div>
+            <div class="col-xl-4 col-md-12">
+              <app-card [hidHeader]="true" cardClass="analytic-card bg-c-blue">
+                <div class="row align-items-center m-b-25">
+                  <div class="col-auto">
+                    <i class="fas fa-clipboard text-c-blue f-18 analytic-icon"></i>
+                  </div>
+                  <div class="col text-right">
+                    <h3 class="m-b-5 text-white">Outlet Billed</h3>
+                  </div>
+                </div>
+                <h6 class="m-b-0 text-white d-inline-block">Target : </h6>
+                <h5 class="text-white d-inline-block m-b-0 m-l-10">{{ OutletVisitedCardData?.supposedShopCounts }}
+                </h5>
+                <h6 class="m-b-0 d-inline-block text-white float-right">Billed : {{
+                  OutletVisitedCardData?.totalSellinShopsTillDate }}</h6>
+              </app-card>
+            </div>
+            <div class="col-xl-4 col-md-12">
+              <app-card [hidHeader]="true" cardClass="analytic-card bg-c-red">
+                <div class="row align-items-center m-b-25">
+                  <div class="col-auto">
+                    <i class="fas fa-clipboard text-c-red f-18 analytic-icon"></i>
+                  </div>
+                  <div class="col text-right">
+                    <h3 class="m-b-5 text-white">Focus Brand Billed</h3>
+                  </div>
+                </div>
+                <p class="m-b-0 d-inline-block text-white">Target : </p>
+                <h5 class="text-white d-inline-block m-b-0 m-l-10">{{ OutletVisitedCardData?.supposedShopCounts }}
+                </h5>
+                <h6 class="m-b-0 d-inline-block text-white float-right">Billed : {{
+                  OutletVisitedCardData?.focusBilled }}</h6>
+              </app-card>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</app-card>
+
+
+<!-- Graphs -->
+<div class="row">
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month1" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getShopVisitedSPLYComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-grouped-vertical-column-chart [transformedChartData]="visitedSPLYLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Outlet Visited'" [heading]="'Outlet Visit Comparison LYTD/YTD'" style="margin-bottom: 3rem;">
+        </app-grouped-vertical-column-chart>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}"
+            (onChange)="outletVisitedMonthlyComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-grouped-vertical-column-chart [transformedChartData]="visitedLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Outlet Visited'" [heading]="'Outlet Visit Comparison CM/LM'" style="margin-bottom: 3rem;">
+        </app-grouped-vertical-column-chart>
+      </div>
+    </app-card>
+  </div>
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="year" groupClassName="row" sizeClass="col-sm-12"
+            [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
+            (onChange)="getShopVisitedYTDLYTDComparisonDataMonthly()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-grouped-vertical-column-chart [transformedChartData]="ytdlytdVisitDataBarChartData" [xAxisLabel]="'Month'"
+          [yAxisLabel]="'Outlet Visited'" [heading]="'Outlet Visit Comparison SPLY'" style="margin-bottom: 2.8rem;">
+        </app-grouped-vertical-column-chart>
+      </div>
+    </app-card>
+  </div>
+  <!-- Second Chart with Filters -->
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month2" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getOutletBilledComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="billedLineChartData" [xAxisLabel]="'Date'" [yAxisLabel]="'Outlet Billed'"
+          [heading]="' Outlet Billed Comparison CM/LM'" class="w-100" style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month3" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getShopBilledSPLYComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <app-line-chart [lineChartData]="billedSPLYLineChartData" [xAxisLabel]="'Date'" [yAxisLabel]="'Outlet Visited'"
+          [heading]="' Outlet Billed Comparison SPLY'" class="w-100" style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+  <!-- Second Chart with Filters -->
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="year1" groupClassName="row" sizeClass="col-sm-12"
+            [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
+            (onChange)="getShopBilledYTDLYTDComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <!-- Second Chart -->
+        <app-line-chart [lineChartData]="billedYTDLYTDLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Outlet Billed'" [heading]="' Outlet Billed Comparison LYTD/YTD'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month4" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}"
+            (onChange)="getFocusCMLMOutletBilledComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <!-- First Chart -->
+        <app-line-chart [lineChartData]="billedCMLMFocusLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Outlet Billed'" [heading]="' Focus Billed CM/LM'" class="w-100" style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+  <!-- Second Chart with Filters -->
+  <div class="col-md-6 col-12">
+    <app-card class="d-flex flex-column h-100">
+      <!-- Filters -->
+      <div class="row mb-3">
+        <div class="col-12 col-sm-6 col-lg-4">
+          <app-select [group]="group.get('searchbar')" controlName="month5" groupClassName="row" sizeClass="col-sm-12"
+            [options]="monthOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.salesDashboard.month' | translate }}"
+            (onChange)="getFocusSPLYOutletBilledComparisonData()">
+          </app-select>
+        </div>
+      </div>
+      <!-- First Chart -->
+      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
+        <!-- Second Chart -->
+        <app-line-chart [lineChartData]="billedSPLFocusLineChartData" [xAxisLabel]="'Date'"
+          [yAxisLabel]="'Outlet Billed'" [heading]="' Focus Outlet Billed Comparison SPLY'" class="w-100"
+          style="height: 325px;">
+        </app-line-chart>
+      </div>
+    </app-card>
+  </div>
+</div>
+<!-- </app-card> -->

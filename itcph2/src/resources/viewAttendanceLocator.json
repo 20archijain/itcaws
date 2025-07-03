@@ -1,0 +1,136 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "total": 18,
+    "markers": [
+      {
+        "latitude": 21.25153329999999840538293938152492046356201171875,
+        "longitude": 77.5224783999999971229044604115188121795654296875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Akash Jawanjad",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Akash Jawanjad<br>Time - 11:01:29 AM<\/p> <p class='attendance-label'>Branch - WNAG<br>Circle - NAV<br>Section - NAV004<br>WDCode - NG2957<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 26.134962000000001580701791681349277496337890625,
+        "longitude": 85.388938499999994746758602559566497802734375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "ANURAG",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>ANURAG<br>Time - 10:05:10 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM004<br>WDCode - PA2774<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 19.8603011000000009289578883908689022064208984375,
+        "longitude": 75.3056761999999935142113827168941497802734375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Asif Mirza",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Asif Mirza<br>Time - 11:06:31 AM<\/p> <p class='attendance-label'>Branch - WNAG<br>Circle - NAM<br>Section - NAM001<br>WDCode - NG3104<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 25.38764880000000090376488515175879001617431640625,
+        "longitude": 87.099198900000004641697159968316555023193359375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Bikash Kumar",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Bikash Kumar<br>Time - 10:51:30 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM007<br>WDCode - PA208910<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 26.1694308000000006586560630239546298980712890625,
+        "longitude": 85.8873597000000046364220906980335712432861328125,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "CHANDAN_EX CG SWD DS",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>CHANDAN_EX CG SWD DS<br>Time - 10:06:27 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM010<br>WDCode - PA2714<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 9.92268609999999995352482073940336704254150390625,
+        "longitude": 78.1229211999999932913851807825267314910888671875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "M MUTHUKRISHNAN",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>M MUTHUKRISHNAN<br>Time - 10:25:17 AM<\/p> <p class='attendance-label'>Branch - SCOI<br>Circle - CO3<br>Section - CO3007<br>WDCode - CO4034<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 21.18293299999999845795173314400017261505126953125,
+        "longitude": 79.6368460999999996374754118733108043670654296875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Mahadeo Sonkusare1",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Mahadeo Sonkusare1<br>Time - 10:56:03 AM<\/p> <p class='attendance-label'>Branch - WNAG<br>Circle - NAV<br>Section - NAV002<br>WDCode - NG2241<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 30.083891099999998886005414533428847789764404296875,
+        "longitude": 78.2450098999999994475729181431233882904052734375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "MRINAL ROY",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>MRINAL ROY<br>Time - 12:11:14 AM<\/p> <p class='attendance-label'>Branch - EBEN<br>Circle - CAV<br>Section - CAV005<br>WDCode - CA3469<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 11.62701870000000070604073698632419109344482421875,
+        "longitude": 78.1351413999999948600816424004733562469482421875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "P STEPHEN",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>P STEPHEN<br>Time - 12:21:05 PM<\/p> <p class='attendance-label'>Branch - SCOI<br>Circle - CO1<br>Section - CO100A<br>WDCode - CO4043<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 25.387344360351999483782492461614310741424560546875,
+        "longitude": 87.0979843139650000694018672220408916473388671875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "PRAMOD KUMAR",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>PRAMOD KUMAR<br>Time - 09:23:20 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM007<br>WDCode - PA208910<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 0,
+        "longitude": 0,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Rajeev",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Rajeev<br>Time - 10:19:29 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM004<br>WDCode - PA2774<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 26.14656120000000072423063102178275585174560546875,
+        "longitude": 85.8957879000000019686922314576804637908935546875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "RANJAN EX CG SWD DS",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>RANJAN EX CG SWD DS<br>Time - 10:28:17 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM010<br>WDCode - PA2714<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 10.8035712999999997663280737469904124736785888671875,
+        "longitude": 78.7070707999999967796611599624156951904296875,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "RUBAN",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>RUBAN<br>Time - 10:26:51 AM<\/p> <p class='attendance-label'>Branch - SCOI<br>Circle - CO2<br>Section - CO200B<br>WDCode - CO4097<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 25.25429150000000078080120147205889225006103515625,
+        "longitude": 82.0886675999999937403117655776441097259521484375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "SHIVAM VAN DS",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>SHIVAM VAN DS<br>Time - 01:00:26 PM<\/p> <p class='attendance-label'>Branch - NEUP<br>Circle - LU4<br>Section - LU4004<br>WDCode - LU4001<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 27.1386707999999998719431459903717041015625,
+        "longitude": 83.54643509999999650972313247621059417724609375,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Sunil2",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Sunil2<br>Time - 10:25:48 AM<\/p> <p class='attendance-label'>Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 27.1387031000000007452399586327373981475830078125,
+        "longitude": 83.546467699999993783421814441680908203125,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "Sunny",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>Sunny<br>Time - 10:37:27 AM<\/p> <p class='attendance-label'>Branch - NEUP<br>Circle - LUC_CFP<br>Section - LUC003_CFP<br>WDCode - LU4077<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 26.16514120000000076515789260156452655792236328125,
+        "longitude": 85.8881166000000035865014069713652133941650390625,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "TULSI KUMAR WHOLESALE DS",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>TULSI KUMAR WHOLESALE DS<br>Time - 11:01:03 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM010<br>WDCode - PA2714<br>DS Type - VAN DS<\/p><\/div>"
+      },
+      {
+        "latitude": 26.1532140999999995756297721527516841888427734375,
+        "longitude": 85.8964270999999968125848681665956974029541015625,
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-flag.png",
+        "markerTitle": "UTTAM",
+        "windowTitle": "<div class='attendance-marker'><p class='attendance-label'>UTTAM<br>Time - 10:03:33 AM<\/p> <p class='attendance-label'>Branch - EPAT<br>Circle - PAM<br>Section - PAM010<br>WDCode - PA2714<br>DS Type - VAN DS<\/p><\/div>"
+      }
+    ]
+  },
+  "hidePopup": true
+}

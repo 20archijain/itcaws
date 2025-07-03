@@ -1,0 +1,282 @@
+<ng-container *ngIf="monthlySalesData?.Title">
+  <app-card headerTitleClass="m-0 fs-14 container" cardTitle="{{monthlySalesData.Title}}" style="font-size: 12px;">
+    <button class="btn btn-sm btn-link p-0 ms-1" style="color: #080808; float :left; text-decoration: none;"
+      (click)="closeAllExpand()">
+      {{ 'Collapse -' }}
+    </button>
+
+    <i class="fas fa-download mb-1" style="cursor: pointer; float :right;"
+      (click)="showDownloadPopup = true">&nbsp;&nbsp;Download</i>
+
+    <!-- Modal Backdrop -->
+    <div class="modal-backdrop" *ngIf="showDownloadPopup" (click)="closeDownloadPopup()"></div>
+
+    <!-- Radio Popup Modal -->
+    <div class="download-popup" *ngIf="showDownloadPopup">
+      <div class="popup-header">
+        <h5>Select Level to Download</h5>
+        <button class="close-btn" (click)="closeDownloadPopup()">×</button>
+      </div>
+      <div class="popup-body">
+        <label *ngFor="let level of downloadLevels" class="radio-option">
+          <input type="radio" name="downloadLevel" [value]="level" (change)="onLevelSelect(level)" />
+          {{ level | titlecase }} Level
+        </label>
+      </div>
+    </div>
+
+    <div class="items-center justify-content-center">
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr class="table-header size-13">
+              <th class="size-13 p-1 district">District
+                <button class="btn btn-sm btn-link p-0 ms-1" style="color: #fff; text-decoration: none;"
+                  (click)="toggleAllColumns()">
+                  {{ areAllGroupsExpanded() ? '-' : '+' }}
+                </button>
+              </th>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                <th *ngIf="shouldDisplayColumn(i)" class="size-13 p-1 text-center" (click)="handleHeaderClick(i)"
+                  [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }"
+                  [style.cursor]="(i === 0 || i === 5 || i === 10) ? 'pointer' : 'default'">
+                  {{ monthYear }}
+                </th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let district of monthlySalesData.districtData">
+              <tr class=" ">
+                <td class="district-cell" style="position: relative;">
+                  <div>
+                    <i class="fas fa-caret-{{ district.isExpanded ? 'up' : 'down' }}"
+                      (click)="toggleExpand(district, 'district')" style="cursor: pointer; margin-right: 5px;"
+                      class="size-10"></i>
+                    {{ district.district }}
+                  </div>
+                  <i class="fas fa-map-marker-alt" (click)="openMap(district)"
+                    style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                  </i>
+                </td>
+                <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                  <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center" [@columnAnimation]="getColumnState(i)"
+                    [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                    {{ district.districtLevelSale[monthYear] || 0 }}
+                  </td>
+                </ng-container>
+              </tr>
+
+              <ng-container *ngIf="district?.isExpanded">
+                <!-- <tr class="table-header m-0 section-row">
+                  <td class="branch">Branch</td>
+                  <td colspan="15" style="background-color: #fff;"></td>
+                </tr> -->
+                <ng-container *ngFor="let branch of district.branchData">
+                  <tr class=" ">
+                    <td class=" nested-table2 branch-cell" style="position: relative;">
+                      <div style="margin-left:5px" class="size-10">
+                        <i class="fas fa-caret-{{ branch.isExpanded ? 'up' : 'down' }}"
+                          (click)="toggleExpand(branch, 'branch')" style="cursor: pointer;"></i>
+                        {{ branch.branch_name }}
+                      </div>
+                      <i class="fas fa-map-marker-alt" (click)="openMap(branch)"
+                        style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                      </i>
+                    </td>
+                    <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                      <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                        [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                        {{ branch.branchLevelSale[monthYear] || 0 }}
+                      </td>
+                    </ng-container>
+                  </tr>
+
+                  <ng-container *ngIf="branch?.isExpanded">
+                    <!-- <tr class="table-header m-0 section-row">
+                      <td class="circle">Circle</td>
+                      <td colspan="15" style="background-color: #fff;"></td>
+                    </tr> -->
+                    <ng-container *ngFor="let circle of branch.circleData">
+                      <tr class=" ">
+                        <td class=" nested-table2 circle-cell" style="position: relative;">
+                          <div style="margin-left:10px" class="size-10">
+                            <i class="fas fa-caret-{{ circle.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                              (click)="toggleExpand(circle, 'circle')" style="cursor: pointer;">
+                              {{ circle.circle }}
+                            </i>
+                          </div>
+                          <i class="fas fa-map-marker-alt" (click)="openMap(circle)"
+                            style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                          </i>
+                        </td>
+                        <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                          <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                            [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                            {{ circle.circleLevelSale[monthYear] || 0 }}
+                          </td>
+                        </ng-container>
+                      </tr>
+                      <ng-container *ngIf="circle?.isExpanded">
+                        <!-- <tr class="table-header section-row">
+                          <td colspan="" class="section">Section</td>
+                          <td colspan="15" style="background-color: #fff;"></td>
+                        </tr> -->
+                        <ng-container *ngFor="let section of circle.sectionData">
+                          <tr class=" ">
+                            <td class=" section-cell" style="position: relative;">
+                              <div style="margin-left:15px" class="size-10">
+                                <i class="fas fa-caret-{{ section.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                                  (click)="toggleExpand(section, 'section')" style="cursor: pointer;">
+                                  {{ section.section }}
+                                </i>
+                              </div>
+                              <i class="fas fa-map-marker-alt" (click)="openMap(section)"
+                                style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                              </i>
+                            </td>
+                            <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                              <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                                [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                                {{ section.sectionLevelSale[monthYear] || 0 }}
+                              </td>
+                            </ng-container>
+                          </tr>
+                          <ng-container *ngIf="section?.isExpanded">
+                            <!-- <tr class="table-header section-row">
+                              <td colspan="" class="wdCode">WD Code</td>
+                              <td colspan="15" style="background-color: #fff;"></td>
+                            </tr> -->
+                            <ng-container *ngFor="let wdData of section.wdData">
+                              <tr class=" ">
+                                <td class=" wdCode-cell" style="position: relative;">
+                                  <div style="margin-left:20px" class="size-10">
+                                    <i class="fas fa-caret-{{ wdData.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                                      (click)="toggleExpand(wdData, 'wd')" style="cursor: pointer;">
+                                      {{ wdData.wd_code }}
+                                    </i>
+                                  </div>
+                                  <i class="fas fa-map-marker-alt" (click)="openMap(wdData)"
+                                    style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                  </i>
+                                </td>
+                                <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                                  <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                                    [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                                    {{ wdData.wdLevelSale[monthYear] || 0 }}
+                                  </td>
+                                </ng-container>
+                              </tr>
+                              <ng-container *ngIf="wdData?.isExpanded">
+                                <!-- <tr class="table-header section-row">
+                                  <td colspan="" class="team">Team</td>
+                                  <td colspan="15" style="background-color: #fff;"></td>
+                                </tr> -->
+                                <ng-container *ngFor="let teamData of wdData.teamData">
+                                  <tr class=" ">
+                                    <td class=" team-cell" style="position: relative;">
+                                      <div style="margin-left:25px" class="size-10">
+                                        <i class="fas fa-caret-{{ teamData.isExpanded ? 'up' : 'down' }}"
+                                          aria-hidden="true" (click)="toggleExpand(teamData, 'team')"
+                                          style="cursor: pointer;">
+                                          {{ teamData.team_name }}
+                                        </i>
+                                      </div>
+                                      <i class="fas fa-map-marker-alt" (click)="openMap([teamData, wdData])"
+                                        style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                      </i>
+                                    </td>
+                                    <ng-container
+                                      *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                                      <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                                        [@columnAnimation]="getColumnState(i)"
+                                        [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                                        {{ teamData.teamLevelSale[monthYear] || 0 }}
+                                      </td>
+                                    </ng-container>
+                                  </tr>
+                                  <ng-container *ngIf="teamData?.isExpanded">
+                                    <!-- <tr class="table-header section-row">
+                                      <td colspan="" class="route">Route Name</td>
+                                      <td colspan="15" style="background-color: #fff;"></td>
+                                    </tr> -->
+                                    <ng-container *ngFor="let routeData of teamData.routeData">
+                                      <tr class=" ">
+                                        <td class=" route-cell" style="position: relative;">
+                                          <div style="margin-left:5px" class="size-10">
+                                            <i class="fas fa-caret-{{ routeData.isExpanded ? 'up' : 'down' }}"
+                                              aria-hidden="true" (click)="toggleExpand(routeData, 'route')"
+                                              style="cursor: pointer;">
+                                              {{ routeData.route_name }}
+                                            </i>
+                                          </div>
+                                          <i class="fas fa-map-marker-alt"
+                                            (click)="openMap([routeData, wdData, teamData])"
+                                            style="position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                          </i>
+                                        </td>
+                                        <ng-container
+                                          *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                                          <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                                            [@columnAnimation]="getColumnState(i)"
+                                            [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                                            {{ routeData.routeLevelSale[monthYear] || 0 }}
+                                          </td>
+                                        </ng-container>
+                                      </tr>
+                                      <ng-container *ngIf="routeData?.isExpanded">
+                                        <!-- <tr class="table-header section-row">
+                                          <td colspan="" class="outlet">Outlet Name</td>
+                                          <td colspan="15" style="background-color: #fff;"></td>
+                                        </tr> -->
+                                        <ng-container *ngFor="let outletData of routeData.outletData">
+                                          <tr class=" ">
+                                            <td style="position: relative;">
+                                              <div class="size-10">
+                                                {{ outletData.outlet_name }}
+                                              </div>
+                                              <i class="fas fa-map-marker-alt"
+                                                (click)="openMap([outletData, teamData, wdData, routeData])"
+                                                style="position: absolute; right: 4rem; top: 50%; transform: translateY(-50%); cursor: pointer;">
+                                              </i>
+                                            </td>
+                                            <ng-container
+                                              *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                                              <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center"
+                                                [@columnAnimation]="getColumnState(i)"
+                                                [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                                                {{ outletData.outletLevelSale[monthYear] || 0 }}
+                                              </td>
+                                            </ng-container>
+                                          </tr>
+                                        </ng-container>
+                                      </ng-container>
+                                    </ng-container>
+                                  </ng-container>
+                                </ng-container>
+                              </ng-container>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <!-- Total Sales Row -->
+            <tr class="table-header  ">
+              <td class="size-13">Total</td>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                <td *ngIf="shouldDisplayColumn(i)" class="size-13 text-center" [@columnAnimation]="getColumnState(i)"
+                  [ngClass]="{ 'white-bg': isWhiteColumn(i) }">
+                  {{ monthlySalesData?.TotalSum[monthYear] || 0 }}
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </app-card>
+</ng-container>

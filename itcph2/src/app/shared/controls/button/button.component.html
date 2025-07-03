@@ -1,0 +1,40 @@
+<!-- Show icon -->
+<ng-container *ngIf="showIconOnly; else showButton">
+  <i class="feather {{ iconName }}" (click)="onBtnClick($event)" [title]="btnTitle | translate" aria-hidden="true"></i>
+</ng-container>
+
+<!-- Show Button -->
+<ng-template #showButton>
+  <ng-container *ngIf="wrapperClass; else noWrapper">
+    <div class="{{ wrapperClass }}">
+      <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #noWrapper>
+    <ng-container *ngTemplateOutlet="buttonContent"></ng-container>
+  </ng-template>
+
+  <ng-template #buttonContent>
+    <button [type]="type" class="btn {{ colorClass }} {{ btnClass }} {{ textColorClass }}" [disabled]="isDisabled"
+      (click)="onBtnClick($event)" [ngbTooltip]="btnTitle | translate" placement="top" [class.disabled]="isDisabled">
+
+      <!-- Show icon -->
+      <ng-container *ngIf="showIconInButton">
+        <i [ngClass]="{'feather': !isFaIcon}" class="{{ iconName }}"></i>
+      </ng-container>
+
+      <!-- Show spinner -->
+      <ng-container *ngIf="showSpinner">
+        <span
+          [ngClass]="{'spinner-border spinner-border-sm': spinnerType === spinType.Border, 'spinner-grow spinner-grow-sm': spinnerType === spinType.Grow}"
+          role="status"></span>
+        <ng-container *ngIf="spinnerText"> {{ spinnerText | translate }}</ng-container>
+      </ng-container>
+
+      <!-- Button text -->
+      <ng-container *ngIf="text && !showSpinner">
+        {{ text | translate }}
+      </ng-container>
+    </button>
+  </ng-template>
+</ng-template>

@@ -1,0 +1,20 @@
+<div class="container"
+  *ngIf="this.nextConfig.layout === 'horizontal' && this.nextConfig.subLayout === 'horizontal-2'; else mainHeader">
+  <ng-container *ngTemplateOutlet="mainHeader"></ng-container>
+</div>
+<ng-template #mainHeader>
+  <div class="container-fluid">
+    <div class="m-header">
+      <a href="javascript:" class="mobile-menu" id="mobile-collapse" (click)="navCollapse()"><span></span></a>
+      <a [routerLink]="homePage" class="b-brand">
+        <img [src]="clientInfo?.logo" alt="{{ 'header.logoAltText' | translate }}" class="logo">
+      </a>
+      <a class="mob-toggler" [ngClass]="{'on' : this.menuClass}" href="javascript:" (click)="toggleMobOption()"><i
+          class="feather icon-more-vertical"></i></a>
+    </div>
+    <div class="collapse navbar-collapse justify-content-lg-end" [style.display]="this.collapseStyle">
+      <!-- <app-navbar-left class="me-auto"></app-navbar-left> -->
+      <app-navbar-right></app-navbar-right>
+    </div>
+  </div>
+</ng-template>

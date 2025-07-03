@@ -1,0 +1,28 @@
+<app-card cardTitle="{{ 'app.download.downloadProductiveReport' | translate }}" [options]="false">
+  <div class="row">
+    <!-- Searchbar -->
+    <div class="col-sm-12">
+      <form (ngSubmit)="download()" [formGroup]="group" novalidate>
+        <div class="row">
+          <div class="col-sm-4 col-lg-4 col-xl-3">
+            <app-dropdown [group]="group" controlName="year" [options]="yearList" blankOptionLabel="app.attendance.year"
+              label="app.attendance.year" [isRequired]="true" [errorMessages]="errorMessages.year"
+              labelClassName="form-label d-none d-lg-block d-xl-none">
+            </app-dropdown>
+          </div>
+          <div class="col-sm-4 col-lg-4 col-xl-3">
+            <app-dropdown [group]="group" controlName="month" [options]="monthList" [isRequired]="true"
+              blankOptionLabel="app.attendance.month" [errorMessages]="errorMessages.month" label="app.attendance.month"
+              labelClassName="form-label d-none d-lg-block d-xl-none"></app-dropdown>
+          </div>
+          <div class="col-sm-4">
+            <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true"
+              btnTitle="button.download" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="group"
+              btnClass="float-right float-sm-none mt-lg-4 mt-xl-0" (onClick)="download()">
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

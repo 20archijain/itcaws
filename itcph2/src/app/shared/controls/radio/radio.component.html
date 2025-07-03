@@ -1,0 +1,18 @@
+<div *ngIf="!hide" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngFor="let option of options; let i = index">
+    <div class="form-group" [class.d-inline]="inline">
+      <div class="radio radio-primary d-inline">
+        <input type="radio" name="{{ controlName }}" id="{{ controlName }} - {{ i }}" [formControlName]="controlName"
+          (change)="onOptionChange($event)" [value]="option.value">
+        <label for="{{ controlName }} - {{ i }}" class="cr">{{ option.label }}</label>
+      </div>
+    </div>
+  </ng-container>
+  <!-- input hidden is only used to display error message if any -->
+  <input type="hidden" class="form-control" [class.is-invalid]="showValidationState && isTouched && isInvalid">
+  <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+    class="text-justify small form-text invalid-feedback">{{ errorMessage }}</label>
+</div>

@@ -1,0 +1,152 @@
+$bg-white: #fff;
+
+.auth-wrapper {
+  align-items: center;
+  background: $primary-color;
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  min-width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+    display: block;
+    margin: 0 auto;
+
+    > .row {
+      min-height: 100vh;
+
+      > .aut-bg-img {
+        min-height: 100vh;
+      }
+    }
+  }
+
+  .saprator {
+    margin: 8px 0;
+    position: relative;
+
+    span {
+      background: $bg-white;
+      font-size: 20px;
+      padding: 0 10px;
+      position: relative;
+      z-index: 5;
+    }
+
+    &::after {
+      background: $theme-border;
+      content: "";
+      height: 1px;
+      left: 0;
+      position: absolute;
+      top: 15px;
+      width: 100%;
+      z-index: 1;
+    }
+  }
+
+  a,
+  p > a {
+    color: $theme-heading-color;
+    font-weight: 600;
+  }
+
+  .input-group {
+    background: transparent;
+  }
+
+  .card {
+    margin-bottom: 0;
+    padding: 8px;
+
+    .card-body {
+      padding: 20px 25px 20px 40px;
+    }
+
+    @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      display: block;
+    }
+  }
+
+  > div {
+    z-index: 5;
+  }
+
+  .auth-content {
+    padding: 15px;
+    position: relative;
+    z-index: 5;
+
+    &:not(.container) {
+      width: 400px;
+
+      .card-body {
+        padding: 40px 35px;
+      }
+    }
+
+    @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+      margin: 0 auto;
+    }
+  }
+
+  .auth-side-img {
+    background-image: url("~assets/images/auth/img-auth-big.jpg");
+    background-size: cover;
+    justify-content: center;
+    left: 0;
+    padding-right: 400px;
+    position: absolute;
+    top: 0;
+    width: calc(100% - 400px);
+
+    @media only screen and (max-width: 991px) {
+      display: none;
+    }
+  }
+
+  .auth-side-form {
+    align-items: center;
+    background: $bg-white;
+    display: inline-flex;
+    float: right;
+    left: auto;
+    min-height: 100%;
+    position: relative;
+
+    @media only screen and (max-width: 991px) {
+      justify-content: center;
+      width: 100%;
+
+      .auth-content:not(.container) {
+        max-width: 350px;
+      }
+    }
+  }
+
+  &.aut-bg-img {
+    .auth-side-form {
+      @media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+        height: 100vh;
+      }
+    }
+  }
+
+  @media only screen and (max-width: 767px) {
+    .card {
+      .card-body {
+        padding: 30px 15px;
+      }
+    }
+  }
+}
+
+// image varient start
+.aut-bg-img {
+  .auth-content {
+    padding: 70px 40px;
+  }
+}
+// image varient End

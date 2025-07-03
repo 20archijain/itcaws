@@ -1,0 +1,15 @@
+{
+  "appConfig": {
+    "id": 50,
+    "features": {
+      "distance": 50,
+      "endTime": "79200000"
+    },
+    "apiUrls": {
+      "surveyUploadUrl": "http://upimg.btlmonitor.com/mobile_services/api/data.php",
+      "imageUploadUrl": "http://upimg.btlmonitor.com/mobile_services/api/file.php",
+      "statsUrl": "http://upimg.btlmonitor.com/mobile_services/api/summary.php",
+      "offlineDropdownApi": "http://upimg.btlmonitor.com/mobile_services/api/get_offline_dropdown_options.php"
+    }
+  }
+}

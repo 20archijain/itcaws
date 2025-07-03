@@ -1,0 +1,36 @@
+<div class="auth-wrapper">
+  <!-- Forgot Form -->
+  <div class="auth-content">
+    <div class="card">
+      <div class="row align-items-center text-center">
+        <div class="col-md-12">
+          <div class="card-body">
+            <h4 class="mb-3 f-w-400">{{ 'auth.forgot.form.heading' | translate }}</h4>
+
+            <form (ngSubmit)="forgot()" [formGroup]="group" novalidate>
+              <!-- Email -->
+              <app-input [showIcon]="true" type="email" controlName="email" [group]="group"
+                placeholder="{{ 'auth.forgot.form.email' | translate }}" icon="icon-mail"
+                [errorMessages]="errorMessages.email">
+              </app-input>
+
+              <!-- Forgot Button -->
+              <app-button class="w-100" type="submit" text="button.resetPassword" wrapperClass="d-grid"
+                [isDisabled]="group.invalid || isDisabled" [showSpinner]="isDisabled" spinnerText="spinnerText.sending">
+              </app-button>
+            </form>
+
+            <!-- Signin -->
+            <div class="text-center">
+              <div class="saprator my-4"><span>{{ 'auth.or' | translate }}</span></div>
+              <p class="mb-0 text-muted">
+                {{ 'auth.forgot.form.rememberPassword' | translate }}
+                <a (click)="navigateToLogin()" class="f-w-400 link">{{ 'auth.forgot.form.signin' | translate }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,150 @@
+<app-card cardTitle="{{ 'app.attendance.title' | translate }}" [options]="false">
+  <div class="row">
+    <div class="col-sm-3 col-lg-2">
+      <app-card cardTitle="{{ 'app.attendance.totalAttendance' | translate }}" [options]="false"
+        headerClass="text-center">
+        <h6 class="text-muted text-center">{{ totalPresent }} / {{ totalTeams }}</h6>
+      </app-card>
+    </div>
+
+    <!-- Searchbar -->
+    <div class="col-sm-9 col-lg-10">
+      <form (ngSubmit)="getAttendance()" [formGroup]="group" novalidate>
+        <!-- If Superadmin or Admin Login -->
+        <div *ngIf="branchFilter" class="row">
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="branch" placeholder="{{ 'app.team.add.branch' | translate }}"
+              label="app.team.add.branch" [options]="branchOptions" [errorMessages]="errorMessages.branch"
+              [multiple]="true" (onChange)="getCircle()" groupBy="mainBranch">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()"
+              label="app.team.add.circle">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()"
+              label="app.team.add.section">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions"
+              placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" [multiple]="true"
+              label="app.team.add.wdCode">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="teamType" placeholder="{{ 'app.team.add.dsType' | translate }}"
+              label="app.team.add.dsType" [options]="teamTypeOptions" (onChange)="getTeams()">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="dsName" placeholder="{{ 'app.team.add.dsName' | translate }}"
+              label="app.team.add.dsName" [options]="teamOptions" [errorMessages]="errorMessages.team"
+              [multiple]="true">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-date label="placeholder.date" labelClassName="form-label d-none d-sm-block"
+              placeholder="{{ 'placeholder.date' | translate }}" [group]="group" controlName="date"
+              [errorMessages]="errorMessages.date" [isRequired]="true"></app-date>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-dropdown label="app.attendance.attendanceTime" [group]="group" controlName="attendanceTime"
+              [options]="attendanceTimeOptions" [errorMessages]="errorMessages.attendanceTime" [isRequired]="true">
+            </app-dropdown>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-dropdown [group]="group" controlName="year" [options]="yearList" blankOptionLabel="app.attendance.year"
+              label="app.attendance.year" [showValidationState]="false" label="app.attendance.year"
+              labelClassName="form-label d-none d-sm-block">
+            </app-dropdown>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-dropdown [group]="group" controlName="month" [options]="monthList" label="app.attendance.month"
+              blankOptionLabel="app.attendance.month" [showValidationState]="false"
+              labelClassName="form-label d-none d-sm-block"></app-dropdown>
+          </div>
+          <div class="col-9 col-sm-2 col-xl-1 mt-4">
+            <app-button [appScrollToFirstInvalidInput]="group" type="submit" iconName="icon-search"
+              [showIconInButton]="true" [isDisabled]="isDisabled" btnTitle="button.search"></app-button>
+          </div>
+          <div class="col-3 col-sm-2 col-xl-1 mt-4">
+            <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true"
+              btnTitle="button.download" [isDisabled]="isDisabled" btnClass="float-right float-sm-none"
+              (onClick)="download()"></app-button>
+          </div>
+        </div>
+
+        <!-- If Regional Login  -->
+        <div *ngIf="!branchFilter" class="row">
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions"
+              placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" [multiple]="true"
+              label="app.team.add.wdCode">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-select [group]="group" controlName="teamType" placeholder="{{ 'app.team.add.dsType' | translate }}"
+              label="app.team.add.dsType" [options]="teamTypeOptions" (onChange)="getTeams()">
+            </app-select>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-select [group]="group" controlName="dsName" placeholder="{{ 'app.team.add.dsName' | translate }}"
+              label="app.team.add.dsName" [options]="teamOptions" [errorMessages]="errorMessages.team"
+              [multiple]="true">
+            </app-select>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-date label="placeholder.date" labelClassName="form-label d-none d-sm-block"
+              placeholder="{{ 'placeholder.date' | translate }}" [group]="group" controlName="date"
+              [errorMessages]="errorMessages.date" [isRequired]="true"></app-date>
+          </div>
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-dropdown label="app.attendance.attendanceTime" [group]="group" controlName="attendanceTime"
+              [options]="attendanceTimeOptions" [errorMessages]="errorMessages.attendanceTime" [isRequired]="true">
+            </app-dropdown>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-dropdown [group]="group" controlName="year" [options]="yearList" blankOptionLabel="app.attendance.year"
+              label="app.attendance.year" [showValidationState]="false" label="app.attendance.year"
+              labelClassName="form-label d-none d-sm-block">
+            </app-dropdown>
+          </div>
+
+          <div class="col-12 col-sm-4 col-md-2">
+            <app-dropdown [group]="group" controlName="month" [options]="monthList" label="app.attendance.month"
+              blankOptionLabel="app.attendance.month" [showValidationState]="false"
+              labelClassName="form-label d-none d-sm-block"></app-dropdown>
+          </div>
+
+          <div class="col-9 col-sm-2 col-xl-1 mt-4">
+            <app-button [appScrollToFirstInvalidInput]="group" type="submit" iconName="icon-search"
+              [showIconInButton]="true" [isDisabled]="isDisabled" btnTitle="button.search"></app-button>
+          </div>
+
+          <div class="col-3 col-sm-2 col-xl-1 mt-4">
+            <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true"
+              btnTitle="button.download" [isDisabled]="isDisabled" btnClass="float-right float-sm-none"
+              (onClick)="download()"></app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>
+
+<!-- Gallery -->
+<ng-container *ngIf="images && images.length > 0">
+  <app-card [options]="false">
+    <app-custom-gallery [url]="deleteUrl" [images]="images" [cgConfig]="cgConfig" [showAsUserCard]="showAsUserCard"
+      [group]="group" (onDelete)="getAttendance()">
+    </app-custom-gallery>
+  </app-card>
+</ng-container>

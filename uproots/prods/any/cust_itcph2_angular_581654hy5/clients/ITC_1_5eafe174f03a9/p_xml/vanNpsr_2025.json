@@ -1,0 +1,482 @@
+{
+  "appConfig": {
+    "id": 99,
+    "userType": 5,
+    "version": 2,
+    "app_version": "1.1.1",
+    "relDate": "2024-05-11",
+    "themeConfig": {
+      "formBackgroundColor": "#FFFFFF",
+      "formTextColor": "#000000",
+      "formSubtextColor": "#000011",
+      "headerBackgroundColor": "#FFEEEE",
+      "headerTextColor": "#000000"
+    },
+    "logoConfig": {
+      "splashScreenUrl": "http://upimg.btlmonitor.com/assets/drawable/splash.png",
+      "clientLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/client-logo.png",
+      "projectLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/company_logo.png"
+    },
+    "fontsConfig": {
+      "fontSize": "XLARGE",
+      "fontStyle": "arial",
+      "formTextFontSize": "LARGE",
+      "formTextFontStyle": "arial",
+      "formSubtextFontSize": "MEDIUM",
+      "formSubtextFontStyle": "monospace"
+    },
+    "buttons": {
+      "report": {
+        "label": "Report",
+        "hide": 0
+      },
+      "upload": {
+        "label": "Upload",
+        "hide": 0
+      },
+      "home": {
+        "label": "Home",
+        "hide": 0
+      },
+      "settings": {
+        "label": "Settings",
+        "hide": 0
+      },
+      "assign": {
+        "label": "Assign",
+        "hide": 0
+      }
+    },
+    "apiUrls": {
+      "surveyUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/data.php",
+      "imageUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/file.php",
+      "jsonUpdateUrl": "http://upimg2.radardashboard.com/mobile_services/api/jsonUpdate.php",
+      "statsUrl": "http://upimg2.radardashboard.com/mobile_services/api/summary.php",
+      "validateOtpUrl": "http://upimg2.radardashboard.com/mobile_services/api/otp_validate.php",
+      "sendOtpUrl": "http://upimg2.radardashboard.com/mobile_services/api/send_otp.php",
+      "offlineDropdownApi": "http://upimg2.radardashboard.com/mobile_services/api/get_offline_dropdown_options.php",
+      "calendarStatusApi": "http://upimg2.radardashboard.com/mobile_services/api/get_calendar_status.php",
+      "masterDataUpdateApi": "http://upimg2.radardashboard.com/mobile_services/api/master_data_update_by_app.php",
+      "custom": {
+        "getStockProductsSellingPriceApi": "http://upimg2.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php"
+      }
+    }
+  },
+  "appForms": [
+    {
+      "id": 1,
+      "title": "Reporting Type",
+      "controls": [
+        {
+          "id": 1,
+          "label": "Reporting Type",
+          "optype": 1,
+          "optList": [
+            "Attendance",
+            "Outlet Survey",
+            "Add Outlet",
+            "Day End"
+          ],
+          "firstRes": "Attendance",
+          "skip_flag": 1,
+          "skip_logic": [
+            8,
+            2,
+            5,
+            0
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Reporting Type is required"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Select route you are going on",
+          "retainValue": 1,
+          "optype": 23,
+          "dependentDropdownLabel": [
+            "Route"
+          ],
+          "dependentDropdownErrMsg": [
+            "Route name is required"
+          ],
+          "dependentDropdownKey": "routeList",
+          "validations": {
+            "mn": 1
+          }
+        },
+        {
+          "id": 3,
+          "label": "Reason for route default",
+          "optype": 5,
+          "optList": [
+            "Market closure/bandh",
+            "Additional survey from this route",
+            "Absent in new route earlier",
+            "Any other"
+          ],
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Reason is Required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Outlet Details",
+      "controls": [
+        {
+          "id": 1,
+          "label": "Select Outlet",
+          "optype": 23,
+          "dependentDropdownLabel": [
+            "Outlet Name"
+          ],
+          "dependentDropdownErrMsg": [
+            "Outlet name is required"
+          ],
+          "dependentDropdownKey": "",
+          "validations": {
+            "mn": 1
+          }
+        },
+        {
+          "id": 2,
+          "label": "Outlet Survey?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "skip_flag": 1,
+          "skip_logic": [
+            3,
+            0
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Survey required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Survey Details",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Items",
+          "optype": 1001,
+          "dtype": 1,
+          "subtype": 4,
+          "optCol": [
+            "Avl Qty (M)",
+            "Net Rate",
+            "Qty (M)",
+            "Total Price"
+          ],
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 13
+          },
+          "validationsMsg": {
+            "mn": "Items is required",
+            "len": "Quantity should be 1-4 digit long",
+            "vtype": "Please enter valid quantity"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 0,
+          "cam_type": 2,
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet Picture is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Outlet Picture",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Reason For No Survey",
+          "optype": 5,
+          "optList": [
+            "Outlet closed",
+            "Owner not available",
+            "Has sufficient stock",
+            "Rate issue"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Reason is Required"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 0,
+          "cam_type": 2,
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet Picture is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "New Outlet Details",
+      "otp": 1,
+      "sendOtpBtn": 1,
+      "otpBtnDisableTime": 10000,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Outlet Name",
+          "optype": 4,
+          "dtype": 2,
+          "validations": {
+            "mn": 1,
+            "len": "1-50",
+            "vtype": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet name is required",
+            "len": "Outlet name should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlet name"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Owner Mobile Number",
+          "optype": 4,
+          "dtype": 1,
+          "isMobile": 1,
+          "validations": {
+            "mn": 1,
+            "len": "10-10",
+            "vtype": 4
+          },
+          "validationsMsg": {
+            "mn": "Mobile Number is required",
+            "len": "Mobile Number should be 10 digit long",
+            "vtype": "Please enter numbers only"
+          }
+        },
+        {
+          "id": 3,
+          "label": "OTP",
+          "optype": 4,
+          "dtype": 1,
+          "isOtp": 1,
+          "validations": {
+            "mn": 1,
+            "len": "4-4",
+            "vtype": 11
+          },
+          "validationsMsg": {
+            "mn": "OTP is required",
+            "len": "Maximum 4 digits",
+            "vtype": "Enter valid OTP"
+          }
+        },
+        {
+          "id": 4,
+          "label": "Outlet Type",
+          "optype": 1,
+          "optList": [
+            "PC",
+            "Non-PC"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet type required"
+          }
+        },
+        {
+          "id": 5,
+          "label": "Outlet Survey?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "skip_flag": 1,
+          "skip_logic": [
+            6,
+            7
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Survey required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Survey Details",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Items",
+          "optype": 1001,
+          "dtype": 1,
+          "subtype": 4,
+          "optCol": [
+            "Avl Qty (M)",
+            "Net Rate",
+            "Qty (M)",
+            "Total Price"
+          ],
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 13
+          },
+          "validationsMsg": {
+            "mn": "Items is required",
+            "len": "Quantity should be 1-4 digit long",
+            "vtype": "Please enter valid quantity"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 0,
+          "cam_type": 2,
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet Picture is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Outlet Picture",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Reason For No Survey",
+          "optype": 5,
+          "optList": [
+            "Outlet closed",
+            "Owner not available",
+            "Has sufficient stock",
+            "Rate issue"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Reason is Required"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 0,
+          "cam_type": 2,
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet Picture is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Attendance",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Carried stock Details",
+          "optype": 1001,
+          "dtype": 1,
+          "subtype": 4,
+          "optCol": [
+            "Qty (M)",
+            "Net Rate"
+          ],
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 13,
+            "max": 999
+          },
+          "validationsMsg": {
+            "mn": "Carried stock details are required",
+            "len": "Quantity should be 1-4 digit long",
+            "vtype": "Please enter valid quantity"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 1000,
+          "cam_type": 1,
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Your selfie is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Day End",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Take your Selfie",
+          "optype": 6,
+          "cam_type": 1,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Your selfie is required"
+          }
+        }
+      ]
+    }
+  ]
+}

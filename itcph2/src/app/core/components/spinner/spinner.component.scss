@@ -1,0 +1,25 @@
+$loader-bg-color: #f1f1f1;
+$parent-bg-color: #333;
+
+.http-loader {
+  height: 100%;
+  left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.loader-bg {
+  background-color: $loader-bg-color;
+  filter: alpha(opacity=70);
+  height: 100%;
+  opacity: .7;
+  position: absolute;
+  width: 100%;
+}
+
+.colored-parent,
+.colored>div {
+  background-color: $parent-bg-color;
+}

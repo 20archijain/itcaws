@@ -1,0 +1,24 @@
+<section class="pagination-box">
+  <span class="pagination-label">
+    {{ 'listing.pagination.showing' | translate }} {{ start }} {{ 'listing.pagination.to' | translate }} {{ end }}
+    {{ 'listing.pagination.of' | translate }} {{ totalRecords }}
+  </span>
+  <nav aria-label="Page navigation" [formGroup]="group" *ngIf="totalRecords > limit">
+    <input type="hidden" [formControlName]="controlName">
+    <ul class="pagination">
+      <li [class.disabled]="disableFirst" (click)="changePage(1, disableFirst, true)">
+        <a class="link" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li *ngFor="let page of pages" (click)="changePage(page, false, true)" [class.active]="page === currentPage">
+        <a class="link">{{ page }}</a>
+      </li>
+      <li [class.disabled]="disableLast" (click)="changePage(lastPage, disableLast, true)">
+        <a class="link" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</section>

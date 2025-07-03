@@ -1,0 +1,211 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchList": [
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "wdList": [
+      {
+        "value": "CA3469",
+        "label": "CA3469"
+      },
+      {
+        "value": "CA3520",
+        "label": "CA3520"
+      },
+      {
+        "value": "CA3684",
+        "label": "CA3684"
+      },
+      {
+        "value": "CO4034",
+        "label": "CO4034"
+      },
+      {
+        "value": "CO4043",
+        "label": "CO4043"
+      },
+      {
+        "value": "CO4097",
+        "label": "CO4097"
+      },
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      },
+      {
+        "value": "LU3999",
+        "label": "LU3999"
+      },
+      {
+        "value": "LU4001",
+        "label": "LU4001"
+      },
+      {
+        "value": "LU4077",
+        "label": "LU4077"
+      },
+      {
+        "value": "NG2241",
+        "label": "NG2241"
+      },
+      {
+        "value": "NG2957",
+        "label": "NG2957"
+      },
+      {
+        "value": "NG3104",
+        "label": "NG3104"
+      },
+      {
+        "value": "NG3141",
+        "label": "NG3141"
+      },
+      {
+        "value": "null",
+        "label": "null"
+      },
+      {
+        "value": "PA208910",
+        "label": "PA208910"
+      },
+      {
+        "value": "PA2714",
+        "label": "PA2714"
+      },
+      {
+        "value": "PA2774",
+        "label": "PA2774"
+      }
+    ],
+    "showTransactionDownloadBtn": true,
+    "showSummaryDownloadBtn": true,
+    "editProductHeading": "Edit Product Price",
+    "branchLabel": "Branch",
+    "wdLabel": "WD Code",
+    "teamTypeLabel": "Team Type",
+    "teamsTypeList": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      }
+    ],
+    "productsList": [
+      {
+        "productName": "Capstan Spl",
+        "sellingPrice": "5952.4",
+        "productId": "53",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "Classic Connect",
+        "sellingPrice": "12400.8",
+        "productId": "54",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "Classic Icon",
+        "sellingPrice": "6800",
+        "productId": "57",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "Flake Excel TastePro Spl",
+        "sellingPrice": "5256.3",
+        "productId": "59",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "Flake Spl DSFT",
+        "sellingPrice": "6388.9",
+        "productId": "61",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GF Indie Mint",
+        "sellingPrice": "8531.2",
+        "productId": "65",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GF Neo Smart",
+        "sellingPrice": "6800",
+        "productId": "67",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GFP",
+        "sellingPrice": "8581.3",
+        "productId": "68",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GFP Mint Switch",
+        "sellingPrice": "8581.3",
+        "productId": "70",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GFSS",
+        "sellingPrice": "5216.5",
+        "productId": "71",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "GFSS Capsule Blue",
+        "sellingPrice": "5216.5",
+        "productId": "73",
+        "branchId": "18",
+        "wdCode": ""
+      },
+      {
+        "productName": "Royal Rich",
+        "sellingPrice": "3000",
+        "productId": "74",
+        "branchId": "18",
+        "wdCode": ""
+      }
+    ]
+  },
+  "hidePopup": true
+}

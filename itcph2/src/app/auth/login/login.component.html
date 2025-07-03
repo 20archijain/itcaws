@@ -1,0 +1,46 @@
+<div class="auth-wrapper">
+  <!-- Login Form -->
+  <div class="auth-content">
+    <div class="card">
+      <div class="row align-items-center text-center">
+        <div class="col-md-12">
+          <div class="card-body">
+            <h3 class="mb-4 f-w-400">{{ 'auth.login.form.heading' | translate }}</h3>
+
+            <form (ngSubmit)="login()" [formGroup]="group" novalidate>
+              <!-- Username -->
+              <app-input [showIcon]="true" controlName="username" [group]="group"
+                placeholder="{{ 'auth.login.form.username' | translate }}" icon="icon-mail"
+                [errorMessages]="errorMessages.username">
+              </app-input>
+
+              <!-- Password -->
+              <app-input [showIcon]="true" type="password" controlName="password" [group]="group"
+                placeholder="{{ 'auth.login.form.password' | translate }}" icon="icon-lock"
+                [errorMessages]="errorMessages.password">
+              </app-input>
+
+              <!-- Captcha -->
+              <!-- <app-captcha [group]="group" controlName="captcha" [errorMessages]="errorMessages.captcha"></app-captcha> -->
+
+              <!-- Login Button -->
+              <app-button class="w-100" type="submit" text="button.login" wrapperClass="d-grid"
+                [isDisabled]="group.invalid || isDisabled" [showSpinner]="isDisabled"
+                spinnerText="spinnerText.loggingIn">
+              </app-button>
+            </form>
+
+            <!-- Forgot Password -->
+            <div class="text-center">
+              <div class="saprator my-4"><span>{{ 'auth.or' | translate }}</span></div>
+              <p class="mb-2 text-muted">
+                {{ 'auth.login.form.forgotPassword' | translate }}
+                <a (click)="navigateToForgot()" class="f-w-400 link">{{ 'auth.login.form.reset' | translate }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

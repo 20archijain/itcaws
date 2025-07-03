@@ -1,0 +1,14 @@
+<div class="captcha-container">
+  <div class="captcha-box">
+    <img *ngIf="captchaImage" [src]="captchaImage" class="captcha-image"
+      alt="{{ 'auth.login.form.captcha' | translate }}">
+    <app-button [showIconOnly]="true" iconName="icon-refresh-cw" btnTitle="icon.captcha" (onClick)="getCaptcha()">
+    </app-button>
+  </div>
+
+  <div class="captcha-text">
+    <app-input type="password" [showIcon]="true" icon="icon-file-text"
+      placeholder="{{ 'auth.login.form.captcha' | translate }}" [group]="group" [controlName]="controlName"
+      [errorMessages]="errorMessages" [autocompleteOff]="true"></app-input>
+  </div>
+</div>

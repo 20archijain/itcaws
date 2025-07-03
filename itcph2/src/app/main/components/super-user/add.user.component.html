@@ -1,0 +1,121 @@
+<app-card cardTitle="{{ 'app.user.user.add.heading' | translate }}" [options]="false">
+  <form (ngSubmit)="addUser()" [formGroup]="form" autocomplete="off" novalidate>
+
+    <div class="row">
+      <div class="col-sm-6 col-md-4">
+        <!-- Personal Details -->
+        <h4>{{ 'app.user.user.add.personalDetails' | translate }}</h4>
+
+        <!-- Name -->
+        <app-input label="app.user.user.add.fullname" placeholder="{{ 'app.user.user.add.fullname' | translate }}"
+          [group]="form" controlName="fullname" [isRequired]="true" [errorMessages]="errorMessages.fullname">
+        </app-input>
+
+        <!-- Email -->
+        <app-input type="email" [group]="form" label="app.profile.form.email" controlName="email"
+          [errorMessages]="errorMessages.email" placeholder="{{ 'app.profile.form.email' | translate }}"
+          [autocompleteOff]="true">
+        </app-input>
+
+        <!-- Mobile -->
+        <app-input label="app.user.user.add.mobile" placeholder="{{ 'app.user.user.add.mobile' | translate }}"
+          [group]="form" controlName="mobile" [errorMessages]="errorMessages.mobile">
+        </app-input>
+      </div>
+
+      <!-- Credentials Details -->
+      <div class="col-sm-6 col-md-4">
+        <h4>{{ 'app.user.user.add.userCredentials' | translate }}</h4>
+
+        <!-- Username -->
+        <app-input label="auth.login.form.username" placeholder="{{ 'auth.login.form.username' | translate }}"
+          [group]="form" controlName="username" [isRequired]="true" [errorMessages]="errorMessages.username">
+        </app-input>
+
+        <!-- Password -->
+        <app-input type="password" label="auth.login.form.password"
+          placeholder="{{ 'auth.login.form.password' | translate }}" [group]="form" controlName="password"
+          [isRequired]="true" [errorMessages]="errorMessages.password" [tooltipContent]="passwordTooltip"
+          (onBlur)="onPasswordBlur()">
+        </app-input>
+
+        <!-- Confirm Password -->
+        <app-input type="password" label="app.user.user.add.confirmPassword"
+          placeholder="{{ 'app.user.user.add.confirmPassword' | translate }}" [group]="form"
+          controlName="confirmPassword" [isRequired]="true" [errorMessages]="errorMessages.confirmPassword"
+          (onBlur)="onPasswordBlur()"></app-input>
+      </div>
+
+      <!-- Group Details -->
+      <div class="col-sm-6 col-md-4">
+        <h4>{{ 'app.user.user.add.groupDetails' | translate }}</h4>
+
+        <!-- Group Name -->
+        <app-select label="app.user.group.form.groupName"
+          placeholder="{{ 'app.user.group.form.groupName' | translate }}" [group]="form" controlName="group"
+          [options]="groupOptions" [isRequired]="true" [errorMessages]="errorMessages.group">
+        </app-select>
+
+        <!-- Landing Page -->
+        <app-select label="app.user.user.add.landingPage"
+          placeholder="{{ 'app.user.user.add.landingPage' | translate }}" [group]="form" controlName="landing"
+          [options]="landingPageOptions" [isRequired]="true" [errorMessages]="errorMessages.landingPage"></app-select>
+      </div>
+    </div>
+
+    <h3 class="m-t-15">{{ 'app.user.user.add.accessDetails' | translate }}</h3>
+    <div class="row">
+      <div class="col-md-6">
+
+        <!-- Access Type -->
+        <app-radio [group]="form" controlName="type" [options]="loginOptions" (onChange)="onTypeChange()">
+        </app-radio>
+
+        <!-- Client -->
+        <app-select label="app.client.add.name" placeholder="{{ 'app.client.add.name' | translate }}" [group]="form"
+          [isRequired]="true" controlName="client" [options]="clientOptions" [errorMessages]="errorMessages.client"
+          [multiple]="true" [hide]="controlVisibility.hideClient" [validators]="validators.client" groupClassName="row"
+          labelClassName="form-label col-sm-4 col-xl-3" [isHorizontalForm]="true"></app-select>
+
+        <!-- Project -->
+        <app-select label="app.project.add.name" placeholder="{{ 'app.project.add.name' | translate }}" [group]="form"
+          [isRequired]="true" controlName="project" [options]="projectOptions" [errorMessages]="errorMessages.project"
+          [multiple]="true" [hide]="controlVisibility.hideProject" [validators]="validators.project"
+          groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3" [isHorizontalForm]="true"></app-select>
+
+        <!-- Branch -->
+        <app-select label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form"
+          controlName="branch" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="branchOptions" [isRequired]="true" [errorMessages]="errorMessages.branch"
+          [hide]="controlVisibility.hideBranch" [validators]="validators.branch" [multiple]="true">
+        </app-select>
+
+        <!-- Circle -->
+        <app-select label="app.team.view.circle" placeholder="{{ 'app.team.view.circle' | translate }}" [group]="form"
+          controlName="circle" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="circleOptions" [isRequired]="true" [errorMessages]="errorMessages.circle"
+          [hide]="controlVisibility.hideCircle" [validators]="validators.circle" [multiple]="true">
+        </app-select>
+
+        <!-- Section -->
+        <app-select label="app.team.view.section" placeholder="{{ 'app.team.view.section' | translate }}" [group]="form"
+          controlName="section" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="sectionOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.section" [hide]="controlVisibility.hideSection"
+          [validators]="validators.section" [multiple]="true">
+        </app-select>
+
+        <!-- WD Code -->
+        <app-select label="app.team.view.wdCode" placeholder="{{ 'app.team.view.wdCode' | translate }}" [group]="form"
+          controlName="wdCode" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="wdCodeOptions" [isRequired]="true" [errorMessages]="errorMessages.wdCode"
+          [hide]="controlVisibility.hideWdCode" [validators]="validators.wdCode" [multiple]="true">
+        </app-select>
+      </div>
+    </div>
+
+    <app-button type="submit" text="button.add" [appScrollToFirstInvalidInput]="form" [showSpinner]="showSpinner"
+      spinnerText="spinnerText.adding">
+    </app-button>
+  </form>
+</app-card>

@@ -1,0 +1,41 @@
+$disabled-color: #ccc;
+$focused-color: #e6e6e6;
+$blue-color: rgb(2, 117, 216);
+$faded-blue-color: rgba(2, 117, 216, .5);
+$white-color: #fff;
+
+::ng-deep {
+  .ngb-dp-day {
+    &.disabled {
+      .custom-day {
+        color: $disabled-color;
+      }
+    }
+
+    .custom-day {
+      display: inline-block;
+      height: 2rem;
+      padding: .185rem .25rem;
+      text-align: center;
+      width: 2rem;
+    }
+
+    &:not(.disabled) {
+      .custom-day {
+        &.focused {
+          background-color: $focused-color;
+        }
+
+        &.range,
+        &:hover {
+          background-color: $blue-color;
+          color: $white-color;
+        }
+
+        &.faded {
+          background-color: $faded-blue-color;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,22 @@
+$white: #fff;
+$green: #438f8e;
+
+.fixed-header {
+  left: 0;
+  position: sticky;
+  top: 1px;
+  z-index: 2;
+}
+
+.fixed-column {
+  background-color: $white;
+  left: 0;
+  position: sticky;
+  z-index: 1;
+}
+
+
+.alternate-row {
+  background-color: $green;
+  color: $white;
+}

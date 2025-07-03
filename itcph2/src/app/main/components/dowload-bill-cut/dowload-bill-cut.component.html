@@ -1,0 +1,45 @@
+<app-card cardTitle="{{ 'app.download.downloadBillCutt' | translate }}" [options]="false">
+  <div class="row">
+    <!-- Searchbar -->
+    <div class="col-sm-12">
+      <form (ngSubmit)="download()" [formGroup]="group" novalidate>
+        <div class="row">
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="branch" placeholder="{{ 'app.team.add.branch' | translate }}"
+              label="app.team.add.branch" [options]="branchOptions" [errorMessages]="errorMessages.branch"
+              groupBy="mainBranch" [isRequired]="true" (onChange)="getTeamsType()" [multiple]="true">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="teamType" [options]="teamTypeOptions" label="app.team.add.type"
+              placeholder="{{ 'app.reporting.teamType' | translate }}" (onChange)="getProducts()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="product" placeholder="{{ 'app.download.products' | translate }}"
+              label="app.download.products" [options]="productOptions" [multiple]="true">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-date label="placeholder.from" placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
+              controlName="dateFrom" [isRequired]="true" [errorMessages]="errorMessages.dateFrom"
+              [maxDate]="group.get('dateTo').value">
+            </app-date>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-date label="placeholder.to" placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
+              controlName="dateTo" [isRequired]="true" [errorMessages]="errorMessages.dateTo"
+              [minDate]="group.get('dateFrom').value">
+            </app-date>
+          </div>
+          <div class="col-sm-3 col-md-2">
+            <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true"
+              btnTitle="button.download" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="group"
+              btnClass="float-right float-sm-none mt-sm-4" (onClick)="download()">
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

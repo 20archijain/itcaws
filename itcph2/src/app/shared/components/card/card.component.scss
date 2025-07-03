@@ -1,0 +1,25 @@
+.card {
+  margin-bottom: 10px;
+
+  &.full-card {
+    border-radius: 0;
+    height: 100vh !important;
+    left: 0 !important;
+    position: fixed !important;
+    top: 0 !important;
+    width: calc(100vw) !important;
+    z-index: 99999;
+  }
+
+  &.m-b-0 {
+    margin-bottom: 0;
+  }
+
+  .card-body {
+    padding: 10px;
+  }
+}
+
+.card-header {
+  padding: 5px 12px;
+}

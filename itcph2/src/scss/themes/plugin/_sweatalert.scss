@@ -1,0 +1,131 @@
+.swal-icon--error {
+  border-color: map-get($theme-colors, "danger");
+}
+
+.swal-icon--error__line {
+  background-color: map-get($theme-colors, "danger");
+}
+
+.swal-icon--warning {
+  border-color: map-get($theme-colors, "warning");
+}
+
+.swal-icon--warning__body {
+  background-color: map-get($theme-colors, "warning");
+}
+
+.swal-icon--warning__dot {
+  background-color: map-get($theme-colors, "warning");
+}
+
+@-webkit-keyframes pulseWarning {
+  0% {
+    border-color: lighten(map-get($theme-colors, "warning"), 5%);
+  }
+
+  to {
+    border-color: map-get($theme-colors, "warning");
+  }
+}
+
+@keyframes pulseWarning {
+  0% {
+    border-color: lighten(map-get($theme-colors, "warning"), 5%);
+  }
+
+  to {
+    border-color: map-get($theme-colors, "warning");
+  }
+}
+
+.swal-icon--success {
+  border-color: map-get($theme-colors, "success");
+}
+
+.swal-icon--success__ring {
+  border: 4px solid transparentize(map-get($theme-colors, "success"), 0.8);
+}
+
+.swal-icon--success__line {
+  background-color: map-get($theme-colors, "success");
+}
+
+.swal-icon--info {
+  border-color: map-get($theme-colors, "info");
+
+  &:after,
+  &:before {
+    background-color: map-get($theme-colors, "info");
+  }
+}
+
+.swal-title {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.swal-text {
+  color: rgba(0, 0, 0, 0.64);
+}
+
+.swal-button {
+  background-color: map-get($theme-colors, "primary");
+
+  &:not([disabled]):hover {
+    background-color: darken(map-get($theme-colors, "primary"), 5%);
+  }
+
+  &:active {
+    background-color: darken(map-get($theme-colors, "primary"), 5%);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px transparentize(map-get($theme-colors, "primary"), 0.71);
+  }
+}
+
+.swal-button--cancel {
+  color: #555;
+  background-color: #efefef;
+
+  &:not([disabled]):hover {
+    background-color: #e8e8e8;
+  }
+
+  &:active {
+    background-color: #d7d7d7;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px rgba(116, 136, 150, 0.29);
+  }
+}
+
+.swal-button--danger {
+  background-color: map-get($theme-colors, "danger");
+
+  &:not([disabled]):hover {
+    background-color: darken(map-get($theme-colors, "danger"), 5%);
+  }
+
+  &:active {
+    background-color: darken(map-get($theme-colors, "danger"), 5%);
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 1px #fff, 0 0 0 3px transparentize(map-get($theme-colors, "danger"), 0.71);
+  }
+}
+
+.swal-footer {
+  text-align: center;
+}
+
+.swal-content__input:focus {
+  border-color: transparentize(map-get($theme-colors, "primary"), 0.71);
+}
+
+.swal-content__textarea {
+  &:focus {
+    border-color: transparentize(map-get($theme-colors, "primary"), 0.71);
+  }
+}

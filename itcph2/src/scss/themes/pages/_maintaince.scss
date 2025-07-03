@@ -1,0 +1,79 @@
+.auth-wrapper {
+  &.maintenance {
+    background: $body-bg;
+  }
+}
+
+@keyframes bubble {
+  0%,
+  30% {
+    opacity: 0;
+  }
+
+  31% {
+    opacity: 1;
+  }
+
+  59% {
+    opacity: 1;
+  }
+
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes sark {
+  0% {
+    transform: rotate(-10deg) translate(245px, 46px);
+  }
+
+  30% {
+    transform: rotate(-13deg) translate(-329px, -80px);
+  }
+
+  60% {
+    transform: rotate(-13deg) translate(-329px, -80px);
+  }
+
+  100% {
+    transform: rotate(-26deg) translate(-887px, -80px);
+  }
+}
+
+@keyframes boatanim {
+  0% {
+    transform: rotate(-10deg) translate(95px, -14px);
+  }
+
+  50% {
+    transform: rotate(5deg) translate(-65px, -14px);
+  }
+
+  100% {
+    transform: rotate(-10deg) translate(95px, -14px);
+  }
+}
+
+@keyframes sunwawe {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(4);
+  }
+}
+
+@keyframes sparcle {
+  0% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}

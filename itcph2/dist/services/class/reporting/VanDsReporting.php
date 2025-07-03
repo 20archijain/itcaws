@@ -1,0 +1,1866 @@
+<?php
+
+require_once $include_path . "defined_index.php";
+require $PHP_SPREADSHEET_PATH;
+
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+
+// phpcs:ignore
+class VanDsReporting
+{
+    private $_dbConn = null;
+    private $_data = null;
+    private $_tables = [];
+    private $_arrAccessInfo = [];
+    private $_projectId = 1;
+    private $arrBranchwiseProducts = [];
+    private $arrBranchwiseCompetition = [];
+    private $arrBranchWiseStockProducts = [];
+    private $session;
+    private $_iUserId = null;
+
+    public function __construct($dbConn, $data, $arrAccessInfo, $iUserId)
+    {
+        $this->_data = $data;
+        $this->_dbConn = $dbConn;
+        $this->_tables = $GLOBALS['TABLES'];
+        $this->_arrAccessInfo = $arrAccessInfo;
+        $this->_iUserId = $iUserId;
+    }
+    // Filter Condition
+    final public function getCondition($summary = false, $andCondition = true)
+    {
+        $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $branchTable = $GLOBALS['TABLES']['BRANCH_TABLE'];
+        $mappingTable = $GLOBALS['TABLES']['WD_MAPPING_TABLE'];
+        $condition = "";
+        $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
+        if ($district) {
+            $matchAll = checkIfAllSelected($district);
+            if (!$matchAll) {
+                if (isNonEmptyArray($district)) {
+                    $districts = "'" . implode("','", $district) . "'";
+                    $condition .= " AND d.district IN ($districts)";
+                } else {
+                    $condition .= " AND d.district = $district";
+                }
+            }
+        }
+        $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
+        if ($branch) {
+            $matchAll = checkIfAllSelected($branch);
+            if (!$matchAll) {
+                if (isNonEmptyArray($branch)) {
+                    $branchIds = "'" . implode("','", $branch) . "'";
+                    $condition .= " AND d.branch_id IN ($branchIds)";
+                } else {
+                    $condition .= " AND d.branch_id = $branch";
+                }
+            }
+        }
+        $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
+        if ($circle) {
+            $matchAll = checkIfAllSelected($circle);
+            if (!$matchAll) {
+                if (isNonEmptyArray($circle)) {
+                    $circleIds = "'" . implode("','", $circle) . "'";
+                    $condition .= " AND b.circle IN ($circleIds)";
+                } else {
+                    $condition .= " AND b.circle = '$circle'";
+                }
+            }
+        }
+        $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
+        if ($section) {
+            $matchAll = checkIfAllSelected($section);
+            if (!$matchAll) {
+                if (isNonEmptyArray($section)) {
+                    $sectionIds = "'" . implode("','", $section) . "'";
+                    $condition .= " AND b.section IN ($sectionIds)";
+                } else {
+                    $condition .= " AND b.section = '$section'";
+                }
+            }
+        }
+        $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
+        if ($wdCode) {
+            $matchAll = checkIfAllSelected($wdCode);
+            if (!$matchAll) {
+                if (isNonEmptyArray($wdCode)) {
+                    $wdCodeIds = "'" . implode("','", $wdCode) . "'";
+                    $condition .= " AND b.wd_code IN ($wdCodeIds)";
+                } else {
+                    $condition .= " AND b.wd_code = '$wdCode'";
+                }
+            }
+        }
+        $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
+        if ($wdMarket) {
+            if (!is_array($wdMarket)) {
+                $wdMarket = array($wdMarket);
+            }
+            if (in_array('all', $wdMarket)) {
+                $condition .= " ";
+            } else {
+                $wdMarket = "'" . implode("','", $wdMarket) . "'";
+                $condition .= " AND e.wd_market IN ($wdMarket)";
+            }
+        }
+        $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
+        if ($wdPopGroup) {
+            if (!is_array($wdPopGroup)) {
+                $wdPopGroup = array($wdPopGroup);
+            }
+            if (in_array('all', $wdPopGroup)) {
+                $condition .= " ";
+            } else {
+                $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
+                $condition .= " AND e.wd_pop_group IN ($wdPopGroup)";
+            }
+        }
+        $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
+        if (isset($teamType) && $teamType != "" && $teamType >= 0) {
+            $matchAll = checkIfAllSelected($teamType);
+            if (!$matchAll) {
+                if (isNonEmptyArray($teamType)) {
+                    $teamTypes = "'" . implode("','", $teamType) . "'";
+                    $condition .= " AND b.is_type IN ($teamTypes)";
+                } else {
+                    $condition .= " AND b.is_type = $teamType";
+                }
+            }
+        }
+
+        $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
+        if ($dsName) {
+            $matchAll = checkIfAllSelected($dsName);
+            if (!$matchAll) {
+                if (isNonEmptyArray($dsName)) {
+                    $dsNames = "'" . implode("','", $dsName) . "'";
+                    $condition .= " AND b.team_id IN ($dsNames)";
+                } else {
+                    $condition .= " AND b.team_id = $dsName";
+                }
+            }
+        }
+
+        $where = "";
+        if ($condition && $andCondition) {
+            $where .= " AND a.team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
+        } elseif ($condition) {
+            $where .= " AND a.team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
+        }
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        if ($teamList) {
+            $where .= " AND a.team_id IN $teamList";
+        }
+
+        return $where;
+    }
+
+    final public function getDistrictList()
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.district";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['district'],
+                    "value" => $row['district']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getBranchList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all",
+        );
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        // echo $where;die;
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.branch_name";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['branch_name'],
+                    "value" => $row['branch_id'],
+                    "mainBranch" => $row['main_branch']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getCircleList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.circle";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['circle'] . " - " . $row['circle_name'],
+                    "value" => $row['circle']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getSectionList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.section";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['section'] . " - " . $row['section_name'],
+                    "value" => $row['section']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+
+    final public function getWdCodeList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.wd_code";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
+                    "value" => $row['wd_code']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+
+    final public function getWdMarketList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_market";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['wd_market'],
+                    "value" => $row['wd_market']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getWdPopGroupList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_pop_group";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['wd_pop_group'],
+                    "value" => $row['wd_pop_group']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+
+    final public function getDsTypeList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $teamType = "";
+                if ($row['is_type'] == 0) {
+                    $teamType = "DS";
+                } elseif ($row['is_type'] == 1) {
+                    $teamType = "Niche";
+                } elseif ($row['is_type'] == 2) {
+                    $teamType = "Town SWD";
+                } elseif ($row['is_type'] == 3) {
+                    $teamType = "Hybrid";
+                } elseif ($row['is_type'] == 4) {
+                    $teamType = "SCP";
+                } elseif ($row['is_type'] == 5) {
+                    $teamType = "NPSR";
+                }
+                $arrData[] = array(
+                    "label" => $teamType,
+                    "value" => $row['is_type']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+
+    final public function getTeamsList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '99' $where order by b.team_name";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['team_name'],
+                    "value" => $row['team_id']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getData()
+    {
+        // $where = "";
+        // $where2 = "";
+        $userBranch = "";
+        // $teamList = $this->_arrAccessInfo["user_teams"];
+        // if ($teamList) {
+        //     $where .= " AND team_id IN $teamList";
+        //     $where2 .= "team_id IN $teamList";
+        //     $branchId = getRowColumn($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", "$where2");
+        // }
+        // $authDetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
+        // $user_id = $this->_iUserId;
+        // $groupId = getRowColumn($this->_dbConn, $authDetailsTable, "group_id", "user_id = $user_id");
+        // if ($groupId == 1 || $groupId == 2) {
+        //     $branchList = getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch");
+        //     $branchFilter = true;
+        // } else {
+        //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
+        //     $branchFilter = true;
+        // }
+        $arrResult = array(
+            // Don't use dstatus = 0
+            "districtList" => $this->getDistrictList(),
+            "branchList" => $this->getBranchList(),
+            "circleList" => $this->getCircleList(),
+            "sectionList" => $this->getSectionList(),
+            "wdCodeList" => $this->getWdCodeList(),
+            "teamType" => $this->getDsTypeList(),
+            "teamList" => $this->getTeamsList(),
+            "wdMarketList" => $this->getWdMarketList(),
+            "wdPopGroupList" => $this->getWdPopGroupList(),
+            "showTransactionDownloadBtn" => true,
+            "showSummaryDownloadBtn" => true,
+            "branchFilter" => true,
+            "userBranch" => $userBranch,
+        );
+
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getBranch($district = "district")
+    {
+        $district = $this->_data['district'];
+        $districtCond = "";
+        if (!empty($district)) {
+            if (!is_array($district)) {
+                $district = array($district);
+            }
+            if (in_array('all', $district)) {
+                $districtCond = ""; // No condition for 'all'
+            } else {
+                $district = "'" . implode("','", $district) . "'";
+                $districtCond = " AND a.district IN ($district)";
+            }
+
+            $arrResult = array(
+                "branchList" => $this->getBranchList($districtCond),
+                "circleList" => $this->getCircleList($districtCond),
+                "sectionList" => $this->getSectionList($districtCond),
+                "wdCodeList" => $this->getWdCodeList($districtCond),
+                "teamType" => $this->getDsTypeList($districtCond),
+                "teamList" => $this->getTeamsList($districtCond),
+                "wdMarketList" => $this->getWdMarketList($districtCond),
+                "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
+            );
+        } else {
+            $arrResult = array(
+                "branchList" => "",
+                "circleList" => "",
+                "sectionList" => "",
+                "wdCodeList" => "",
+                "teamType" => "",
+                "teamList" => "",
+                "wdMarketList" => "",
+                "wdPopGroupList" => "",
+            );
+        }
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+
+    final public function getCircle($branch = "branch_id")
+    {
+        $branch = $this->_data['branch'];
+        $branchCond = "";
+        if ($branch) {
+            if (!is_array($branch)) {
+                $branch = array($branch);
+            }
+            if (in_array('all', $branch)) {
+                $branchCond = ""; // No condition for 'all'
+            } else {
+                $branch = "'" . implode("','", $branch) . "'";
+                $branchCond = " AND a.branch_id IN ($branch)";
+            }
+
+            $arrResult = array(
+                "circleList" => $this->getCircleList($branchCond),
+                "sectionList" => $this->getSectionList($branchCond),
+                "wdCodeList" => $this->getWdCodeList($branchCond),
+                "teamType" => $this->getDsTypeList($branchCond),
+                "teamList" => $this->getTeamsList($branchCond),
+                "wdMarketList" => $this->getWdMarketList($branchCond),
+                "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
+            );
+        } else {
+            $arrResult = array(
+                "circleList" => "",
+                "sectionList" => "",
+                "wdCodeList" => "",
+                "teamType" => "",
+                "teamList" => "",
+                "wdMarketList" => "",
+                "wdPopGroupList" => "",
+            );
+        }
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getSection($circle = "circle")
+    {
+        $circle = $this->_data['circle'];
+        $circleCond = "";
+        if ($circle) {
+            if ($circle) {
+                if (!is_array($circle)) {
+                    $circle = array($circle);
+                }
+                if (in_array('all', $circle)) {
+                    $circleCond = ""; // No condition for 'all'
+                } else {
+                    $circle = "'" . implode("','", $circle) . "'";
+                    $circleCond = " AND b.circle IN ($circle)";
+                }
+            }
+            $arrResult = array(
+                "sectionList" => $this->getSectionList($circleCond),
+                "wdCodeList" => $this->getWdCodeList($circleCond),
+                "teamType" => $this->getDsTypeList($circleCond),
+                "teamList" => $this->getTeamsList($circleCond),
+                "wdMarketList" => $this->getWdMarketList($circleCond),
+                "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
+            );
+        } else {
+            $arrResult = array(
+                "teamType" => "",
+                "sectionList" => "",
+                "wdCodeList" => "",
+                "teamList" => "",
+                "wdMarketList" => "",
+                "wdPopGroupList" => "",
+            );
+        }
+
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getWDCode($section = "section")
+    {
+        $section = $this->_data['section'];
+        $sectionCond = "";
+        if ($section) {
+            if ($section) {
+                if (!is_array($section)) {
+                    $section = array($section);
+                }
+                if (in_array('all', $section)) {
+                    $sectionCond = ""; // No condition for 'all'
+                } else {
+                    $section = "'" . implode("','", $section) . "'";
+                    $sectionCond = " AND b.section IN ($section)";
+                }
+            }
+
+            $arrResult = array(
+                "wdCodeList" => $this->getWdCodeList($sectionCond),
+                "teamType" => $this->getDsTypeList($sectionCond),
+                "teamList" => $this->getTeamsList($sectionCond),
+                "wdMarketList" => $this->getWdMarketList($sectionCond),
+                "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
+            );
+        } else {
+            $arrResult = array(
+                "teamType" => "",
+                "wdCodeList" => "",
+                "teamList" => "",
+                "wdMarketList" => "",
+                "wdPopGroupList" => "",
+            );
+        }
+
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getTeamType()
+    {
+        $wdCode = $this->_data['wdCode'];
+        $wdCodeCond = "";
+        if ($wdCode) {
+            if ($wdCode) {
+                if (!is_array($wdCode)) {
+                    $wdCode = array($wdCode);
+                }
+                if (in_array('all', $wdCode)) {
+                    $wdCodeCond = ""; // No condition for 'all'
+                } else {
+                    $wdCode = "'" . implode("','", $wdCode) . "'";
+                    $wdCodeCond = " AND b.wd_code IN ($wdCode)";
+                }
+            }
+            $arrResult = array(
+                "teamType" => $this->getDsTypeList($wdCodeCond),
+                "teamList" => $this->getTeamsList($wdCodeCond),
+            );
+        } else {
+            $arrResult = array(
+                "teamType" => "",
+                "teamList" => "",
+            );
+        }
+
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getTeamList()
+    {
+        $dsType = $this->_data['dsType'];
+        $dsTypeCond = "";
+        if (isset($dsType) && $dsType != "" && $dsType >= 0) {
+            if (!is_array($dsType)) {
+                $dsType = array($dsType);
+            }
+            if (in_array('all', $dsType)) {
+                $dsTypeCond = ""; // No condition for 'all'
+            } else {
+                $dsType = "'" . implode("','", $dsType) . "'";
+                $dsTypeCond = " AND b.is_type IN ($dsType)";
+            }
+            $arrResult = array(
+                "teamList" => $this->getTeamsList($dsTypeCond),
+            );
+        } else {
+            $arrResult = array(
+                "teamList" => "",
+            );
+        }
+
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    private function getBranchWiseProducts($branchId = null, $teamType = null)
+    {
+        $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        if ($branchId) {
+            if ($teamType !== null && $teamType !== "") {
+                return $this->arrBranchwiseProducts[$branchId][$teamType] ?? [];
+            } else {
+                return $this->arrBranchwiseProducts[$branchId] ?? [];
+            }
+        } else {
+            if ($teamType !== null && $teamType !== "") {
+                $arrProductSummaryColumns = getRowsColumns(
+                    $this->_dbConn,
+                    $branchProductsTable,
+                    "branch_id, product_name, summary_column_name",
+                    "dstatus = 0 AND team_type = '$teamType' ORDER BY product_name",
+                    array(),
+                    true
+                );
+
+                foreach ($arrProductSummaryColumns as $arrBranchColumns) {
+                    $branchId = $arrBranchColumns[0];
+                    $productName = $arrBranchColumns[1];
+                    $summaryColumnName = $arrBranchColumns[2];
+
+                    if (!isset($this->arrBranchwiseProducts[$branchId][$teamType])) {
+                        $this->arrBranchwiseProducts[$branchId][$teamType] = [];
+                    }
+                    $this->arrBranchwiseProducts[$branchId][$teamType][] = [$productName, $summaryColumnName];
+                }
+            } else {
+                $sProductAction = null;
+                $iProductRows = 0;
+                $sProductQuery = "SELECT DISTINCT branch_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 ORDER BY product_name";
+                $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
+
+                if ($iProductRows > 0) {
+                    while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
+                        $branchId = $rowProduct["branch_id"];
+                        if (!isset($this->arrBranchwiseProducts[$branchId])) {
+                            $this->arrBranchwiseProducts[$branchId] = [];
+                        }
+                        $this->arrBranchwiseProducts[$branchId][] = [$rowProduct["product_name"], $rowProduct["summary_column_name"]];
+                    }
+                }
+            }
+        }
+    }
+
+    private function getWeekNumber($date)
+    {
+        $day = (int)date('j', strtotime($date)); // Get day of the month
+
+        if ($day >= 1 && $day <= 7) {
+            return "Week 1";
+        } elseif ($day >= 8 && $day <= 14) {
+            return "Week 2";
+        } elseif ($day >= 15 && $day <= 21) {
+            return "Week 3";
+        } else {
+            return "Week 4";
+        }
+    }
+
+    final public function getReportingData()
+    {
+        // filter query
+        $where = $this->getCondition();
+
+        // print_r($where);die;
+        $respTable = getRespTable(1, $this->_projectId);
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $partialQuery = "FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = '99' $where";
+
+        // Don't use b.dstatus = 0 AND c.dstatus = 0
+        $arrData = array();
+        $rsAction = null;
+        $iRows = 0;
+        // use a.pro_id > 0 to include primary column as index while calculating no of rows
+        $sQuery = "SELECT a.pro_id $partialQuery AND a.pro_id > 0";
+        $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
+
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, b.team_id, b.team_name,b.circle,b.section, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
+        $sQuery .= " " . $limit["limit"];
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+        if ($iRows > 0) {
+            $i = 0;
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $shopId = $row["ques_3"];
+                // Don't use dstatus = 0
+                $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                $shopType = $shopDetails[0];
+                $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
+                $mobileNumber = $shopDetails[2];
+                $sellIinOrder = $row["ques_4"];
+                $shopFrontPicture = $row["ques_6"];
+                $reasonForNoSale = $sellIinOrder == "Yes" ? $row["ques_5"] : "";
+
+                $arrImages = getListingImages(
+                    $this->_dbConn,
+                    $row["uni_id"],
+                    "",
+                    array(
+                        $shopFrontPicture => "Outlet front Picture Lt: {$row["lt"]} Lg: {$row["lg"]}",
+                    )
+                );
+
+                $arrData[$i] = array(
+                    "reportingType" => $row["ques_0"],
+                    "wdCode" => $row["wd_code"],
+                    "route" => json_decode($row["ques_1"], true)[0],
+                    "shopName" => $shopName,
+                    "mobileNumber" => $mobileNumber,
+                    "shopType" => $shopType,
+                    "sellIinOrder" => $sellIinOrder,
+                    "timestamp" => currentDateTime($row["capture_datetime"], "d-m-Y h:i:s A"),
+                    "team_id" => $row["team_id"],
+                    "team" => $row["team_name"],
+                    "branchName" => $row["branch_name"],
+                    "circle" => $row["circle"],
+                    "section" => $row["section"],
+                    "lt" => $row["lt"],
+                    "lg" => $row["lg"],
+                    "images" => $arrImages,
+                );
+
+                $i++;
+            }
+        }
+
+        $arrResponse = array(
+            "total" => $limit["total"],
+            "listingData" => $arrData,
+        );
+
+        $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+        echo json_encode($arrMessage);
+    }
+
+    private function getBranches()
+    {
+        return getBranchList($this->_dbConn, false, "", "", 0, true);
+    }
+
+    final public function getDownloadData()
+    {
+        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // filter query
+        $where = $this->getCondition();
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+        // $branch = array();
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $teamType = getFormData($this->_data['searchbar'], "teamType");
+        if (checkIfAllSelected($branch)) {
+            $branch = $this->getBranches();
+        }
+
+        $respTable = getRespTable(1, $this->_projectId);
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        // $stockSummaryTable = $this->_tables["STOCK_SUMMARY_TABLE"];
+
+        // create 2 arrays for sale and competition so that Products and Competition columns can be clubbed together
+        $arrDownload = array(
+            "sale" => array(
+                array(),    // header
+            ),
+            // "competition" => array(
+            //     array(),
+            // ),
+        );
+
+        // create header
+        $arrDownload["sale"][0][] = "ProId";
+        $arrDownload["sale"][0][] = "Date";
+        $arrDownload["sale"][0][] = "Week";
+        $arrDownload["sale"][0][] = "Timestamp";
+        $arrDownload["sale"][0][] = "Lt";
+        $arrDownload["sale"][0][] = "Lg";
+        $arrDownload["sale"][0][] = "District";
+        $arrDownload["sale"][0][] = "Branch";
+        $arrDownload["sale"][0][] = "Region";
+        $arrDownload["sale"][0][] = "Circle";
+        $arrDownload["sale"][0][] = "Section";
+        $arrDownload["sale"][0][] = "WD Code";
+        $arrDownload["sale"][0][] = "DS ID";
+        $arrDownload["sale"][0][] = "DS Type";
+        $arrDownload["sale"][0][] = "DS Name";
+        $arrDownload["sale"][0][] = "Reporting Type";
+        $arrDownload["sale"][0][] = "Route";
+        // $arrDownload["sale"][0][] = "Market Name";
+        $arrDownload["sale"][0][] = "Outlet Name";
+        // $arrDownload["sale"][0][] = "Goi Market Id";
+        // $arrDownload["sale"][0][] = "Goi Pop Group";
+        $arrDownload["sale"][0][] = "Outlet ID";
+        $arrDownload["sale"][0][] = "Owner Mobile Number";
+        $arrDownload["sale"][0][] = "Outlet Type";
+        $arrDownload["sale"][0][] = "Sell-in order";
+        $arrDownload["sale"][0][] = "Base Location Distance (meters)";
+        $arrDownload["sale"][0][] = "CFT";
+        $cftIndex = array_search("CFT", $arrDownload["sale"][0]);
+        array_splice($arrDownload["sale"][0], $cftIndex + 1, 0, "ULC");
+        $iStartofProductsColumn = count($arrDownload["sale"][0]);
+
+        // Store index of each product and competition to increment quantity in that column
+        $arrProductIndex = array();
+        //$arrCompetitionIndex = array();
+
+        $this->getBranchWiseProducts(null, $teamType);
+
+        // Loop through each brach data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+
+            // create header with product list and competition list
+            $arrProductBought = $this->getBranchWiseProducts($branchId, $teamType);
+
+            $sProductSaleColumns = "";
+            if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                foreach ($arrProductBought as $arrProduct) {
+                    $productName = strtoupper($arrProduct[0]);
+                    $productColumnName = $arrProduct[1];
+                    if (!isset($arrProductIndex[$productName])) {
+                        $arrProductIndex[$productName] = count($arrDownload["sale"][0]);
+                        $arrDownload["sale"][0][] = "$productName - Qty (M) Bought";
+                        // $arrDownload["sale"][0][] = "$productName - Stock (Pkt)";
+                    }
+
+                    $sProductSaleColumns .= ", a.$productColumnName";
+                }
+            }
+
+            // $arrCompetition = $this->getBranchWiseProducts($branchId, false, $teamType);
+            // if ($arrCompetition && isNonEmptyArray($arrCompetition)) {
+            //     foreach ($arrCompetition as $competition) {
+            //         $competition = strtoupper($competition);
+            //         if (!isset($arrCompetitionIndex[$competition])) {
+            //             $arrCompetitionIndex[$competition] = count($arrDownload["competition"][0]);
+            //             $arrDownload["competition"][0][] = "$competition Competition - Avg Sale";
+            //             $arrDownload["competition"][0][] = "$competition Competition - Stock";
+            //         }
+            //     }
+            // }
+
+            // Don't use b.dstatus = 0 AND c.dstatus = 0
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.pro_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.distance_in_meter" .
+                ", b.team_id, b.team_name, b.is_type,b.circle,b.section, b.wd_code, c.district, c.branch_name, c.main_branch $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = '99' AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows) {
+                $productCount = 0;
+                // $sReplacedProductSaleColumns = trim(substr(str_replace("a.", "", $sProductSaleColumns), 1));
+                $index = count($arrDownload["sale"]);
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $proId = $row["pro_id"];
+                    $captureDate = $row["capture_date"];
+                    $week = $this->getWeekNumber($captureDate);
+                    $callTime = $row["call_time"];
+                    $time = $callTime / 1000;
+                    $timeSpent = gmdate("i:s", $time);
+                    $meters = $row["distance_in_meter"] / 1000;
+                    $roundedMeters = round($meters, 2);
+
+                    // Convert seconds to HH:MM:SS format
+
+                    $shopId = $row["ques_3"];
+                    // Don't use dstatus = 0
+                    $shopDetails = $shopId && is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
+                    $shopName = isset($shopDetails[0]) ? htmlentities($shopDetails[0]) : "";
+                    $shopUniqCode = isset($shopDetails[1]) ? htmlentities($shopDetails[1]) : "";
+                    $mobileNumber = isset($shopDetails[2]) ? htmlentities($shopDetails[2]) : "";
+                    $shopType = isset($shopDetails[3]) ? htmlentities($shopDetails[3]) : "";
+                    $sellIinOrder = $row["ques_4"];
+
+
+                    // $arrDownload["competition"][$index] = array();
+                    $arrDownload["sale"][$index][] = $proId;
+                    $arrDownload["sale"][$index][] = $captureDate;
+                    $arrDownload["sale"][$index][] = $week;
+                    $arrDownload["sale"][$index][] = currentDateTime($row["capture_datetime"], "d-m-Y h:i:s A");
+                    $arrDownload["sale"][$index][] = $row["lt"];
+                    $arrDownload["sale"][$index][] = $row["lg"];
+                    $arrDownload["sale"][$index][] = $row["district"];
+                    $arrDownload["sale"][$index][] = $row["main_branch"];
+                    $arrDownload["sale"][$index][] = $row["branch_name"];
+                    $arrDownload["sale"][$index][] = $row["circle"];
+                    $arrDownload["sale"][$index][] = $row["section"];
+                    $arrDownload["sale"][$index][] = $row["wd_code"];
+                    $arrDownload["sale"][$index][] = $row["team_id"];
+                    $arrDownload["sale"][$index][] = $arrTeamType[$row["is_type"]];
+                    $arrDownload["sale"][$index][] = $row["team_name"];
+                    $arrDownload["sale"][$index][] = $row["ques_0"];
+                    $arrDownload["sale"][$index][] = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
+                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($feederMarketName);
+                    $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopName);
+                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiMarketId);
+                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiPopGroup);
+                    $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopUniqCode);
+                    $arrDownload["sale"][$index][] = $mobileNumber;
+                    $arrDownload["sale"][$index][] = $shopType;
+                    $arrDownload["sale"][$index][] = $sellIinOrder;
+                    $arrDownload["sale"][$index][] = $roundedMeters;
+                    $arrDownload["sale"][$index][] = $timeSpent;
+                    $arrDownload["sale"][$index][] = "";
+
+                    if ($sellIinOrder === "Yes") {
+                        // get Stock in Products Bought
+                        // $arrStock = getRowColumns($this->_dbConn, $stockSummaryTable, $sReplacedProductSaleColumns, "stock_type = 2 AND rec_id = $proId", array(), true, 2);
+
+                        // $competitionDetails = getGridDataAsArray(
+                        //     json_decode($row["ques_7"], true),
+                        //     2,
+                        //     isNonEmptyArray($arrCompetition) ? count($arrCompetition) : 1
+                        // );
+                        $productCount = 0; // Initialize product count before the loop
+                        // get each product sale
+                        if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                            foreach ($arrProductBought as $productIndex => $arrProduct) {
+                                $productName = strtoupper($arrProduct[0]);
+                                $productColumnName = $arrProduct[1];
+
+                                $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
+                                // Ensure the product value exists and is strictly greater than 0
+                                if (isset($iSale) && floatval($iSale) > 0) {
+                                    $productCount++; // Count only if the value is greater than 0
+                                }
+
+                                $arrDownload["sale"][$index][$cftIndex + 1] = isset($productCount) ? $productCount : 0;
+                                // get index of product and insert sale
+                                $iProductIndex = $arrProductIndex[$productName];
+                                $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
+                                // insert Stock in Products Bought
+                                // $iStock = isset($arrStock[$productColumnName]) && floatval($arrStock[$productColumnName]) ? floatval($arrStock[$productColumnName]) : 0;
+                                // $arrDownload["sale"][$index][$iProductIndex + 1] = $iStock;
+                            }
+                        }
+
+                        // get each competition
+                        // if ($arrCompetition && isNonEmptyArray($arrCompetition)) {
+                        //     foreach ($arrCompetition as $compIndex => $competition) {
+                        //         $iCompetitionAvgSale = isset($competitionDetails[0][$compIndex]) ? $competitionDetails[0][$compIndex] : 0;
+                        //         $iCompetitionStock = isset($competitionDetails[1][$compIndex]) ? $competitionDetails[1][$compIndex] : 0;
+
+                        //         // get index of competition
+                        //         $competition = strtoupper($competition);
+                        //         $iCompetitionIndex = $arrCompetitionIndex[$competition];
+                        //         $arrDownload["competition"][$index][$iCompetitionIndex] = floatval($iCompetitionAvgSale);
+                        //         $arrDownload["competition"][$index][$iCompetitionIndex + 1] = floatval($iCompetitionStock);
+                        //     }
+                        // }
+                    }
+                    $index++;
+                }
+            }
+        }
+
+        $fileName = "VanDs_Report_$currentDateTime.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $iNofOfProductsColumn = count($arrDownload["sale"][0]) - $iStartofProductsColumn;
+        // $iNofOfCompetitionColumn = count($arrDownload["competition"][0]);
+
+        // Prepare excel data to download
+        $arrExcelData = array();
+        foreach ($arrDownload["sale"] as $index => $arrBody) {
+            // header
+            if ($index === 0) {
+                $arrValues = array();
+                foreach ($arrBody as $body) {
+                    $arrValues[] = $body;
+                }
+                // foreach ($arrDownload["competition"][$index] as $competition) {
+                //     $arrValues[] = $competition;
+                // }
+            } else {
+                // body
+                $arrValues = $productCount;
+                // Take first $iStartofProductsColumn values
+                $arrValues = array_slice($arrBody, 0, $iStartofProductsColumn);
+
+                // insert each product sale
+                for ($productIndex = 0; $productIndex < $iNofOfProductsColumn; $productIndex++) {
+                    $arrValues[] = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : 0;
+                }
+
+                // insert each competition
+                // for ($competitionIndex = 0; $competitionIndex < $iNofOfCompetitionColumn; $competitionIndex++) {
+                //     $arrValues[] = isset($arrDownload["competition"][$index][$competitionIndex]) ? $arrDownload["competition"][$index][$competitionIndex] : 0;
+                // }
+            }
+
+            $arrExcelData[] = $arrValues;
+        }
+
+        // Pass complete data
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+
+        echo json_encode($arrMessage);
+    }
+
+    final public function getDownloadSummary()
+    {
+        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
+        $stockSummaryTable = $this->_tables["STOCK_SUMMARY_TABLE"];
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $constantsTable = $this->_tables["CONSTANTS_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
+        // $respTable = getRespTable(1, $this->_projectId);
+        $where = "";
+        // filter query
+        $where .= $this->getCondition(true);
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.activity_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $stockWhere = str_replace(array("a.activity_date", "a.team_id"), array("capture_date", "team_id"), $where);
+
+        // prepare missing team condition
+        $sTeamCond = getFilterResult(
+            $this->_data['searchbar'],
+            array("dsName" => array("team_id", 0, true, true)),
+            $this->_dbConn
+        );
+        // $branch = array();
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $teamType = getFormData($this->_data['searchbar'], "dsType");
+
+        if (checkIfAllSelected($branch)) {
+            $branch = $this->getBranches();
+        }
+        $minTotalShops =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
+        $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
+        $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
+
+        // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
+        $arrSummary = array(
+            "sale" => array(
+                array(),    // header
+            ),
+            "stock" => array(
+                array(),
+            ),
+        );
+
+        // create header
+        $arrSummary["sale"][0][] = "District";
+        $arrSummary["sale"][0][] = "Branch";
+        $arrSummary["sale"][0][] = "Region";
+        $arrSummary["sale"][0][] = "Circle";
+        $arrSummary["sale"][0][] = "Section";
+        $arrSummary["sale"][0][] = "WD Code";
+        $arrSummary["sale"][0][] = "DS ID";
+        $arrSummary["sale"][0][] = "DS Name";
+        $arrSummary["sale"][0][] = "DS Type";
+        $arrSummary["sale"][0][] = "Date";
+        $arrSummary["sale"][0][] = "Week";
+        $arrSummary["sale"][0][] = "Present";
+        $arrSummary["sale"][0][] = "Start Time";
+        $arrSummary["sale"][0][] = "End Time";
+        $arrSummary["sale"][0][] = "First Outlet Visit Time";
+        $arrSummary["sale"][0][] = "Last Outlet Visit Time";
+        $arrSummary["sale"][0][] = "Total Time Spent (Mins)";
+        $arrSummary["sale"][0][] = "Time in Market (Mins)";
+        $arrSummary["sale"][0][] = "KM Travelled";
+        $arrSummary["sale"][0][] = "Total CFT";
+        $arrSummary["sale"][0][] = "Avg CFT";
+        $arrSummary["sale"][0][] = "Qualified Attendance";
+        $arrSummary["sale"][0][] = "Ideal Route";
+        $arrSummary["sale"][0][] = "Route Taken";
+        $arrSummary["sale"][0][] = "Route Day";
+        $arrSummary["sale"][0][] = "Route Adherence";
+        $arrSummary["sale"][0][] = "Reason For Non-Adherence";
+        $arrSummary["sale"][0][] = "Planned Outlets";
+        $arrSummary["sale"][0][] = "Outlets Visited";
+        $arrSummary["sale"][0][] = "Outlets billed";
+        $arrSummary["sale"][0][] = "Outlets added";
+        $outletAddedIndex = array_search("Outlets added", $arrSummary["sale"][0]);
+        array_splice($arrSummary["sale"][0], $outletAddedIndex + 1, 0, "Total Stock Carried (M)");
+        array_splice($arrSummary["sale"][0], $outletAddedIndex + 2, 0, "Total Sale (M)");
+
+        $iStartofProductsColumn = count($arrSummary["sale"][0]);
+
+        // get branchwise products and competition of all branches
+        $this->getBranchWiseProducts(null, $teamType);
+
+        // // get branch wise pickup stock products
+        // $this->getBranchWiseStockPickupProducts(null, $teamType);
+
+        // Store index of each product and stock to increment quantity in that column
+        $arrProductIndex = array();
+        $arrStockIndex = array();
+
+        // Loop through each brach data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND a.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND a.branch_id = $branchId";
+                    }
+                }
+            }
+
+            // create header with product list sold
+            $arrProductBought = $this->getBranchWiseProducts($branchId, $teamType);
+            $sProductSaleColumns = "";
+            if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                foreach ($arrProductBought as $arrProduct) {
+                    $productName = strtoupper($arrProduct[0]);
+                    $productColumnName = $arrProduct[1];
+
+                    if (!isset($arrProductIndex[$productName])) {
+                        $arrProductIndex[$productName] = count($arrSummary["sale"][0]);
+                        $arrSummary["sale"][0][] = "$productName - Qty (M) Sold";
+                    }
+
+                    $sProductSaleColumns .= ", SUM(a.$productColumnName) AS $productColumnName";
+                }
+            }
+
+            // create header with product list carried
+            $arrStockProducts = $this->getBranchWiseProducts($branchId, $teamType);
+            $sStockColumns = "";
+            if ($arrStockProducts && isNonEmptyArray($arrStockProducts)) {
+                foreach ($arrStockProducts as $stockProduct) {
+                    $stockProductName = strtoupper($stockProduct[0]);
+                    if (!isset($arrStockIndex[$stockProductName])) {
+                        $arrStockIndex[$stockProductName] = count($arrSummary["stock"][0]);
+                        $arrSummary["stock"][0][] = "{$stockProductName} - Qty (M) Carried";
+                        // $arrSummary["stock"][0][] = "{$stockProductName} - Readystock Avg Sale";
+                    }
+
+                    $sStockColumns .= ", {$stockProduct[1]}";
+                }
+            }
+
+            // get stock for each team
+            $arrTeamWiseStock = array();
+            $sStockAction = null;
+            $iStockRows = 0;
+            $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0, 1) $stockWhere";
+            $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
+
+            if ($iStockRows > 0) {
+                while ($rowStock = $this->_dbConn->GetData($sStockAction)) {
+                    $teamId = $rowStock["team_id"];
+                    $captureDate = $rowStock["capture_date"];
+                    $stockType = $rowStock["stock_type"];
+
+                    $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
+                    foreach ($arrStockProducts as $product) {
+                        $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
+                    }
+                }
+            }
+
+            // get sales
+            // Don't use b.dstatus = 0
+            $where .= getFilterResult(
+                $this->_data['searchbar'],
+                array(
+                    "dsType" => array("b.is_type", -1),
+                )
+            );
+
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.route, a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, SUM(a.total_sales_deliveries) AS total_sales_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops" .
+                ", SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
+                " AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows > 0) {
+                $index = count($arrSummary["sale"]);
+
+                $arrBranchDetails = getRowsColumns($this->_dbConn, $branchTable, "branch_id, branch_name, main_branch, district");
+
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $routeName = $row["route"];
+                    $date = $row["activity_date"];
+                    $week = $this->getWeekNumber($date);
+                    $dayOfWeek = date('D', strtotime($date));
+                    $teamId = $row["team_id"];
+                    $callTime = getRowsColumn($this->_dbConn, $respTable, "call_time", "dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
+                    if (!empty($callTime)) {
+                        $totalTime = array_sum($callTime); // Sum all time values
+                        $time = $totalTime / 1000;
+                        // Convert time to H:i:s format
+                        $totalTimeSpent = gmdate("i:s", (int)$time);
+                    }
+
+                    $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
+                    $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+
+                    $mainBranch = $branchName = $district = "";
+                    if (($branchIndex = array_search($branchId, array_column($arrBranchDetails, 0))) !== false) {
+                        $branchName = $arrBranchDetails[$branchIndex][1];
+                        $mainBranch = $arrBranchDetails[$branchIndex][2];
+                        $district = $arrBranchDetails[$branchIndex][3];
+                    }
+
+                    $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                    $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                    $sellInShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+
+                    $totalShops = $orderShop + $addShop;
+
+                    // Divide by total shops
+                    $timePerShop = ($totalShops > 0) ? ($time / $totalShops) : 0;
+
+                    // Convert back to H:i:s format
+                    $timePerShopFormatted = gmdate("i:s", $timePerShop);
+                    // $totalShops = $row["total_sales_deliveries"] + $row["total_other_shops"];
+                    $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
+                    $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
+                    if ($row["is_beat_adherence"] == "Yes") {
+                        $isBeatAdher = "1";
+                    } elseif ($row["is_beat_adherence"] == "No") {
+                        $isBeatAdher = "0";
+                    }
+
+                    $arrSummary["stock"][$index] = array();
+                    $arrSummary["sale"][$index][] = $district;
+                    $arrSummary["sale"][$index][] = $mainBranch;
+                    $arrSummary["sale"][$index][] = $branchName;
+                    $arrSummary["sale"][$index][] = $row["circle"];
+                    $arrSummary["sale"][$index][] = $row["section"];
+                    $arrSummary["sale"][$index][] = $row["wd_code"];
+                    $arrSummary["sale"][$index][] = $teamId;
+                    $arrSummary["sale"][$index][] = $row["team_name"];
+                    $arrSummary["sale"][$index][] = $arrTeamType[$row["is_type"]];
+                    $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
+                    $arrSummary["sale"][$index][] = $week;
+                    $arrSummary["sale"][$index][] = "1";
+                    $arrSummary["sale"][$index][] = currentDateTime($row["start_datetime"], "H:i:s");
+                    $arrSummary["sale"][$index][] = currentDateTime($row["end_datetime"], "H:i:s");
+                    $arrSummary["sale"][$index][] = isset($row["resp_startdatetime"]) ? currentDateTime($row["resp_startdatetime"], "H:i:s") : "";
+                    $arrSummary["sale"][$index][] = isset($row["resp_enddatetime"]) ? currentDateTime($row["resp_enddatetime"], "H:i:s") : "";
+                    $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
+                    $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
+                    $arrSummary["sale"][$index][] = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
+                    $arrSummary["sale"][$index][] = $totalTimeSpent;
+                    $arrSummary["sale"][$index][] = $timePerShopFormatted;
+                    $arrSummary["sale"][$index][] = $isQualifiedAttendance;
+                    $arrSummary["sale"][$index][] = $idealRoute;
+                    $arrSummary["sale"][$index][] = $row["route"];
+                    $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[1]) ? $arrPlannedOutletBeatDay[1] : "";
+                    $arrSummary["sale"][$index][] = $isBeatAdher;
+                    $arrSummary["sale"][$index][] = $row["beat_adherence_reason"];
+                    $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[0]) ? $arrPlannedOutletBeatDay[0] : "";
+                    $arrSummary["sale"][$index][] = $totalShops;
+                    $arrSummary["sale"][$index][] = $sellInShop;
+                    $arrSummary["sale"][$index][] = $addShop;
+
+                    // insert sale
+                    $totalProductSale = 0; // Initialize total product sale
+                    if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                        foreach ($arrProductBought as $productIndex => $arrProduct) {
+                            $productName = strtoupper($arrProduct[0]);
+                            $iSale = $row[$arrProduct[1]];
+
+                            // Accumulate the product sale
+                            $totalProductSale += $iSale;
+
+                            // get index of product
+                            $iProductIndex = $arrProductIndex[$productName];
+                            $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
+                        }
+                    }
+
+                    $totalReadyStockPickup = 0; // Initialize total ready stock pickup
+                    // insert pickup stock Qty and Avg sale
+                    foreach ($arrStockProducts as $stockProduct) {
+                        $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
+                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
+
+                        // Accumulate the ready stock pickup
+                        $totalReadyStockPickup += $iStockQty;
+
+                        // get index of product
+                        $stockProductName = strtoupper($stockProduct[0]);
+                        $iStockIndex = $arrStockIndex[$stockProductName];
+                        $arrSummary["stock"][$index][$iStockIndex] = floatval($iStockQty);
+                    }
+                    $arrSummary["sale"][$index][$outletAddedIndex + 1] = $totalReadyStockPickup;
+                    $arrSummary["sale"][$index][$outletAddedIndex + 2] = $totalProductSale;
+                    $index++;
+                }
+            }
+
+            $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
+            $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
+
+            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+
+            // Convert date strings to DateTime objects
+            $startDate = new DateTime($dateFrom);
+            $endDate = new DateTime($dateTo);
+
+            while ($startDate <= $endDate) {
+                $index = count($arrSummary["sale"]);
+                $date = $startDate->format('Y-m-d'); // Format the current date
+                $week = $this->getWeekNumber($date);
+                $arrDates = array();
+
+                if (!in_array($date, $arrDates)) {
+                    $arrDates[] = $date;
+
+                    $teamTypeCon = getFilterResult(
+                        $this->_data['searchbar'],
+                        array(
+                            "dsType" => array("a.is_type", -1),
+                        )
+                    );
+
+                    // Query to get teams who have not uploaded any record on that date
+                    $iTeamRows = 0;
+                    $rsTeamAction = 0;
+                    $sTeamQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '99' AND a.branch_id = b.branch_id $branchCond" .
+                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM $summaryTable WHERE dstatus = 0 AND activity_date = '$date') $sTeamCond $teamTypeCon ORDER BY a.team_name";
+                    $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
+
+                    if ($iTeamRows) {
+                        while ($rowTeam = $this->_dbConn->GetData($rsTeamAction)) {
+                            $arrSummary["stock"][$index] = array();
+                            $arrSummary["sale"][$index][] = $rowTeam["district"];
+                            $arrSummary["sale"][$index][] = $rowTeam["main_branch"];
+                            $arrSummary["sale"][$index][] = $rowTeam["branch_name"];
+                            $arrSummary["sale"][$index][] = $rowTeam["circle"];
+                            $arrSummary["sale"][$index][] = $rowTeam["section"];
+                            $arrSummary["sale"][$index][] = $rowTeam["wd_code"];
+                            $arrSummary["sale"][$index][] = $rowTeam["team_id"];
+                            $arrSummary["sale"][$index][] = $rowTeam["team_name"];
+                            $arrSummary["sale"][$index][] = $arrTeamType[$rowTeam["is_type"]];
+                            $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
+                            $arrSummary["sale"][$index][] = $week;
+                            $arrSummary["sale"][$index][] = "0";
+                            $index++;
+                        }
+                    }
+                }
+
+                // Move to the next date
+                $startDate->modify('+1 day');
+            }
+        }
+
+        $fileName = "VanDs_Summary_$currentDateTime.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $iNofOfProductsColumn = count($arrSummary["sale"][0]) - $iStartofProductsColumn;
+        $iNofOfStockColumn = count($arrSummary["stock"][0]);
+
+        // Prepare excel data to download
+        $arrExcelData = array();
+        foreach ($arrSummary["sale"] as $index => $arrBody) {
+            // header
+            if ($index === 0) {
+                $arrValues = array();
+                foreach ($arrBody as $body) {
+                    $arrValues[] = $body;
+                }
+                foreach ($arrSummary["stock"][$index] as $stock) {
+                    $arrValues[] = $stock;
+                }
+
+                // Style header
+                $endColumnName = $sheet->getCellByColumnAndRow(count($arrValues), 1)->getCoordinate();
+                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // center align text
+                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER); // center align text
+                $sheet->getStyle("A1:$endColumnName")->getFill()->setFillType(Fill::FILL_SOLID);  // fill style
+                $sheet->getStyle("A1:$endColumnName")->getFont()->getColor()->setARGB("FF000000"); // font color
+                $sheet->getStyle("A1:$endColumnName")->getFont()->setBold(true);   // bold text
+                $sheet->getStyle("A1:$endColumnName")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);   // set border
+                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setWrapText(true);   // wrap text
+
+                // Backgroud color
+                $endColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn, 1)->getCoordinate();
+                $sheet->getStyle("A1:$endColumnName")->getFill()->getStartColor()->setARGB("FFFFC000"); // background color
+                $productStartColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + 1, 1)->getCoordinate();
+                $productEndColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + $iNofOfProductsColumn, 1)->getCoordinate();
+                $sheet->getStyle("$productStartColumnName:$productEndColumnName")->getFill()->getStartColor()->setARGB("FFFF5E00"); // background color
+                $stockStartColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + $iNofOfProductsColumn + 1, 1)->getCoordinate();
+                $stockEndColumnName = $sheet->getCellByColumnAndRow(count($arrValues), 1)->getCoordinate();
+                $sheet->getStyle("$stockStartColumnName:$stockEndColumnName")->getFill()->getStartColor()->setARGB("FF88FF00"); // background color
+            } else {
+                // Body
+
+                // Sort array by index since some values were added explicity using index
+                ksort($arrBody);
+
+                // Take first $iStartofProductsColumn values
+                $arrValues = array_slice($arrBody, 0, $iStartofProductsColumn);
+
+                // insert each product sale
+                for ($productIndex = 0; $productIndex < $iNofOfProductsColumn; $productIndex++) {
+                    $arrValues[] = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : 0;
+                }
+
+                // insert each stock
+                if (isNonEmptyArray($arrSummary["stock"][$index])) {
+                    for ($stockIndex = 0; $stockIndex < $iNofOfStockColumn; $stockIndex++) {
+                        $arrValues[] = isset($arrSummary["stock"][$index][$stockIndex]) ? $arrSummary["stock"][$index][$stockIndex] : 0;
+                    }
+                }
+            }
+
+            $arrExcelData[] = $arrValues;
+        }
+
+        // Pass complete data
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+
+        echo json_encode($arrMessage);
+    }
+
+    public function getDownloadBinderReport()
+    {
+        $where = "";
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+
+        // Filter query
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $circle = getFormData($this->_data['searchbar'], "circle");
+        $section = getFormData($this->_data['searchbar'], "section");
+        $wdCode = getFormData($this->_data['searchbar'], "wdCode");
+        $dsType = getFormData($this->_data['searchbar'], "dsType");
+        $dsName = getFormData($this->_data['searchbar'], "dsName");
+
+        $respTable = getRespTable(1, $this->_projectId);
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        $Cond = "";
+        $teamTypeCond = "";
+        if ($dsType) {
+            $teamTypeCond .= " AND team_type = $dsType";
+            $Cond .= " AND b.is_type = $dsType";
+        }
+
+        if ($branch) {
+            $matchAll = checkIfAllSelected($branch);
+            if (!$matchAll) {
+                if (isNonEmptyArray($branch)) {
+                    $branchs = "'" . implode("','", $branch) . "'";
+                    $branchCond = " AND branch_id IN ($branchs)";
+                    $Cond .= " AND b.branch_id IN ($branchs)";
+                } else {
+                    $branchCond = " AND branch_id = $branch";
+                    $Cond .= " AND b.branch_id = $branch";
+                }
+            } else {
+                $branch = $this->getBranch();
+            }
+        }
+
+        $circleCond = "";
+        if ($circle) {
+            $matchAll = checkIfAllSelected($circle);
+            if (!$matchAll) {
+                if (isNonEmptyArray($circle)) {
+                    $circles = "'" . implode("','", $circle) . "'";
+                    $circleCond = " AND circle IN ($circles)";
+                    $Cond .= " AND b.circle IN ($circles)";
+                } else {
+                    $circleCond = " AND circle = $circle";
+                    $Cond .= " AND b.circle = $circle";
+                }
+            }
+        }
+
+        $sectionCond = "";
+        if ($section) {
+            $matchAll = checkIfAllSelected($section);
+            if (!$matchAll) {
+                if (isNonEmptyArray($section)) {
+                    $sections = "'" . implode("','", $section) . "'";
+                    $sectionCond = " AND section IN ($sections)";
+                    $Cond .= " AND b.section IN ($sections)";
+                } else {
+                    $sectionCond = " AND section = $section";
+                    $Cond .= " AND b.section = $section";
+                }
+            }
+        }
+
+        $wdCodeCond = "";
+        if ($wdCode) {
+            $matchAll = checkIfAllSelected($wdCode);
+            if (!$matchAll) {
+                if (isNonEmptyArray($wdCode)) {
+                    $wdCodes = "'" . implode("','", $wdCode) . "'";
+                    $wdCodeCond = " AND wd_code IN ($wdCodes)";
+                    $Cond .= " AND b.wd_code IN ($wdCodes)";
+                } else {
+                    $wdCodeCond = " AND wd_code = $wdCode";
+                    $Cond .= " AND b.wd_code = $wdCode";
+                }
+            }
+        }
+
+        $dsNameCond = "";
+        if ($dsName) {
+            $matchAll = checkIfAllSelected($dsName);
+            if (!$matchAll) {
+                if (isNonEmptyArray($dsName)) {
+                    $dsNames = "'" . implode("','", $dsName) . "'";
+                    $dsNameCond = " AND team_id IN ($dsNames)";
+                    $Cond .= " AND b.team_id IN ($dsNames)";
+                } else {
+                    $dsNameCond = " AND team_id = $dsName";
+                    $Cond .= " AND b.team_id = $dsName";
+                }
+            }
+        }
+
+        $allCond = "";
+        if ($Cond) {
+            $allCond .= " AND a.team_id IN (SELECT team_id FROM $projectTeamTable WHERE dstatus = 0  $Cond)";
+        }
+
+        $arrExcelData = [];
+        $arrExcelData[] = ["Branch", "Region", "Circle", "Section", "WD Code", "DS Type", "DS ID", "DS Name", "Date", "Week", "Route", "Outlet Name", "Owner Moblie Number", "Outlet ID", "Outlet Type", "Category", "Variant", "Sales Qty (M)"];
+
+        foreach ($branch as $branchId) {
+            $sProductQuery = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $teamTypeCond ORDER BY product_name";
+            $sProductAction = null;
+            $iProductRows = 0;
+            $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
+
+            if ($iProductRows > 0) {
+                $summaryColName = [];
+                $productNames = [];
+                $category_name = [];
+
+                while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
+                    $summaryColName[] = $rowProduct["summary_column_name"];
+                    $productNames[] = $rowProduct["product_name"];
+                    $category_name[$rowProduct["summary_column_name"]] = $rowProduct["category_name"];
+                }
+                $sProductSaleColumns = implode(",", $summaryColName);
+
+                $isType = [0 => "Van DS", 1 => "Niches", 5 => "NPSR"];
+                $rsAction = null;
+                $iRows = 0;
+
+                // Fetch all records (no grouping)
+                $sQuery = "SELECT a.capture_datetime, a.capture_date, a.ques_0, a.ques_1, a.ques_3, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code, c.branch_name, c.main_branch, $sProductSaleColumns" .
+                    " FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c Where a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0 AND ques_0 IN ('Outlet Order', 'Add Outlet')" .
+                    " $where $allCond AND b.branch_id = $branchId ORDER BY a.capture_date DESC, capture_datetime DESC";
+
+                $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+                if ($iRows > 0) {
+                    while ($row = $this->_dbConn->GetData($rsAction)) {
+                        $mainBranchName = $row['main_branch'];
+                        $branchName = $row['branch_name'];
+                        $teamId = $row['team_id'];
+                        $teamName = $row['team_name'];
+                        $circle = $row['circle'];
+                        $outletId = $row['ques_3'];
+                        $section = $row['section'];
+                        $dsType = $isType[$row['is_type']];
+                        $wdCode = $row['wd_code'];
+                        $date = $row['capture_date'];
+                        $week = $this->getWeekNumber($date);
+                        $route = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
+                        $outletData = getRowColumns(
+                            $this->_dbConn,
+                            "$routeTable",
+                            "outlet_name, shop_uniq_code, outlet_type, outlet_mobile",
+                            "dstatus = 0 AND rec_id = '$outletId'
+                         AND team_id = $teamId "
+                        );
+
+                        $outletName  = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
+                        $shopUniqueCode = $outletData[1] ?? "";
+                        $outletType = $outletData[2] ?? "";
+                        $mobileNo = $outletData[3] ?? "";
+
+                        foreach ($summaryColName as $colName) {
+                            // Get sales quantity for each product variant per transaction
+                            $salesQty = $row[$colName] ?? 0;
+
+                            if ($salesQty > 0) {
+                                $arrExcelData[] = [
+                                    'Branch' => $mainBranchName,
+                                    'Region' => $branchName,
+                                    'Circle' => $circle,
+                                    'Section' => $section,
+                                    'WD Code' => $wdCode,
+                                    'DS Type' => $dsType,
+                                    'DS ID' => $teamId,
+                                    'DS Name' => $teamName,
+                                    'Date' => $date,
+                                    'Week' => $week,
+                                    'Route' => $route,
+                                    'Outlet Name' => $outletName,
+                                    'Owner Moblie Number' => $mobileNo,
+                                    'Outlet ID' => $shopUniqueCode,
+                                    'Outlet Type' => $outletType,
+                                    'Category' => $category_name[$colName] ?? '',
+                                    'Variant' => $productNames[array_search($colName, $summaryColName)],
+                                    'Sales Qty (M)' => $salesQty,
+                                ];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $fileName = "BINDER_REPORT_$currentDateTime.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = [
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        ];
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
+
+        echo json_encode($arrMessage);
+    }
+}

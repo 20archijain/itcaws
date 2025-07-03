@@ -1,0 +1,50 @@
+<app-card cardTitle="{{ 'app.wdMapping.heading' | translate }}" [options]="false">
+
+  <app-table-listing checkKey="id" [header]="header" [url]="url" [body]="body" [searchTemplate]="searchTemplate"
+    [searchGroup]="form" [smallTable]="true" editLabel="app.project.view.editHeading" [editConfig]="editConfig"
+    editModalSize="modal-md" [isSelectable]="false">
+  </app-table-listing>
+
+  <ng-template #searchTemplate>
+    <div class="row">
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="district" [options]="districtOptions"
+          placeholder="{{ 'app.wdMapping.district' | translate}}" [multiple]="true" (onChange)="getBranch()">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="branch" [options]="branchOptions"
+          placeholder="{{ 'app.wdMapping.branch' | translate}}" [multiple]="true" (onChange)="getCircle()">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="circle" [options]="circleOptions"
+          placeholder="{{ 'app.wdMapping.circle' | translate}}" [multiple]="true" (onChange)="getSection()">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="section" [options]="sectionOptions"
+          placeholder="{{ 'app.wdMapping.section' | translate}}" [multiple]="true" (onChange)="getWdCode()">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="wdCode" [options]="wdCodeOptions"
+          placeholder="{{ 'app.wdMapping.wd_code' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="wdMarket" [options]="wdMarketOptions"
+          placeholder="{{ 'app.wdMapping.wd_market' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="col-sm-2 col-md-2">
+        <app-select [group]="form" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+          placeholder="{{ 'app.wdMapping.wd_pop_group' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="col-sm-3 col-md-2">
+        <app-button type="submit" text="button.search"></app-button>
+      </div>
+    </div>
+  </ng-template>
+</app-card>

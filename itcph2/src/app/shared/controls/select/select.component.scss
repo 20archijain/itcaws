@@ -1,0 +1,13 @@
+::ng-deep {
+  .mh-default {
+    ng-select {
+      .placeholder {
+        min-height: 32px;
+      }
+
+      .option {
+        max-width: 100%;
+      }
+    }
+  }
+}

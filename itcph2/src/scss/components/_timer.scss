@@ -1,0 +1,33 @@
+$timer-border-thickness: 10px;
+$mask-color: #ccc;
+$spin-color: #337ab7;
+$white-bg-color: #fff;
+
+.timer {
+  background: $white-bg-color;
+  border: $timer-border-thickness solid $mask-color;
+  border-radius: 50%;
+  margin: 30px auto;
+  position: relative;
+
+  .time {
+    color: $spin-color;
+    font-size: 30px;
+    left: 50%;
+    margin-bottom: 0;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 400;
+  }
+}
+
+@include timer(
+  ".timer",
+  10,
+  160px,
+  #fff,
+  "#{$timer-border-thickness} solid #{$spin-color}",
+  $timer-border-thickness,
+  $mask-color
+);

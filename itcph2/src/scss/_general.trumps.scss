@@ -1,0 +1,392 @@
+$error-border-color: #ff5252;
+$bg-light-info: rgba(0, 172, 193, .2);
+$required-field-color: #e32;
+$ratings-color: #aaa;
+$ngselect-border-color: #b8dbff;
+$orange-bg-color: #ff9149;
+$grey-bg-color: rgb(96, 125, 139);
+$blue-bg-color: #26c6da;
+$black-color: #000;
+$white-color: #fff;
+$teal-color1: #012a4a;
+$teal-color2: #013a63;
+$teal-color3: #01497c;
+$teal-color4: #014f86;
+$teal-color5: #2a6f97;
+$teal-color6: #2c7da0;
+$teal-color7: #61a5c2;
+$teal-color8: #468faf;
+$teal-color9: #3a7ca5;
+$teal-color10: #89c2d9;
+
+.form-group {
+  margin-bottom: 5px;
+}
+
+.link {
+  cursor: pointer;
+}
+
+// Header
+.b-brand {
+  height: 90%;
+
+  .logo {
+    height: inherit;
+  }
+}
+
+.required {
+  &::after {
+    color: $required-field-color;
+    content: " *";
+  }
+}
+
+// remove checkbox margin and padding
+.no-margin {
+  margin-bottom: 0;
+
+  .checkbox {
+    padding: 0;
+
+    .cr {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.dummy-image {
+  max-height: 120px;
+  max-width: 120px;
+}
+
+// custom scrollbar
+@include scrollbar(".custom-scrollbar");
+
+.pcoded-content {
+  padding: 15px;
+}
+
+.pcoded-main-container {
+  min-height: calc(100vh - 60px);
+}
+
+.table {
+  &.table-xxs {
+
+    th,
+    td {
+      padding: .2rem .2rem 0;
+      white-space: normal;
+    }
+  }
+
+  &.table-xxxs {
+
+    th,
+    td {
+      font-size: 12px;
+      padding: .25rem;
+      white-space: normal;
+    }
+  }
+
+  thead {
+    th {
+      &.bg-light-info {
+        background-color: $bg-light-info;
+      }
+    }
+  }
+}
+
+.d-flex-inline {
+  display: inline-flex;
+}
+
+google-map {
+  height: 500px;
+}
+
+.total-ratings {
+  background-color: $ratings-color;
+}
+
+.attendance-marker {
+  .attendance-img {
+    margin-bottom: 5px;
+    max-height: 80px;
+    max-width: 80px;
+  }
+
+  .attendance-label {
+    color: $black-color;
+    font-size: 10px;
+    margin-bottom: 5px;
+  }
+}
+
+.v-align-middle {
+  vertical-align: middle;
+}
+
+.ng-select {
+  &:not(.option-selected) {
+    .ng-select-container {
+      &.ng-has-value {
+        .ng-placeholder {
+          display: block;
+        }
+      }
+    }
+  }
+
+  &.ng-invalid {
+    &.ng-touched {
+      .ng-select-container {
+        border: solid 1px $error-border-color;
+      }
+
+      ~.invalid-feedback {
+        display: block;
+      }
+    }
+  }
+
+  &.ng-select-multiple {
+    .ng-select-container {
+      .ng-value-container {
+        .ng-value {
+          margin-right: 0;
+          padding-right: 5px;
+
+          .ng-value-icon {
+            &.left {
+              border-right: 0;
+            }
+          }
+
+          .ng-value-label {
+            border-left: 1px solid $ngselect-border-color;
+            white-space: normal;
+          }
+        }
+      }
+    }
+  }
+}
+
+.table-fixed {
+  tbody {
+    max-height: 500px;
+    overflow-y: auto;
+    width: 100%;
+  }
+
+  thead,
+  tbody,
+  tr {
+    display: block;
+
+    th,
+    td {
+      float: left;
+      height: 44px;
+    }
+  }
+}
+
+.proj-t-card {
+  .pt-badge {
+    &.dashboard {
+      padding: 30px 30px 10px 15px;
+      right: -25px;
+      top: -25px;
+    }
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .pcoded-navbar {
+    &.navbar-collapsed {
+      margin-left: 0;
+      transition: all .3s ease-in-out;
+      width: 215px;
+    }
+  }
+}
+
+.ng-dropdown-panel {
+  .ng-dropdown-panel-items {
+    .ng-option {
+      overflow: visible !important;
+      white-space: normal !important;
+    }
+  }
+}
+
+.mt-sm-btn-align {
+  @media screen and (min-width: 576px) {
+    margin-top: 29px;
+  }
+}
+
+.mt-md-btn-align {
+  @media screen and (min-width: 768px) {
+    margin-top: 29px;
+  }
+}
+
+.mt-lg-btn-align {
+  @media screen and (min-width: 992px) {
+    margin-top: 29px;
+  }
+}
+
+.bg-c-orange {
+  background-color: $orange-bg-color;
+}
+
+.bg-c-grey {
+  background-color: $grey-bg-color;
+}
+
+.bg-c-skyblue {
+  background-color: $blue-bg-color;
+}
+
+.text-ellipsis {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.w-100px {
+  width: 100px;
+}
+
+.caption-top {
+  caption-side: top;
+}
+
+.fixed-table {
+  table-layout: fixed;
+}
+
+.fixed-table-header {
+  max-height: 400px;
+  overflow: auto;
+
+  .table {
+    position: relative;
+
+    th {
+      background: $white-color !important;
+      position: sticky;
+      top: -1px;
+    }
+  }
+}
+
+.si-content {
+  max-height: 500px !important;
+}
+
+.teal-bgcolor1 {
+  background-color: $teal-color1 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor2 {
+  background-color: $teal-color2 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor3 {
+  background-color: $teal-color3 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor4 {
+  background-color: $teal-color4 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor5 {
+  background-color: $teal-color5 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor6 {
+  background-color: $teal-color6 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor7 {
+  background-color: $teal-color7 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor8 {
+  background-color: $teal-color8 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor9 {
+  background-color: $teal-color9 !important;
+  color: $white-color !important;
+}
+
+.teal-bgcolor10 {
+  background-color: $teal-color10 !important;
+  color: $white-color !important;
+}
+
+.w-4 {
+  width: 4%;
+}
+
+.w-13 {
+  width: 13%;
+}
+
+.w-5 {
+  width: 5%;
+}
+
+.font-sm {
+  font-size: 13px;
+}
+
+.dropdown-menu-right {
+  left: auto !important;
+  right: -100%;
+}
+
+table {
+  &:not(.table-custom) {
+    tr {
+
+      td,
+      th {
+        background: none !important;
+        box-shadow: none !important;
+      }
+    }
+  }
+}
+
+.text-justify {
+  text-align: justify !important;
+}
+
+.form-control {
+  &.is-invalid {
+    background-position: center right calc(.375em + .1875rem);
+  }
+}
+
+.toast-container {
+  position: fixed;
+}

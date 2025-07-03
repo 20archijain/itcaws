@@ -1,0 +1,24 @@
+<ul class="navbar-nav ms-auto">
+  <li class="nav-item">
+    <div class="dropdown drp-user" ngbDropdown placement="auto">
+      <a href="javascript:" ngbDropdownToggle data-toggle="dropdown">
+        <i class="icon feather icon-user"></i>
+      </a>
+      <div class="dropdown-menu dropdown-menu-right profile-notification" ngbDropdownMenu>
+        <div class="pro-head">
+          <span>{{ userInfo?.name }}</span>
+          <a (click)="logout()" class="dud-logout link" title="Logout">
+            <i class="feather icon-log-out"></i>
+          </a>
+        </div>
+        <ul class="pro-body">
+          <li>
+            <a [routerLink]="['/app', 'MP01', '0']" class="dropdown-item"><i class="feather icon-user"></i>
+              Profile
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </li>
+</ul>

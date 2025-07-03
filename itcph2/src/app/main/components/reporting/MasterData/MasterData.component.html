@@ -1,0 +1,28 @@
+<app-card cardTitle="{{ 'app.reporting.activeUSers.activeSKU' | translate }}" [options]="false">
+  <app-table-listing checkKey="id" [header]="header" [body]="body" [isSelectable]="isSelectable"
+    [sortOptions]="sortOptions" [searchTemplate]="searchTemplate" [searchGroup]="form" [url]="url">
+  </app-table-listing>
+</app-card>
+
+<ng-template #searchTemplate>
+  <div class="row">
+    <div class="col-sm-3 col-lg-2">
+      <app-select placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form" controlName="branch"
+        [options]="branchOptions" [multiple]="true" groupBy="mainBranch">
+      </app-select>
+    </div>
+    <div class="col-sm-3 col-lg-2">
+      <app-select placeholder="{{ 'app.reporting.activeUSers.dsType' | translate }}" [group]="form" controlName="dsType"
+        [options]="dsTypeOptions">
+      </app-select>
+    </div>
+    <div class="col-sm-5 col-md-4">
+      <app-button type="submit" text="button.search"></app-button>
+      <app-button type="submit" [showIconInButton]="true" colorClass="btn-info" btnClass="m-l-5"
+        iconName="icon-download" btnTitle="button.download" (onClick)="download()" [isDisabled]="isExportBtnDisabled">
+      </app-button>
+      <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+        (onClick)="clearForm()"></app-button>
+    </div>
+  </div>
+</ng-template>

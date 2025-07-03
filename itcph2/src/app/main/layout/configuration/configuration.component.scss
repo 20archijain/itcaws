@@ -1,0 +1,29 @@
+$text-color: #222;
+$tab-color: rgba(4, 169, 245, .03);
+
+.menu-styler {
+  .nav-pills {
+    box-shadow: none;
+    margin-bottom: 8px;
+  }
+}
+
+body {
+  &.next-dark {
+    .menu-styler {
+      .tab-content {
+        background: $tab-color;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      p,
+      h6 {
+        color: $text-color;
+      }
+    }
+  }
+}

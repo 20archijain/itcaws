@@ -1,0 +1,50 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "sortOptions": [
+      {
+        "label": "Client Name",
+        "value": "client_name"
+      },
+      {
+        "label": "Description",
+        "value": "client_desc"
+      }
+    ],
+    "viewHeader": [
+      "app.client.view.id",
+      "app.client.add.name",
+      "app.client.add.desc"
+    ],
+    "viewBody": [
+      "id",
+      "name",
+      "desc"
+    ],
+    "data0": [
+      {
+        "name": "ITC",
+        "images": [
+          {
+            "big": "https:\/\/upimg.itccampaign.com\/prods\/any\/cust_itcph2_angular_581654hy5\/clientlogo\/ITC_8f87969f9cf8b50e64bb7617ac1406a4ce6b75e30c839be2dc70058016629545.png",
+            "small": "https:\/\/upimg.itccampaign.com\/prods\/any\/cust_itcph2_angular_581654hy5\/clientlogo\/thumb_ITC_8f87969f9cf8b50e64bb7617ac1406a4ce6b75e30c839be2dc70058016629545.png",
+            "medium": "https:\/\/upimg.itccampaign.com\/prods\/any\/cust_itcph2_angular_581654hy5\/clientlogo\/ITC_8f87969f9cf8b50e64bb7617ac1406a4ce6b75e30c839be2dc70058016629545.png",
+            "description": "",
+            "id": "",
+            "downloadFileName": "ITC_8f87969f9cf8b50e64bb7617ac1406a4ce6b75e30c839be2dc70058016629545.png",
+            "thumbnailTitle": "",
+            "thumbnailContent": "",
+            "thumbnailAltText": ""
+          }
+        ],
+        "desc": "",
+        "id": "1"
+      },
+      {
+        "total": 1
+      }
+    ]
+  },
+  "hidePopup": true
+}

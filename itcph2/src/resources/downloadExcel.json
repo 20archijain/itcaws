@@ -1,0 +1,11 @@
+{
+  "status": 200,
+  "message": [
+    "Downloading file. Please wait..."
+  ],
+  "data": {
+    "filePath": "https:\/\/upimg.itccampaign.com\/upload_xls\/Route_Report_2024-01-10_17-18-18.xlsx",
+    "fileName": "Route_Report_2024-01-10_17-18-18.xlsx"
+  },
+  "hidePopup": false
+}

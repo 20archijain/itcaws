@@ -1,0 +1,101 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "moduleActionCodeList": [
+      {
+        "label": "ADD",
+        "value": "ADD"
+      },
+      {
+        "label": "DELETE",
+        "value": "DEL"
+      },
+      {
+        "label": "EDIT",
+        "value": "EDIT"
+      },
+      {
+        "label": "VIEW",
+        "value": "VIEW"
+      },
+      {
+        "label": "MAP",
+        "value": "MAP"
+      }
+    ],
+    "modulePositionList": [
+      {
+        "label": "Actionbar",
+        "value": "actionbar"
+      },
+      {
+        "label": "Leftside",
+        "value": "leftside"
+      },
+      {
+        "label": "Navbar",
+        "value": "navbar"
+      },
+      {
+        "label": "Topbar",
+        "value": "topbar"
+      }
+    ],
+    "breadcrumbList": [
+      {
+        "label": "Yes",
+        "value": 1
+      },
+      {
+        "label": "No",
+        "value": 0
+      }
+    ],
+    "sortOptions": [
+      {
+        "label": "Module Name",
+        "value": "module_name"
+      },
+      {
+        "label": "Module Code",
+        "value": "module_code"
+      },
+      {
+        "label": "Module Position",
+        "value": "module_position"
+      },
+      {
+        "label": "Module Actioncode",
+        "value": "module_actioncode"
+      },
+      {
+        "label": "Module Added - ASC",
+        "value": "rdt"
+      }
+    ],
+    "viewHeader": [
+      "app.user.module.add.moduleId",
+      "app.user.module.add.moduleName",
+      "app.user.module.add.moduleCode",
+      "app.user.module.add.parentModuleCode",
+      "app.user.module.add.moduleActionCode",
+      "app.user.module.add.moduleComponent",
+      "app.user.module.add.moduleIcon",
+      "app.user.module.add.moduleUrl",
+      "app.user.module.add.moduleSort"
+    ],
+    "viewBody": [
+      "id",
+      "name",
+      "modc",
+      "pmodc",
+      "moduleActionCode",
+      "moduleComponent",
+      "icon",
+      "url",
+      "sort"
+    ]
+  },
+  "hidePopup": true
+}

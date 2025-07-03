@@ -1,0 +1,20 @@
+$scroll-bar-shadow-color: rgba(0, 0, 0, .3);
+$scroll-bar-bg-color: rgba(156, 165, 210, .7);
+
+@mixin scrollbar($element) {
+  #{$element}::-webkit-scrollbar {
+    height: 8px;
+    margin-top: 3px;
+    width: 8px;
+  }
+
+  #{$element}::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 10px $scroll-bar-shadow-color;
+  }
+
+  #{$element}::-webkit-scrollbar-thumb {
+    background-color: $scroll-bar-bg-color;
+    border-radius: 10px;
+    max-height: 100px;
+  }
+}

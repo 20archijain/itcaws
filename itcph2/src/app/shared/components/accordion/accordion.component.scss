@@ -1,0 +1,68 @@
+$white: #fff;
+$blue1: #002d62;
+$blue2: #0066b2;
+$blue3: #b8d9f1;
+$black: #000;
+
+i {
+  font-weight: bold;
+}
+
+.table-header {
+
+  th,
+  td {
+    background-color: $blue1;
+    color: $white;
+  }
+}
+
+.table-data {
+  background-color: $blue2;
+  color: $white;
+}
+
+.expanded-table {
+  background-color: $blue1;
+  color: $white;
+}
+
+.nested-table {
+  background-color: $blue2;
+  color: $white;
+}
+
+.wd-td {
+  background-color: $blue3;
+}
+
+.size-13 {
+  font-size: 12px;
+  padding: 0;
+  width: 7.14%;
+}
+
+.second-nested {
+  border-bottom: 1px solid $black;
+  padding: 0 !important;
+}
+
+.section-row>td {
+  padding: 0;
+}
+
+th,
+td {
+  border: 1px solid $black;
+}
+
+/* Ensure container is centered */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  max-width: 95vw;
+}

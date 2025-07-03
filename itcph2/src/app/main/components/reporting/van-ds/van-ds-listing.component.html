@@ -1,0 +1,224 @@
+<app-card cardTitle="{{ 'app.reporting.vanDs.heading' | translate }}" [options]="false">
+  <div class="table-listing">
+    <app-listing-searchbar [group]="group" [searchGroup]="group.get('searchbar')" [searchTemplate]="searchTemplate"
+      (onAction)="onSearchAction($event)">
+    </app-listing-searchbar>
+
+    <div class="listing" *ngIf="!isSkeletonModeOn; else skeletonData">
+      <div class="listing-row" *ngFor="let data of tableData; let di = index">
+        <app-card [options]="false">
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-4 v-border">
+                  <app-listing-column header="app.reporting.vanDs.reportingType" [content]="data.reportingType">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.route" [content]="data.route">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.branch" [content]="data.branchName">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.circle" [content]="data.circle">
+                  </app-listing-column>
+                </div>
+                <div class="col-sm-4 v-border">
+                  <app-listing-column header="app.team.add.section" [content]="data.section">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.wdCode" [content]="data.wdCode">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopName" [content]="data.shopName">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.mobileNumber" [content]="data.mobileNumber">
+                  </app-listing-column>
+
+                </div>
+                <div class="col-sm-4">
+                  <app-listing-column header="app.reporting.vanDs.sellIinOrder" [content]="data.sellIinOrder">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.timestamp" [content]="data.timestamp">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.dsName" [content]="data.team">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopType" [content]="data.shopType">
+                  </app-listing-column>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Images -->
+            <div class="col-sm-2">
+              <app-custom-gallery *ngIf="data['images']" [images]="data['images']" [cgConfig]="cgConfig">
+              </app-custom-gallery>
+            </div>
+
+            <!-- Actions -->
+            <div class="col-sm-1 listing-actions" *ngIf="isMapAllowed">
+              <i class="feather icon-map-pin link first" title="{{ 'icon.map' | translate }}"
+                (click)="showLocationOnMap(data.lt, data.lg)"></i>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </div>
+
+    <ng-template #skeletonData>
+      <div class="listing-row" *ngFor="let sA of skeletonArray">
+        <app-card [options]="false">
+          <div class="row">
+            <div class="col-sm-10">
+              <div class="row">
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-1">
+              <app-skeleton></app-skeleton>
+            </div>
+            <div class="col-sm-1" *ngIf="isMapAllowed">
+              <app-skeleton></app-skeleton>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </ng-template>
+
+    <ng-template #searchTemplate>
+      <!-- If Superadmin or Admin Login -->
+      <div *ngIf="branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="district" groupClassName="row" sizeClass="col-sm-12"
+            [options]="districtOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.team.add.district' | translate }}" [multiple]="true" (onChange)="getBranch()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="branch" groupClassName="row" sizeClass="col-sm-12"
+            [options]="branchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+            [isRequired]="true" [errorMessages]="errorMessages.branch" (onChange)="getCircle()" [multiple]="true"
+            groupBy="mainBranch">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions"
+            [multiple]="true" placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdMarket" [options]="wdMarketOptions"
+            [multiple]="true" placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+            [multiple]="true" placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true"
+            btnTitle="button.search"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-list-alt" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-download" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadBinder" (onClick)="downloadBinderReport()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
+          <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+            (onClick)="clearForm()"></app-button>
+        </div>
+      </div>
+
+      <!-- If Regional Login -->
+      <div *ngIf="!branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-3">
+          <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true"
+            btnTitle="button.search"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-list-alt" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa-solid fa-download" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="Binder Report" (onClick)="downloadBinderReport()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
+          <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+            (onClick)="clearForm()"></app-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <app-pagination #pagination [group]="group" [limit]="limit" [totalRecords]="totalRecords"
+      (onPageChange)="listingData()"></app-pagination>
+  </div>
+</app-card>
+
+<app-location-on-map-modal></app-location-on-map-modal>

@@ -1,0 +1,1385 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "teamList": [
+      {
+        "value": "1260",
+        "label": "Akash Jawanjad"
+      },
+      {
+        "value": "1131",
+        "label": "ANURAG"
+      },
+      {
+        "value": "8",
+        "label": "Asif"
+      },
+      {
+        "value": "1851",
+        "label": "Asif Mirza"
+      },
+      {
+        "value": "19044",
+        "label": "Bikash Kumar"
+      },
+      {
+        "value": "944",
+        "label": "CHANDAN_EX CG SWD DS"
+      },
+      {
+        "value": "1067",
+        "label": "Kartick2"
+      },
+      {
+        "value": "638",
+        "label": "KOUSHIK ROY"
+      },
+      {
+        "value": "15940",
+        "label": "M MUTHUKRISHNAN"
+      },
+      {
+        "value": "1867",
+        "label": "Mahadeo Sonkusare1"
+      },
+      {
+        "value": "639",
+        "label": "MRINAL ROY"
+      },
+      {
+        "value": "1068",
+        "label": "Narayan"
+      },
+      {
+        "value": "965",
+        "label": "Naushad2"
+      },
+      {
+        "value": "15950",
+        "label": "P STEPHEN"
+      },
+      {
+        "value": "926",
+        "label": "PRAMOD KUMAR"
+      },
+      {
+        "value": "1589",
+        "label": "PRATAP ROY2"
+      },
+      {
+        "value": "1532",
+        "label": "Rajeev"
+      },
+      {
+        "value": "2",
+        "label": "Ram Ds"
+      },
+      {
+        "value": "946",
+        "label": "RANJAN EX CG SWD DS"
+      },
+      {
+        "value": "15960",
+        "label": "RUBAN"
+      },
+      {
+        "value": "1069",
+        "label": "Santu"
+      },
+      {
+        "value": "1591",
+        "label": "SAYAN PAIN"
+      },
+      {
+        "value": "59",
+        "label": "SHIVAM VAN DS"
+      },
+      {
+        "value": "1480",
+        "label": "SUJAN DAS"
+      },
+      {
+        "value": "1168",
+        "label": "Sunil2"
+      },
+      {
+        "value": "1167",
+        "label": "Sunny"
+      },
+      {
+        "value": "19075",
+        "label": "Sunny"
+      },
+      {
+        "value": "1070",
+        "label": "Tapas Das"
+      },
+      {
+        "value": "1224",
+        "label": "TULSI KUMAR WHOLESALE DS"
+      },
+      {
+        "value": "1866",
+        "label": "TUSHAR"
+      },
+      {
+        "value": "19076",
+        "label": "Tushar"
+      },
+      {
+        "value": "1158",
+        "label": "UTTAM"
+      }
+    ],
+    "teamType": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      }
+    ],
+    "circleList": [
+      {
+        "value": "CA1",
+        "label": "CA1"
+      },
+      {
+        "value": "CAV",
+        "label": "CAV"
+      },
+      {
+        "value": "CO1",
+        "label": "CO1"
+      },
+      {
+        "value": "CO2",
+        "label": "CO2"
+      },
+      {
+        "value": "CO3",
+        "label": "CO3"
+      },
+      {
+        "value": "JAK",
+        "label": "JAK"
+      },
+      {
+        "value": "LU4",
+        "label": "LU4"
+      },
+      {
+        "value": "LUC_CFP",
+        "label": "LUC_CFP"
+      },
+      {
+        "value": "NAM",
+        "label": "NAM"
+      },
+      {
+        "value": "NAV",
+        "label": "NAV"
+      },
+      {
+        "value": "PAM",
+        "label": "PAM"
+      }
+    ],
+    "sectionList": [
+      {
+        "value": "CA1004",
+        "label": "CA1004"
+      },
+      {
+        "value": "CAV001",
+        "label": "CAV001"
+      },
+      {
+        "value": "CAV005",
+        "label": "CAV005"
+      },
+      {
+        "value": "CO100A",
+        "label": "CO100A"
+      },
+      {
+        "value": "CO200B",
+        "label": "CO200B"
+      },
+      {
+        "value": "CO3007",
+        "label": "CO3007"
+      },
+      {
+        "value": "JAK001",
+        "label": "JAK001"
+      },
+      {
+        "value": "LU4002",
+        "label": "LU4002"
+      },
+      {
+        "value": "LU4004",
+        "label": "LU4004"
+      },
+      {
+        "value": "LUC003_CFP",
+        "label": "LUC003_CFP"
+      },
+      {
+        "value": "NAM001",
+        "label": "NAM001"
+      },
+      {
+        "value": "NAV002",
+        "label": "NAV002"
+      },
+      {
+        "value": "NAV003",
+        "label": "NAV003"
+      },
+      {
+        "value": "NAV004",
+        "label": "NAV004"
+      },
+      {
+        "value": "PAM004",
+        "label": "PAM004"
+      },
+      {
+        "value": "PAM007",
+        "label": "PAM007"
+      },
+      {
+        "value": "PAM010",
+        "label": "PAM010"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "value": "CA3469",
+        "label": "CA3469"
+      },
+      {
+        "value": "CA3520",
+        "label": "CA3520"
+      },
+      {
+        "value": "CA3684",
+        "label": "CA3684"
+      },
+      {
+        "value": "CO4034",
+        "label": "CO4034"
+      },
+      {
+        "value": "CO4043",
+        "label": "CO4043"
+      },
+      {
+        "value": "CO4097",
+        "label": "CO4097"
+      },
+      {
+        "value": "JA6051",
+        "label": "JA6051"
+      },
+      {
+        "value": "LU3999",
+        "label": "LU3999"
+      },
+      {
+        "value": "LU4001",
+        "label": "LU4001"
+      },
+      {
+        "value": "LU4077",
+        "label": "LU4077"
+      },
+      {
+        "value": "NG2241",
+        "label": "NG2241"
+      },
+      {
+        "value": "NG2957",
+        "label": "NG2957"
+      },
+      {
+        "value": "NG3104",
+        "label": "NG3104"
+      },
+      {
+        "value": "NG3141",
+        "label": "NG3141"
+      },
+      {
+        "value": "PA208910",
+        "label": "PA208910"
+      },
+      {
+        "value": "PA2714",
+        "label": "PA2714"
+      },
+      {
+        "value": "PA2774",
+        "label": "PA2774"
+      }
+    ],
+    "branchFilter": true,
+    "columnSize": 12,
+    "repeatMapBy": 1,
+    "markers": [
+      {
+        "latitude": "25.2171086",
+        "longitude": "82.0845726",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - NARESH KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2632835",
+        "longitude": "82.1578861",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SANTOSH KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.27718",
+        "longitude": "82.13719",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - AAYUSH KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2522361",
+        "longitude": "82.0921855",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - CHETREY KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-05<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2601807",
+        "longitude": "82.0929795",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VIKAS KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2166967",
+        "longitude": "82.0843633",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - KAPOOR KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2361517",
+        "longitude": "82.05314",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GUDDU KIRANA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2148648",
+        "longitude": "82.0844431",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ROHIT JAIN RAM JAIN<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2371349",
+        "longitude": "82.0885441",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VIKAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2600217",
+        "longitude": "82.09168",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GOVRDHAN KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2583282",
+        "longitude": "82.0926278",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ASHOK KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1526854",
+        "longitude": "82.2423685",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - LAXMAN DAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2600217",
+        "longitude": "82.09168",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANOJ KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2145153",
+        "longitude": "82.089973",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHIV BAHADUR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2600217",
+        "longitude": "82.09168",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DINESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2600217",
+        "longitude": "82.09168",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAJU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2364808",
+        "longitude": "82.0531039",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - KUSHWAHA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2427244",
+        "longitude": "82.0357713",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - JAI MAA VINDHYAWASINI<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2492433",
+        "longitude": "82.0918567",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - PHOOL CHANDRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2494791",
+        "longitude": "82.0918713",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BABA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2372761",
+        "longitude": "82.050078",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SANDEEP KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2371349",
+        "longitude": "82.0885441",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RETESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2425704",
+        "longitude": "82.035834",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - PAPPU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2301546",
+        "longitude": "82.0863016",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GIRJASHAKAR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1425313",
+        "longitude": "82.2557991",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GAURISHANKAR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2365928",
+        "longitude": "82.0885385",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BADRI PRASAD KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2600217",
+        "longitude": "82.09168",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DILIP KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2611476",
+        "longitude": "82.0900783",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ARUN KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1326381",
+        "longitude": "82.2662052",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - JAY KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2601372",
+        "longitude": "82.093",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SANJAY KIRA STORE(BACHCHA)<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1157735",
+        "longitude": "82.2750784",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MONU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1041662",
+        "longitude": "82.2451456",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANOJ  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.245978",
+        "longitude": "82.0914523",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANGLA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2218417",
+        "longitude": "82.084094",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - P.K KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2576334",
+        "longitude": "82.088578",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BHOLA SINGH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2337369",
+        "longitude": "82.0592836",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BALE TIWARI KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2229871",
+        "longitude": "82.0854812",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DOCTOR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.206865",
+        "longitude": "82.0846333",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - CHHANGU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2361846",
+        "longitude": "82.0533467",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GUDDU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2319576",
+        "longitude": "82.0634823",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BHOLA DUBEY KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1356347",
+        "longitude": "82.1663834",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - POOJA PCO<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.0960339",
+        "longitude": "82.2587953",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - HARISHCHANDRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2385461",
+        "longitude": "82.0463324",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GHANSHYAM KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1186577",
+        "longitude": "82.206509",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - UMESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2636894",
+        "longitude": "82.1793637",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MATA WADAN KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2539769",
+        "longitude": "82.089133",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BACCHA LAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2610583",
+        "longitude": "82.0899617",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SURESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.156775",
+        "longitude": "82.2320132",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RADHE KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1437843",
+        "longitude": "82.1125892",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GOLI KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1681327",
+        "longitude": "82.0968126",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - HARSH KIRA STORE MASTER JI<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2036734",
+        "longitude": "82.1122472",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SUJEET KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2550333",
+        "longitude": "82.0920101",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BABA TIWARI<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.0955698",
+        "longitude": "82.2590957",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ROHIT KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2550044",
+        "longitude": "82.091971",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BABBU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2765514",
+        "longitude": "82.159021",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GOPAL KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1332545",
+        "longitude": "82.1719883",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MAHESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2005104",
+        "longitude": "82.0855693",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ROSHAN LAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1928359",
+        "longitude": "82.1842989",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - AAYUSH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2523584",
+        "longitude": "82.2296358",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MISHRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.11495",
+        "longitude": "81.95494",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAJTILAK KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2541145",
+        "longitude": "82.088559",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RADHESHYAM  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.260852",
+        "longitude": "82.0903693",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHYAM JI KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2803654",
+        "longitude": "82.1620492",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANGALA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1263039",
+        "longitude": "81.9713795",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - HANUMAN DAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1668894",
+        "longitude": "82.2169305",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DINESH  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2087511",
+        "longitude": "82.1019692",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ANND KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1918611",
+        "longitude": "82.0677818",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MASTAR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2772133",
+        "longitude": "82.1372005",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RADHARAMAN TIWARI<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1655621",
+        "longitude": "82.0422199",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANOJ  KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.16572",
+        "longitude": "82.0391267",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - LAL JI KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2153774",
+        "longitude": "82.0874199",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VINOD KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2006433",
+        "longitude": "82.0855483",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - PRAHLAD KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.152349",
+        "longitude": "82.0017431",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHITLA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1571772",
+        "longitude": "82.0641807",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MANOHAR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.27718",
+        "longitude": "82.13719",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - AJAY KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2156148",
+        "longitude": "82.0874224",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SANJAY KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.28029",
+        "longitude": "82.1620333",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - KANHAIYA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1149215",
+        "longitude": "81.9549505",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MOOLCHANDRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.190599",
+        "longitude": "82.1864089",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GYAN KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1582781",
+        "longitude": "82.0660797",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DHIRAJ KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2552069",
+        "longitude": "82.0880479",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BHANU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1811715",
+        "longitude": "82.181457",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/red-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DEEP KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-01-27<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2609063",
+        "longitude": "82.1778345",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MONEY LAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1648659",
+        "longitude": "82.2205294",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SANTOSH KIRA STORE 2<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2595959",
+        "longitude": "82.0892241",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VIKRAMADITYA WS<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.164987",
+        "longitude": "82.2190415",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SUBHASH PATEL<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1405657",
+        "longitude": "82.2565879",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DINDAYAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.260356",
+        "longitude": "82.0892428",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VIKRAMADIYTA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2356031",
+        "longitude": "82.0882038",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - AYODHAYA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.0973467",
+        "longitude": "82.2603083",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHYAM KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1416904",
+        "longitude": "82.1448451",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - KAPOOR KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1858503",
+        "longitude": "82.1856758",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - NEERAJ KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1380625",
+        "longitude": "82.2592025",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MULCHANDRA(SANTOSH) KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2561203",
+        "longitude": "82.1182118",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - LOKESH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1972351",
+        "longitude": "82.1269896",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHIVAM KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1559862",
+        "longitude": "82.2329702",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SURESH MAURYA<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2785905",
+        "longitude": "82.1412738",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - GOPAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1798954",
+        "longitude": "82.1956634",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - HARISHCHANDRA  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2547884",
+        "longitude": "82.1166778",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ASHISH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2573551",
+        "longitude": "82.0882038",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MAHADEV KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2184349",
+        "longitude": "82.0835555",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - KUSHWAHA  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2541894",
+        "longitude": "82.0909263",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ANIL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2428579",
+        "longitude": "82.035646",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DABLU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2609913",
+        "longitude": "82.1783143",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SONU KIRA MEJA<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2541164",
+        "longitude": "82.0895651",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BHAGWAN DAS MEJA<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2527516",
+        "longitude": "82.1147658",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - Amit kira<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2074039",
+        "longitude": "82.1049113",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - VIMAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2007702",
+        "longitude": "82.0855632",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAJENDRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2200177",
+        "longitude": "82.0822138",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHALTU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1163232",
+        "longitude": "82.2730188",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAMDAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1763492",
+        "longitude": "82.1912458",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - MITHLESH PAAN SHOP<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1692431",
+        "longitude": "82.2170679",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - CHETREY KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2524221",
+        "longitude": "82.0941449",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - LAXMAN  DAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1135484",
+        "longitude": "82.2755219",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SIYA RAM KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2598474",
+        "longitude": "82.0926641",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BABLU KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1665083",
+        "longitude": "82.20789",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHUKLA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1151412",
+        "longitude": "81.9547677",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SRI RAM KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1843214",
+        "longitude": "82.157697",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHAHID KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2638293",
+        "longitude": "82.0922875",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ASHISH (RAJU) KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1800313",
+        "longitude": "82.0629049",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BANWARI KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1820114",
+        "longitude": "82.0808175",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - DINDAYAL  KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2609264",
+        "longitude": "82.0899696",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BABLU KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2163425",
+        "longitude": "82.0844561",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAHUL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.207099",
+        "longitude": "82.1733353",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - RAJENDRA (KISHAN) KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2523166",
+        "longitude": "82.0960409",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - BADKAU JAISWAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2523264",
+        "longitude": "82.092034",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - JAISWAL KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.150412",
+        "longitude": "81.9784553",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SUBHASH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.216355",
+        "longitude": "82.0843867",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - PAWAN KIRA  STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2201562",
+        "longitude": "82.0822324",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - LOVKUSH KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2542067",
+        "longitude": "82.1687783",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - sVIRENDRA KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1439733",
+        "longitude": "81.9822067",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - SHIVDAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1983627",
+        "longitude": "82.0854488",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - NIRAJ KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2149757",
+        "longitude": "82.087993",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ANGOOR DAS KIRA STORE<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2449057",
+        "longitude": "82.123501",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - Ashok kirana stoers<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-02<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1428925",
+        "longitude": "82.1052871",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ved interprazes<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1436945",
+        "longitude": "81.9824437",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - shubham kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-07<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2589454",
+        "longitude": "82.088997",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - rahual genral stor<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1168041",
+        "longitude": "82.2732177",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ajay kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1148669",
+        "longitude": "82.2713446",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - dhiraj kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1153735",
+        "longitude": "82.2759772",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - mangala kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-04<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.09626",
+        "longitude": "82.2593808",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - ujal kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1348456",
+        "longitude": "82.263306",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - Rambali kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.2178169",
+        "longitude": "82.163584",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - raju kirana storw<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1988854",
+        "longitude": "82.181014",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - dherraj kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      },
+      {
+        "latitude": "25.1928164",
+        "longitude": "82.184345",
+        "markerUrl": "https:\/\/upimg.itccampaign.com\/markers\/green-dot.png",
+        "markerTitle": "",
+        "windowTitle": "<div class='attendance-marker'>\r\n                <p class='attendance-label'>\r\n                  DS ID - 59<br>\r\n                  DS Name - SHIVAM VAN DS<br>\r\n                <\/p>\r\n                <p class='attendance-label'>\r\n                    Outlet Name - rajaaram kirana<br>\r\n                    Branch - NEUP<br>\r\n                    Circle - LU4<br>\r\n                    Section - LU4004<br>\r\n                    WDCode - LU4001<br>\r\n                    DS Type - VAN DS<br>\r\n                    Outlet Last Visited - 2025-02-06<br>\r\n                <\/p>\r\n                <\/div>"
+      }
+    ]
+  },
+  "hidePopup": true
+}

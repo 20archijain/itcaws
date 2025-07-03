@@ -1,0 +1,159 @@
+<ng-container *ngIf="outletVisitedTableData?.Title">
+  <app-card headerTitleClass="m-0 fs-14 container" cardTitle="{{ outletVisitedTableData.Title }}"
+    style="font-size: 12px">
+    <div class="items-center justify-content-center">
+      <div class="table-responsive">
+        <table class="table">
+          <thead class="table-header">
+            <tr class="text-center size-13">
+              <th rowspan="2">Branch</th>
+              <!-- <th rowspan="2">Active Outlets</th> -->
+              <ng-container *ngFor="let monthYear of outletVisitedTableData.MonthsAndYears">
+                <th colspan="2">{{ monthYear }}</th>
+              </ng-container>
+            </tr>
+            <tr class="text-center size-13 sub-header">
+              <ng-container *ngFor="let monthYear of outletVisitedTableData.MonthsAndYears">
+                <th>Visited</th>
+                <th>Not Visited</th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Branch Row -->
+            <ng-container *ngFor="
+                let branch of outletVisitedTableData.BranchVisitData;
+                let i = index
+              ">
+              <tr class="text-center">
+                <td class="size-13 nested-table branch-cell">
+                  <i class="fas fa-caret-{{ branch.isExpanded ? 'up' : 'down' }}" (click)="toggleExpand(branch)"
+                    style="cursor: pointer">
+                    {{ branch.branch_name }}
+                  </i>
+                </td>
+                <!-- <td class="size-13 nested-table branch-cell">
+                    {{ branch.active_outlets }}
+                </td> -->
+                <ng-container *ngFor="
+                    let monthYear of outletVisitedTableData.MonthsAndYears
+                  ">
+                  <td class="size-13 nested-table branch-cell">
+                    {{ branch.branchLevelVisited[monthYear] || 0 }}
+                  </td>
+                  <td class="size-13 nested-table branch-cell">
+                    {{
+                    outletVisitedTableData.BranchNotVisitData[i]
+                    ?.branchLevelNotVisited[monthYear] || 0
+                    }}
+                  </td>
+                </ng-container>
+              </tr>
+
+              <ng-container *ngIf="branch.isExpanded">
+                <tr class="table-header text-center m-0 section-row">
+                  <td colspan="100%">Circle</td>
+                </tr>
+                <ng-container *ngFor="let circle of branch.circleData; let j = index">
+                  <tr class="text-center">
+                    <td class="size-13 nested-table2 circle-cell">
+                      <i class="fas fa-caret-{{
+                          circle.isExpanded ? 'up' : 'down'
+                        }}" (click)="toggleExpand(circle)" style="cursor: pointer">
+                        {{ circle.circle }}
+                      </i>
+                    </td>
+                    <ng-container *ngFor="
+                        let monthYear of outletVisitedTableData.MonthsAndYears
+                      ">
+                      <td class="size-13 nested-table2 circle-cell">
+                        {{ circle.circleLevelVisited[monthYear] || 0 }}
+                      </td>
+                      <td class="size-13 nested-table2 circle-cell">
+                        {{
+                        outletVisitedTableData.BranchNotVisitData[i]
+                        ?.circleData[j]?.circleLevelNotVisited[monthYear] ||
+                        0
+                        }}
+                      </td>
+                    </ng-container>
+                  </tr>
+
+                  <ng-container *ngIf="circle.isExpanded">
+                    <tr class="table-header text-center section-row">
+                      <td colspan="100%">Section</td>
+                    </tr>
+                    <ng-container *ngFor="let section of circle.sectionData; let k = index">
+                      <tr class="text-center">
+                        <td class="size-13 second-nested">
+                          <i class="fas fa-caret-{{
+                              section.isExpanded ? 'up' : 'down'
+                            }}" (click)="toggleExpand(section)" style="cursor: pointer">
+                            {{ section.section }}
+                          </i>
+                        </td>
+                        <ng-container *ngFor="
+                            let monthYear of outletVisitedTableData.MonthsAndYears
+                          ">
+                          <td class="size-13 second-nested">
+                            {{ section.sectionLevelVisited[monthYear] || 0 }}
+                          </td>
+                          <td class="size-13 second-nested">
+                            {{
+                            outletVisitedTableData.BranchNotVisitData[i]
+                            ?.circleData[j]?.sectionData[k]
+                            ?.sectionLevelNotVisited[monthYear] || 0
+                            }}
+                          </td>
+                        </ng-container>
+                      </tr>
+
+                      <ng-container *ngIf="section.isExpanded">
+                        <tr class="table-header text-center section-row">
+                          <td colspan="100%">WD Code</td>
+                        </tr>
+                        <ng-container *ngFor="let wd of section.wdData; let l = index">
+                          <tr class="text-center">
+                            <td class="size-13 wd-td">{{ wd.wdCode }}</td>
+                            <ng-container *ngFor="
+                                let monthYear of outletVisitedTableData.MonthsAndYears
+                              ">
+                              <td class="size-13 wd-td">
+                                {{ wd.wdLevelVisited[monthYear] || 0 }}
+                              </td>
+                              <td class="size-13 wd-td">
+                                {{
+                                outletVisitedTableData.BranchNotVisitData[i]
+                                ?.circleData[j]?.sectionData[k]?.wdData[l]
+                                ?.wdLevelNotVisited[monthYear] || 0
+                                }}
+                              </td>
+                            </ng-container>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+
+
+            <!-- Total Row -->
+            <tr class="table-header text-center">
+              <td>Total</td>
+              <ng-container *ngFor="let monthYear of outletVisitedTableData.MonthsAndYears">
+                <td>
+                  {{ outletVisitedTableData.TotalSumVisited[monthYear] || 0 }}
+                </td>
+                <td>
+                  {{ outletVisitedTableData.TotalSumVisited[monthYear] || 0 }}
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </app-card>
+</ng-container>

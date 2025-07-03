@@ -1,0 +1,62 @@
+<ng-container>
+  <div class="row">
+    <div class="col-sm-12">
+      <form [formGroup]="group">
+        <!-- <div class="col-xxl-2 col-md-2 mb-2">
+          <app-select [options]="monthOptions"
+            placeholder="{{ 'app.team.add.month' | translate }}" [group]="group" controlName="month"
+            [errorMessages]="errorMessages.month" [isRequired]="true" (onChange)="initialData()"></app-select>
+        </div> -->
+        <div class="table-responsive custom-scrollbar fixed-table-header" *ngIf="stockProductsList?.length">
+          <table class="table table-xxs table-hover table-bordered">
+            <thead>
+              <tr class="fixed-header">
+                <th class="f-16 fix-width " [class.highlight]="true">WD Code</th>
+                <th class="f-16 fix-width2 " [class.highlight]="true">NPSR</th>
+                <th class="f-16 fix-width2 " [class.highlight]="true">{{previousMonth}} : Target</th>
+                <th class="f-16 fix-width2 " [class.highlight]="true">{{previousMonth}} : Achieved</th>
+                <th class="f-16 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
+                  {{ team.label }}
+                </th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
+                [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
+                <td>{{ stockProductsList[pi]?.wd_code }}</td>
+                <td>{{ stockProductsList[pi]?.label }}</td>
+                <td>{{ stockProductsList[pi]?.previousMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.previousMonthAchieve }}</td>
+                <td *ngFor="let team of teamsList" class="">
+                  <div class="d-flex justify-content-center fix-width4">
+                    <app-input maxLength="10" [group]="productControl" [id]="pi"
+                      [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
+                      placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
+                      [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
+                    </app-input>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
+        </div>
+        <!-- Confirm Button -->
+
+        <h6 *ngIf="group.invalid || isDisabled" class="text-center text-danger">For each Team, all SKU Targets are
+          Requrired</h6>
+        <div class="row mt-2 mb-1" *ngIf="stockProductsList?.length">
+          <div class="col-md-12 d-flex justify-content-center">
+
+            <app-button text="button.confirm" [showSpinner]="isDisabled" spinnerText="spinnerText.confirming"
+              [isDisabled]="group.invalid || isDisabled" (onClick)="confirmStock()">
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+</ng-container>

@@ -1,0 +1,78 @@
+<app-card cardTitle="{{ 'app.user.module.add.heading' | translate }}" [options]="false">
+  <form (ngSubmit)="addModule()" [formGroup]="form" autocomplete="off" novalidate>
+    <div class="row">
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleId" placeholder="{{ 'app.user.module.add.moduleId' | translate }}"
+          [group]="form" controlName="id" [errorMessages]="errorMessages.id"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleName"
+          placeholder="{{ 'app.user.module.add.moduleName' | translate }}" [group]="form" controlName="name"
+          [isRequired]="true" [errorMessages]="errorMessages.name"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleCode"
+          placeholder="{{ 'app.user.module.add.moduleCode' | translate }}" [group]="form" controlName="modc"
+          [isRequired]="true" [errorMessages]="errorMessages.modc"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.parentModuleCode"
+          placeholder="{{ 'app.user.module.add.parentModuleCode' | translate }}" [group]="form" controlName="pmodc"
+          [isRequired]="true" [errorMessages]="errorMessages.pmodc"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleComponent"
+          placeholder="{{ 'app.user.module.add.moduleComponent' | translate }}" [group]="form"
+          controlName="moduleComponent" [errorMessages]="errorMessages.moduleComponent"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-dropdown [group]="form" controlName="moduleActionCode" [options]="moduleActionCodeOptions"
+          label="app.user.module.add.moduleActionCode" [isRequired]="true"
+          [errorMessages]="errorMessages.moduleActionCode">
+        </app-dropdown>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-dropdown [group]="form" controlName="modulePos" [options]="modulePosOptions"
+          label="app.user.module.add.modulePos" [isRequired]="true" [errorMessages]="errorMessages.modulePos">
+        </app-dropdown>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleIcon"
+          placeholder="{{ 'app.user.module.add.moduleIcon' | translate }}" [group]="form" controlName="icon"
+          [errorMessages]="errorMessages.icon"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleUrl" placeholder="{{ 'app.user.module.add.moduleUrl' | translate }}"
+          [group]="form" controlName="url" [errorMessages]="errorMessages.url"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-input label="app.user.module.add.moduleSort"
+          placeholder="{{ 'app.user.module.add.moduleSort' | translate }}" [group]="form" controlName="sort"
+          [errorMessages]="errorMessages.sort" [isRequired]="true"></app-input>
+      </div>
+
+      <div class="col-10 col-sm-6 col-md-4 col-lg-3">
+        <app-dropdown [group]="form" controlName="breadcrumb" [options]="breadcrumbOptions"
+          label="app.user.module.add.breadcrumb" [isRequired]="true" [errorMessages]="errorMessages.breadcrumb">
+        </app-dropdown>
+      </div>
+    </div>
+
+    <div class="row">
+      <div [ngClass]="{'col-9 col-sm-5 col-md-4 col-xl-3': isDisabled, 'col-4 col-sm-3 col-md-2': !isDisabled}">
+        <app-button type="submit" text="button.add" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="form"
+          [showSpinner]="isDisabled" spinnerText="spinnerText.adding">
+        </app-button>
+      </div>
+    </div>
+  </form>
+</app-card>

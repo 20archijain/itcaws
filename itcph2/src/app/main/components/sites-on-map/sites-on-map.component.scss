@@ -1,0 +1,15 @@
+.filter-container .w-2 {
+  width: 150px !important;
+  /* Adjust width as needed */
+  min-height: 40px;
+  /* Ensures a consistent height */
+}
+
+.filter-container app-select,
+.filter-container app-date {
+  width: 100% !important;
+}
+
+.filter-container .col-sm-1 {
+  width: auto;
+}

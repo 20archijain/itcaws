@@ -1,0 +1,41 @@
+<div *ngIf="!hide" class="mh-default form-group {{ groupClassName}}" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+    <div class="{{ sizeClass }}">
+      <ng-container *ngTemplateOutlet="selectBox"></ng-container>
+    </div>
+  </ng-container>
+
+  <ng-template #nonHorizontalForm>
+    <ng-container *ngTemplateOutlet="selectBox"></ng-container>
+  </ng-template>
+
+  <!-- Select box control -->
+  <ng-template #selectBox>
+    <ng-select class="ng-select" [class.option-selected]="group?.get(controlName)?.value"
+      [class.is-invalid]="showValidationState && isTouched && isInvalid" [items]="options"
+      [formControlName]="controlName" [multiple]="multiple" [placeholder]="placeholder" [closeOnSelect]="!multiple"
+      [groupBy]="groupBy" [selectableGroup]="multiple" [bindLabel]="bindLabel" [bindValue]="bindValue"
+      [hideSelected]="multiple && !groupBy" (focus)="onFocusIn($event)" (blur)="onFocusOut()" (close)="onClosed()"
+      (add)="onModelChange($event, true)" (remove)="onModelChange($event, false)" [disabled]="disable"
+      (change)="onValueChange($event)" [clearable]="false" [selectableGroupAsModel]="false"
+      [attr.id]="controlName + id">
+      <ng-container *ngIf="groupBy">
+        <ng-template ng-optgroup-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{index}}" class="v-align-middle" type="checkbox" [checked]="item$.selected" />
+          {{ item[groupBy] }}
+        </ng-template>
+      </ng-container>
+      <ng-container *ngIf="multiple">
+        <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+          <input id="item-{{index}}" class="v-align-middle" type="checkbox" [checked]="item$.selected" />
+          {{ item.label }}
+        </ng-template>
+      </ng-container>
+    </ng-select>
+    <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+      class="error text-justify small form-text invalid-feedback">{{ errorMessage }}</label>
+  </ng-template>
+</div>

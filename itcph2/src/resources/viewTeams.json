@@ -1,0 +1,122 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "data0": [
+      {
+        "id": "19075",
+        "teamName": "Sunny",
+        "projectId": "1",
+        "recId": "64671",
+        "mobile": "9879878977",
+        "password": "12345",
+        "json": "breezeTest.json",
+        "branchName": "UP East",
+        "wdCode": "LU4077"
+      },
+      {
+        "id": "19076",
+        "teamName": "Tushar",
+        "projectId": "1",
+        "recId": "64672",
+        "mobile": "9898989876",
+        "password": "12345",
+        "json": "breezeTest.json",
+        "branchName": "UP East",
+        "wdCode": "LU4077"
+      },
+      {
+        "id": "19074",
+        "teamName": "NAV003",
+        "projectId": "1",
+        "recId": "64296",
+        "mobile": "1111110007",
+        "password": "ae2025",
+        "json": "Ae_app.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "null"
+      },
+      {
+        "id": "19073",
+        "teamName": "NAM001",
+        "projectId": "1",
+        "recId": "64295",
+        "mobile": "1111110006",
+        "password": "ae2025",
+        "json": "Ae_app.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "null"
+      },
+      {
+        "id": "19072",
+        "teamName": "NAV004",
+        "projectId": "1",
+        "recId": "64294",
+        "mobile": "1111110005",
+        "password": "ae2025",
+        "json": "Ae_app.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "null"
+      },
+      {
+        "id": "19071",
+        "teamName": "NAV002",
+        "projectId": "1",
+        "recId": "64293",
+        "mobile": "1111110004",
+        "password": "ae2025",
+        "json": "Ae_app.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "null"
+      },
+      {
+        "id": "19070",
+        "teamName": "NG3141",
+        "projectId": "1",
+        "recId": "64292",
+        "mobile": "1111110003",
+        "password": "wd2025",
+        "json": "Wd_priceScheme.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "NG3141"
+      },
+      {
+        "id": "19069",
+        "teamName": "NG3104",
+        "projectId": "1",
+        "recId": "64291",
+        "mobile": "1111110002",
+        "password": "wd2025",
+        "json": "Wd_priceScheme.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "NG3104"
+      },
+      {
+        "id": "19068",
+        "teamName": "NG2957",
+        "projectId": "1",
+        "recId": "64290",
+        "mobile": "1111110001",
+        "password": "wd2025",
+        "json": "Wd_priceScheme.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "NG2957"
+      },
+      {
+        "id": "19067",
+        "teamName": "NG2241",
+        "projectId": "1",
+        "recId": "64289",
+        "mobile": "1111110000",
+        "password": "wd2025",
+        "json": "Wd_priceScheme.json",
+        "branchName": "W-NAG-MH",
+        "wdCode": "NG2241"
+      },
+      {
+        "total": 62
+      }
+    ]
+  },
+  "hidePopup": true
+}

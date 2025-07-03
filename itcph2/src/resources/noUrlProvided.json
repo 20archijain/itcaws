@@ -1,0 +1,8 @@
+{
+  "status": 400,
+  "message": [
+    "No/Invalid URL provided"
+  ],
+  "data": "",
+  "hidePopup": false
+}

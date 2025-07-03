@@ -1,0 +1,23 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
+  <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+    <div class="{{ sizeClass }}">
+      <ng-container *ngTemplateOutlet="timeBox"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #nonHorizontalForm>
+    <ng-container *ngTemplateOutlet="timeBox"></ng-container>
+  </ng-template>
+
+  <!-- Time control -->
+  <ng-template #timeBox>
+    <ngb-timepicker [spinners]="spinners" [meridian]="meridian" [formControlName]="controlName"
+      [class.is-invalid]="showValidationState && isTouched && isInvalid"></ngb-timepicker>
+    <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+      class="error text-justify small form-text invalid-feedback">
+      {{ errorMessage }}
+    </label>
+  </ng-template>
+</div>

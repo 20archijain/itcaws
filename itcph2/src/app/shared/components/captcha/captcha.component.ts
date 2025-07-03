@@ -1,0 +1,45 @@
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { UntypedFormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
+import { FormService } from 'src/app/core/services/form.service';
+import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
+
+@Component({
+  selector: 'app-captcha',
+  styleUrls: ['./captcha.component.scss'],
+  templateUrl: './captcha.component.html',
+})
+export class CaptchaComponent implements OnDestroy, OnInit {
+  private subscription: Subscription[] = [];
+  @Input() group: UntypedFormGroup;
+  @Input() controlName: string;
+  @Input() errorMessages: string[];
+  captchaImage = '';
+
+  constructor(private formService: FormService) {
+  }
+
+  ngOnInit() {
+    this.getCaptcha();
+  }
+
+  ngOnDestroy() {
+    this.subscription.forEach(sub => sub.unsubscribe());
+  }
+
+  getCaptcha() {
+    this.captchaImage = null;
+
+    this.subscription.push(
+      this.formService.customActionCall<string>(STATIC_MODULES.custom.getCaptcha, ['getCaptcha'], null,
+        environment.getCaptchaUrl, { moduleName: STATIC_MODULES.custom.getCaptcha, staticModule: true })
+        .subscribe(response => {
+          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+            this.captchaImage = response.data + '?te=' + new Date().getTime();
+          }
+        })
+    );
+  }
+}

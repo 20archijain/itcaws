@@ -1,0 +1,196 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "branchFilter": true,
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "UP East",
+        "value": "1",
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "Jaipur",
+        "value": "5",
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "EBEN",
+        "value": "15",
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "Bihar",
+        "value": "18",
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "W-NAG-MH",
+        "value": "25",
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "SCOI",
+        "value": "35",
+        "mainBranch": "SCOI"
+      }
+    ],
+    "dsTypeList": [
+      {
+        "label": "VAN DS",
+        "value": "0"
+      },
+      {
+        "label": "Niche",
+        "value": "1"
+      },
+      {
+        "label": "Town SWD",
+        "value": "2"
+      }
+    ],
+    "isSelectable": false,
+    "sortOptions": [
+      {
+        "label": "Focus Brand",
+        "value": "a.is_focusbrand"
+      },
+      {
+        "label": "DS Type",
+        "value": "a.team_type"
+      },
+      {
+        "label": "SKU Name",
+        "value": "a.product_name"
+      }
+    ],
+    "viewHeader": [
+      "app.reporting.activeUSers.branch",
+      "app.reporting.activeUSers.region",
+      "app.reporting.activeUSers.dsType",
+      "app.reporting.activeUSers.focusBrand",
+      "app.reporting.activeUSers.skucategory",
+      "app.reporting.activeUSers.skuName",
+      "app.reporting.activeUSers.netRate"
+    ],
+    "viewBody": [
+      "region",
+      "branchName",
+      "dsType",
+      "focusBrand",
+      "category",
+      "skuName",
+      "prodRate"
+    ],
+    "data0": [
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Classic",
+        "skuName": "Classic Connect",
+        "creationDate": "1970-01-01",
+        "prodRate": "12400.8"
+      },
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Navy Cut",
+        "skuName": "NC RSFT",
+        "creationDate": "1970-01-01",
+        "prodRate": "7281.7"
+      },
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Navy Cut",
+        "skuName": "NC Virginia",
+        "creationDate": "1970-01-01",
+        "prodRate": "4464.3"
+      },
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Players",
+        "skuName": "Players Mint",
+        "creationDate": "1970-01-01",
+        "prodRate": "7291.7"
+      },
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Royal",
+        "skuName": "Royal Dlx",
+        "creationDate": "1970-01-01",
+        "prodRate": "4513.9"
+      },
+      {
+        "branchName": "SERN",
+        "region": "SERN",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Scissors",
+        "skuName": "Scissors",
+        "creationDate": "1970-01-01",
+        "prodRate": "7281.7"
+      },
+      {
+        "branchName": "SHYD",
+        "region": "SHYD",
+        "dsType": "VAN DS",
+        "focusBrand": "Yes",
+        "category": "American Club",
+        "skuName": "AC Clove Mint",
+        "creationDate": "1970-01-01",
+        "prodRate": "9900"
+      },
+      {
+        "branchName": "SHYD",
+        "region": "SHYD",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "American Club",
+        "skuName": "AC Fruity Taste",
+        "creationDate": "1970-01-01",
+        "prodRate": "11800"
+      },
+      {
+        "branchName": "SHYD",
+        "region": "SHYD",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Bristol",
+        "skuName": "Bristol Spl",
+        "creationDate": "1970-01-01",
+        "prodRate": "6349.2"
+      },
+      {
+        "branchName": "SHYD",
+        "region": "SHYD",
+        "dsType": "VAN DS",
+        "focusBrand": "No",
+        "category": "Classic",
+        "skuName": "Classic BT",
+        "creationDate": "1970-01-01",
+        "prodRate": "15525.8"
+      },
+      {
+        "total": 355
+      }
+    ]
+  },
+  "hidePopup": true
+}

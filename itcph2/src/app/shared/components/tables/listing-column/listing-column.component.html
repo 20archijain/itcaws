@@ -1,0 +1,18 @@
+<ng-container *ngIf="isSkeleton; else noSkeleton">
+  <div class="col-xs-12">
+    <span class="listing-row-content skeleton">
+      <span class="heading">
+        <app-skeleton></app-skeleton>
+      </span>
+    </span>
+  </div>
+</ng-container>
+
+<ng-template #noSkeleton>
+  <div class="col-xs-12">
+    <span class="listing-row-content">
+      <span class="heading" *ngIf="header">{{ header | translate }}:</span>
+      <span class="content" *ngIf="content">&nbsp;{{ content }}</span>
+    </span>
+  </div>
+</ng-template>

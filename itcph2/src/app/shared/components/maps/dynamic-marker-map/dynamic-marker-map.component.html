@@ -1,0 +1,13 @@
+<!-- Map Style Selector Dropdown -->
+<div class="col-2 m-1" *ngIf="showMapStyleDropdown">
+  <app-select placeholder="MAP STYLE" [options]="mapStyleKeys" (onChange)="onStyleChanged($event)"></app-select>
+</div>
+
+<!-- Google Map View -->
+<google-map *ngIf="markers?.length > 0" width="100%" [zoom]="defaultZoom" [center]="center" [options]="mapOptions"
+  (mapInitialized)="onMapLoad($event)">
+  <!-- Info Window -->
+  <map-info-window #infoWindow>
+    <div [innerHTML]="infoWindowContent"></div>
+  </map-info-window>
+</google-map>

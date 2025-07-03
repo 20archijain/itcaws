@@ -1,0 +1,142 @@
+<div class="table-listing">
+  <ng-container *ngIf="!hideSearchbar">
+    <app-listing-searchbar [group]="group" [searchGroup]="group.get('searchbar')" [sortOptions]="sortOptions"
+      [searchTemplate]="searchTemplate" [selectedRecords]="selectedRecords" [actions]="actions"
+      [showPagination]="showPagination" (onAction)="onSearchAction($event)">
+    </app-listing-searchbar>
+  </ng-container>
+
+  <div class="table-responsive">
+    <table class="table table-sm {{ tableClass }}" [class.fixed-table]="fixedTable" [class.table-xxs]="smallTable">
+      <thead>
+        <tr>
+          <th *ngIf="isSelectable && tableData?.length && multiActions?.length > 0">
+            <app-checkbox [tableData]="tableData" [checkKey]="checkKey" [isChecked]="isAllChecked" [selectAll]="true"
+              [selectedRecords]="selectedRecords" (emitSelectedRecords)="emitSelectedRecords($event)" [noMargin]="true">
+            </app-checkbox>
+          </th>
+          <th *ngIf="isExpandable"></th>
+          <th *ngFor="let heading of header; let i=index">
+            <ng-container *ngIf="isSortable; else notSortableHeader">
+              <span class="link no-text-select" [class.sort]="isSorted" [class.desc]="sortOrder" (click)="sortData(i)">
+                {{ heading | translate }}
+              </span>
+            </ng-container>
+            <ng-template #notSortableHeader>{{ heading | translate }}</ng-template>
+          </th>
+          <th *ngIf="gallery">{{ 'listing.images' | translate }}</th>
+          <th *ngIf="singleActions.length > 0">{{ 'text.actions' | translate }}</th>
+          <ng-container *ngIf="extraButtons?.length > 0">
+            <th *ngFor="let btn of extraButtons">{{ btn?.heading | translate }}</th>
+          </ng-container>
+        </tr>
+      </thead>
+
+      <tbody *ngIf="!isSkeletonModeOn && tableData?.length > 0">
+        <ng-container *ngFor="let data of tableData; let i = index">
+          <tr>
+            <td *ngIf="isSelectable">
+              <app-checkbox [tableData]="tableData" [checkKey]="checkKey" [value]="data" [isChecked]="isChecked(data)"
+                [selectedRecords]="selectedRecords" (emitSelectedRecords)="emitSelectedRecords($event)"
+                [noMargin]="true">
+              </app-checkbox>
+            </td>
+            <td *ngIf="isExpandable">
+              <i class="fa link" (click)="clickedIndex = clickedIndex === i ? -1 : i"
+                [class.fa-plus-circle]="clickedIndex !== i" [class.fa-minus-circle]="clickedIndex === i"></i>
+            </td>
+            <td *ngFor="let label of body; let bi = index" [class.wrap-normal]="columnWrap">
+              <!-- Clickable means navigating to some path -->
+              <ng-container *ngIf="clickableTableColumns[bi]; else notClickable">
+                <a
+                  [routerLink]="clickableTableColumns[bi]['path'] + data[clickableTableColumns[bi]['dynamicColumnName']]">
+                  {{ data[label] }}
+                </a>
+              </ng-container>
+              <ng-template #notClickable>
+                <span [innerHTML]="getColumnContent(data, label, bi)" (click)="downloadFile(data, label, bi)"></span>
+              </ng-template>
+            </td>
+            <td *ngIf="gallery">
+              <app-custom-gallery *ngIf="data[galleryKey]" [images]="data[galleryKey]" [cgConfig]="cgConfig"
+                [thumbnailNoWrap]="thumbnailNoWrap" [limitWidth]="galleryLimitWidth">
+              </app-custom-gallery>
+            </td>
+            <td *ngIf="singleActions?.length > 0">
+              <ng-container *ngFor="let action of singleActions">
+                <app-button [showIconOnly]="true" [iconName]="action?.icon" [btnTitle]="action?.title"
+                  (onClick)="onActionClick(action, data)" *ngIf="isActionAllowed(action, data)"></app-button>
+              </ng-container>
+            </td>
+            <ng-container *ngIf="extraButtons?.length > 0">
+              <td *ngFor="let btn of extraButtons; let ebi = index">
+                <app-button [showIconOnly]="btn?.showIconOnly" [iconName]="btn?.icon" [btnTitle]="btn?.title"
+                  [text]="btn?.text" [colorClass]="btn?.colorClass" [btnClass]="btn?.btnClass"
+                  (onClick)="onExtraButtonClick(i, ebi)">
+                </app-button>
+              </td>
+            </ng-container>
+          </tr>
+          <tr *ngIf="isExpandable && clickedIndex === i">
+            <td [attr.colspan]="expandableColumnSize">
+              <ng-container *ngTemplateOutlet="expandableTemplate; context: {$implicit: data}">
+              </ng-container>
+            </td>
+          </tr>
+          <ng-container *ngIf="extraButtons?.length > 0">
+            <ng-container *ngFor="let btn of extraButtons; let ebi = index">
+              <tr *ngIf="btn.showTemplate === (i + ebi)">
+                <td [attr.colspan]="btn.columnSize">
+                  <ng-container [ngTemplateOutlet]="btn.template" [ngTemplateOutletContext]="{$implicit: data}">
+                  </ng-container>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </tbody>
+
+      <tbody *ngIf="!isSkeletonModeOn && tableData?.length === 0">
+        <tr>
+          <td [attr.colspan]="header?.length || 1">{{ 'not.noRecordFound' | translate }}</td>
+        </tr>
+      </tbody>
+
+      <tbody *ngIf="isSkeletonModeOn">
+        <tr *ngFor="let item of sketetonList">
+          <td *ngIf="isSelectable">
+            <app-skeleton></app-skeleton>
+          </td>
+          <td *ngIf="isExpandable">
+            <app-skeleton></app-skeleton>
+          </td>
+          <td *ngFor="let heading of header">
+            <app-skeleton></app-skeleton>
+          </td>
+          <td *ngIf="gallery">
+            <app-skeleton></app-skeleton>
+          </td>
+          <td *ngIf="actions.length > 0">
+            <app-skeleton></app-skeleton>
+          </td>
+          <ng-container *ngIf="extraButtons?.length > 0">
+            <td *ngFor="let btn of extraButtons">
+              <app-skeleton></app-skeleton>
+            </td>
+          </ng-container>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-container *ngIf="showPagination">
+    <app-pagination #pagination [group]="group" [limit]="limit" [totalRecords]="totalRecords"
+      (onPageChange)="onSearch(false)"></app-pagination>
+  </ng-container>
+</div>
+
+<app-edit-modal [editLabel]="editLabel" [editConfig]="editConfig" [url]="url" [modalSize]="editModalSize"
+  (onEdit)="onEdit($event)">
+</app-edit-modal>
+
+<app-location-on-map-modal></app-location-on-map-modal>

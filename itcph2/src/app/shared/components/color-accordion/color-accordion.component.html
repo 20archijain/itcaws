@@ -1,0 +1,116 @@
+<ng-container *ngIf="monthlySalesData?.Title">
+  <app-card headerTitleClass="m-0 fs-14 container" cardTitle="{{monthlySalesData.Title}}" style="font-size: 12px;">
+    <div class="items-center justify-content-center">
+      <div class="table-responsive">
+        <table class="table table-custom">
+          <thead>
+            <tr class="table-header size-13">
+              <th class="size-13 p-1 district">Branch
+              </th>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                <th class="size-13 p-1 text-center" (click)="handleHeaderClick(i)"
+                  [@columnAnimation]="getColumnState(i)">
+                  {{ monthYear }}
+                </th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container *ngFor="let branch of monthlySalesData.BranchData">
+              <tr class=" ">
+                <td class="district-cell" style="position: relative;">
+                  <div>
+                    <i class="fas fa-caret-{{ branch.isExpanded ? 'up' : 'down' }}" (click)="toggleExpand(branch)"
+                      style="cursor: pointer; margin-right: 5px;" class="size-10"></i>
+                    {{ branch.branch_name }}
+                  </div>
+                </td>
+                <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                  <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                    {{ branch.branchLevelSale[monthYear] || 0 }}
+                  </td>
+                </ng-container>
+              </tr>
+
+              <ng-container *ngIf="branch?.isExpanded">
+                <tr class="table-header m-0 section-row">
+                  <!-- <td class="branch" colspan="15">Branch</td> -->
+                  <!-- <td colspan="15" style="background-color: #fff;"></td> -->
+                </tr>
+                <ng-container *ngFor="let circle of branch.circleData">
+                  <tr class=" ">
+                    <td class=" nested-table2 branch-cell" style="position: relative;">
+                      <div style="margin-left:5px" class="size-10">
+                        <i class="fas fa-caret-{{ circle.isExpanded ? 'up' : 'down' }}" (click)="toggleExpand(circle)"
+                          style="cursor: pointer;"></i>
+                        {{ circle.circle }}
+                      </div>
+                    </td>
+                    <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                      <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                        {{ circle.circleLevelSale[monthYear] || 0 }}
+                      </td>
+                    </ng-container>
+                  </tr>
+
+                  <ng-container *ngIf="circle?.isExpanded">
+                    <tr class="table-header m-0 section-row">
+                      <!-- <td class="circle" colspan="15">Circle</td> -->
+                      <!-- <td colspan="15" style="background-color: #fff;"></td> -->
+                    </tr>
+                    <ng-container *ngFor="let section of circle.sectionData">
+                      <tr class=" ">
+                        <td class=" nested-table2 circle-cell" style="position: relative;">
+                          <div style="margin-left:10px" class="size-10">
+                            <i class="fas fa-caret-{{ section.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
+                              (click)="toggleExpand(section)" style="cursor: pointer;">
+                              {{ section.section }}
+                            </i>
+                          </div>
+                        </td>
+                        <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                          <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                            {{ section.sectionLevelSale[monthYear] || 0 }}
+                          </td>
+                        </ng-container>
+                      </tr>
+                      <ng-container *ngIf="section?.isExpanded">
+                        <tr class="table-header section-row">
+                          <!-- <td colspan="15" class="section">Section</td> -->
+                          <!-- <td colspan="15" style="background-color: #fff;"></td> -->
+                        </tr>
+                        <ng-container *ngFor="let wdData of section.wdData">
+                          <tr class=" ">
+                            <td class=" section-cell" style="position: relative;">
+                              <div style="margin-left:15px" class="size-10">
+                                {{ wdData.wdCode }}
+                              </div>
+                            </td>
+                            <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                              <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                                {{ wdData.wdLevelSale[monthYear] || 0 }}
+                              </td>
+                            </ng-container>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+            <!-- Total Sales Row -->
+            <tr class="table-header  ">
+              <td class="size-13">Total</td>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                  {{ monthlySalesData?.TotalSum[monthYear] || 0 }}
+                </td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </app-card>
+</ng-container>

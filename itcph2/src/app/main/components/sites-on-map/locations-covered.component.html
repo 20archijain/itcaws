@@ -1,0 +1,100 @@
+<app-card cardTitle="{{ 'app.sitesOnMap.locationCovered' | translate }}" [options]="false">
+  <form (ngSubmit)="getData()" [formGroup]="group" novalidate>
+    <!-- If Superadmin or Admin Login -->
+    <div *ngIf="branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-date label="placeholder.from" placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
+          controlName="dateFrom" [errorMessages]="errorMessages.dateFrom" [isRequired]="true"
+          [maxDate]="group.get('dateTo').value">
+        </app-date>
+      </div>
+      <div class="w-2 m-1">
+        <app-date label="placeholder.to" placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
+          controlName="dateTo" [errorMessages]="errorMessages.dateTo" [isRequired]="true"
+          [minDate]="group.get('dateFrom').value">
+        </app-date>
+      </div>
+
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="branch" [options]="branchOptions" [multiple]="true"
+          label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()"
+          groupBy="mainBranch">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()" label="app.team.add.circle">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()" label="app.team.add.section">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" label="app.team.add.wdCode">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
+          (onChange)="getTeams()" placeholder="{{ 'app.team.add.dsType' | translate }}" label="app.team.add.dsType">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
+        </app-select>
+      </div>
+      <div class="col-sm-1 m-1">
+        <app-button type="submit" text="button.search" [appScrollToFirstInvalidInput]="group" btnClass="m-t-30">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- If Regional Login -->
+    <div *ngIf="!branchFilter" class="row ml-1 filter-container">
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-date label="placeholder.from" placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
+          controlName="dateFrom" [errorMessages]="errorMessages.dateFrom" [isRequired]="true"
+          [maxDate]="group.get('dateTo').value">
+        </app-date>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-date label="placeholder.to" placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
+          controlName="dateTo" [errorMessages]="errorMessages.dateTo" [isRequired]="true"
+          [minDate]="group.get('dateFrom').value">
+        </app-date>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" label="app.team.add.wdCode">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
+          (onChange)="getTeams()" placeholder="{{ 'app.team.add.dsType' | translate }}" label="app.team.add.dsType">
+        </app-select>
+      </div>
+      <div class="col-12 col-sm-4 col-md-2">
+        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
+        </app-select>
+      </div>
+      <div class="col-sm-1 m-1">
+        <app-button type="submit" text="button.search" [appScrollToFirstInvalidInput]="group" btnClass="m-t-30">
+        </app-button>
+      </div>
+    </div>
+  </form>
+</app-card>
+
+<ng-container *ngIf="markers && markers.length > 0">
+  <app-card [options]="false">
+    <div class="row">
+      <div *ngFor="let index of noOfMaps" class="mb-m col-lg-{{ columnSize }}">
+        <app-simple-map [markers]="markers"></app-simple-map>
+      </div>
+    </div>
+  </app-card>
+</ng-container>

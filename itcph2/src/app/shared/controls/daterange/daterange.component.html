@@ -1,0 +1,40 @@
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group.get(controlName)">
+  <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
+    <span [class.required]="isRequired">{{ label | translate }}</span>
+  </label>
+  <ng-container *ngIf="isHorizontalForm; else nonHorizontalForm">
+    <div class="{{ sizeClass }}">
+      <ng-container *ngTemplateOutlet="dateBox"></ng-container>
+    </div>
+  </ng-container>
+  <ng-template #nonHorizontalForm>
+    <ng-container *ngTemplateOutlet="dateBox"></ng-container>
+  </ng-template>
+
+  <!-- Date box control -->
+  <ng-template #dateBox>
+    <div class="input-group">
+      <span *ngIf="showIcon" class="input-group-text" (click)="d.toggle()"><i class="feather icon-lock"
+          [ngClass]="icon"></i></span>
+      <input #dpFromDate ngbDatepicker #d="ngbDatepicker" [autoClose]="'outside'" [displayMonths]="2" [dayTemplate]="t"
+        outsideDays="hidden" [minDate]="ngbMinDate" [maxDate]="ngbMaxDate" [startDate]="ngbMinDate" class="form-control"
+        autocomplete="off" placeholder="{{ 'placeholder.dateRange' | translate }}" name="dpFromDate-{{ controlName }}"
+        [attr.id]="'dpFromDate-' + controlName" [class.is-invalid]="showValidationState && isTouched && isInvalid"
+        [formControlName]="fromControlName"
+        [value]="ngbDateParserFormatter.format(fromDate) + (toDate ? ' to ' + ngbDateParserFormatter.format(toDate) : '')"
+        (click)="d.toggle()" (dateSelect)="onDateSelection($event)" (closed)="onClosed($event)">
+      <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
+        class="error text-justify small form-text invalid-feedback">
+        {{ errorMessageFrom ? errorMessageFrom : errorMessageTo }}
+      </label>
+    </div>
+  </ng-template>
+
+  <ng-template #t let-date let-focused="focused">
+    <span class="custom-day" [class.focused]="focused" [class.range]="isRange(date)"
+      [class.faded]="isHovered(date) || isInside(date)" (mouseenter)="hoveredDate = date"
+      (mouseleave)="hoveredDate = null">
+      {{ date.day }}
+    </span>
+  </ng-template>
+</div>

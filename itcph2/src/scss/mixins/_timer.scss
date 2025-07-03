@@ -1,0 +1,66 @@
+@mixin timer($item, $duration, $size, $color, $border, $border-thickness, $mask-color) {
+  #{$item} {
+    height: $size;
+    width: $size;
+
+    .pie {
+      background: $color;
+      border: #{$border};
+      height: $size;
+      left: -$border-thickness;
+      position: absolute;
+      top: -$border-thickness;
+      transform-origin: 100% 50%;
+      width: calc($size / 2);
+    }
+
+    .spin {
+      border-radius: 100% 0 0 100% / 50% 0 0 50%;
+      border-right: 0;
+      z-index: 200;
+    }
+
+    .filler {
+      border-left: 0;
+      border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+      left: 50%;
+      opacity: 0;
+      z-index: 100;
+    }
+
+    .mask {
+      background: inherit;
+      border: $border-thickness solid $mask-color;
+      border-radius: calc($size / 2) 0 0 calc($size / 2);
+      border-right: 0;
+      height: $size;
+      left: -$border-thickness;
+      opacity: 1;
+      position: absolute;
+      top: -$border-thickness;
+      width: calc($size / 2);
+      z-index: 300;
+    }
+  }
+
+  @keyframes rota {
+    0% {
+      transform: rotate(0deg);
+    }
+
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes opa {
+    0% {
+      opacity: 1;
+    }
+
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
+}

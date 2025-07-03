@@ -1,0 +1,23 @@
+<app-modal #timeoutModal [containerClick]="false">
+  <div class="app-modal-header">
+    <h2 class="modal-title">
+      <i class="fa fa-clock-o" aria-hidden="true"></i>
+      {{ 'session.timeout.header' | translate }}
+    </h2>
+  </div>
+  <div class="app-modal-body">
+    <h3 class="text-center text-info">{{ 'session.timeout.body' | translate }}</h3>
+    <div class="timer">
+      <div class="spin pie"></div>
+      <div class="filler pie"></div>
+      <div class="mask"></div>
+      <strong class="time">{{ countdown }}</strong>
+    </div>
+  </div>
+  <div class="app-modal-footer btn-page">
+    <button type="button" (click)="continue()" data-dismiss="modal" class="btn btn-primary text-white">
+      {{ 'button.continue' | translate }}</button>
+    <button type="button" (click)="logout()" class="btn btn-warning text-white">
+      {{ 'button.logout' | translate }}</button>
+  </div>
+</app-modal>

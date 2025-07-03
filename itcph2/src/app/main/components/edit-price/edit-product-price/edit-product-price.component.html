@@ -1,0 +1,71 @@
+<app-card [options]="false">
+  <form [formGroup]="searchGroup">
+    <div class="row">
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <app-select [group]="searchGroup" controlName="branch" placeholder="{{ branchLabel }}" [options]="branchOptions"
+          (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <app-select [group]="searchGroup" controlName="wdCode" placeholder="{{ wdLabel }}" [options]="wdOptions">
+        </app-select>
+      </div>
+      <div class="col-sm-6 col-lg-4 col-xl-3">
+        <app-select [group]="searchGroup" controlName="teamType" placeholder="{{ teamTypeLabel }}"
+          [options]="teamTypeOptions">
+        </app-select>
+      </div>
+      <div class="col-sm-5 col-lg-3">
+        <app-button text="button.searchProduct" [showSpinner]="isDisabled" [isDisabled]="isDisabled"
+          (onClick)="getProductList()">
+        </app-button>
+        <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="resetAllData()"></app-button>
+      </div>
+      <!-- Warning Message -->
+      <div class="col-12" *ngIf="isSelectionInvalid()">
+        <p class="text-danger">Please select either a branch or wdcode to show the products price</p>
+      </div>
+    </div>
+  </form>
+</app-card>
+
+<app-card [cardTitle]="editProductHeading" *ngIf="productsNamePriceList?.length">
+  <form [formGroup]="group" novalidate>
+    <ng-container>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="table-responsive custom-scrollbar fixed-table-header">
+            <table class="table table-xxs table-hover table-striped table-bordered">
+              <thead>
+                <th class="f-16">{{ 'app.editProduct.productName' | translate }}</th>
+                <th class="f-16">{{ 'app.editProduct.sellingPrice' | translate }}</th>
+              </thead>
+              <tbody>
+                <tr class="f-16" *ngFor="let product of productsNamePriceList; let i = index">
+                  <td>{{ product.productName }}</td>
+                  <td>
+                    <app-input [group]="group.get('sellingPrice')"
+                      [controlName]="product.productName + '-' + product.productId + '-' + (i + 1)"
+                      placeholder="{{ 'placeholder.price' | translate }}" [autocompleteOff]="true"
+                      groupClassName="wid-80" inputClass="f-12" [errorMessages]="errorMessages.sellingPrice">
+                    </app-input>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Confirm Button -->
+      <div class="row m-t-5">
+        <div class="col-md-12 d-flex justify-content-center">
+          <app-button text="button.confirm" [showSpinner]="isDisabled" spinnerText="spinnerText.confirming"
+            [isDisabled]="group.invalid || isDisabled" (onClick)="confirmPrice()">
+          </app-button>
+        </div>
+      </div>
+    </ng-container>
+  </form>
+</app-card>

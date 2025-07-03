@@ -1,0 +1,42 @@
+<div class="auth-wrapper">
+  <!--Two Way Auth Form -->
+  <div class="auth-content">
+    <div class="card">
+      <div class="row align-items-center text-center">
+        <div class="col-md-12">
+          <div class="card-body">
+            <h5 class="mb-3 f-w-400">{{ heading | translate }} {{ obscuredNumber }}</h5>
+            <p class="mb-3 f-w-400">{{ 'auth.twoWay.form.subHeading' | translate }}&nbsp;
+              <app-button (click)="resend()" [text]="timerText" btnClass="btn-sm" [isDisabled]="isResendBtnDisable">
+              </app-button>
+            </p>
+
+            <form (ngSubmit)="verify()" [formGroup]="group" novalidate>
+
+              <!-- OTP Input -->
+              <app-input [showIcon]="true" type="number" controlName="otp" [group]="group"
+                placeholder="{{ 'auth.twoWay.form.otpText' | translate }}" icon="icon-smartphone"
+                [errorMessages]="errorMessages.otp">
+              </app-input>
+
+              <!-- Confirm Button -->
+              <app-button class="w-100" type="submit" text="button.verifyOtp" wrapperClass="d-grid"
+                [isDisabled]="group.invalid || isVerifyOtpDisabled" [showSpinner]="isVerifyOtpDisabled"
+                spinnerText="spinnerText.verifying">
+              </app-button>
+            </form>
+
+            <!-- Signin -->
+            <div class="text-center">
+              <div class="saprator my-4"><span>{{ 'auth.or' | translate }}</span></div>
+              <p class="mb-0 text-muted">
+                {{ 'auth.twoWay.form.GoBack' | translate }}
+                <a (click)="navigateToLogin()" class="f-w-400 link">{{ 'auth.twoWay.form.signin' | translate }}</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
