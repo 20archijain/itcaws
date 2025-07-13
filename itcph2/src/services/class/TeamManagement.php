@@ -53,7 +53,6 @@ class TeamManagement
 
         // Using Names
         if ($addMethodType == 1) {
-
             if (isNonEmptyArray($teams)) {
                 foreach ($teams as $index => $team) {
                     $obj->addValidation("dsName$index", $team["dsName"], 'alnum_s_u_h', 1, 1, $this->_validationLength['TEAM_NAME_MAXLENGTH'], 'Surveyor Name');

@@ -116,29 +116,30 @@ function getRespTable($clientId = null, $projectId = null, $jsonId = null)
 {
     global $COMMON_PROCESS_SETTINGS, $PROJECT_SPECIFIC_SETTINGS;
 
+    // Add null checks and use isset() for safer array access
     if (
-        $clientId && $projectId && $jsonId &&
-        isset($PROJECT_SPECIFIC_SETTINGS[$clientId]) &&
-        isset($PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId]) &&
+        !is_null($clientId) && !is_null($projectId) && !is_null($jsonId) &&
         isset($PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId][$jsonId]["RESPONSE_TABLE"])
     ) {
         return $PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId][$jsonId]["RESPONSE_TABLE"];
     }
-    return $COMMON_PROCESS_SETTINGS["RESPONSE_TABLE"];
+    return isset($COMMON_PROCESS_SETTINGS["RESPONSE_TABLE"]) ?
+        $COMMON_PROCESS_SETTINGS["RESPONSE_TABLE"] :
+        "tblsurvey_response_details";
 }
 
 function getImageTable($clientId = null, $projectId = null, $jsonId = null)
 {
     global $COMMON_PROCESS_SETTINGS, $PROJECT_SPECIFIC_SETTINGS;
 
+    // Add null checks and use isset() for safer array access
     if (
-        $clientId && $projectId && $jsonId &&
-        isset($PROJECT_SPECIFIC_SETTINGS[$clientId]) &&
-        isset($PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId]) &&
-        isset($PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId][$jsonId]) &&
+        !is_null($clientId) && !is_null($projectId) && !is_null($jsonId) &&
         isset($PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId][$jsonId]["IMG_TABLE"])
     ) {
         return $PROJECT_SPECIFIC_SETTINGS[$clientId][$projectId][$jsonId]["IMG_TABLE"];
     }
-    return $COMMON_PROCESS_SETTINGS["IMG_TABLE"];
+    return isset($COMMON_PROCESS_SETTINGS["IMG_TABLE"]) ?
+        $COMMON_PROCESS_SETTINGS["IMG_TABLE"] :
+        "tblsurvey_response_file_new";
 }

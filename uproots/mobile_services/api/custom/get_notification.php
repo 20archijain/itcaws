@@ -61,6 +61,7 @@ class GetNotification extends Utilities
         // Branch found
         if ($branchId) {
             if ($dbName == $ITCPH2_DB) {
+                $allNotifications = array();
                 if ($jsonId == 100) {
                     $allNotifications = $this->tableUtil->getRowsColumns(
                         "$dbName.$TBL_NOTIFICATION",

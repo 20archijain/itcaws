@@ -1733,22 +1733,28 @@ class AppSummary extends Utilities
 
             // Define Team Type list for dropdown
             foreach ($arrDsType as $dsType) {
-                if ($dsType[0] == 0) {
+                // Check if $dsType is an array or a single value
+                $dsTypeValue = is_array($dsType) ? $dsType[0] : $dsType;
+
+                if ($dsTypeValue == 0) {
                     $type = "DS";
-                } elseif ($dsType[0] == 1) {
+                } elseif ($dsTypeValue == 1) {
                     $type = "Niches";
-                } elseif ($dsType[0] == 2) {
+                } elseif ($dsTypeValue == 2) {
                     $type = "Town SWD";
-                } elseif ($dsType[0] == 3) {
+                } elseif ($dsTypeValue == 3) {
                     $type = "Hybrid";
-                } elseif ($dsType[0] == 4) {
+                } elseif ($dsTypeValue == 4) {
                     $type = "SCP";
-                } elseif ($dsType[0] == 5) {
+                } elseif ($dsTypeValue == 5) {
                     $type = "NPSR";
+                } else {
+                    $type = "Unknown"; // Handle unexpected values
                 }
+
                 $arrDsTypeList[] = [
                     "label" => $type,
-                    "value" => (string)$dsType[0],
+                    "value" => (string)$dsTypeValue,
                 ];
             }
 
@@ -1784,6 +1790,11 @@ class AppSummary extends Utilities
                 'selectedProduct' => isset($this->requestGetData['productlist']) ? $this->requestGetData['productlist'] : null,
             ];
 
+
+            // Initialize condition variables at the top, before any conditional logic
+            $dsTypeConditions = "";
+            $wdcodesConditions = "";
+            $teamConditions = "";
             $whereConditions = "AND dstatus = 0";
             if (!empty($filters['selectedMonth'])) {
                 $selectedValue = $filters['selectedMonth']; // e.g., "February-2024"
@@ -2065,7 +2076,7 @@ class AppSummary extends Utilities
             $mtdOutletCovered = $arrTodaySummary[7] + $arrTodaySummary[11];
             $sellInShopCount = $arrTodaySummary[2] + $arrTodaySummary[12];
             $sellInShopCountMtd = $arrTodaySummary[8] + $arrTodaySummary[13];
-            $filteredValue = preg_replace('/\s*\d+s/', '', $arrTodaySummary[4]); // Removes seconds
+            $filteredValue = preg_replace('/\s*\d+s/', '', (string)$arrTodaySummary[4]);
             $arrOtherLabelList1 = array(
                 array(
                     "label" => "Outlets covered VS Outlets planned",

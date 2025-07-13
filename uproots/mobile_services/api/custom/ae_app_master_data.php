@@ -66,7 +66,7 @@ class GetAeMaster extends Utilities
 
                 $groupedRoutes[$routeName][] = [
                     "label" => $outletName,
-                    "value" => $recId,
+                    "value" => "$recId",
                     "otherDetails" => [
                         "contactNo" => $row["outlet_mobile"] ?? "",
                         "showMapIcon" => true,

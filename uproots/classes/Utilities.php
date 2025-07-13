@@ -97,21 +97,22 @@ class Utilities
     protected function getToken()
     {
         $sToken = "";
-        if (
-            isset($_SERVER["PHP_AUTH_PW"]) && $_SERVER["PHP_AUTH_PW"] &&
-            $_SERVER["PHP_AUTH_USER"] && $_SERVER["PHP_AUTH_PW"] === $_SERVER["PHP_AUTH_USER"]
-        ) {
+        if (isset($_SERVER["PHP_AUTH_PW"]) && $_SERVER["PHP_AUTH_PW"]) {
             $sToken = $_SERVER["PHP_AUTH_PW"];
-        }
-
-        if (
-            !$sToken && isset($_SERVER["REDIRECT_HTTP_AUTHORIZATION"]) && $_SERVER["REDIRECT_HTTP_AUTHORIZATION"]
-            && preg_match('/Basic\s+(.*)$/i', $_SERVER['REDIRECT_HTTP_AUTHORIZATION'], $matches)
+        } elseif (
+            isset($_SERVER["REDIRECT_HTTP_AUTHORIZATION"]) &&
+            preg_match('/Basic\s+(.*)$/i', $_SERVER['REDIRECT_HTTP_AUTHORIZATION'], $matches)
         ) {
-            list($name, $password) = explode(':', base64_decode($matches[1]));
-            $sToken = strip_tags($password);
+            $decoded = base64_decode($matches[1], true);
+            if ($decoded === false) {
+                error_log("Invalid Base64 in REDIRECT_HTTP_AUTHORIZATION");
+                return "";
+            }
+            if (strpos($decoded, ':') !== false) {
+                list($name, $password) = explode(':', $decoded, 2);
+                $sToken = $password ?? "";
+            }
         }
-
         return $sToken;
     }
 

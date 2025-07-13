@@ -10,10 +10,10 @@
 
       </div>
       <div class="col-sm-3 col-lg-2">
-      <app-select label="app.team.add.appName" placeholder="{{ 'app.team.add.appName' | translate }}" [group]="form"
-        (onChange)="getJsonName()" [options]="jsonIdOptions" [isRequired]="true"
-        [errorMessages]="errorMessages.jsonId" controlName="jsonId">
-      </app-select>
+        <app-select label="app.team.add.appName" placeholder="{{ 'app.team.add.appName' | translate }}" [group]="form"
+          (onChange)="getJsonName()" [options]="jsonIdOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.jsonId" controlName="jsonId">
+        </app-select>
       </div>
 
       <div class="col-sm-3 col-lg-2">
@@ -37,7 +37,7 @@
 
       <div class="col-sm-3 col-lg-2">
         <app-input label="app.team.view.wdCode" placeholder="{{ 'app.team.view.wdCode' | translate }}" [group]="form"
-          controlName="wdCode" >
+          controlName="wdCode">
         </app-input>
       </div>
     </div>
@@ -47,10 +47,10 @@
         <app-select label="app.team.add.aeName" placeholder="{{ 'app.team.add.aeName' | translate }}" [group]="form"
           [options]="aeNameOptions" controlName="aeName">
         </app-select>
-         </div>
-         <div class="col-sm-3 col-lg-2">
-          <app-select label="app.team.add.dsType" placeholder="{{ 'app.team.add.dsType' | translate }}" [group]="form"
-          controlName="dsType" [options]="dsTypeOptions" >
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.team.add.dsType" placeholder="{{ 'app.team.add.dsType' | translate }}" [group]="form"
+          controlName="dsType" [options]="dsTypeOptions">
         </app-select>
       </div>
 
@@ -82,8 +82,7 @@
 
       <div class="col-sm-3 col-lg-2">
         <app-input label="auth.login.form.password" placeholder="{{ 'auth.login.form.password' | translate }}"
-          [group]="form" controlName="password"
-          [tooltipContent]="passwordTooltip">
+          [group]="form" controlName="password" [tooltipContent]="passwordTooltip">
         </app-input>
       </div>
     </div>
@@ -101,8 +100,8 @@
     <div class="row">
       <div class="col-10 col-sm-6 col-md-4 col-lg-3">
         <app-input label="app.team.add.name" placeholder="{{ 'app.team.add.name' | translate }}" [group]="form"
-          controlName="dsName" [validators]="validators.dsName" [hide]="controlVisibility.hideTeamsUsingIndex"
-        ></app-input>
+          controlName="dsName" [validators]="validators.dsName"
+          [hide]="controlVisibility.hideTeamsUsingIndex"></app-input>
       </div>
 
       <div class="col-10 col-sm-6 col-md-4 col-lg-3">

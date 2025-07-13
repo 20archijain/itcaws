@@ -42,8 +42,8 @@ class GetOfflineDropdownOptions
         return array(
             "key" => $arrConfig["jsonKey"],
             "dropDownItemList" => $this->getDropDownItemList($arrConfig["tableConfig"]),
-            "baseLt" => $arrConfig["baseLt"],
-            "baseLg" => $arrConfig["baseLg"],
+            "baseLt" => isset($arrConfig["baseLt"]) ? $arrConfig["baseLt"] : null,
+            "baseLg" => isset($arrConfig["baseLg"]) ? $arrConfig["baseLg"] : null,
         );
     }
 

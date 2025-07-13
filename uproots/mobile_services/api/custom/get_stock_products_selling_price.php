@@ -270,7 +270,7 @@ class GetStockProductsSellingPrice extends Utilities
                         $productName = $rowNetRateUpdate["product_name"];
                         $newNetRate = $rowNetRateUpdate["net_rate"];
                         // Store the updated net rates using product_id as the key
-                        $arrUpdatedNetRates[$productName] = $newNetRate;
+                        $arrUpdatedNetRates[$productName] = (string)$newNetRate;
                     }
                 }
 
@@ -289,9 +289,9 @@ class GetStockProductsSellingPrice extends Utilities
                     while ($rowProduct = $this->dbConn->GetData($rsProductsAction)) {
                         $categoryName = $rowProduct["category_name"];
                         $productName = $rowProduct["product_name"];
-                        $focusBrand = $rowProduct["is_focusbrand"];
-                        $netRate = $rowProduct["net_rate"];
-                        $sortOrder = $rowProduct["sort_order"];
+                        $focusBrand = (string)$rowProduct["is_focusbrand"];
+                        $netRate = (string)$rowProduct["net_rate"];
+                        $sortOrder = (string)$rowProduct["sort_order"];
 
                         // Check if there's an updated net rate for this product in tblwd_product_net_rate_update
                         if (isset($arrUpdatedNetRates[$productName])) {
@@ -304,7 +304,7 @@ class GetStockProductsSellingPrice extends Utilities
                             );
                         }
                         if ($jsonId == 100 || $jsonId == 101) {
-                            $baseRate = $rowProduct["net_rate"];  // Original net_rate stored as base_rate
+                            $baseRate = (string)$rowProduct["net_rate"];  // Original net_rate stored as base_rate
                             // Set net_rate to null if $wdCode is not provided
                             $netRateToSend = ($wdCode === null) ? "" : $netRate;
                             $arrCategories[$categoryName]["productList"][] = array(

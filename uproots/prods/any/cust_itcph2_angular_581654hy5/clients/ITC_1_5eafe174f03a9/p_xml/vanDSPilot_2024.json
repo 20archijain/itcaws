@@ -48,17 +48,17 @@
       }
     },
     "apiUrls": {
-      "surveyUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/data.php",
-      "imageUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/file.php",
-      "jsonUpdateUrl": "http://upimg2.radardashboard.com/mobile_services/api/jsonUpdate.php",
-      "statsUrl": "http://upimg2.radardashboard.com/mobile_services/api/summary.php",
-      "validateOtpUrl": "http://upimg2.radardashboard.com/mobile_services/api/otp_validate.php",
-      "sendOtpUrl": "http://upimg2.radardashboard.com/mobile_services/api/send_otp.php",
-      "offlineDropdownApi": "http://upimg2.radardashboard.com/mobile_services/api/get_offline_dropdown_options.php",
-      "calendarStatusApi": "http://upimg2.radardashboard.com/mobile_services/api/get_calendar_status.php",
-      "masterDataUpdateApi": "http://upimg2.radardashboard.com/mobile_services/api/master_data_update_by_app.php",
+      "surveyUploadUrl": "https://upimg2.radardashboard.com/mobile_services/api/data.php",
+      "imageUploadUrl": "https://upimg2.radardashboard.com/mobile_services/api/file.php",
+      "jsonUpdateUrl": "https://upimg2.radardashboard.com/mobile_services/api/jsonUpdate.php",
+      "statsUrl": "https://upimg2.radardashboard.com/mobile_services/api/summary.php",
+      "validateOtpUrl": "https://upimg2.radardashboard.com/mobile_services/api/otp_validate.php",
+      "sendOtpUrl": "https://upimg2.radardashboard.com/mobile_services/api/send_otp.php",
+      "offlineDropdownApi": "https://upimg2.radardashboard.com/mobile_services/api/get_offline_dropdown_options.php",
+      "calendarStatusApi": "https://upimg2.radardashboard.com/mobile_services/api/get_calendar_status.php",
+      "masterDataUpdateApi": "https://upimg2.radardashboard.com/mobile_services/api/master_data_update_by_app.php",
       "custom": {
-        "getStockProductsSellingPriceApi": "http://upimg2.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php"
+        "getStockProductsSellingPriceApi": "https://upimg2.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php"
       }
     }
   },
