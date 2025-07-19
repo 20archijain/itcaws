@@ -244,7 +244,8 @@ class ProcessResponse
                                 $iQuesId = $quesInfo["QUES_ID"];
                                 $selectedValue = isset($arrData[$pageId]) && isset($arrData[$pageId][$iQuesId]) ? strtolower($arrData[$pageId][$iQuesId]) : null;
 
-                                if (isset($selectedValue) && (count($arrPageIds) == 0 || in_array($pageId, $arrPageIds))) {
+                                // Check if selectedValue is not null, not empty, and the key exists in quesInfo
+                                if (isset($selectedValue) && $selectedValue !== "" && isset($quesInfo[$selectedValue]) && (count($arrPageIds) == 0 || in_array($pageId, $arrPageIds))) {
                                     $arrProcessPageIds = $quesInfo[$selectedValue];
                                     if (isNonEmptyArray($arrProcessPageIds)) {
                                         foreach ($arrProcessPageIds as $iPageId) {
@@ -321,11 +322,11 @@ class ProcessResponse
                                         if ($sellin == "Yes") {
                                             $productsBought = $arrParams[20];
                                         }
-                                        $shopFrontPicture = $arrParams[21];
+                                        $shopFrontPicture = $arrParams[21] ?? null;
 
                                         // add if valid shop
                                         if ($jsonId == 99) {
-                                            $otp = $arrParams[22];
+                                            $otp = $arrParams[22] ?? null;
                                             //list($callStatus) = getCallStatus($this->_dbConn, "tblcloudring_live_login", $ownerMobileNumber, $otp);
                                             $callStatus = 5;
                                         } else {
@@ -578,13 +579,13 @@ class ProcessResponse
                 // Outlet Order OR Add Outlet
                 if ($isOtherRecord && ($activityType === 'Outlet Order' || $activityType === 'Outlet Survey' || $activityType === 'Add Outlet')) {
                     if ($activityType === 'Outlet Order' || $activityType === 'Outlet Survey ') {
-                        $values .= ", total_sales_deliveries = (`total_sales_deliveries` + 1)";
+                        $values .= ", total_sales_deliveries = (total_sales_deliveries + 1)";
                     } else {
-                        $values .= ", total_other_shops = (`total_other_shops` + 1)";
+                        $values .= ", total_other_shops = (total_other_shops + 1)";
                     }
 
                     if ($arrData[17] === 'Yes') {
-                        $values .= ", total_sellin_shops = (`total_sellin_shops` + 1)";
+                        $values .= ", total_sellin_shops = (total_sellin_shops + 1)";
                     }
 
                     if ((($activityType === 'Outlet Order' || $activityType === 'Outlet Survey') && $arrData[17] === 'Yes') || ($activityType === 'Add Outlet' && $arrData[17] === 'Yes')) {
@@ -614,7 +615,7 @@ class ProcessResponse
                             $netAmount = ($netAmount === '' || $netAmount === null) ? 0 : $netAmount; // Final fallback
                             $discount = ($discount === '' || $discount === null) ? 0 : $discount; // Final fallback
 
-                            $values .= ", netAmount = (`netAmount` + {$netAmount}), discount = (`discount` + {$discount})";
+                            $values .= ", netAmount = (netAmount + {$netAmount}), discount = (discount + {$discount})";
                         }
 
                         $arrParams = array_merge($arrParams, $arrSalesValues);
@@ -644,7 +645,7 @@ class ProcessResponse
                             $distanceInM = round($distanceTravelledInKm * 1000, 2);
                             $values .= ", total_meter_travelled = $distanceInM";
                         } else {
-                            $values .= ", total_meter_travelled = (`total_meter_travelled` + $distanceInM)";
+                            $values .= ", total_meter_travelled = (total_meter_travelled + $distanceInM)";
                         }
                     }
 

@@ -1044,7 +1044,7 @@ class VanDsReporting
                     $week = $this->getWeekNumber($captureDate);
                     $callTime = $row["call_time"];
                     $time = $callTime / 1000;
-                    $timeSpent = gmdate("i:s", $time);
+                    $timeSpent = gmdate("i:s", (int) round($time));
                     $meters = $row["distance_in_meter"] / 1000;
                     $roundedMeters = round($meters, 2);
 
@@ -1398,7 +1398,7 @@ class VanDsReporting
                         $totalTime = array_sum($callTime); // Sum all time values
                         $time = $totalTime / 1000;
                         // Convert time to H:i:s format
-                        $totalTimeSpent = gmdate("i:s", (int)$time);
+                        $totalTimeSpent = gmdate("i:s", (int) round($time));
                     }
 
                     $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
@@ -1421,7 +1421,7 @@ class VanDsReporting
                     $timePerShop = ($totalShops > 0) ? ($time / $totalShops) : 0;
 
                     // Convert back to H:i:s format
-                    $timePerShopFormatted = gmdate("i:s", $timePerShop);
+                    $timePerShopFormatted = gmdate("i:s", (int) round($timePerShop));
                     // $totalShops = $row["total_sales_deliveries"] + $row["total_other_shops"];
                     $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
                     $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
