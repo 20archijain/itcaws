@@ -5,7 +5,7 @@ $isLocalServer = isset($_SERVER["SERVER_NAME"]) && $_SERVER["SERVER_NAME"] == "l
 // LOCAL
 if ($isLocalServer) {
     // For file include/upload
-    $SITE_PATH = "C:/xampp/htdocs/work/appilary";
+    $SITE_PATH = "C:/xampp/htdocs/work/itcawsportal";
 } else {
     // PROD
 

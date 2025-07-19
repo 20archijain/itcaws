@@ -244,7 +244,8 @@ class ProcessResponse
                                 $iQuesId = $quesInfo["QUES_ID"];
                                 $selectedValue = isset($arrData[$pageId]) && isset($arrData[$pageId][$iQuesId]) ? strtolower($arrData[$pageId][$iQuesId]) : null;
 
-                                if (isset($selectedValue) && (count($arrPageIds) == 0 || in_array($pageId, $arrPageIds))) {
+                                // Check if selectedValue is not null, not empty, and the key exists in quesInfo
+                                if (isset($selectedValue) && $selectedValue !== "" && isset($quesInfo[$selectedValue]) && (count($arrPageIds) == 0 || in_array($pageId, $arrPageIds))) {
                                     $arrProcessPageIds = $quesInfo[$selectedValue];
                                     if (isNonEmptyArray($arrProcessPageIds)) {
                                         foreach ($arrProcessPageIds as $iPageId) {
@@ -321,11 +322,11 @@ class ProcessResponse
                                         if ($sellin == "Yes") {
                                             $productsBought = $arrParams[20];
                                         }
-                                        $shopFrontPicture = $arrParams[21];
+                                        $shopFrontPicture = $arrParams[21] ?? null;
 
                                         // add if valid shop
                                         if ($jsonId == 99) {
-                                            $otp = $arrParams[22];
+                                            $otp = $arrParams[22] ?? null;
                                             //list($callStatus) = getCallStatus($this->_dbConn, "tblcloudring_live_login", $ownerMobileNumber, $otp);
                                             $callStatus = 5;
                                         } else {

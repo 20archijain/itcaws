@@ -1044,7 +1044,7 @@ class VanDsReporting
                     $week = $this->getWeekNumber($captureDate);
                     $callTime = $row["call_time"];
                     $time = $callTime / 1000;
-                    $timeSpent = gmdate("i:s", $time);
+                    $timeSpent = gmdate("i:s", (int) round($time));
                     $meters = $row["distance_in_meter"] / 1000;
                     $roundedMeters = round($meters, 2);
 
@@ -1074,7 +1074,7 @@ class VanDsReporting
                     $arrDownload["sale"][$index][] = $row["section"];
                     $arrDownload["sale"][$index][] = $row["wd_code"];
                     $arrDownload["sale"][$index][] = $row["team_id"];
-                    $arrDownload["sale"][$index][] = $arrTeamType[$row["is_type"]];
+                    $arrDownload["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
                     $arrDownload["sale"][$index][] = $row["team_name"];
                     $arrDownload["sale"][$index][] = $row["ques_0"];
                     $arrDownload["sale"][$index][] = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
@@ -1183,6 +1183,9 @@ class VanDsReporting
         // Pass complete data
         $sheet->fromArray($arrExcelData);
 
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
         $fileDetails = array(
@@ -1398,7 +1401,7 @@ class VanDsReporting
                         $totalTime = array_sum($callTime); // Sum all time values
                         $time = $totalTime / 1000;
                         // Convert time to H:i:s format
-                        $totalTimeSpent = gmdate("i:s", (int)$time);
+                        $totalTimeSpent = gmdate("i:s", (int) round($time));
                     }
 
                     $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
@@ -1421,7 +1424,7 @@ class VanDsReporting
                     $timePerShop = ($totalShops > 0) ? ($time / $totalShops) : 0;
 
                     // Convert back to H:i:s format
-                    $timePerShopFormatted = gmdate("i:s", $timePerShop);
+                    $timePerShopFormatted = gmdate("i:s", (int) round($timePerShop));
                     // $totalShops = $row["total_sales_deliveries"] + $row["total_other_shops"];
                     $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
                     $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
@@ -1625,6 +1628,9 @@ class VanDsReporting
         // Pass complete data
         $sheet->fromArray($arrExcelData);
 
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
         $fileDetails = array(
@@ -1851,6 +1857,9 @@ class VanDsReporting
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->fromArray($arrExcelData);
 
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
         $fileDetails = [

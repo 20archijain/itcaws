@@ -1,0 +1,30 @@
+[08-Jun-2025 08:03:25 UTC] PHP Warning:  require_once(/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:25 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php:29
+Stack trace:
+#0 /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/index.php(2): include_once()
+#1 {main}
+  thrown in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:26 UTC] PHP Warning:  require_once(/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:26 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php:29
+Stack trace:
+#0 /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/index.php(2): include_once()
+#1 {main}
+  thrown in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:26 UTC] PHP Warning:  require_once(/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:26 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php:29
+Stack trace:
+#0 /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/index.php(2): include_once()
+#1 {main}
+  thrown in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:27 UTC] PHP Warning:  require_once(/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[08-Jun-2025 08:03:27 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php:29
+Stack trace:
+#0 /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/index.php(2): include_once()
+#1 {main}
+  thrown in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[11-Jun-2025 01:36:02 UTC] PHP Warning:  require_once(/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php): Failed to open stream: No such file or directory in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
+[11-Jun-2025 01:36:02 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/../vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php81/root/usr/share/pear') in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php:29
+Stack trace:
+#0 /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/index.php(2): include_once()
+#1 {main}
+  thrown in /home/itcawsportal/public_html/uproots/php_libs/PHPPresentation/samples/Sample_Header.php on line 29
