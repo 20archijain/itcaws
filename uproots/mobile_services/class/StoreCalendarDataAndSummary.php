@@ -378,13 +378,14 @@ class StoreCalendarDataAndSummary
                     "planned_outlets, oulet_covered_today, add_oulet_covered_today, sell_in_shops_count_today, other_sell_in_shops_count_today, total_sales_today, time_spent_today, total_meter_travelled",
                     "team_id = $teamId AND rcd = '$date'"
                 );
-                $coveredOutlet = $SummaryDetails[1] + $SummaryDetails[2];
-                $outletPlanned = $SummaryDetails[0];
-                // $percentage = round($coveredOutlet / $SummaryDetails[0] * 100);
-                $sellInOutlet = $SummaryDetails[3] + $SummaryDetails[4];
-                $salesQty = round($SummaryDetails[5], 1);
-                $timeSpent = preg_replace('/\s*\d+s/', '', $SummaryDetails[6]); // Removes seconds;
-                $totalMeterTravelled =  round($SummaryDetails[7] / 1000, 2);
+                $coveredOutlet = (isset($SummaryDetails[1]) ? $SummaryDetails[1] : 0) +
+                    (isset($SummaryDetails[2]) ? $SummaryDetails[2] : 0);
+                $outletPlanned = isset($SummaryDetails[0]) ? $SummaryDetails[0] : 0;
+                $sellInOutlet = (isset($SummaryDetails[3]) ? $SummaryDetails[3] : 0) +
+                    (isset($SummaryDetails[4]) ? $SummaryDetails[4] : 0);
+                $salesQty = isset($SummaryDetails[5]) ? round($SummaryDetails[5], 1) : 0;
+                $timeSpent = isset($SummaryDetails[6]) ? preg_replace('/\s*\d+s/', '', $SummaryDetails[6]) : ""; // Removes seconds;
+                $totalMeterTravelled =  isset($SummaryDetails[7]) ? round($SummaryDetails[7] / 1000, 2) : 0;
 
                 $arrExtraSummary = array(
                     array(

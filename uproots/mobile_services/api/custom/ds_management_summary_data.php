@@ -42,11 +42,11 @@ class DsManagementSummary extends Utilities
         if (isset($_GET) && $this->commonFunctions->isNonEmptyArray($_GET)) {
             $this->requestGetData = $_GET;
 
-            // if (empty($this->requestGetData['wdlist'])) {
-            //     $response = $this->response->sendResponse(["message" => "WD Code is required"]);
-            //     $this->logOutput($response, $this->sExtraLogData);
-            //     return;
-            // }
+            if (empty($this->requestGetData['wdlist'])) {
+                $response = $this->response->sendResponse(["message" => "WD Code is required"]);
+                $this->logOutput($response, $this->sExtraLogData);
+                return;
+            }
         }
 
         $wdcodesFilterConditions = "";
@@ -69,7 +69,7 @@ class DsManagementSummary extends Utilities
         // Fetch all teams corresponding the WD CODE
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT team_id, branch_id, team_name, is_type, ds_number FROM $dbName.$TBL_PROJECT_TEAM WHERE dstatus = 0 AND s_id = 99 AND wd_code = 'LU4046'";
+        $sQuery = "SELECT team_id, branch_id, team_name, is_type, ds_number FROM $dbName.$TBL_PROJECT_TEAM WHERE dstatus = 0 AND s_id = 99 $wdcodesFilterConditions";
         $this->dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         $summaryDataList  = [];
         $type  = array(0 => "Van DS", 1 => "Niches", 2 => "Town Swd", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD");

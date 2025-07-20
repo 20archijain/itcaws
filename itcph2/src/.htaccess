@@ -29,7 +29,7 @@
    php_value memory_limit 512M
    php_value post_max_size 128M
    php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php72"
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php81"
    php_value upload_max_filesize 128M
    php_flag zlib.output_compression Off
 </IfModule>
@@ -41,7 +41,7 @@
    php_value memory_limit 512M
    php_value post_max_size 128M
    php_value session.gc_maxlifetime 1440
-   php_value session.save_path "/var/cpanel/php/sessions/ea-php72"
+   php_value session.save_path "/var/cpanel/php/sessions/ea-php81"
    php_value upload_max_filesize 128M
    php_flag zlib.output_compression Off
 </IfModule>
