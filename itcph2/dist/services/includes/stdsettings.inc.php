@@ -63,7 +63,7 @@ define('CLIENTS_JSON_FOLDER', "p_xml");
 define('CLIENTS_RES_FOLDER', "res/android/drawable");
 
 // DB DETAILS
-// define("DB_HOSTNAME", "ded4219.inmotionhosting.com");
+// define("DB_HOSTNAME", "3.109.90.46");
 define("DB_HOSTNAME", "localhost");
 $DB_DBNAME = 'itcawsportal_itcph2';
 

@@ -1319,4 +1319,38 @@ class CommonFunctions
             );
         }
     }
+
+    // get the avg Date time range from time array
+    final public function getAverageDatetimeRange(array $timeSpent): array
+    {
+        $startSum = 0;
+        $endSum = 0;
+        $count = 0;
+
+        foreach ($timeSpent as $row) {
+            $start = $row[0] ?? null;
+            $end   = $row[1] ?? null;
+
+            // Only call strtotime if both are non-null and non-empty
+            if (!empty($start) && !empty($end)) {
+                $startTimestamp = strtotime($start);
+                $endTimestamp = strtotime($end);
+
+                // Only use valid timestamps
+                if ($startTimestamp !== false && $endTimestamp !== false) {
+                    $startSum += $startTimestamp;
+                    $endSum += $endTimestamp;
+                    $count++;
+                }
+            }
+        }
+
+        $avgStartDatetime = $count > 0 ? date("Y-m-d H:i:s", (int)($startSum / $count)) : null;
+        $avgEndDatetime   = $count > 0 ? date("Y-m-d H:i:s", (int)($endSum / $count)) : null;
+
+        return [
+            'avgStartDatetime' => $avgStartDatetime,
+            'avgEndDatetime'   => $avgEndDatetime
+        ];
+    }
 }

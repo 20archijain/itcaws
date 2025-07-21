@@ -15,7 +15,7 @@ define("OUR_DLT_ENTITY_ID", "1201159202619010869");
 date_default_timezone_set(DEFAULT_TIMEZONE);
 
 // DB Constants
-// define("DB_HOSTNAME", "3-109-90-46.cprapid.com");
+// define("DB_HOSTNAME", "3.109.90.46");
 define("DB_HOSTNAME", "localhost");
 define("DB_NAME", "itcawsportal_mobiappilaryauth");
 

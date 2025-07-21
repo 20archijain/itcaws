@@ -2211,7 +2211,7 @@ class AppSummary extends Utilities
                         date('Y-m'),
                     );
                     //productlist
-                    $arrFocusProduct = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "summary_column_name", "dstatus = 0 AND is_focusbrand = '1' AND team_type = 5 AND branch_id = $branchId");
+                    $arrFocusProduct = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 AND team_type = 5 AND branch_id = $branchId");
                     $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops'");
                     $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin'");
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;

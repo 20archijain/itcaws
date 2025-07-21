@@ -1334,9 +1334,10 @@ class StoreOfflineDropdownOptions
                 "branch_id",
                 "team_id = $teamId"
             );
-            // if ($branchId == 15) {
-            //     $arrOptions[0]["allowed_distance_in_mtr"] = 100;
-            // }
+            $allowedBranchIds = [1, 2, 3, 4, 5, 6, 30];
+            if (in_array($branchId, $allowedBranchIds)) {
+                $arrOptions[0]["allowed_distance_in_mtr"] = 200;
+            }
             // Add today's date in 'Y-m-d' format
             $arrOptions[0]["today_date"] = date("Y-m-d");
             foreach ($arrOptions as &$arrRoute) {
