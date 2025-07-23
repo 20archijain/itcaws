@@ -1443,7 +1443,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = $row["wd_code"];
                     $arrSummary["sale"][$index][] = $teamId;
                     $arrSummary["sale"][$index][] = $row["team_name"];
-                    $arrSummary["sale"][$index][] = $arrTeamType[$row["is_type"]];
+                    $arrSummary["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
                     $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
                     $arrSummary["sale"][$index][] = $week;
                     $arrSummary["sale"][$index][] = "1";
@@ -1582,7 +1582,7 @@ class VanDsReporting
                 }
 
                 // Style header
-                $endColumnName = $sheet->getCellByColumnAndRow(count($arrValues), 1)->getCoordinate();
+                $endColumnName = $sheet->getCell([count($arrValues), 1])->getCoordinate();
                 $sheet->getStyle("A1:$endColumnName")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // center align text
                 $sheet->getStyle("A1:$endColumnName")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER); // center align text
                 $sheet->getStyle("A1:$endColumnName")->getFill()->setFillType(Fill::FILL_SOLID);  // fill style
@@ -1592,13 +1592,13 @@ class VanDsReporting
                 $sheet->getStyle("A1:$endColumnName")->getAlignment()->setWrapText(true);   // wrap text
 
                 // Backgroud color
-                $endColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn, 1)->getCoordinate();
+                $endColumnName = $sheet->getCell([$iStartofProductsColumn, 1])->getCoordinate();
                 $sheet->getStyle("A1:$endColumnName")->getFill()->getStartColor()->setARGB("FFFFC000"); // background color
-                $productStartColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + 1, 1)->getCoordinate();
-                $productEndColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + $iNofOfProductsColumn, 1)->getCoordinate();
+                $productStartColumnName = $sheet->getCell([$iStartofProductsColumn + 1, 1])->getCoordinate();
+                $productEndColumnName = $sheet->getCell([$iStartofProductsColumn + $iNofOfProductsColumn, 1])->getCoordinate();
                 $sheet->getStyle("$productStartColumnName:$productEndColumnName")->getFill()->getStartColor()->setARGB("FFFF5E00"); // background color
-                $stockStartColumnName = $sheet->getCellByColumnAndRow($iStartofProductsColumn + $iNofOfProductsColumn + 1, 1)->getCoordinate();
-                $stockEndColumnName = $sheet->getCellByColumnAndRow(count($arrValues), 1)->getCoordinate();
+                $stockStartColumnName = $sheet->getCell([$iStartofProductsColumn + $iNofOfProductsColumn + 1, 1])->getCoordinate();
+                $stockEndColumnName = $sheet->getCell([count($arrValues), 1])->getCoordinate();
                 $sheet->getStyle("$stockStartColumnName:$stockEndColumnName")->getFill()->getStartColor()->setARGB("FF88FF00"); // background color
             } else {
                 // Body
@@ -1692,7 +1692,7 @@ class VanDsReporting
                     $Cond .= " AND b.branch_id = $branch";
                 }
             } else {
-                $branch = $this->getBranch();
+                $branch = $this->getBranches();
             }
         }
 
@@ -1802,7 +1802,7 @@ class VanDsReporting
                         $circle = $row['circle'];
                         $outletId = $row['ques_3'];
                         $section = $row['section'];
-                        $dsType = $isType[$row['is_type']];
+                        $dsType = $row['is_type'] != "" ? $isType[$row['is_type']] : "";
                         $wdCode = $row['wd_code'];
                         $date = $row['capture_date'];
                         $week = $this->getWeekNumber($date);
