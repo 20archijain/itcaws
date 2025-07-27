@@ -1506,8 +1506,8 @@ class VanDsReporting
             $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
             $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
 
-            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
-            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+            $dateFrom = sprintf('%04d-%02d-%02d', isset($dateFrom['year']), isset($dateFrom['month']), isset($dateFrom['day']));
+            $dateTo = sprintf('%04d-%02d-%02d', isset($dateTo['year']), isset($dateTo['month']), isset($dateTo['day']));
 
             // Convert date strings to DateTime objects
             $startDate = new DateTime($dateFrom);

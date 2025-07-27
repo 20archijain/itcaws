@@ -36,7 +36,7 @@ class ProductiveDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.district";
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -72,7 +72,7 @@ class ProductiveDashboard
         // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.branch_name";
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -167,7 +167,7 @@ class ProductiveDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.circle";
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -202,7 +202,7 @@ class ProductiveDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.section";
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -238,7 +238,7 @@ class ProductiveDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.wd_code";
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -274,7 +274,7 @@ class ProductiveDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_market";
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -309,7 +309,7 @@ class ProductiveDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_pop_group";
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -344,7 +344,7 @@ class ProductiveDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -393,7 +393,7 @@ class ProductiveDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '99' $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -1174,9 +1174,9 @@ class ProductiveDashboard
             foreach ($monthWiseSales as &$arrDistrictData) {
                 if (isset($arrDistrictData['districtLevelSale']['CFT per days']) && isset($arrDistrictData['districtLevelSale']['No of days present'])) {
                     $time = $arrDistrictData['districtLevelSale']['CFT per days'] / $arrDistrictData['districtLevelSale']['No of days present'];
-                    $seconds = intdiv($time, 1000);
-                    $minutes = intdiv($seconds, 60);
-                    $hours = intdiv($minutes, 60);
+                    $seconds = round((int)$time / 1000);
+                    $minutes = round((int)$seconds / 60);
+                    $hours = round((int)$minutes / 60);
                     $minutes = $minutes % 60;
                     $arrDistrictData['districtLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                 }
@@ -1198,7 +1198,7 @@ class ProductiveDashboard
                 }
                 if (isset($arrDistrictData['districtLevelSale']['Time in market'])) {
                     $time = ($arrDistrictData['districtLevelSale']['Time in market'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate;
-                    $hours = intdiv((int)$time, 60);
+                    $hours = round((int)$time / 60);
                     $minutes = $time % 60;
                     $arrDistrictData['districtLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                 }
@@ -1209,9 +1209,9 @@ class ProductiveDashboard
 
                 if (isset($arrDistrictData['districtLevelSale']['CFT per outlet']) && isset($arrDistrictData['districtLevelSale']['Total Transaction'])) {
                     $time = $arrDistrictData['districtLevelSale']['CFT per outlet'] / $arrDistrictData['districtLevelSale']['Total Transaction'];
-                    $seconds = intdiv((int)$time, 1000);
-                    $minutes = intdiv((int)$seconds, 60);
-                    $hours = intdiv((int)$minutes, 60);
+                    $seconds = round((int)$time / 1000);
+                    $minutes = round((int)$seconds / 60);
+                    $hours = round((int)$minutes / 60);
                     $minutes = $minutes % 60;
                     $arrDistrictData['districtLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                 }
@@ -1220,9 +1220,9 @@ class ProductiveDashboard
                 foreach ($arrDistrictData['branchData'] as &$arrBranchData) {
                     if (isset($arrBranchData['branchLevelSale']['CFT per days']) && isset($arrBranchData['branchLevelSale']['No of days present'])) {
                         $time = $arrBranchData['branchLevelSale']['CFT per days'] / $arrBranchData['branchLevelSale']['No of days present'];
-                        $seconds = intdiv((int)$time, 1000);
-                        $minutes = intdiv((int)$seconds, 60);
-                        $hours = intdiv((int)$minutes, 60);
+                        $seconds = round((int)$time / 1000);
+                        $minutes = round((int)$seconds / 60);
+                        $hours = round((int)$minutes / 60);
                         $minutes = $minutes % 60;
                         $arrBranchData['branchLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                     }
@@ -1245,7 +1245,7 @@ class ProductiveDashboard
 
                     if (isset($arrBranchData['branchLevelSale']['Time in market'])) {
                         $time = ($arrBranchData['branchLevelSale']['Time in market'] / $arrBranchData['branchLevelSale']['No of Users']) / $getDate;
-                        $hours = intdiv((int)$time, 60);
+                        $hours = round((int)$time / 60);
                         $minutes = $time % 60;
                         $arrBranchData['branchLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                     }
@@ -1256,9 +1256,9 @@ class ProductiveDashboard
 
                     if (isset($arrBranchData['branchLevelSale']['CFT per outlet']) && isset($arrBranchData['branchLevelSale']['Total Transaction'])) {
                         $time = ($arrBranchData['branchLevelSale']['Total Transaction'] > 0) ? $arrBranchData['branchLevelSale']['CFT per outlet'] / $arrBranchData['branchLevelSale']['Total Transaction'] : $arrBranchData['branchLevelSale']['CFT per outlet'];
-                        $seconds = intdiv((int)$time, 1000);
-                        $minutes = intdiv((int)$seconds, 60);
-                        $hours = intdiv((int)$minutes, 60);
+                        $seconds = round((int)$time / 1000);
+                        $minutes = round((int)$seconds / 60);
+                        $hours = round((int)$minutes / 60);
                         $minutes = $minutes % 60;
                         $arrBranchData['branchLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                     }
@@ -1266,9 +1266,9 @@ class ProductiveDashboard
                     foreach ($arrBranchData['circleData'] as &$arrCircleData) {
                         if (isset($arrCircleData['circleLevelSale']['CFT per days']) && isset($arrCircleData['circleLevelSale']['No of days present'])) {
                             $time = $arrCircleData['circleLevelSale']['CFT per days'] / $arrCircleData['circleLevelSale']['No of days present'];
-                            $seconds = intdiv($time, 1000);
-                            $minutes = intdiv($seconds, 60);
-                            $hours = intdiv($minutes, 60);
+                            $seconds = round($time / 1000);
+                            $minutes = round($seconds / 60);
+                            $hours = round($minutes / 60);
                             $minutes = $minutes % 60;
                             $arrCircleData['circleLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                         }
@@ -1291,7 +1291,7 @@ class ProductiveDashboard
 
                         if (isset($arrCircleData['circleLevelSale']['Time in market'])) {
                             $time = ($arrCircleData['circleLevelSale']['Time in market'] / $arrCircleData['circleLevelSale']['No of Users']) / $getDate;
-                            $hours = intdiv((int)$time, 60);
+                            $hours = round((int)$time / 60);
                             $minutes = $time % 60;
                             $arrCircleData['circleLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                         }
@@ -1302,9 +1302,9 @@ class ProductiveDashboard
 
                         if (isset($arrCircleData['circleLevelSale']['CFT per outlet']) && isset($arrCircleData['circleLevelSale']['Total Transaction'])) {
                             $time = ($arrCircleData['circleLevelSale']['Total Transaction'] > 0) ? $arrCircleData['circleLevelSale']['CFT per outlet'] / $arrCircleData['circleLevelSale']['Total Transaction'] : $arrCircleData['circleLevelSale']['CFT per outlet'];
-                            $seconds = intdiv($time, 1000);
-                            $minutes = intdiv($seconds, 60);
-                            $hours = intdiv($minutes, 60);
+                            $seconds = round($time / 1000);
+                            $minutes = round($seconds / 60);
+                            $hours = round($minutes / 60);
                             $minutes = $minutes % 60;
                             $arrCircleData['circleLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                         }
@@ -1312,9 +1312,9 @@ class ProductiveDashboard
                         foreach ($arrCircleData['sectionData'] as &$arrSectionData) {
                             if (isset($arrSectionData['sectionLevelSale']['CFT per days']) && isset($arrSectionData['sectionLevelSale']['No of days present'])) {
                                 $time = $arrSectionData['sectionLevelSale']['CFT per days'] / $arrSectionData['sectionLevelSale']['No of days present'];
-                                $seconds = intdiv($time, 1000);
-                                $minutes = intdiv($seconds, 60);
-                                $hours = intdiv($minutes, 60);
+                                $seconds = round($time / 1000);
+                                $minutes = round($seconds / 60);
+                                $hours = round($minutes / 60);
                                 $minutes = $minutes % 60;
                                 $arrSectionData['sectionLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                             }
@@ -1337,7 +1337,7 @@ class ProductiveDashboard
 
                             if (isset($arrSectionData['sectionLevelSale']['Time in market'])) {
                                 $time = ($arrSectionData['sectionLevelSale']['Time in market'] / $arrSectionData['sectionLevelSale']['No of Users']) / $getDate;
-                                $hours = intdiv((int)$time, 60);
+                                $hours = round((int)$time / 60);
                                 $minutes = $time % 60;
                                 $arrSectionData['sectionLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                             }
@@ -1348,9 +1348,9 @@ class ProductiveDashboard
 
                             if (isset($arrSectionData['sectionLevelSale']['CFT per outlet']) && isset($arrSectionData['sectionLevelSale']['Total Transaction'])) {
                                 $time = ($arrSectionData['sectionLevelSale']['Total Transaction'] > 0) ? $arrSectionData['sectionLevelSale']['CFT per outlet'] / $arrSectionData['sectionLevelSale']['Total Transaction'] : $arrSectionData['sectionLevelSale']['CFT per outlet'];
-                                $seconds = intdiv((int)$time, 1000);
-                                $minutes = intdiv((int)$seconds, 60);
-                                $hours = intdiv((int)$minutes, 60);
+                                $seconds = round((int)$time / 1000);
+                                $minutes = round((int)$seconds / 60);
+                                $hours = round((int)$minutes / 60);
                                 $minutes = $minutes % 60;
                                 $arrSectionData['sectionLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                             }
@@ -1358,9 +1358,9 @@ class ProductiveDashboard
                             foreach ($arrSectionData['wdData'] as &$arrWdCodeData) {
                                 if (isset($arrWdCodeData['wdLevelSale']['CFT per days']) && isset($arrWdCodeData['wdLevelSale']['No of days present'])) {
                                     $time = $arrWdCodeData['wdLevelSale']['CFT per days'] / $arrWdCodeData['wdLevelSale']['No of days present'];
-                                    $seconds = intdiv((int)$time, 1000);
-                                    $minutes = intdiv((int)$seconds, 60);
-                                    $hours = intdiv((int)$minutes, 60);
+                                    $seconds = round((int)$time / 1000);
+                                    $minutes = round((int)$seconds / 60);
+                                    $hours = round((int)$minutes / 60);
                                     $minutes = $minutes % 60;
                                     $arrWdCodeData['wdLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                                 }
@@ -1383,7 +1383,7 @@ class ProductiveDashboard
 
                                 if (isset($arrWdCodeData['wdLevelSale']['Time in market'])) {
                                     $time = ($arrWdCodeData['wdLevelSale']['Time in market'] / $arrWdCodeData['wdLevelSale']['No of Users']) / $getDate;
-                                    $hours = intdiv((int)$time, 60);
+                                    $hours = round((int)$time / 60);
                                     $minutes = $time % 60;
                                     $arrWdCodeData['wdLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                                 }
@@ -1394,9 +1394,9 @@ class ProductiveDashboard
 
                                 if (isset($arrWdCodeData['wdLevelSale']['CFT per outlet']) && isset($arrWdCodeData['wdLevelSale']['Total Transaction'])) {
                                     $time = ($arrWdCodeData['wdLevelSale']['Total Transaction'] > 0) ? $arrWdCodeData['wdLevelSale']['CFT per outlet'] / $arrWdCodeData['wdLevelSale']['Total Transaction'] : $arrWdCodeData['wdLevelSale']['CFT per outlet'];
-                                    $seconds = intdiv($time, 1000);
-                                    $minutes = intdiv($seconds, 60);
-                                    $hours = intdiv($minutes, 60);
+                                    $seconds = round($time / 1000);
+                                    $minutes = round($seconds / 60);
+                                    $hours = round($minutes / 60);
                                     $minutes = $minutes % 60;
                                     $arrWdCodeData['wdLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                                 }
@@ -1404,9 +1404,9 @@ class ProductiveDashboard
                                 foreach ($arrWdCodeData['teamData'] as &$arrTeamData) {
                                     if (isset($arrTeamData['teamLevelSale']['CFT per days']) && isset($arrTeamData['teamLevelSale']['No of days present'])) {
                                         $time = $arrTeamData['teamLevelSale']['CFT per days'] / $arrTeamData['teamLevelSale']['No of days present'];
-                                        $seconds = intdiv((int)$time, 1000);
-                                        $minutes = intdiv((int)$seconds, 60);
-                                        $hours = intdiv((int)$minutes, 60);
+                                        $seconds = round((int)$time / 1000);
+                                        $minutes = round((int)$seconds / 60);
+                                        $hours = round((int)$minutes / 60);
                                         $minutes = $minutes % 60;
                                         $arrTeamData['teamLevelSale']['CFT per days'] = "{$hours} h {$minutes} m";
                                     }
@@ -1429,7 +1429,7 @@ class ProductiveDashboard
 
                                     if (isset($arrTeamData['teamLevelSale']['Time in market'])) {
                                         $time = ($arrTeamData['teamLevelSale']['Time in market'] / $arrTeamData['teamLevelSale']['No of Users']) / $getDate;
-                                        $hours = intdiv((int)$time, 60);
+                                        $hours = round((int)$time / 60);
                                         $minutes = $time % 60;
                                         $arrTeamData['teamLevelSale']['Time in market'] = "{$hours} h {$minutes} m";
                                     }
@@ -1440,9 +1440,9 @@ class ProductiveDashboard
 
                                     if (isset($arrTeamData['teamLevelSale']['CFT per outlet']) && isset($arrTeamData['teamLevelSale']['Total Transaction'])) {
                                         $time = ($arrTeamData['teamLevelSale']['Total Transaction'] > 0) ? $arrTeamData['teamLevelSale']['CFT per outlet'] / $arrTeamData['teamLevelSale']['Total Transaction'] : $arrTeamData['teamLevelSale']['CFT per outlet'];
-                                        $seconds = intdiv((int)$time, 1000);
-                                        $minutes = intdiv((int)$seconds, 60);
-                                        $hours = intdiv((int)$minutes, 60);
+                                        $seconds = round((int)$time / 1000);
+                                        $minutes = round((int)$seconds / 60);
+                                        $hours = round((int)$minutes / 60);
                                         $minutes = $minutes % 60;
                                         $arrTeamData['teamLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                                     }

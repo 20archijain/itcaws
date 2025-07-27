@@ -43,7 +43,7 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
 
   directionsService = new google.maps.DirectionsService();
   directionsRenderer = new google.maps.DirectionsRenderer();
-    walkingIcon = {
+  walkingIcon = {
     url: `${mapPath}walking-man.png`,
     scaledSize: new google.maps.Size(32, 32),
     origin: new google.maps.Point(0, 0),
@@ -82,14 +82,14 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
     }, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
         this.directionsRenderer.setDirections(response);
-         this.startWalkingAnimation(response.routes[0].overview_path);
+        this.startWalkingAnimation(response.routes[0].overview_path);
       } else {
         console.error('Directions request failed due to ' + status);
       }
     });
   }
 
-    initializeWalkingAnimation() {
+  initializeWalkingAnimation() {
     this.marker = new google.maps.Marker({
       map: this.googleMap.googleMap,
       icon: this.walkingIcon

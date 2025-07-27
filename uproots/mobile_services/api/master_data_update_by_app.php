@@ -36,7 +36,7 @@ class UpdateMasterData extends Utilities
         $lt = isset($this->requestPostData["lt"]) ? htmlentities($this->requestPostData["lt"]) : "";
         $lg = isset($this->requestPostData["lg"]) ? htmlentities($this->requestPostData["lg"]) : "";
 
-        $iStatus = $this->tableUtil->isRecordExist("$dbName.tblroute_details", "rec_id", "dstatus = 0 AND outlet_mobile = $mobileNo");
+        $iStatus = $this->tableUtil->isRecordExist("$dbName.tblroute_details", "rec_id", "dstatus = 0 AND outlet_mobile = $mobileNo AND rec_id != $shopId");
         if ($iStatus) {
             // Data is invalid
             $response = $this->response->sendResponse(array("message" => $this->arrOTPMessages["OTP22"]));
