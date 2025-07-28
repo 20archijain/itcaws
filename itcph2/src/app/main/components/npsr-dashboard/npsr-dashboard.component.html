@@ -1,6 +1,6 @@
 <app-card [options]="false">
 
-  <form (ngSubmit)="getCardData()" [formGroup]="group" novalidate class="form-content">
+  <form (ngSubmit)="getCardData(true)" [formGroup]="group" novalidate class="form-content">
     <!-- Superadmin and Admin Login -->
     <div *ngIf="branchFilter" class="row ml-1 filter-container">
       <!-- <div class="w-2 m-1">

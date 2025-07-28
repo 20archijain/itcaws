@@ -88,7 +88,6 @@ export class NpsrDashboardComponent implements OnDestroy, OnInit {
     });
 
     this.initialData();
-    this.getCardData();
     // this.getSalesData();
   }
 
@@ -103,7 +102,7 @@ export class NpsrDashboardComponent implements OnDestroy, OnInit {
       this.subscription.push(
         this.formService.getData<SalesDashboardData>(this.url, this.group.getRawValue())
           .pipe(
-            finalize(() => this.loaderService.stopLoader()),
+            finalize(() => this.getCardData()),
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -126,11 +125,13 @@ export class NpsrDashboardComponent implements OnDestroy, OnInit {
     }
   }
 
-  getCardData() {
+  getCardData(showLoader = false) {
     const monthValues = this.group.get('month').value;
     if (monthValues.length <= 3) {
       this.chartData = null;
-      this.loaderService.startLoader();
+      if (showLoader) {
+        this.loaderService.startLoader();
+      }
       this.subscription.push(
         this.formService.getList<SalesDashboardData>(this.url, this.group.getRawValue())
           .pipe(
@@ -359,9 +360,8 @@ export class NpsrDashboardComponent implements OnDestroy, OnInit {
     this.group.reset(
       { month: '' }
     );
-    this.initialData();
     this.monthlySalesData = [];
-    this.getCardData();
+    this.initialData();
     this.categoryOptions = [];
     this.productOptions = [];
   }

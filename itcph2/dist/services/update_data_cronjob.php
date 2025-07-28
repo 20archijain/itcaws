@@ -436,6 +436,6 @@ class UpdateDataCronjob
 
 $updateDataCronjob = new UpdateDataCronjob($dbConn);
 $updateDataCronjob->updateAttendanceProductWiseStock();
-$updateDataCronjob->updateUobSalesData();
-$updateDataCronjob->updateWeeklyUobSalesData();
+// $updateDataCronjob->updateUobSalesData();
+// $updateDataCronjob->updateWeeklyUobSalesData();
 $updateDataCronjob->updateDistance();
