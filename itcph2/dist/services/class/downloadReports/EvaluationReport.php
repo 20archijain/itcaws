@@ -889,15 +889,11 @@ class EvaluationReport
                 )
             );
 
-            $sQuery = "SELECT a.route, a.activity_date, a.total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns
-                   FROM $summaryTable AS a, $projectTeamTable AS b
-                   WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $dateCond
-                   GROUP BY a.team_id ORDER BY b.team_name";
+            $sQuery = "SELECT a.route, a.activity_date, a.total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $dateCond $where GROUP BY a.team_id ORDER BY b.team_name";
             $rsAction = null;
             $iRows = 0;
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
             $rsRoutes = null;
-
             if ($iRows > 0) {
                 $index = count($arrSummary["sale"]);
                 $arrBranchDetails = getRowsColumns($this->_dbConn, $branchTable, "branch_id, branch_name, main_branch, district");
