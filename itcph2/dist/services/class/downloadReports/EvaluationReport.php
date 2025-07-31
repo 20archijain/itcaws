@@ -985,6 +985,7 @@ class EvaluationReport
                     $index++;
 
                     // Product-specific rows
+                    $proCount = 1;
                     foreach ($arrProductBought as $arrProduct) {
                         $productName = strtoupper($arrProduct[0]);
                         $productColumnName = $arrProduct[1];
@@ -997,7 +998,8 @@ class EvaluationReport
                                 "COUNT(DISTINCT ques_3)",
                                 "ques_0 = 'Outlet Order' AND $productColumnName > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
                             );
-                            $arrSummary["sale"][$index] = array_merge($rowData, ["$productName Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore]);
+                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand $proCount Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore]);
+                            $proCount++;
                             $index++;
                         }
                     }
