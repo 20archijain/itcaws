@@ -395,7 +395,10 @@ class TeamManagement
                     if ($jsonId == '1') {
                         $jsonId = 99;
                     }
-                    $type = isset($dsType) && $dsType != "" && $dsType >= 0;
+                    $type = null;
+                    if (isset($dsType) && $dsType != "" && $dsType >= 0) {
+                        $type = $dsType;
+                    }
                     $cols = "project_id, s_id, is_type, team_name, branch_id, circle, section, wd_code, ds_number, ae_name, ae_number, am_name, am_number, creator_id, rcd, rdt";
                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                     $arrParams = array($project, $jsonId, $type, $team["dsName"], $branch, $circle, $section, $wdCode, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $this->_iUserId, $cD, $cDT);

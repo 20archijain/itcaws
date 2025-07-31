@@ -153,6 +153,7 @@
       "add": {
         "heading": "Add Team",
         "name": "Surveyor Name",
+        "billed": "Billed (M)",
         "dsName": "Surveyor Name",
         "mdoName": "MDO Name",
         "type": "Surveyor Type",
@@ -284,6 +285,7 @@
     "download": {
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
+      "downloadEvaluationReport": "Evaluation Report",
       "products": "SKU",
       "downloadProductiveReport": "Productive Report",
       "downloadLeaderBoardReport": "Leaderboard Report"

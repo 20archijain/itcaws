@@ -30,13 +30,13 @@ import { EditProductPriceComponent } from './edit-price/edit-product-price/edit-
 import { SalesDashboardComponent } from './sales-dashboard/sales-dashboard.component';
 import { LeaderBoardComponent } from './leaderboardReport/leaderboardReport.component';
 import { UniverseDataComponent } from './sites-on-map/universe-data.component';
-import { BinderReportComponent } from './download-binder-report/binder-report.component';
 import { NpsrDashboardComponent } from './npsr-dashboard/npsr-dashboard.component';
 import { ProductiveDashboardComponent } from './productive-dashboard/productive-dashboard.component';
 
 import { AddMdoTeamComponent } from './team/add.mdo.team.component';
 import { AssignTargetComponent } from './assign-target/assignTarget.component';
 import { ViewWdMappingComponent } from './wd-mapping/view.wdmapping.component';
+import { EvaluationReportComponent } from './download-evaluation-report/evaluation-report.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -70,7 +70,7 @@ export const MAIN_COMPONENTS = [
   EditProductPriceComponent,
   LeaderBoardComponent,
   UniverseDataComponent,
-  BinderReportComponent,
+  EvaluationReportComponent,
   NpsrDashboardComponent,
   ProductiveDashboardComponent,
   AddMdoTeamComponent,
@@ -110,7 +110,7 @@ export const MAP_MAIN_COMPONENTS = {
   MasterDataListingComponent,
   LeaderBoardComponent,
   UniverseDataComponent,
-  BinderReportComponent,
+  EvaluationReportComponent,
   NpsrDashboardComponent,
   ProductiveDashboardComponent,
   AddMdoTeamComponent,
