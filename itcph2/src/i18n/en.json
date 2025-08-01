@@ -282,6 +282,11 @@
         "reportingType": "Reporting Type"
       }
     },
+    "missCall": {
+      "selectDatabase": "Select Database",
+      "selectProject": "Select Project",
+      "dateRange": "Date Range"
+    },
     "download": {
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",

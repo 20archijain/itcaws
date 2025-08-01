@@ -37,6 +37,7 @@ import { AddMdoTeamComponent } from './team/add.mdo.team.component';
 import { AssignTargetComponent } from './assign-target/assignTarget.component';
 import { ViewWdMappingComponent } from './wd-mapping/view.wdmapping.component';
 import { EvaluationReportComponent } from './download-evaluation-report/evaluation-report.component';
+import { DownloadMisscallComponent } from './download-misscall/download-misscall.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -76,6 +77,7 @@ export const MAIN_COMPONENTS = [
   AddMdoTeamComponent,
   AssignTargetComponent,
   ViewWdMappingComponent,
+  DownloadMisscallComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -116,4 +118,5 @@ export const MAP_MAIN_COMPONENTS = {
   AddMdoTeamComponent,
   AssignTargetComponent,
   ViewWdMappingComponent,
+  DownloadMisscallComponent,
 };
