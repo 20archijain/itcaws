@@ -1,16 +1,16 @@
 <?php
 
 require_once $include_path . "defined_index.php";
-require_once $include_path . "class/downloadReports/BinderReport.php";
+require_once $include_path . "class/downloadReports/EvaluationReport.php";
 
 if (!isEmptyString($requestAction)) {
-    $download = new BinderReport($dbConn, $requestData, $arrAccessInfo, $iUserId);
+    $download = new EvaluationReport($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
             $download->getData();
             break;
-        case $ACTION_LIST['GET_TEAM_TYPE_LIST']:
-            $download->getBranchTeamTypeList();
+        case $ACTION_LIST['GET_BRANCH']:
+            $download->getBranch();
             break;
         case $ACTION_LIST['GET_CIRCLE']:
             $download->getCircle();
@@ -28,7 +28,7 @@ if (!isEmptyString($requestAction)) {
             $download->getTeamList();
             break;
         case $ACTION_LIST['GET_DOWNLOAD_DATA']:
-            $download->getDownloadData();
+            $download->getDownloadEvaluationReport();
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));

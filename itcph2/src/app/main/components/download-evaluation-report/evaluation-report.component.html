@@ -1,0 +1,111 @@
+<app-card cardTitle="{{ 'app.download.downloadEvaluationReport' | translate }}" [options]="false">
+  <form (ngSubmit)="download()" [formGroup]="group" novalidate class="form-content">
+
+      <!-- If Superadmin or Admin Login -->
+      <div *ngIf="branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="district" groupClassName="row" sizeClass="col-sm-12"
+            [options]="districtOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.team.add.district' | translate }}" [multiple]="true" (onChange)="getBranch()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="branch" groupClassName="row" sizeClass="col-sm-12"
+            [options]="branchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+            [isRequired]="true" [errorMessages]="errorMessages.branch" (onChange)="getCircle()" [multiple]="true"
+            groupBy="mainBranch">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions"
+            [multiple]="true" placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdMarket" [options]="wdMarketOptions"
+            [multiple]="true" placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+            [multiple]="true" placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+         <div class="col-sm-4 col-lg-2">
+          <app-input [group]="group.get('searchbar')" controlName="billed" [type]="'number'"
+            placeholder="{{ 'app.team.add.billed' | translate }}">
+          </app-input>
+        </div>
+      </div>
+
+      <!-- If Regional Login -->
+      <div *ngIf="!branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="group.get('searchbar')" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+      </div>
+         <div class="m-1">
+        <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true" btnClass="m-t-30"
+          btnTitle="button.download" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="group" btnClass="m-t-30"
+          (onClick)="download()">
+        </app-button>
+      </div>
+
+  </form>
+</app-card>

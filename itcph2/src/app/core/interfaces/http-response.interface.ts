@@ -426,6 +426,17 @@ export interface RouteDataUploadExcelData {
   [key: string]: string[];
 }
 
+export interface DownloadReports {
+  projectList: DropdownList<string, string>[];
+  dataBaseList: DropdownList<string, string>[];
+  wdCodeList: DropdownList<string, string>[];
+  retailerList: DropdownList<string, string>[];
+  statusList: DropdownList<string, string>[];
+  sectionList: DropdownList<string, string>[];
+  teamList: DropdownList<string, string>[];
+  typeList: DropdownList<string, string>[];
+  tableList: DropdownList<string, string>[];
+}
 export interface GetProductiveReportDataResponse {
   monthList?: DropdownList[];
   yearList?: DropdownList<number, number>[];
