@@ -63,7 +63,7 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
         district: [''],
         wdMarket: [''],
         wdPopGroup: [''],
-        billed: ['',COMMON_VALIDATORS.validators.zeroAndFloatQtyStock],
+        billed: ['', COMMON_VALIDATORS.validators.zeroAndFloatQtyStock],
       }),
       sort: [''],
     });
@@ -131,15 +131,15 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
   }
 
   getCircle() {
-     this.circleValue = null;
-     this.sectionValue = null;
-     this.wdCodeValue = null;
-     this.dsTypeValue = null;
-     this.dsNameValue = null;
-     this.wdMarketValue = null;
-     this.wdPopGroupValue = null;
-     this.loaderService.startLoader();
-     this.subscription.push(
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.wdMarketValue = null;
+    this.wdPopGroupValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
       this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('searchbar').get('branch').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
@@ -237,35 +237,44 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
   }
 
   download() {
-    if (!this.isDisabled && this.group.valid) {
-      this.isDisabled = true;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
-          null, environment.downloadExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDisabled = false;
-              this.loaderService.stopLoader();
+    // const teamTypeValue = this.group.get('searchbar').get('dsType').value;
+    // if (this.branchValue && this.branchValue.length && teamTypeValue) {
+      if (!this.isDisabled && this.group.valid) {
+        this.isDisabled = true;
+        this.loaderService.startLoader();
+        this.subscription.push(
+          this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+            null, environment.downloadExcelUrl)
+            .pipe(
+              finalize(() => {
+                this.isDisabled = false;
+                this.loaderService.stopLoader();
+              })
+            )
+            .subscribe(resp => {
+              if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+                Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+              }
             })
-          )
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
-            }
-          })
-      );
-    }
+        );
+      }
+    // } else {
+    //   this.displayBranchError();
+    // }
   }
 
 
   displayBranchError() {
-    this.toastr.toastr({ type: 'error', msg: this.branchSelectError });
+    this.toastr.toastr({ type: 'error', msg: 'Please select Branch and Team Type' });
   }
 
   get branchValue() {
     return this.group && this.group.get('searchbar').get('branch').value;
   }
+
+  // get teamTypeValue() {
+  //   return this.group && this.group.get('searchbar').get('dsType').value;
+  // }
 
   set branchValue(value: string) {
     this.branchOptions = [];
