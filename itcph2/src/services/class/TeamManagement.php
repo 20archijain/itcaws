@@ -56,15 +56,15 @@ class TeamManagement
             if (isNonEmptyArray($teams)) {
                 foreach ($teams as $index => $team) {
                     $obj->addValidation("dsName$index", $team["dsName"], 'alnum_s_u_h', 1, 1, $this->_validationLength['TEAM_NAME_MAXLENGTH'], 'Surveyor Name');
-                    // print_r($team["username"]);
-                    // die;
                     if ($jsonId != '100' && $jsonId != '101') {
                         if (isset($team["dsPhone"]) || isset($team["username"])) {
                             $obj->addValidation("dsPhone$index", $team["dsPhone"], 'mobile', 1, $this->_validationLength['MOBILE_MINLENGTH'], $this->_validationLength['MOBILE_MAXLENGTH'], 'Surveyor Phone');
                             $obj->addValidation("dsType", $dsType, 'pz_num', 1, $this->_validationLength['MINLENGTH'], $this->_validationLength['JSON_MAXLENGTH'], 'Surveyor Type');
+                            $obj->addValidation("username$index", $team["username"], 'alnum_s', 1, $this->_validationLength['USERNAME_MINLENGTH'], $this->_validationLength['USERNAME_MAXLENGTH'], 'Username');
                         } else {
                             $obj->addValidation("dsPhone$index", $team["dsPhone"], 'mobile', 1, $this->_validationLength['MOBILE_MINLENGTH'], $this->_validationLength['MOBILE_MAXLENGTH'], 'Surveyor Phone');
                             $obj->addValidation("dsType", $dsType, 'pz_num', 1, $this->_validationLength['MINLENGTH'], $this->_validationLength['JSON_MAXLENGTH'], 'Surveyor Type');
+                            $obj->addValidation("username$index", $team["username"], 'alnum_s', 1, $this->_validationLength['USERNAME_MINLENGTH'], $this->_validationLength['USERNAME_MAXLENGTH'], 'Username');
                         }
                     } else {
                         $obj->addValidation("username$index", $team["username"], 'username', 1, $this->_validationLength['USERNAME_MINLENGTH'], $this->_validationLength['USERNAME_MAXLENGTH'], 'Username');
@@ -121,11 +121,15 @@ class TeamManagement
             $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "project_id = ? AND ds_number = ?", array($project, $team["dsPhone"]));
             // Don't use dstatus = 0
             $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "mobile = ?", array($team["dsPhone"]), true);
-
+            // Don't use dstatus = 0
+            $iStatusCloudUser = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "username = ?", array($team["username"]), true);
             if ($iStatus === 1 || $iStatusCloud === 1) {
                 if ($jsonId != '100' && $jsonId != '101') {
                     $arrExists["hasError"] = true;
                     $arrExists["errors"][] = $iStatus === 1 ? "Number'{$team['dsPhone']}' already exists" : "Number'{$team['dsPhone']}' already exists";
+                } elseif ($iStatusCloudUser === 1) {
+                    $arrExists["hasError"] = true;
+                    $arrExists["errors"][] = $iStatusCloudUser === 1 ? "'{$team['username']}' already exists" : "'{$team['username']}' already exists";
                 }
             }
         }
@@ -360,6 +364,9 @@ class TeamManagement
             $arrExists = $this->checkTeamAndPhoneIfExists($project, $teams, $jsonId);
 
             // Error, some team already exists
+            // print_r($arrExists);
+            // print_r($arrExists["hasError"]);
+            // die;
             if ($arrExists["hasError"]) {
                 $arrMessage = responseMessage($arrExists["errors"]);
             } else {
@@ -395,7 +402,10 @@ class TeamManagement
                     if ($jsonId == '1') {
                         $jsonId = 99;
                     }
-                    $type = isset($dsType) && $dsType != "" && $dsType >= 0;
+                    $type = null;
+                    if (isset($dsType) && $dsType != "" && $dsType >= 0) {
+                        $type = $dsType;
+                    }
                     $cols = "project_id, s_id, is_type, team_name, branch_id, circle, section, wd_code, ds_number, ae_name, ae_number, am_name, am_number, creator_id, rcd, rdt";
                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                     $arrParams = array($project, $jsonId, $type, $team["dsName"], $branch, $circle, $section, $wdCode, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $this->_iUserId, $cD, $cDT);
