@@ -4,57 +4,57 @@
     <!-- Superadmin and Admin Login -->
     <div *ngIf="branchFilter" class="row ml-1 filter-container">
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="district" [options]="districtOptions"
-          [multiple]="true" placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+        <app-select [group]="searchbarForm" controlName="district" [options]="districtOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="branch" [options]="branchOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="branch" [options]="branchOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
         </app-select>
       </div>
       <div *ngIf="branchFilter" class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="circle" [options]="circleOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
         </app-select>
       </div>
       <div *ngIf="branchFilter" class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="section" [options]="sectionOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdMarket" [options]="wdMarketOptions"
+        <app-select [group]="searchbarForm" controlName="wdMarket" [options]="wdMarketOptions"
           placeholder="{{ 'app.wdMapping.wd_market' | translate}}" [multiple]="true">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+        <app-select [group]="searchbarForm" controlName="wdPopGroup" [options]="wdPopGroupOptions"
           placeholder="{{ 'app.wdMapping.wd_pop_group' | translate}}" [multiple]="true">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="category" [options]="categoryOptions"
-          [multiple]="true" placeholder="{{ 'app.team.add.category' | translate }}" (onChange)="getProduct()">
+        <app-select [group]="searchbarForm" controlName="category" [options]="categoryOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.category' | translate }}" (onChange)="getProduct()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="product" [options]="productOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="product" [options]="productOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.product' | translate }}">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+        <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
           placeholder="{{ 'app.team.add.dsType' | translate }}" [multiple]="true" (onChange)="getTeamsName()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.dsName' | translate }}">
         </app-select>
       </div>
@@ -70,17 +70,17 @@
     <!-- Regional Login -->
     <div *ngIf="!branchFilter" class="row ml-1 filter-container">
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions"
+        <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
           placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.dsName' | translate }}">
         </app-select>
       </div>
@@ -267,7 +267,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month1" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month1" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getShopVisitedSPLYComparisonData()">
           </app-select>
@@ -286,7 +286,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}"
             (onChange)="outletVisitedMonthlyComparisonData()">
@@ -306,7 +306,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="year" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="year" groupClassName="row" sizeClass="col-sm-12"
             [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
             (onChange)="getShopVisitedYTDLYTDComparisonDataMonthly()">
           </app-select>
@@ -326,7 +326,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month2" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month2" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getOutletBilledComparisonData()">
           </app-select>
@@ -346,7 +346,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month3" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month3" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}" (onChange)="getShopBilledSPLYComparisonData()">
           </app-select>
@@ -366,7 +366,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="year1" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="year1" groupClassName="row" sizeClass="col-sm-12"
             [options]="yearOptions" [isHorizontalForm]="true" placeholder="{{ 'app.salesDashboard.year' | translate }}"
             (onChange)="getShopBilledYTDLYTDComparisonData()">
           </app-select>
@@ -388,7 +388,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month4" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month4" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}"
             (onChange)="getFocusCMLMOutletBilledComparisonData()">
@@ -410,7 +410,7 @@
       <!-- Filters -->
       <div class="row mb-3">
         <div class="col-12 col-sm-6 col-lg-4">
-          <app-select [group]="group.get('searchbar')" controlName="month5" groupClassName="row" sizeClass="col-sm-12"
+          <app-select [group]="searchbarForm" controlName="month5" groupClassName="row" sizeClass="col-sm-12"
             [options]="monthOptions" [isHorizontalForm]="true"
             placeholder="{{ 'app.salesDashboard.month' | translate }}"
             (onChange)="getFocusSPLYOutletBilledComparisonData()">

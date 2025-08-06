@@ -17,7 +17,7 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: string;
+  isSelectable: boolean;
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   wdOptions: DropdownList[] = [];

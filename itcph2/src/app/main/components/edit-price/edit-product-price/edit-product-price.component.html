@@ -45,7 +45,7 @@
                 <tr class="f-16" *ngFor="let product of productsNamePriceList; let i = index">
                   <td>{{ product.productName }}</td>
                   <td>
-                    <app-input [group]="group.get('sellingPrice')"
+                    <app-input [group]="sellingPriceForm"
                       [controlName]="product.productName + '-' + product.productId + '-' + (i + 1)"
                       placeholder="{{ 'placeholder.price' | translate }}" [autocompleteOff]="true"
                       groupClassName="wid-80" inputClass="f-12" [errorMessages]="errorMessages.sellingPrice">

@@ -1,14 +1,14 @@
 <div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group">
   <label class="{{ labelClassName }}" for="{{ controlName }}" *ngIf="label || labelTemplate">
-    <span [class.required]="isRequired" *ngIf="label">{{ label | translate }}</span>
+    <span *ngIf="label">{{ label | translate }}</span>
     <ng-container *ngIf="labelTemplate" [ngTemplateOutlet]="labelTemplate"></ng-container>
   </label>
 
   <div class="{{ sizeClass }}">
     <section *ngIf="hasFiles(); else dummyImg">
       <ng-container *ngIf="isImageFile(); else nonImageFile">
-        <img [src]="defaultSelcted || selectedFile" class="dummy-image m-b-5 {{ thumbnailClass }}"
-          [class.small]="smallSizeThumbnail" *ngIf="showPreview">
+        <img [src]="selectedFile" class="dummy-image m-b-5 {{ thumbnailClass }}" [class.small]="smallSizeThumbnail"
+          *ngIf="showPreview">
       </ng-container>
       <ng-template #nonImageFile>
         <p>{{ files[0].name }}</p>

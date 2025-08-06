@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { Color } from '@swimlane/ngx-charts';
 
 import { LineChartComponent } from '../line/line-chart.component';
-import { ThemeDomainColorList } from 'src/app/core/interfaces/common.interface';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
@@ -68,7 +68,7 @@ export class StackAreaChartComponent extends LineChartComponent implements OnCha
   @Input() appendPercentageOnXAxis = false;
   @Input() appendPercentageOnYAxis = false;
   style: any;
-  themeScheme: ThemeDomainColorList = null;
+  themeScheme: string | Color = null;
   xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
   yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
@@ -83,7 +83,7 @@ export class StackAreaChartComponent extends LineChartComponent implements OnCha
     this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
-      this.themeScheme.domain = this.customColors;
+      (this.themeScheme as Color).domain = this.customColors;
     }
 
     if (this.width && this.height) {

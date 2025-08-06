@@ -1,5 +1,8 @@
 import { Component, Input, HostBinding } from '@angular/core';
+import { LegendPosition } from '@swimlane/ngx-charts';
 import { curveMonotoneX } from 'd3-shape'; // Import the curve function from d3-shape
+
+import { CHART_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-line-chart',
@@ -17,10 +20,9 @@ import { curveMonotoneX } from 'd3-shape'; // Import the curve function from d3-
         [yAxisLabel]="yAxisLabel"
         [legend]="true"
         [legendTitle]="''"
-        [legendPosition]="'below'"
+        [legendPosition]="legendPosition"
         [autoScale]="true"
         [showGridLines]="true"
-        [showDataLabel]="false"
         [curve]="curveMonotoneX">
       </ngx-charts-line-chart>
     </div>
@@ -37,8 +39,10 @@ export class LineChartComponent {
   @Input() xAxisLabel: string; // Set to 'Date'
   @Input() yAxisLabel: string;
   @Input() heading: string;
+  @Input() width: number;
+  legendPosition: LegendPosition = CHART_DEFAULTS.LEGEND_POSITION;
 
   // Import curveMonotoneX and apply it in the chart via the [curve] binding
   curveMonotoneX = curveMonotoneX;
-  @HostBinding('style.width') @Input() width = '100%';
+  @HostBinding('style.width') @Input() hostWidth = '100%';
 }

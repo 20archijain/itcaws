@@ -1,3 +1,5 @@
+import { LegendPosition } from '@swimlane/ngx-charts';
+
 import { basePath } from 'src/environments/environment';
 
 export const imagePath = `${basePath.url}${basePath.image}`;
@@ -500,8 +502,6 @@ export const MAP_STYLES = {
   ]
 };
 
-
-
 export const GA_TRACKING_ID = 'G-1VDGG62Q2B';
 
 export enum CHART_CONFIG {
@@ -524,7 +524,7 @@ export enum CHART_CONFIG {
 export const CHART_DEFAULTS = {
   DEFAULT_THEME: 'COOL',
   HEIGHT: 0,
-  LEGEND_POSITION: 'below',  // right or below
+  LEGEND_POSITION: LegendPosition.Below,  // right or below
   WIDTH: 0
 };
 

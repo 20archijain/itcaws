@@ -4,7 +4,7 @@
   </label>
   <ng-container *ngIf="showIcon; else nonIcon">
     <div class="input-group">
-      <span class="input-group-text" (click)="d.toggle()"><i class="feather" [ngClass]="icon"></i></span>
+      <span class="input-group-text"><i class="feather" [ngClass]="icon"></i></span>
       <ng-container *ngTemplateOutlet="dateBox"></ng-container>
     </div>
   </ng-container>
@@ -23,7 +23,7 @@
   <ng-template #dateBox>
     <input class="form-control" [class.is-invalid]="showValidationState && isTouched && isInvalid" autocomplete="off"
       [placeholder]="placeholder" [formControlName]="controlName" name="{{ controlName }}" ngbDatepicker
-      #d="ngbDatepicker" (click)="d.toggle()" [minDate]="ngbMinDate" [maxDate]="ngbMaxDate" (closed)="onClosed($event)"
+      #d="ngbDatepicker" (click)="d.toggle()" [minDate]="ngbMinDate" [maxDate]="ngbMaxDate" (closed)="onClosed()"
       [attr.id]="controlName" outsideDays="visible" [startDate]="ngbMinDate" [markDisabled]="markDisabledFn"
       (blur)="onBlur($event)">
     <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"

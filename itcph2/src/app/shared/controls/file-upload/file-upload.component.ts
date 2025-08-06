@@ -8,6 +8,7 @@ import { CUSTOM_VALIDATOR_KEYS, UPLOAD_FILES } from 'src/app/app.constants';
 import { ListingService } from 'src/app/core/services/listing.service';
 import { FileUploadEvent } from 'src/app/core/interfaces/helpers.interface';
 import { FILE_SIZE_VALIDATOR, FILE_TYPE_VALIDATOR } from 'src/app/core/validators/common.validator';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-file-upload',
@@ -21,7 +22,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   @Input() private addMaxFileSizeValidation = true;
   @Input() accept = UPLOAD_FILES.fileTypes.imageOnly.mimeTypes.join(',');
   @Input() private addFileTypeValidation = true;
-  @Input() private errorMessages: string[] = [];
+  @Input() private errorMessages: FormControlErrorMessage[] = [];
   @Input() label = '';
   @Input() labelTemplate: TemplateRef<any> = null;
   @Input() showPreview = true;

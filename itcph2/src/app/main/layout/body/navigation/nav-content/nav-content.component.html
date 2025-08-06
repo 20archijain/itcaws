@@ -1,6 +1,5 @@
 <ng-scrollbar *ngIf="this.nextConfig['layout'] === 'vertical'" (clickOutside)="navMob()" id="nav-ps-next"
-  [clickOutsideExclude]="'#mobile-collapse'" ngClass="next-scroll" [style.max-width]="'300px'"
-  [style.max-height]="'calc(100vh - 60px)'" [disabled]="null">
+  ngClass="next-scroll" [style.max-width]="'300px'" [style.max-height]="'calc(100vh - 60px)'">
   <div class="navbar-content">
     <ul class="nav pcoded-inner-navbar" (clickOutside)="fireOutClick()">
       <ng-container *ngFor="let item of navigation">

@@ -23,16 +23,12 @@ export interface INavigationItem {
     title?: string;
     type?: string;
   };
-  children?: NavigationItem[];
-}
-
-export interface Navigation extends INavigationItem {
-  children?: NavigationItem[];
+  children?: INavigationItem[];
 }
 
 @Injectable()
 export class NavigationItem {
-  private getAsideItems() {
+  private getAsideItems(): INavigationItem[] {
     let modules: SessionModuleObject;
 
     if (SessionUtil.getItem('modules')) {
@@ -44,9 +40,9 @@ export class NavigationItem {
     return [];
   }
 
-  private getModules(modules: SessionModuleObject) {
+  private getModules(modules: SessionModuleObject): INavigationItem[] {
     const newModules = Object.keys(modules);
-    const modulesList = [];
+    const modulesList: INavigationItem[] = [];
 
     if (newModules && newModules.length > 0) {
       newModules.forEach(module => {
@@ -57,7 +53,7 @@ export class NavigationItem {
     return modulesList;
   }
 
-  private getAsideItem(mod: SessionModule) {
+  private getAsideItem(mod: SessionModule): INavigationItem {
     const subModules = mod && mod.submodules ? Object.keys(mod.submodules) : [];
 
     return {

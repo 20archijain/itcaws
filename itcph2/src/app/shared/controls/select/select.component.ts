@@ -5,6 +5,7 @@ import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 import { FormService } from 'src/app/core/services/form.service';
 import { CONSTANTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-select',
@@ -19,12 +20,12 @@ export class SelectComponent implements OnChanges, OnInit {
   @Output() private onBlur = new EventEmitter();
   @Output() private onFocus = new EventEmitter();
   @Output() private onClose = new EventEmitter();
-  @Output() private onChange = new EventEmitter<DropdownList>();
-  @Input() protected errorMessages: string[] = [];
+  @Output() private onChange = new EventEmitter<any>();
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
   @Input() group: UntypedFormGroup = null;
   @Input() controlName = 'select';
-  @Input() options: DropdownList[] = [];
+  @Input() options: any[] = [];
   @Input() multiple = false;
   @Input() isHorizontalForm = false;
   @Input() groupClassName = '';

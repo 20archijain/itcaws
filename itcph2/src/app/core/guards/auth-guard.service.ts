@@ -10,7 +10,7 @@ import { RoutingService } from '../services/routing.service';
 import { SessionModuleObject } from '../interfaces/common.interface';
 
 @Injectable()
-export class AuthGuardService  implements OnDestroy {
+export class AuthGuardService implements OnDestroy {
   private subscription: Subscription[] = [];
   private invalidModuleErrorMessage = 'not.invalidModule';
 

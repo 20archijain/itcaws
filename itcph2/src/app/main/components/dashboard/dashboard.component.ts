@@ -86,6 +86,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
   isDataLoaded: boolean;
   data: any;
   animateSlide = true;
+  searchbarForm: UntypedFormGroup;
+
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private loaderService: LoaderService) { }
 
   ngOnInit() {
@@ -114,6 +116,8 @@ export class DashboardComponent implements OnDestroy, OnInit {
         wdPopGroup: [],
       })
     });
+
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.getInitialData();
     this.getDashboardData();

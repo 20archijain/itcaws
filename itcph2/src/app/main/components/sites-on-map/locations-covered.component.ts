@@ -39,6 +39,7 @@ export class LocationsCoveredComponent implements OnDestroy, OnInit {
     dateTo: COMMON_VALIDATORS.messages.requiredOnly('To'),
     // branch: COMMON_VALIDATORS.messages.dropdownAll('Branch'),
   };
+  searchbarForm: UntypedFormGroup;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -56,6 +57,8 @@ export class LocationsCoveredComponent implements OnDestroy, OnInit {
         dsName: [''],
       })
     });
+
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.initialData();
   }

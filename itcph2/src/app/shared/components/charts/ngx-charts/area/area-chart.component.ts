@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges } from '@angular/core';
+import { Color, LegendPosition } from '@swimlane/ngx-charts';
 
 import { LineChartComponent } from '../line/line-chart.component';
-import { ThemeDomainColorList } from 'src/app/core/interfaces/common.interface';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
@@ -51,7 +51,7 @@ export class AreaChartComponent extends LineChartComponent implements OnChanges 
   @Input() customColors = [];
   @Input() legend = false;
   @Input() legendTitle = '';
-  @Input() legendPosition = CHART_DEFAULTS.LEGEND_POSITION;
+  @Input() legendPosition: LegendPosition = CHART_DEFAULTS.LEGEND_POSITION;
   @Input() xAxis = false;
   @Input() yAxis = false;
   @Input() showGridLines = true;
@@ -70,7 +70,7 @@ export class AreaChartComponent extends LineChartComponent implements OnChanges 
   @Input() yScaleMin = 0;
   @Input() yScaleMax = 0;
   style: any;
-  themeScheme: ThemeDomainColorList = null;
+  themeScheme: string | Color = null;
   xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
   yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
@@ -85,7 +85,7 @@ export class AreaChartComponent extends LineChartComponent implements OnChanges 
     this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
-      this.themeScheme.domain = this.customColors;
+      (this.themeScheme as Color).domain = this.customColors;
     }
 
     if (this.width && this.height) {

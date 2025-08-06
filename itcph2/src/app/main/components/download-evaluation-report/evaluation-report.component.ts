@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 import { FormService } from 'src/app/core/services/form.service';
 import { environment } from 'src/environments/environment';
@@ -11,7 +12,6 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { DashboardData, DropdownList, GetDownloadFileDetails, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './evaluation-report.component.html',
@@ -41,6 +41,7 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
   };
   isDisabled = false;
   url = environment.getBinderReportDataUrl;
+  searchbarForm: UntypedFormGroup;
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private loaderService: LoaderService,
     private toastr: ToastrService, private translate: TranslateService) { }
@@ -68,6 +69,8 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
       sort: [''],
     });
 
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
+
     this.subscription.push(
       this.translate.get(this.branchSelectError)
         .subscribe(translatedMsg => {
@@ -77,7 +80,7 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
 
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.getData<VanDsListingData>(environment.viewVanDsDataUrl)
+      this.formService.getData<VanDsListingData>(environment.getEvaluationReportDataUrl)
         .pipe(
           finalize(() => this.loaderService.stopLoader()),
         )
@@ -239,25 +242,25 @@ export class EvaluationReportComponent implements OnDestroy, OnInit {
   download() {
     // const teamTypeValue = this.group.get('searchbar').get('dsType').value;
     // if (this.branchValue && this.branchValue.length && teamTypeValue) {
-      if (!this.isDisabled && this.group.valid) {
-        this.isDisabled = true;
-        this.loaderService.startLoader();
-        this.subscription.push(
-          this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
-            null, environment.downloadExcelUrl)
-            .pipe(
-              finalize(() => {
-                this.isDisabled = false;
-                this.loaderService.stopLoader();
-              })
-            )
-            .subscribe(resp => {
-              if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-                Functions.downloadFile(resp.data.filePath, resp.data.fileName);
-              }
+    if (!this.isDisabled && this.group.valid) {
+      this.isDisabled = true;
+      this.loaderService.startLoader();
+      this.subscription.push(
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+          null, environment.downloadExcelUrl)
+          .pipe(
+            finalize(() => {
+              this.isDisabled = false;
+              this.loaderService.stopLoader();
             })
-        );
-      }
+          )
+          .subscribe(resp => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+            }
+          })
+      );
+    }
     // } else {
     //   this.displayBranchError();
     // }

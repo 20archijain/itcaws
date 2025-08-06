@@ -9,17 +9,17 @@
       "email": ""
     },
     "landing": {
-      "modc": "DSH02",
-      "pmodc": "DSH01"
+      "modc": "DWN02",
+      "pmodc": "DWN01"
     },
     "client": {
-      "logo": "https:\/\/upimg.itccampaign.com\/logo\/dummy_pic.jpg"
+      "logo": "https:\/\/upimg2.radardashboard.com\/logo\/dummy_pic.jpg"
     },
-    "token": "8a80c956cd616120ef450ded6ec37803e9ca58f3aa685a89a153961421f0c97d",
+    "token": "cb3464973bb6889f0a4ee905c516d6f088e757b3df9de8ed8776adffcc7078e2",
     "modules": {
       "MP01": {
         "breadcrumbs": false,
-        "id": "1",
+        "id": 1,
         "name": "My Profile",
         "hidden": false,
         "icon": "icon-user",
@@ -32,7 +32,7 @@
       },
       "DSH01": {
         "breadcrumbs": false,
-        "id": "3",
+        "id": 3,
         "name": "Home Page",
         "hidden": false,
         "icon": "icon-home",
@@ -43,7 +43,7 @@
         "submodules": {
           "DSH02": {
             "breadcrumbs": false,
-            "id": "78",
+            "id": 78,
             "name": "Dashboard",
             "hidden": false,
             "icon": "",
@@ -56,8 +56,8 @@
           },
           "DSH03": {
             "breadcrumbs": false,
-            "id": "79",
-            "name": "Sales Dashboard",
+            "id": 79,
+            "name": "Survey Trend",
             "hidden": false,
             "icon": "",
             "modc": "DSH03",
@@ -66,13 +66,39 @@
             "componentName": "SalesDashboardComponent",
             "submodules": [],
             "actions": []
+          },
+          "DSH04": {
+            "breadcrumbs": false,
+            "id": 88,
+            "name": "Survey Dashboard",
+            "hidden": false,
+            "icon": "",
+            "modc": "DSH04",
+            "pmodc": "DSH01",
+            "fold": "npsr-dashboard\/npsrDashboard.php",
+            "componentName": "NpsrDashboardComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DSH05": {
+            "breadcrumbs": false,
+            "id": 89,
+            "name": "Productivity Dashboard",
+            "hidden": false,
+            "icon": "",
+            "modc": "DSH05",
+            "pmodc": "DSH01",
+            "fold": "productive-dashboard\/productiveDashboard.php",
+            "componentName": "ProductiveDashboardComponent",
+            "submodules": [],
+            "actions": []
           }
         },
         "actions": []
       },
       "ACN01": {
         "breadcrumbs": false,
-        "id": "84",
+        "id": 84,
         "name": "Actionable",
         "hidden": false,
         "icon": "icon-activity",
@@ -85,7 +111,7 @@
       },
       "ATN01": {
         "breadcrumbs": false,
-        "id": "83",
+        "id": 83,
         "name": "Attendance",
         "hidden": false,
         "icon": "icon-clock",
@@ -96,7 +122,7 @@
         "submodules": {
           "ATN02": {
             "breadcrumbs": false,
-            "id": "51",
+            "id": 51,
             "name": "Attendance Tracker",
             "hidden": false,
             "icon": "icon-clock",
@@ -109,7 +135,7 @@
           },
           "ATN03": {
             "breadcrumbs": false,
-            "id": "52",
+            "id": 52,
             "name": "Attendance Locator",
             "hidden": false,
             "icon": "icon-clock",
@@ -122,7 +148,7 @@
           },
           "SOM03": {
             "breadcrumbs": false,
-            "id": "63",
+            "id": 63,
             "name": "Route Tracker",
             "hidden": false,
             "icon": "icon-map-pin",
@@ -135,7 +161,7 @@
           },
           "SOM02": {
             "breadcrumbs": false,
-            "id": "62",
+            "id": 62,
             "name": "Locations Covered",
             "hidden": false,
             "icon": "icon-map-pin",
@@ -148,7 +174,7 @@
           },
           "SOM05": {
             "breadcrumbs": false,
-            "id": "86",
+            "id": 86,
             "name": "Outlet Universe",
             "hidden": false,
             "icon": "icon-map-pin",
@@ -164,7 +190,7 @@
       },
       "PM01": {
         "breadcrumbs": false,
-        "id": "11",
+        "id": 11,
         "name": "Project Management",
         "hidden": false,
         "icon": "icon-briefcase",
@@ -175,7 +201,7 @@
         "submodules": {
           "PM02": {
             "breadcrumbs": false,
-            "id": "12",
+            "id": 12,
             "name": "Add Client",
             "hidden": false,
             "icon": "",
@@ -188,7 +214,7 @@
           },
           "PM03": {
             "breadcrumbs": false,
-            "id": "13",
+            "id": 13,
             "name": "View Clients",
             "hidden": false,
             "icon": "",
@@ -204,7 +230,7 @@
           },
           "PM06": {
             "breadcrumbs": false,
-            "id": "16",
+            "id": 16,
             "name": "Add Project",
             "hidden": false,
             "icon": "",
@@ -217,7 +243,7 @@
           },
           "PM07": {
             "breadcrumbs": false,
-            "id": "17",
+            "id": 17,
             "name": "View Project",
             "hidden": false,
             "icon": "",
@@ -233,7 +259,7 @@
           },
           "PM10": {
             "breadcrumbs": false,
-            "id": "20",
+            "id": 20,
             "name": "Add Team",
             "hidden": false,
             "icon": "",
@@ -246,7 +272,7 @@
           },
           "PM11": {
             "breadcrumbs": false,
-            "id": "21",
+            "id": 21,
             "name": "View Team",
             "hidden": false,
             "icon": "",
@@ -260,9 +286,22 @@
               "DEL"
             ]
           },
+          "ADDMDO": {
+            "breadcrumbs": false,
+            "id": 90,
+            "name": "Add MDO Team",
+            "hidden": false,
+            "icon": null,
+            "modc": "ADDMDO",
+            "pmodc": "PM01",
+            "fold": "team\/mdoAddTeam.php",
+            "componentName": "AddMdoTeamComponent",
+            "submodules": [],
+            "actions": []
+          },
           "EDPT": {
             "breadcrumbs": false,
-            "id": "77",
+            "id": 77,
             "name": "Edit Product Price",
             "hidden": false,
             "icon": null,
@@ -278,7 +317,7 @@
       },
       "SU01": {
         "breadcrumbs": false,
-        "id": "31",
+        "id": 31,
         "name": "Super User",
         "hidden": false,
         "icon": "icon-users",
@@ -289,7 +328,7 @@
         "submodules": {
           "SU02": {
             "breadcrumbs": false,
-            "id": "32",
+            "id": 32,
             "name": "Add Group",
             "hidden": false,
             "icon": "",
@@ -302,7 +341,7 @@
           },
           "SU03": {
             "breadcrumbs": false,
-            "id": "33",
+            "id": 33,
             "name": "View Groups",
             "hidden": false,
             "icon": "",
@@ -318,7 +357,7 @@
           },
           "SU06": {
             "breadcrumbs": false,
-            "id": "36",
+            "id": 36,
             "name": "Add User",
             "hidden": false,
             "icon": "",
@@ -331,7 +370,7 @@
           },
           "SU07": {
             "breadcrumbs": false,
-            "id": "37",
+            "id": 37,
             "name": "View Users",
             "hidden": false,
             "icon": "",
@@ -348,7 +387,7 @@
           },
           "SU10": {
             "breadcrumbs": false,
-            "id": "40",
+            "id": 40,
             "name": "Add Module",
             "hidden": false,
             "icon": "",
@@ -361,7 +400,7 @@
           },
           "SU11": {
             "breadcrumbs": false,
-            "id": "41",
+            "id": 41,
             "name": "View Modules",
             "hidden": false,
             "icon": "",
@@ -380,7 +419,7 @@
       },
       "RD01": {
         "breadcrumbs": false,
-        "id": "47",
+        "id": 47,
         "name": "Route Data",
         "hidden": false,
         "icon": "icon-map",
@@ -391,7 +430,7 @@
         "submodules": {
           "RD03": {
             "breadcrumbs": false,
-            "id": "49",
+            "id": 49,
             "name": "Upload Route Data",
             "hidden": false,
             "icon": null,
@@ -407,7 +446,7 @@
       },
       "DWN01": {
         "breadcrumbs": false,
-        "id": "74",
+        "id": 74,
         "name": "Downloads",
         "hidden": false,
         "icon": "icon-folder",
@@ -418,7 +457,7 @@
         "submodules": {
           "DWN02": {
             "breadcrumbs": false,
-            "id": "72",
+            "id": 72,
             "name": "Van DS Reporting",
             "hidden": false,
             "icon": null,
@@ -433,7 +472,7 @@
           },
           "DWN04": {
             "breadcrumbs": false,
-            "id": "76",
+            "id": 76,
             "name": "Productivity Report",
             "hidden": false,
             "icon": null,
@@ -446,7 +485,7 @@
           },
           "DWN05": {
             "breadcrumbs": false,
-            "id": "75",
+            "id": 75,
             "name": "UOB Report",
             "hidden": false,
             "icon": null,
@@ -459,7 +498,7 @@
           },
           "DWN06": {
             "breadcrumbs": false,
-            "id": "80",
+            "id": 80,
             "name": "Active DSs",
             "hidden": false,
             "icon": "",
@@ -472,7 +511,7 @@
           },
           "DWN07": {
             "breadcrumbs": false,
-            "id": "81",
+            "id": 81,
             "name": "Active Variants",
             "hidden": false,
             "icon": "",
@@ -485,7 +524,7 @@
           },
           "DWN08": {
             "breadcrumbs": false,
-            "id": "48",
+            "id": 48,
             "name": "Route (Outlet Master)",
             "hidden": false,
             "icon": null,
@@ -496,16 +535,42 @@
             "submodules": [],
             "actions": []
           },
-          "DWN10": {
+          "DWN11": {
             "breadcrumbs": false,
-            "id": "87",
-            "name": "Binder Report",
+            "id": 91,
+            "name": "wd mapping management",
             "hidden": false,
             "icon": null,
-            "modc": "DWN10",
+            "modc": "DWN11",
             "pmodc": "DWN01",
-            "fold": "downloadReports\/binderReport.php",
-            "componentName": "BinderReportComponent",
+            "fold": "wd-mapping\/viewWdMapping.php",
+            "componentName": "ViewWdMappingComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN12": {
+            "breadcrumbs": false,
+            "id": 92,
+            "name": "Conversion Report",
+            "hidden": false,
+            "icon": "",
+            "modc": "DWN12",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/evaluationReport.php",
+            "componentName": "EvaluationReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN13": {
+            "breadcrumbs": false,
+            "id": 93,
+            "name": "Missed Call Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN13",
+            "pmodc": "DWN01",
+            "fold": "download_misscall\/downloadMisscall.php",
+            "componentName": "DownloadMisscallComponent",
             "submodules": [],
             "actions": []
           }

@@ -32,8 +32,8 @@
               <tr *ngFor="let header of excelHeader; let i = index">
                 <td>{{ header }}</td>
                 <td>
-                  <app-select [group]="form.get('columns')" [controlName]="'columnSelections-' + i + '-' + header"
-                    [options]="tableColumns" [isRequired]="isRequired">
+                  <app-select [group]="columnsForm" [controlName]="'columnSelections-' + i + '-' + header"
+                    [options]="tableColumns">
                   </app-select>
                 </td>
                 <td>

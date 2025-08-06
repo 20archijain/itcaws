@@ -1,4 +1,5 @@
 import { CUSTOM_VALIDATOR_KEYS, UPLOAD_FILES } from 'src/app/app.constants';
+import { FormControlErrorMessage } from '../interfaces/common.interface';
 
 export const VALIDATION_LENGTH = {
   ADDRESS_MAXLENGTH: 100,
@@ -36,37 +37,37 @@ export const CUSTOM_VALIDATION_LENGTH = {
 };
 
 export const FILESIZE_VALIDATOR =
-  (name = 'File', maxFileSizeInBytes = UPLOAD_FILES.maxFileSizeInBytes, message = 'err.fileSize') => (
+  (name = 'File', maxFileSizeInBytes = UPLOAD_FILES.maxFileSizeInBytes, message = 'err.fileSize'): FormControlErrorMessage => (
     { name, errorName: CUSTOM_VALIDATOR_KEYS.FILE_SIZE, fileSize: Math.round(maxFileSizeInBytes / (1024 * 1024)), message }
   );
 export const FILETYPE_VALIDATOR =
-  (name = 'File', allowedFileTypes = UPLOAD_FILES.fileTypes.imageOnly.fileExtensions, message = 'err.fileType') => ({ name, errorName: CUSTOM_VALIDATOR_KEYS.FILE_TYPE, fileType: allowedFileTypes.join(', '), message });
+  (name = 'File', allowedFileTypes = UPLOAD_FILES.fileTypes.imageOnly.fileExtensions, message = 'err.fileType'): FormControlErrorMessage => ({ name, errorName: CUSTOM_VALIDATOR_KEYS.FILE_TYPE, fileType: allowedFileTypes.join(', '), message });
 
 export const MAXLENGTH_VALIDATOR =
-  (name: string, maxLength = VALIDATION_LENGTH.MAXLENGTH, minLength = VALIDATION_LENGTH.MINLENGTH, message = 'err.length') => ({
+  (name: string, maxLength = VALIDATION_LENGTH.MAXLENGTH, minLength = VALIDATION_LENGTH.MINLENGTH, message = 'err.length'): FormControlErrorMessage => ({
     maxLength, minLength, name, errorName: 'maxlength',
     message: minLength === maxLength ? 'err.sameLength' : message
   });
 
 export const MINLENGTH_VALIDATOR =
-  (name: string, minLength = VALIDATION_LENGTH.MINLENGTH, maxLength = VALIDATION_LENGTH.MAXLENGTH, message = 'err.length') => ({
+  (name: string, minLength = VALIDATION_LENGTH.MINLENGTH, maxLength = VALIDATION_LENGTH.MAXLENGTH, message = 'err.length'): FormControlErrorMessage => ({
     maxLength, minLength, name, errorName: 'minlength',
     message: minLength === maxLength ? 'err.sameLength' : message
   });
 
 export const MAXVALUE_VALIDATOR =
-  (name: string, maxValue = VALIDATION_LENGTH.MAXVALUE, message = 'err.max') => ({ errorName: 'max', maxValue, message, name });
+  (name: string, maxValue = VALIDATION_LENGTH.MAXVALUE, message = 'err.max'): FormControlErrorMessage => ({ errorName: 'max', maxValue, message, name });
 
 export const MINVALUE_VALIDATOR =
-  (name: string, minValue = VALIDATION_LENGTH.MINVALUE, message = 'err.min') => ({ errorName: 'min', minValue, message, name });
+  (name: string, minValue = VALIDATION_LENGTH.MINVALUE, message = 'err.min'): FormControlErrorMessage => ({ errorName: 'min', minValue, message, name });
 
-export const PATTERN_VALIDATOR = (name = 'value', message = 'err.pattern') => ({
+export const PATTERN_VALIDATOR = (name = 'value', message = 'err.pattern'): FormControlErrorMessage => ({
   message, name,
   errorName: CUSTOM_VALIDATOR_KEYS.INVALID_PATTERN,
 });
 
-export const CUSTOM_VALIDATOR = (errorName: string, message: string, name = 'value') => ({
+export const CUSTOM_VALIDATOR = (errorName: string, message: string, name = 'value'): FormControlErrorMessage => ({
   errorName, message, name,
 });
 
-export const REQUIRED_VALIDATOR = (name = '', message = 'err.required') => ({ errorName: 'required', message, name });
+export const REQUIRED_VALIDATOR = (name = '', message = 'err.required'): FormControlErrorMessage => ({ errorName: 'required', message, name });

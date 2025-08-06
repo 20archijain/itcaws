@@ -1,4 +1,4 @@
-<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="group.get(controlName)">
+<div *ngIf="!hide" class="form-group {{ groupClassName}}" [formGroup]="formGroup">
   <label *ngIf="label" class="{{ labelClassName }}" for="{{ controlName }}">
     <span [class.required]="isRequired">{{ label | translate }}</span>
   </label>
@@ -22,7 +22,7 @@
         [attr.id]="'dpFromDate-' + controlName" [class.is-invalid]="showValidationState && isTouched && isInvalid"
         [formControlName]="fromControlName"
         [value]="ngbDateParserFormatter.format(fromDate) + (toDate ? ' to ' + ngbDateParserFormatter.format(toDate) : '')"
-        (click)="d.toggle()" (dateSelect)="onDateSelection($event)" (closed)="onClosed($event)">
+        (click)="d.toggle()" (dateSelect)="onDateSelection($event)" (closed)="onClosed()">
       <label *ngIf="showValidationState && isTouched && isInvalid" id="validation-{{ controlName }}-error"
         class="error text-justify small form-text invalid-feedback">
         {{ errorMessageFrom ? errorMessageFrom : errorMessageTo }}

@@ -45,7 +45,6 @@ export class ProductiveDashboardComponent implements OnDestroy, OnInit {
   todayFocusSaleAmount: number;
   tillDateFocusSaleDone: number;
   tillDateFocusSaleAmount: number;
-  useBlackWhiteStyle = true;
   currentAndLastMonthData: any;
   currentMonthVsLastYearMonthSales: any;
   currentYearLastYearMonthlySales: any;

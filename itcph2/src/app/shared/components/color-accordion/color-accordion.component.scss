@@ -4,13 +4,21 @@ $blue2: #0066b2;
 $blue3: #b8d9f1;
 $black: #000;
 $color0: #8dcaef;
+$faded-color0: rgba($color0, .75);
 $color1: #217cb5;
+$faded-color1: rgba($color1, .75);
 $color2: #5f70b6;
+$faded-color2: rgba($color2, .75);
 $color3: #725ca5;
+$faded-color3: rgba($color3, .75);
 $color4: #ba58a5;
+$faded-color4: rgba($color4, .75);
 $color5: #f06197;
+$faded-color5: rgba($color5, .75);
 $color6: #fe8d25;
+$faded-color6: rgba($color6, .75);
 $color7: #fbd707;
+$faded-color7: rgba($color7, .75);
 
 .white-bg {
   background-color: $white !important;
@@ -26,7 +34,7 @@ i {
 }
 
 .district-cell {
-  background: rgba($color0, 0.75);
+  background: $faded-color0;
   color: $white;
 }
 
@@ -36,7 +44,7 @@ i {
 }
 
 .branch-cell {
-  background: rgba($color1, 0.75);
+  background: $faded-color1;
   color: $white;
 }
 
@@ -46,7 +54,7 @@ i {
 }
 
 .circle-cell {
-  background: rgba($color2, 0.75);
+  background: $faded-color2;
   color: $white;
 }
 
@@ -56,19 +64,22 @@ i {
 }
 
 .section-cell {
-  background: rgba($color3, 0.75);
+  background: $faded-color3;
   color: $white;
 }
 
+// sass-lint:disable class-name-format
 .wdCode {
   background: $color4;
   color: $white;
 }
 
 .wdCode-cell {
-  background: rgba($color4, 0.75);
+  background: $faded-color4;
   color: $white;
 }
+
+// sass-lint:enable class-name-format
 
 .team {
   background: $color5;
@@ -76,7 +87,7 @@ i {
 }
 
 .team-cell {
-  background: rgba($color5, 0.75);
+  background: $faded-color5;
   color: $white;
 }
 
@@ -86,7 +97,7 @@ i {
 }
 
 .route-cell {
-  background: rgba($color6, 0.75);
+  background: $faded-color6;
   color: $white;
 }
 
@@ -96,7 +107,7 @@ i {
 }
 
 .outlet-cell {
-  background: rgba($color7, 0.75);
+  background: $faded-color7;
   color: $white;
 }
 
@@ -143,40 +154,39 @@ td {
   border: 1px solid $black;
 }
 
-/* Ensure container is centered */
 .container {
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
   margin: auto;
-  padding: 20px;
   max-width: 95vw;
-}
-
-/* Responsive Table Wrapper */
-.table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+  padding: 20px;
   width: 100%;
 }
 
-/* Base Table Styling */
+// Responsive Table Wrapper
+.table-responsive {
+  -webkit-overflow-scrolling: touch;
+  overflow-x: auto;
+  width: 100%;
+}
+
+// Base Table Styling
 .table-custom {
+  border-collapse: collapse;
   min-width: 1400px;
   width: max-content;
-  border-collapse: collapse;
+
+  th,
+  td {
+    // text-align: center;
+    padding: 4px 8px;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
 }
 
-.table-custom th,
-.table-custom td {
-  white-space: nowrap;
-  vertical-align: middle;
-  // text-align: center;
-  padding: 4px 8px;
-}
-
-// /* Fixed Column Widths */
+// Fixed Column Widths
 // .branch,
 // .branch-cell,
 // .circle-cell,
@@ -189,7 +199,8 @@ td {
 //   white-space: nowrap;
 // }
 
-/* Fixed Column Widths */
+// sass-lint:disable class-name-format
+// Fixed Column Widths
 .district,
 .district-cell,
 .branch,
@@ -206,18 +217,21 @@ td {
 .route-cell,
 .outlet,
 .outlet-cell {
-  width: 270px;
   max-width: 270px;
   white-space: nowrap;
+  width: 270px;
 }
 
-/* Responsive Adjustments */
+// Responsive Adjustments
 @media (max-width: 768px) {
 
-  .table-custom th,
-  .table-custom td {
-    font-size: 10px;
-    padding: 2px 4px;
+  .table-custom {
+
+    th,
+    td {
+      font-size: 10px;
+      padding: 2px 4px;
+    }
   }
 
   .district,
@@ -228,7 +242,9 @@ td {
   .wdCode-cell,
   .team-cell,
   .route-cell {
-    width: 120px;
     max-width: 140px;
+    width: 120px;
   }
 }
+
+// sass-lint:enable class-name-format

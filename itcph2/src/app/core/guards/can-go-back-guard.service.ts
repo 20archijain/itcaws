@@ -6,7 +6,7 @@ import { ConfirmationModalService } from '../services/confirmation-modal.service
 import { RoutingService } from '../services/routing.service';
 
 @Injectable()
-export class CanGoBackGuard  implements OnDestroy {
+export class CanGoBackGuard implements OnDestroy {
   private subscription: Subscription[] = [];
   private routedUrl: string = null;
   private isFormDirty = false;

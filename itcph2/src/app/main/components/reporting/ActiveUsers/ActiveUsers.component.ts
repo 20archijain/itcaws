@@ -19,9 +19,7 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: string;
-  // isSelectable = false;
-  // editConfig: EditConfig[] = [];
+  isSelectable: boolean;
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   wdCodeOptions: DropdownList[] = [];
@@ -33,7 +31,6 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
   wdMarketOptions: DropdownList[] = [];
   wdPopGroupOptions: DropdownList[] = [];
   form: UntypedFormGroup;
-  // url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;

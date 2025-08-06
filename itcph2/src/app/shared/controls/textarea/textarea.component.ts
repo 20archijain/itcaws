@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
@@ -18,7 +19,7 @@ export class TextareaComponent implements OnChanges, OnInit {
   @Output() private onKeyupOut = new EventEmitter();
   @Output() private onFocus = new EventEmitter();
   @Output() private onBlur = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
   @Input() label = '';
   @Input() placeholder = '';

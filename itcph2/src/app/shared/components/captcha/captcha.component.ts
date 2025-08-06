@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FormService } from 'src/app/core/services/form.service';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-captcha',
@@ -15,7 +16,7 @@ export class CaptchaComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   @Input() group: UntypedFormGroup;
   @Input() controlName: string;
-  @Input() errorMessages: string[];
+  @Input() errorMessages: FormControlErrorMessage[];
   captchaImage = '';
 
   constructor(private formService: FormService) {

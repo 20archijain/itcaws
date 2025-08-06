@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChange
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { find } from 'ramda';
 
-import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
@@ -16,7 +16,7 @@ export class DropdownComponent implements OnChanges, OnInit {
   @Output() private onChange = new EventEmitter();
   @Output() private onFocus = new EventEmitter();
   @Output() private onBlur = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
   @Input() label = '';
   @Input() controlName = 'dropdown';
@@ -30,7 +30,7 @@ export class DropdownComponent implements OnChanges, OnInit {
   @Input() sizeClass = 'col-sm-8 col-xl-9';
   @Input() showBlankOption = true;
   @Input() blankOptionLabel = 'listing.pleaseSelect';
-  @Input() options: DropdownList<any>[] = [];
+  @Input() options: any[] = [];
   @Input() labelKey = 'label';
   errorMessage = '';
   isInvalid = false;
@@ -121,7 +121,7 @@ export class DropdownComponent implements OnChanges, OnInit {
     return this.inputField && (this.inputField.touched || this.inputField.dirty);
   }
 
-  onOptionChange($event: KeyboardEvent) {
+  onOptionChange($event: Event | KeyboardEvent) {
     this.resetError($event);
     this.onChange.emit($event);
   }

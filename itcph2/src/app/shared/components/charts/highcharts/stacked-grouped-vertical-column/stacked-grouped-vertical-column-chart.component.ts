@@ -19,7 +19,7 @@ export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnCha
   @Input() width = CHART_DEFAULTS.WIDTH;
   @Input() height = CHART_DEFAULTS.HEIGHT;
   @Input() heading = '';
-  @Input() data: StackedGroupedColumnChartData;
+  @Input() data: StackedGroupedColumnChartData | any[];
   Highcharts = Highcharts;
   stackGroupedColumnChartOptions: Highcharts.Options;
   style: any = {
@@ -41,7 +41,8 @@ export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnCha
   }
 
   private initializeChartOptions() {
-    if (this.data && this.data.seriesData) {
+    const data = this.data as StackedGroupedColumnChartData;
+    if (data && data.seriesData) {
       this.stackGroupedColumnChartOptions = {
         chart: {
           type: 'column',
@@ -55,9 +56,9 @@ export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnCha
             stacking: 'normal',  // Keep stacking enabled to stack values
           }
         },
-        series: this.data?.seriesData || [],  // Now contains "Last Month" and "This Month" series
+        series: data?.seriesData || [],  // Now contains "Last Month" and "This Month" series
         title: {
-          text: this.data?.title || ''
+          text: data?.title || ''
         },
         tooltip: {
           formatter: function () {
@@ -66,7 +67,7 @@ export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnCha
           }
         },
         xAxis: {
-          categories: this.data?.xAxisLabels || [],  // Branch names as categories
+          categories: data?.xAxisLabels || [],  // Branch names as categories
           title: {
             text: 'Branches'
           }
@@ -75,7 +76,7 @@ export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnCha
           allowDecimals: false,
           min: 0,
           title: {
-            text: this.data?.yAxisLabel || ''
+            text: data?.yAxisLabel || ''
           }
         },
       };

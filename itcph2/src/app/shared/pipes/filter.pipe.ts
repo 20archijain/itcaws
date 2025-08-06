@@ -27,7 +27,7 @@ export class FilterPipe implements PipeTransform {
     return allValues;
   }
 
-  transform(items: any[], searchText: string, labelKey = 'ALL', caseSensitive = false, exclude = false) {
+  transform(items: any[], searchText: string | boolean, labelKey = 'ALL', caseSensitive = false, exclude = false) {
     if (!items || items.length === 0) {
       return [];
     }
@@ -48,7 +48,7 @@ export class FilterPipe implements PipeTransform {
             if (caseSensitive) {
               return value && value.toString().indexOf(searchText) > -1;
             } else {
-              return value && value.toString().toLowerCase().indexOf(searchText.toLowerCase()) > -1;
+              return value && value.toString().toLowerCase().indexOf((searchText as string).toLowerCase()) > -1;
             }
           });
         }
@@ -67,9 +67,9 @@ export class FilterPipe implements PipeTransform {
         } else {
           // exclude searchText from items
           if (exclude) {
-            return items.filter(item => item[labelKey].toString().toLowerCase().indexOf(searchText.toLowerCase()) === -1);
+            return items.filter(item => item[labelKey].toString().toLowerCase().indexOf((searchText as string).toLowerCase()) === -1);
           } else {
-            return items.filter(item => item[labelKey].toString().toLowerCase().indexOf(searchText.toLowerCase()) > -1);
+            return items.filter(item => item[labelKey].toString().toLowerCase().indexOf((searchText as string).toLowerCase()) > -1);
           }
         }
       } else {
@@ -83,9 +83,9 @@ export class FilterPipe implements PipeTransform {
         } else {
           // exclude searchText from items
           if (exclude) {
-            return items.filter(item => item.toString().toLowerCase().indexOf(searchText.toLowerCase()) === -1);
+            return items.filter(item => item.toString().toLowerCase().indexOf((searchText as string).toLowerCase()) === -1);
           } else {
-            return items.filter(item => item.toString().toLowerCase().indexOf(searchText.toLowerCase()) > -1);
+            return items.filter(item => item.toString().toLowerCase().indexOf((searchText as string).toLowerCase()) > -1);
           }
         }
       }

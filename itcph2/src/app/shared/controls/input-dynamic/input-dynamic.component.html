@@ -6,16 +6,16 @@
         <ng-container [ngSwitch]="config.type">
           <!-- Input Box -->
           <ng-container *ngSwitchCase="typeConfig.INPUT_BOX">
-            <app-input [label]="config?.label" placeholder="{{ config?.label | translate }}" [group]="control"
+            <app-input [label]="config?.label" placeholder="{{ config?.label | translate }}" [group]="getGroup(control)"
               [controlName]="config.controlName" [isRequired]="config?.required" [errorMessages]="config?.errorMessages"
-              [id]="i">
+              [id]="i + ''">
             </app-input>
           </ng-container>
           <!-- Select Box -->
           <ng-container *ngSwitchCase="typeConfig.SELECT_BOX">
-            <app-select [group]="control" [controlName]="config.controlName" [label]="config?.label"
+            <app-select [group]="getGroup(control)" [controlName]="config.controlName" [label]="config?.label"
               [options]="config?.options" [errorMessages]="config?.errorMessages" [isRequired]="config?.required"
-              placeholder="{{ config.label | translate}}" [id]="i"
+              placeholder="{{ config.label | translate}}" [id]="i + ''"
               (onChange)="onChangeOption(i, ci, config.controlName, config?.disableOption)">
             </app-select>
           </ng-container>

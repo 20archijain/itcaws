@@ -4,15 +4,9 @@
     <h6 class="card-title mb-3" *ngIf="heading">{{ heading | translate }}</h6>
 
     <ng-container *ngIf="!hideSearchbar">
-      <app-listing-searchbar [group]="group" [searchGroup]="group.get('searchbar')" [sortOptions]="sortOptions"
+      <app-listing-searchbar [group]="group" [searchGroup]="searchbarGroup" [sortOptions]="sortOptions"
         [searchTemplate]="searchTemplate" [selectedRecords]="selectedRecords" [actions]="actions"
-        [showPagination]="showPagination" [showDownloadDataBtn]="showDownloadDataBtn"
-        [downloadDataBtnTitle]="downloadDataBtnTitle" [isDownloadDataBtnDisabled]="isDownloadDataBtnDisabled"
-        [showDownloadSummaryBtn]="showDownloadSummaryBtn" [downloadSummaryBtnTitle]="downloadSummaryBtnTitle"
-        [isDownloadSummaryBtnDisabled]="isDownloadSummaryBtnDisabled" [noOfRecords]="tableData?.length"
-        [isAddConfigPresent]="!!addConfig?.length" [downloadTemplate]="downloadTemplate"
-        [showExportTableToXlsxBtn]="showExportTableToXlsxBtn" [showExportTableToPdfBtn]="showExportTableToPdfBtn"
-        [showPrintBtn]="showPrintBtn" (onAction)="onSearchAction($event)" (onClear)="onClearFilters()"
+        [showPagination]="showPagination" (onAction)="onSearchAction($event)" (onClear)="onClearFilters()"
         (onDownloadData)="downloadData()" (onDownloadSummary)="downloadSummary()">
       </app-listing-searchbar>
     </ng-container>
@@ -27,7 +21,7 @@
         <thead>
           <tr class="bg-light text-muted">
             <th scope="col" style="width: 50px;"
-              *ngIf="isSelectable && tableData?.length > 0 && multiActions?.length > 0 && (tableData | filter: (group.get('localSearch')?.value): 'ALL': false: body)?.length > 0">
+              *ngIf="isSelectable && tableData?.length > 0 && multiActions?.length > 0 && (tableData | filter: (group.get('localSearch')?.value): 'ALL': false: !!body)?.length > 0">
               <app-checkbox [tableData]="tableData" [checkKey]="checkKey" [isChecked]="isAllChecked" [selectAll]="true"
                 [selectedRecords]="selectedRecords" (emitSelectedRecords)="emitSelectedRecords($event)"
                 [noMargin]="true">
@@ -47,7 +41,7 @@
 
         <tbody *ngIf="!isSkeletonModeOn && tableData?.length > 0">
           <ng-container
-            *ngFor="let data of tableData | filter: (group.get('localSearch')?.value): 'ALL': false: body; let i = index">
+            *ngFor="let data of tableData | filter: (group.get('localSearch')?.value): 'ALL': false: !!body; let i = index">
             <tr>
               <th scope="row" *ngIf="isSelectable && multiActions?.length > 0">
                 <app-checkbox [tableData]="tableData" [checkKey]="checkKey" [value]="data" [isChecked]="isChecked(data)"
@@ -92,7 +86,7 @@
                 <ul class="list-inline hstack gap-2 mb-0">
                   <ng-container *ngFor="let action of singleActions">
                     <li *ngIf="isActionAllowed(action, data)" class="list-inline-item edit"
-                      [title]="action?.title | translate" (click)="onActionClick(action, data)">
+                      [title]="action?.title | translate">
                       <a class="text-muted d-inline-block">
                         <i [ngClass]="action?.icon" class="fs-20"></i>
                       </a>

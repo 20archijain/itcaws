@@ -1,0 +1,316 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "districtList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "EDIS",
+        "value": "EDIS"
+      },
+      {
+        "label": "NDIS",
+        "value": "NDIS"
+      },
+      {
+        "label": "SDIS",
+        "value": "SDIS"
+      },
+      {
+        "label": "WDIS",
+        "value": "WDIS"
+      }
+    ],
+    "branchList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "Arunachal",
+        "value": 7,
+        "mainBranch": "EGAU"
+      },
+      {
+        "label": "Assam",
+        "value": 8,
+        "mainBranch": "EGAU"
+      },
+      {
+        "label": "Bihar",
+        "value": 18,
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "EBEN",
+        "value": 15,
+        "mainBranch": "EBEN"
+      },
+      {
+        "label": "ECAL",
+        "value": 13,
+        "mainBranch": "ECAL"
+      },
+      {
+        "label": "EORI",
+        "value": 17,
+        "mainBranch": "EORI"
+      },
+      {
+        "label": "EVIZ",
+        "value": 14,
+        "mainBranch": "EVIZ"
+      },
+      {
+        "label": "Haryana",
+        "value": 3,
+        "mainBranch": "NCHA"
+      },
+      {
+        "label": "Jharkhand",
+        "value": 19,
+        "mainBranch": "EPAT"
+      },
+      {
+        "label": "Meghalaya",
+        "value": 9,
+        "mainBranch": "EGAU"
+      },
+      {
+        "label": "Mizoram",
+        "value": 10,
+        "mainBranch": "EGAU"
+      },
+      {
+        "label": "NDEL",
+        "value": 40,
+        "mainBranch": "NDEL"
+      },
+      {
+        "label": "NJAM",
+        "value": 6,
+        "mainBranch": "NJAM"
+      },
+      {
+        "label": "NJPR",
+        "value": 5,
+        "mainBranch": "NJPR"
+      },
+      {
+        "label": "NLUC",
+        "value": 4,
+        "mainBranch": "NLUC"
+      },
+      {
+        "label": "NSAH",
+        "value": 2,
+        "mainBranch": "NSAH"
+      },
+      {
+        "label": "Punjab",
+        "value": 30,
+        "mainBranch": "NCHA"
+      },
+      {
+        "label": "SBLR",
+        "value": 33,
+        "mainBranch": "SBLR"
+      },
+      {
+        "label": "SCHE",
+        "value": 34,
+        "mainBranch": "SCHE"
+      },
+      {
+        "label": "SCOI",
+        "value": 35,
+        "mainBranch": "SCOI"
+      },
+      {
+        "label": "SERN",
+        "value": 36,
+        "mainBranch": "SERN"
+      },
+      {
+        "label": "SHYD",
+        "value": 37,
+        "mainBranch": "SHYD"
+      },
+      {
+        "label": "SKAR",
+        "value": 39,
+        "mainBranch": "SKAR"
+      },
+      {
+        "label": "SRAY",
+        "value": 32,
+        "mainBranch": "SRAY"
+      },
+      {
+        "label": "Tripura",
+        "value": 12,
+        "mainBranch": "EGAU"
+      },
+      {
+        "label": "UP East",
+        "value": 1,
+        "mainBranch": "NEUP"
+      },
+      {
+        "label": "WAHM",
+        "value": 28,
+        "mainBranch": "WAHM"
+      },
+      {
+        "label": "WBHO",
+        "value": 27,
+        "mainBranch": "WBHO"
+      },
+      {
+        "label": "WMUM",
+        "value": 31,
+        "mainBranch": "WMUM"
+      },
+      {
+        "label": "WNAG-CG",
+        "value": 26,
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "WNAG-MH",
+        "value": 25,
+        "mainBranch": "WNAG"
+      },
+      {
+        "label": "WPUN-GOA",
+        "value": 24,
+        "mainBranch": "WPUN"
+      },
+      {
+        "label": "WPUN-MH",
+        "value": 23,
+        "mainBranch": "WPUN"
+      }
+    ],
+    "circleList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "AH2 - South Gujrat Circle",
+        "value": "AH2"
+      },
+      {
+        "label": "AH3 - ",
+        "value": "AH3"
+      },
+      {
+        "label": "AH3 - Saurashtra Circle",
+        "value": "AH3"
+      }
+    ],
+    "sectionList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "AH2001 - Vadodara - CFP",
+        "value": "AH2001"
+      },
+      {
+        "label": "AH2003 - Vapi-CFP",
+        "value": "AH2003"
+      },
+      {
+        "label": "AH2004 - Valsad - CFP",
+        "value": "AH2004"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "AH2356 -  - P H WADIA & SONS",
+        "value": "AH2356"
+      },
+      {
+        "label": "AH2882 - BOTAD (M) - AVADH MARKETING",
+        "value": "AH2882"
+      },
+      {
+        "label": "AH2912 - BHACHAU (M) - BHAVANI STORE",
+        "value": "AH2912"
+      }
+    ],
+    "teamType": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "DS",
+        "value": 0
+      },
+      {
+        "label": "NPSR",
+        "value": 5
+      }
+    ],
+    "teamList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "1CG BALAKRISHNAN",
+        "value": 19858
+      },
+      {
+        "label": "A Basha",
+        "value": 20272
+      },
+      {
+        "label": "A RAJU",
+        "value": 20025
+      }
+    ],
+    "wdMarketList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "ABHAYAPURI (TC)",
+        "value": "ABHAYAPURI (TC)"
+      },
+      {
+        "label": "ABOHAR (M CL)",
+        "value": "ABOHAR (M CL)"
+      }
+    ],
+    "wdPopGroupList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "<2",
+        "value": "<2"
+      },
+      {
+        "label": ">1000",
+        "value": ">1000"
+      }
+    ],
+    "branchFilter": true,
+    "userBranch": ""
+  },
+  "hidePopup": true
+}

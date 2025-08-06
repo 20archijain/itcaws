@@ -1,4 +1,7 @@
 import { Component, Input, OnInit, HostListener } from '@angular/core';
+import { LegendPosition } from '@swimlane/ngx-charts';
+
+import { CHART_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-grouped-vertical-column-chart',
@@ -42,7 +45,7 @@ export class GroupedVerticalColumnChartComponent implements OnInit {
   @Input() maxWidth = 600; // Maximum width for responsiveness
   calculatedWidth = 600; // Adjusted width based on the container or screen size
   legend = true;
-  legendPosition = 'below';
+  legendPosition: LegendPosition = CHART_DEFAULTS.LEGEND_POSITION;
   xAxis = true;
   yAxis = true;
   roundDomains = true;

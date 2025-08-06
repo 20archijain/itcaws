@@ -16,33 +16,33 @@
       </div> -->
 
       <div *ngIf="branchFilter" class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="branch" [options]="branchOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="branch" [options]="branchOptions" [multiple]="true"
           label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()"
           groupBy="mainBranch">
         </app-select>
       </div>
       <div *ngIf="branchFilter" class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="circle" [options]="circleOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="circle" [options]="circleOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()" label="app.team.add.circle">
         </app-select>
       </div>
       <div *ngIf="branchFilter" class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="section" [options]="sectionOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="section" [options]="sectionOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()" label="app.team.add.section">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" label="app.team.add.wdCode">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
           (onChange)="getTeams()" placeholder="{{ 'app.team.add.dsType' | translate }}" label="app.team.add.dsType">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
         </app-select>
       </div>
@@ -67,17 +67,17 @@
         </app-date>
       </div> -->
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()" label="app.team.add.wdCode">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions" [multiple]="true"
           placeholder="{{ 'app.team.add.dsType' | translate }}" label="app.team.add.dsType">
         </app-select>
       </div>
       <div class="w-2 m-1">
-        <app-select [group]="group.get('searchbar')" controlName="dsName" [options]="teamOptions" [multiple]="true"
+        <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
           (onChange)="getTeams()" placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
         </app-select>
       </div>

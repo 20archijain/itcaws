@@ -47,6 +47,7 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
   errorMessages = {
     sellingPrice: COMMON_VALIDATORS.messages.dropdownAllOptional('Price')
   };
+  sellingPriceForm: UntypedFormGroup;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private confirmationModalService: ConfirmationModalService) { }
@@ -62,6 +63,8 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
       product: [''],
       sellingPrice: this.fb.group({}),
     });
+
+    this.sellingPriceForm = this.group.get('sellingPrice') as UntypedFormGroup;
 
     this.initialData();
 

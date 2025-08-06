@@ -3,6 +3,7 @@ import { MapInfoWindow, GoogleMap } from '@angular/google-maps';
 
 import { MapConfig } from 'src/app/core/interfaces/common.interface';
 import { mapPath, MAP_DEFAULTS, MAP_STYLES } from 'src/app/app.constants';
+import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
   selector: 'app-dynamic-marker-map',
@@ -34,8 +35,8 @@ export class HeatMapComponent implements OnChanges, OnInit {
   }
 
 
-  onStyleChanged(newStyle: keyof typeof MAP_STYLES): void {
-    this.selectedMapStyle = newStyle;
+  onStyleChanged(newStyle: DropdownList | keyof typeof MAP_STYLES): void {
+    this.selectedMapStyle = newStyle as keyof typeof MAP_STYLES;
     this.setMapOptions();
   }
 

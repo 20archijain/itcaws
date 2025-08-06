@@ -1,3 +1,5 @@
+import { LegendPosition } from "@swimlane/ngx-charts";
+
 export type ChartColorSchemeNames = 'VIVID' | 'NATURAL' | 'COOL' | 'FIRE' | 'SOLAR' | 'AIR' |
   'AQUA' | 'FLAME' | 'OCEAN' | 'FOREST' | 'HORIZON' | 'NEONS' | 'PICNIC' | 'NIGHT' | 'NIGHTLIGHTS';
 
@@ -150,7 +152,7 @@ export interface ServerStatisticsConfig {
   trimLabels?: boolean;
   height?: number;
   legend?: boolean;
-  legendPosition?: string;
+  legendPosition?: LegendPosition;
   legendTitle?: string;
   scheme?: ChartColorSchemeNames;
   width?: number;
@@ -191,8 +193,6 @@ export interface StatisticsConfig extends ServerStatisticsConfig {
   ngxCustomColors?: string[];
   appendPercentageOnYAxis?: boolean;
   appendPercentageOnXAxis?: boolean;
-  appendPercentageOnDatalabel?: boolean;
-  textToAppendAfterValue?: string;
   advancedPieChartTotalLabel?: string;
   apexColors?: string[];
   apexChartID?: string;
@@ -210,4 +210,16 @@ export interface EditData {
 export interface DropdownChangeData {
   data?: any;
   type: number;
+}
+
+export interface FormControlErrorMessage {
+  name: string;
+  errorName: string;
+  message: string;
+  fileSize?: number;
+  fileType?: string;
+  maxLength?: number;
+  minLength?: number;
+  maxValue?: number;
+  minValue?: number;
 }

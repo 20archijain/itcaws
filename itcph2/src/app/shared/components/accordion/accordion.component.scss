@@ -56,13 +56,13 @@ td {
   border: 1px solid $black;
 }
 
-/* Ensure container is centered */
+// Ensure container is centered
 .container {
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
   margin: auto;
-  padding: 20px;
   max-width: 95vw;
+  padding: 20px;
+  width: 100%;
 }

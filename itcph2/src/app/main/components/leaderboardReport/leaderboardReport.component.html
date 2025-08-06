@@ -10,7 +10,7 @@
         </app-date>
       </div>
       <div class="col-sm-3 col-lg-2">
-        <app-date [group]="group" controlName="dateTo" sizeClass="col-sm-12" label="To" isRequired="true"
+        <app-date [group]="group" controlName="dateTo" sizeClass="col-sm-12" label="To" [isRequired]="true"
           [errorMessages]="errorMessages.dateTo" [isRequired]="true" placeholder="{{ 'placeholder.to' | translate }}"
           [minDate]="group.get('dateFrom').value">
         </app-date>
@@ -81,7 +81,7 @@
 
       <div class="col-12 col-sm-4 col-md-2">
         <app-select [group]="group" controlName="dsName" placeholder="{{ 'app.team.add.dsName' | translate }}"
-          label="app.team.add.dsName" [options]="teamOptions" [errorMessages]="errorMessages.team" [multiple]="true">
+          label="app.team.add.dsName" [options]="teamOptions" [multiple]="true">
         </app-select>
       </div>
       <div class="col-sm-4 col-md-2">

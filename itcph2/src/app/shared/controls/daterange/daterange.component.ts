@@ -50,6 +50,7 @@ export class DateRangeComponent implements OnChanges, OnDestroy, OnInit {
   hoveredDate: NgbDate;
   fromDate: NgbDate;
   toDate: NgbDate;
+  formGroup: UntypedFormGroup;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, protected ngbDateParserFormatter: NgbDateParserFormatter) {
   }
@@ -99,6 +100,7 @@ export class DateRangeComponent implements OnChanges, OnDestroy, OnInit {
         }),
       });
     }
+    this.formGroup = this.group.get(this.controlName) as UntypedFormGroup;
 
     // set current date as minimum date
     if (this.isCurrentDateMin) {
@@ -131,7 +133,7 @@ export class DateRangeComponent implements OnChanges, OnDestroy, OnInit {
     return this.inputField && (this.inputField.touched || this.inputField.dirty);
   }
 
-  onClosed($event: Event) {
+  onClosed($event: Event = null) {
     this.resetError($event);
     this.onClose.emit($event);
   }

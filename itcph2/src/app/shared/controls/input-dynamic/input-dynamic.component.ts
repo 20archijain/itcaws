@@ -38,6 +38,10 @@ export class InputDynamicComponent extends InputComponent implements OnChanges, 
     return this.group.get(this.controlName) as UntypedFormArray;
   }
 
+  getGroup(group) {
+    return group as UntypedFormGroup;
+  }
+
   addMoreControl() {
     if (this.dynamicControl) {
       this.dynamicControl.push(this.createDynamicControl());

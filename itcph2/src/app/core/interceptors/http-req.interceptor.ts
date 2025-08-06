@@ -30,7 +30,7 @@ export class HttpReqInterceptor implements HttpInterceptor {
       .handle(req)
       .pipe(
         map(event => {
-          if (event instanceof HttpResponse) {
+          if (event instanceof HttpResponse) {// OR if (event.type === HttpEventType.Response) {
             const body = event.body as HttpRequestResponse;
             if (body && body.status) {
               if (body.status === REQUEST_STATUS.FAILED) {

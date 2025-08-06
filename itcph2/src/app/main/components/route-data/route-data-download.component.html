@@ -11,7 +11,7 @@
       <div class="w-2 m-1">
         <app-select [group]="group" controlName="branch" placeholder="{{ 'app.team.add.branch' | translate }}"
           label="app.team.add.branch" [options]="branchOptions" [errorMessages]="errorMessages.branch"
-          (onChange)="getCircle()" [isRequired]="isBranchRequired" multiple="true" groupBy="mainBranch">
+          (onChange)="getCircle()" [isRequired]="isBranchRequired" [multiple]="true" groupBy="mainBranch">
         </app-select>
       </div>
       <div class="w-2 m-1">

@@ -30,7 +30,7 @@
                 <td>{{ stockProductsList[pi]?.previousMonthAchieve }}</td>
                 <td *ngFor="let team of teamsList" class="">
                   <div class="d-flex justify-content-center fix-width4">
-                    <app-input maxLength="10" [group]="productControl" [id]="pi"
+                    <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
                       [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
                       placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
                       [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">

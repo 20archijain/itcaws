@@ -222,7 +222,7 @@ export interface GetAddTeamDataResponse extends GetViewHeaderBody {
   separatorList?: DropdownList[];
   sortOptions?: DropdownList[];
   accessList: DropdownList[];
-  isSelectable: string;
+  isSelectable: boolean;
   jsonName?: string;
   branchFilter?: boolean
 }
@@ -234,6 +234,10 @@ export interface StockProduct extends DropdownList {
   day5Incubation: string;
   fgStock: string;
   stockIssued?: number;
+  brand?: any;
+  wd_code?: any;
+  previousMonthTarget?: any;
+  previousMonthAchieve?: any;
 }
 
 export interface ReadyStockPickupResponse {
@@ -296,7 +300,7 @@ export interface GetActiveDsDataResponse extends GetViewHeaderBody {
 export interface VanDsListing {
   reportingType: string;
   route: string;
-  feederMarketName: string;
+  section: string;
   shopName: string;
   mobileNumber: string;
   shopType: string;
@@ -304,6 +308,9 @@ export interface VanDsListing {
   timestamp: string;
   team: string;
   branchName: string;
+  circle: string;
+  wdCode: string;
+  team_id: number;
   lt: number;
   lg: number;
   images: GalleryImagesList[];

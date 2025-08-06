@@ -3,7 +3,6 @@
   <map-polyline [path]="paths" [options]="polylineOptions" />
   <ng-container *ngIf="showMarkers">
     <app-simple-map [markers]="markers" [useGoogleMapWrapper]="false" [useDifferentIconForFirstLastBetweenMarker]="true"
-      [firstMarkerUrl]="firstMarkerUrl" [betweenMarkerUrl]="betweenMarkerUrl" [lastMarkerUrl]="lastMarkerUrl"
-      [transactionMarkerUrl]="transactionMarkerUrl" />
+      [firstMarkerUrl]="firstMarkerUrl" [betweenMarkerUrl]="betweenMarkerUrl" [lastMarkerUrl]="lastMarkerUrl" />
   </ng-container>
 </google-map>

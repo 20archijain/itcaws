@@ -35,6 +35,7 @@ export class UniverseDataComponent implements OnDestroy, OnInit {
   // isDateRequired = true;
   isRmdNameRequired = false;
   branchFilter = false;
+  searchbarForm: UntypedFormGroup;
   // errorMessages = {
   //   dateFrom: COMMON_VALIDATORS.messages.requiredOnly('From'),
   //   dateTo: COMMON_VALIDATORS.messages.requiredOnly('To'),
@@ -57,6 +58,8 @@ export class UniverseDataComponent implements OnDestroy, OnInit {
         dsName: [''],
       })
     });
+
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.initialData();
   }

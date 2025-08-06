@@ -38,6 +38,7 @@ export class RouteDataUploadComponent implements OnInit, OnDestroy {
   duplicateColumnError = 'app.routeData.duplicateColumnError';
   noHeaderFoundError = 'app.routeData.noHeaderFoundError';
   columnErrors = [this.atleastOneColumnError, this.duplicateColumnError, this.noHeaderFoundError];
+  columnsForm: UntypedFormGroup;
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService,
     private canGoBackGuard: CanGoBackGuard, private toast: ToastrService, private loaderService: LoaderService,
@@ -55,6 +56,8 @@ export class RouteDataUploadComponent implements OnInit, OnDestroy {
           this.columnErrors = translatedMsg;
         })
     );
+
+    this.columnsForm = this.form.get('columns') as UntypedFormGroup;
 
     this.canGoBackGuard.markAsPristine();
 

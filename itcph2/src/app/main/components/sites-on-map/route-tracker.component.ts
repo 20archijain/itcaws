@@ -43,6 +43,7 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
     // wdCode: COMMON_VALIDATORS.messages.requiredOnly('WD Code'),
     dsName: COMMON_VALIDATORS.messages.requiredOnly('Surveyor Name'),
   };
+  searchbarForm: UntypedFormGroup;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -60,6 +61,8 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
         dsName: ['', COMMON_VALIDATORS.validators.requiredOnly],
       })
     });
+
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.initialData();
   }

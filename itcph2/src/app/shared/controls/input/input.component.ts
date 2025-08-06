@@ -1,6 +1,7 @@
 import { Component, EventEmitter, HostListener, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 import { FormService } from 'src/app/core/services/form.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
@@ -14,7 +15,7 @@ export class InputComponent implements OnChanges, OnInit {
   @Output() private onKeyupOut = new EventEmitter();
   @Output() private onFocus = new EventEmitter();
   @Output() private onBlur = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
   @Input() type = 'text';
   @Input() label = '';

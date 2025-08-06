@@ -2,6 +2,7 @@ $white: #fff;
 $blue1: #02428c;
 $blue2: #037cd8;
 $blue3: #b8d9f1;
+$blue4: #0697f1;
 $black: #000;
 
 i {
@@ -52,22 +53,17 @@ td {
   border: 1px solid $black;
 }
 
-/* Ensure container is centered */
+// Ensure container is centered
 .container {
+  align-items: center;
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
   margin: auto;
-  padding: 20px;
   max-width: 95vw;
-
+  padding: 20px;
+  width: 100%;
 }
 
 .sub-header {
-  background-color: #0697f1f3;
+  background-color: $blue4;
 }
-
-// .sub-header2{
-//   background-color: #0572ac;
-// }

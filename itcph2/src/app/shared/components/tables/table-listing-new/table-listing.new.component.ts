@@ -107,6 +107,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   isSorted = false;
   sortOrder = false;
   group: UntypedFormGroup;
+  searchbarGroup: UntypedFormGroup;
   sketetonList = Array(5);
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private listingService: ListingService,
@@ -142,6 +143,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
           date: new UntypedFormControl()
         }));
       }
+      this.searchbarGroup = this.group.get('searchbar') as UntypedFormGroup;
     }
 
     if (this.getListingOnInit && this.callListingApi) {

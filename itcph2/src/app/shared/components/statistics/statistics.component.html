@@ -16,7 +16,14 @@
             <ng-container [ngSwitch]="config.type">
               <!-- NGX Line Chart -->
               <ng-container *ngSwitchCase="typeConfig.LINE">
-                <app-line-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
+                <app-line-chart [heading]="config?.heading" [width]="config?.width"
+                  [xAxisLabel]="config?.xAxisLabel || ''" [yAxisLabel]="config?.yAxisLabel || ''">
+                </app-line-chart>
+              </ng-container>
+
+              <!-- NGX Vertical Column/Bar Chart -->
+              <ng-container *ngSwitchCase="typeConfig.COLUMN">
+                <app-column-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
                   [width]="config?.width" [height]="config?.height" [data]="config.data"
                   [scheme]="config?.scheme || scheme" [customColors]="config?.ngxCustomColors"
                   [legend]="config?.legend || false" [legendTitle]="config?.legendTitle || ''"
@@ -25,28 +32,6 @@
                   [roundDomains]="config?.roundDomains || false" [xAxisLabel]="config?.xAxisLabel || ''"
                   [yAxisLabel]="config?.yAxisLabel || ''" [trimXAxisTicks]="config?.trimXAxisTicks || false"
                   [trimYAxisTicks]="config?.trimYAxisTicks || false"
-                  [rotateXAxisTicks]="config?.rotateXAxisTicks || false"
-                  [maxXAxisTickLength]="config?.maxXAxisTickLength || 16"
-                  [maxYAxisTickLength]="config?.maxYAxisTickLength || 16"
-                  [appendPercentageOnXAxis]="config?.appendPercentageOnXAxis || false"
-                  [appendPercentageOnYAxis]="config?.appendPercentageOnYAxis || false"
-                  [timeline]="config?.timeline || false" [autoScale]="config?.autoScale || false"
-                  [gradient]="config?.gradient || false" [tooltipDisabled]="config?.tooltipDisabled || false"
-                  [yScaleMin]="config?.yScaleMin || 0" [yScaleMax]="config?.yScaleMax || 0">
-                </app-line-chart>
-              </ng-container>
-
-              <!-- NGX Vertical Column/Bar Chart -->
-              <ng-container *ngSwitchCase="typeConfig.COLUMN">
-                <app-column-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
-                  [appendPercentageOnDatalabel]="config?.appendPercentageOnDatalabel || false" [width]="config?.width"
-                  [height]="config?.height" [data]="config.data" [scheme]="config?.scheme || scheme"
-                  [customColors]="config?.ngxCustomColors" [legend]="config?.legend || false"
-                  [legendTitle]="config?.legendTitle || ''" [legendPosition]="config?.legendPosition || legendPosition"
-                  [xAxis]="!config?.hideXAxis || false" [yAxis]="!config?.hideYAxis || false"
-                  [showGridLines]="!config?.hideGridLines || false" [roundDomains]="config?.roundDomains || false"
-                  [xAxisLabel]="config?.xAxisLabel || ''" [yAxisLabel]="config?.yAxisLabel || ''"
-                  [trimXAxisTicks]="config?.trimXAxisTicks || false" [trimYAxisTicks]="config?.trimYAxisTicks || false"
                   [rotateXAxisTicks]="config?.rotateXAxisTicks || false"
                   [maxXAxisTickLength]="config?.maxXAxisTickLength || 16"
                   [maxYAxisTickLength]="config?.maxYAxisTickLength || 16"
@@ -76,14 +61,14 @@
               <!-- NGX Stacked Vertical Column/Bar Chart -->
               <ng-container *ngSwitchCase="typeConfig.STACK_VERTICAL_COLUMN">
                 <app-stack-vertical-column-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
-                  [appendPercentageOnDatalabel]="config?.appendPercentageOnDatalabel || false" [width]="config?.width"
-                  [height]="config?.height" [data]="config.data" [scheme]="config?.scheme || scheme"
-                  [customColors]="config?.ngxCustomColors" [legend]="config?.legend || false"
-                  [legendTitle]="config?.legendTitle || ''" [legendPosition]="config?.legendPosition || legendPosition"
-                  [xAxis]="!config?.hideXAxis || false" [yAxis]="!config?.hideYAxis || false"
-                  [showGridLines]="!config?.hideGridLines || false" [roundDomains]="config?.roundDomains || false"
-                  [xAxisLabel]="config?.xAxisLabel || ''" [yAxisLabel]="config?.yAxisLabel || ''"
-                  [trimXAxisTicks]="config?.trimXAxisTicks || false" [trimYAxisTicks]="config?.trimYAxisTicks || false"
+                  [width]="config?.width" [height]="config?.height" [data]="config.data"
+                  [scheme]="config?.scheme || scheme" [customColors]="config?.ngxCustomColors"
+                  [legend]="config?.legend || false" [legendTitle]="config?.legendTitle || ''"
+                  [legendPosition]="config?.legendPosition || legendPosition" [xAxis]="!config?.hideXAxis || false"
+                  [yAxis]="!config?.hideYAxis || false" [showGridLines]="!config?.hideGridLines || false"
+                  [roundDomains]="config?.roundDomains || false" [xAxisLabel]="config?.xAxisLabel || ''"
+                  [yAxisLabel]="config?.yAxisLabel || ''" [trimXAxisTicks]="config?.trimXAxisTicks || false"
+                  [trimYAxisTicks]="config?.trimYAxisTicks || false"
                   [rotateXAxisTicks]="config?.rotateXAxisTicks || false"
                   [maxXAxisTickLength]="config?.maxXAxisTickLength || 16"
                   [maxYAxisTickLength]="config?.maxYAxisTickLength || 16"
@@ -97,23 +82,9 @@
 
               <!-- NGX Grouped Vertical Column/Bar Chart -->
               <ng-container *ngSwitchCase="typeConfig.GROUPED_VERTICAL_COLUMN">
-                <app-grouped-vertical-column-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
-                  [appendPercentageOnDatalabel]="config?.appendPercentageOnDatalabel || false" [width]="config?.width"
-                  [height]="config?.height" [data]="config.data" [scheme]="config?.scheme || scheme"
-                  [customColors]="config?.ngxCustomColors" [legend]="config?.legend || false"
-                  [legendTitle]="config?.legendTitle || ''" [legendPosition]="config?.legendPosition || legendPosition"
-                  [xAxis]="!config?.hideXAxis || false" [yAxis]="!config?.hideYAxis || false"
-                  [showGridLines]="!config?.hideGridLines || false" [roundDomains]="config?.roundDomains || false"
-                  [xAxisLabel]="config?.xAxisLabel || ''" [yAxisLabel]="config?.yAxisLabel || ''"
-                  [trimXAxisTicks]="config?.trimXAxisTicks || false" [trimYAxisTicks]="config?.trimYAxisTicks || false"
-                  [maxXAxisTickLength]="config?.maxXAxisTickLength || 16"
-                  [maxYAxisTickLength]="config?.maxYAxisTickLength || 16"
-                  [appendPercentageOnXAxis]="config?.appendPercentageOnXAxis || false"
-                  [appendPercentageOnYAxis]="config?.appendPercentageOnYAxis || false"
-                  [showDataLabel]="config?.showDataLabel || false" [noBarWhenZero]="config?.noBarWhenZero || false"
-                  [gradient]="config?.gradient || false" [barPadding]="config?.barPadding || 8"
-                  [groupPadding]="config?.groupPadding || 16" [tooltipDisabled]="config?.tooltipDisabled || false"
-                  [yScaleMax]="config?.yScaleMax || 0">
+                <app-grouped-vertical-column-chart [heading]="config?.heading" [height]="config?.height"
+                  [legendTitle]="config?.legendTitle || ''" [xAxisLabel]="config?.xAxisLabel || ''"
+                  [yAxisLabel]="config?.yAxisLabel || ''">
                 </app-grouped-vertical-column-chart>
               </ng-container>
 
@@ -164,14 +135,14 @@
               <!-- NGX Stacked Horizontal Column/Bar Chart -->
               <ng-container *ngSwitchCase="typeConfig.STACK_HORIZONTAL_COLUMN">
                 <app-stack-horizontal-column-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
-                  [appendPercentageOnDatalabel]="config?.appendPercentageOnDatalabel || false" [width]="config?.width"
-                  [height]="config?.height" [data]="config.data" [scheme]="config?.scheme || scheme"
-                  [customColors]="config?.ngxCustomColors" [legend]="config?.legend || false"
-                  [legendTitle]="config?.legendTitle || ''" [legendPosition]="config?.legendPosition || legendPosition"
-                  [xAxis]="!config?.hideXAxis || false" [yAxis]="!config?.hideYAxis || false"
-                  [showGridLines]="!config?.hideGridLines || false" [roundDomains]="config?.roundDomains || false"
-                  [xAxisLabel]="config?.xAxisLabel || ''" [yAxisLabel]="config?.yAxisLabel || ''"
-                  [trimXAxisTicks]="config?.trimXAxisTicks || false" [trimYAxisTicks]="config?.trimYAxisTicks || false"
+                  [width]="config?.width" [height]="config?.height" [data]="config.data"
+                  [scheme]="config?.scheme || scheme" [customColors]="config?.ngxCustomColors"
+                  [legend]="config?.legend || false" [legendTitle]="config?.legendTitle || ''"
+                  [legendPosition]="config?.legendPosition || legendPosition" [xAxis]="!config?.hideXAxis || false"
+                  [yAxis]="!config?.hideYAxis || false" [showGridLines]="!config?.hideGridLines || false"
+                  [roundDomains]="config?.roundDomains || false" [xAxisLabel]="config?.xAxisLabel || ''"
+                  [yAxisLabel]="config?.yAxisLabel || ''" [trimXAxisTicks]="config?.trimXAxisTicks || false"
+                  [trimYAxisTicks]="config?.trimYAxisTicks || false"
                   [rotateXAxisTicks]="config?.rotateXAxisTicks || false"
                   [maxXAxisTickLength]="config?.maxXAxisTickLength || 16"
                   [maxYAxisTickLength]="config?.maxYAxisTickLength || 16"
@@ -186,9 +157,9 @@
               <!-- NGX Advanced Pie Chart -->
               <ng-container *ngSwitchCase="typeConfig.ADVANCED_PIE">
                 <app-advance-pie-chart [heading]="config?.heading" [graphMaxHeight]="config?.graphMaxHeight"
-                  [textToAppendAfterValue]="config?.textToAppendAfterValue || ''" [width]="config?.width"
-                  [height]="config?.height" [data]="config.data" [scheme]="config?.scheme || scheme"
-                  [customColors]="config?.ngxCustomColors" [gradient]="config?.gradient || false"
+                  [width]="config?.width" [height]="config?.height" [data]="config.data"
+                  [scheme]="config?.scheme || scheme" [customColors]="config?.ngxCustomColors"
+                  [gradient]="config?.gradient || false"
                   [advancedPieChartTotalLabel]="config?.advancedPieChartTotalLabel || ''"
                   [tooltipDisabled]="config?.tooltipDisabled || false">
                 </app-advance-pie-chart>

@@ -5,6 +5,7 @@ import { NgbDate } from '@ng-bootstrap/ng-bootstrap';
 import { FormService } from 'src/app/core/services/form.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { ControlMaxDate } from 'src/app/core/interfaces/helpers.interface';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-date',
@@ -14,7 +15,7 @@ export class DateComponent implements OnChanges, OnInit {
   @Input() private validators = null;
   @Input() private defaultValue = null;
   @Output() private onClose = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
   @Input() group: UntypedFormGroup = null;
   @Input() controlName = 'date';
@@ -115,7 +116,7 @@ export class DateComponent implements OnChanges, OnInit {
     return this.inputField && (this.inputField.touched || this.inputField.dirty);
   }
 
-  onClosed($event: Event) {
+  onClosed($event: Event = null) {
     this.resetError($event);
     this.onClose.emit($event);
   }

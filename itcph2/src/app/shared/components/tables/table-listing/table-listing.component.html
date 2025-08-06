@@ -1,6 +1,6 @@
 <div class="table-listing">
   <ng-container *ngIf="!hideSearchbar">
-    <app-listing-searchbar [group]="group" [searchGroup]="group.get('searchbar')" [sortOptions]="sortOptions"
+    <app-listing-searchbar [group]="group" [searchGroup]="searchbarGroup" [sortOptions]="sortOptions"
       [searchTemplate]="searchTemplate" [selectedRecords]="selectedRecords" [actions]="actions"
       [showPagination]="showPagination" (onAction)="onSearchAction($event)">
     </app-listing-searchbar>

@@ -54,6 +54,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   errorMessages = {
     branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
   };
+  searchbarForm: UntypedFormGroup;
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private listingService: ListingService,
     private locationOnMapModalService: LocationOnMapModalService, private loaderService: LoaderService,
@@ -79,6 +80,8 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
       }),
       sort: [''],
     });
+
+    this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.subscription.push(
       this.translate.get(this.branchSelectError)

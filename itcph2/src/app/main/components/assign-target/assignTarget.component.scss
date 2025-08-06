@@ -1,4 +1,5 @@
 $white: #fff;
+$white2: #ecf0f2;
 $green: #767676;
 $whitish1: #f9f9f9;
 $whitish2: #ddd;
@@ -30,18 +31,19 @@ $steelblue: #4682b4;
   }
 }
 
+// sass-lint:disable no-universal-selectors
 .table> :not(caption)>*>* {
-  padding: 0.3rem 0.6rem !important;
+  padding: .3rem .6rem !important;
 }
 
+// sass-lint:enable no-universal-selectors
 
 .bg-light-gray {
-  background-color: #ecf0f2ca;
-  /* Light gray */
+  background-color: $white2;
 }
 
 .bg-white {
-  background-color: white;
+  background-color: $white;
 }
 
 .fix-width {

@@ -37,6 +37,7 @@ export const environment = {
   getBinderReportDataUrl: baseUrl + 'getBinderReportData.json',
   getCaptchaUrl: baseUrl + 'getCaptcha.json',
   // getDashboardDataUrl: baseUrl + 'getDashboardData.json',
+  getEvaluationReportDataUrl: baseUrl + 'getEvaluationReportData.json',
   getGroupDataUrl: baseUrl + 'getGroupData.json',
   getListingExcelUrl: baseUrl + 'getListingExcel.json',
   getLocationsCoveredDataUrl: baseUrl + 'getLocationsCoveredData.json',
