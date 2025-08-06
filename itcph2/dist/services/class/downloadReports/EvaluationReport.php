@@ -862,8 +862,9 @@ class EvaluationReport
 
         // Create header
         $arrSummary["sale"][0] = [
-            "Region",
+            "District",
             "Branch",
+            "Region",
             "Circle",
             "Section",
             "WD Code",
@@ -903,7 +904,7 @@ class EvaluationReport
                     }
                 }
                 $teamTypeWhere = $where;
-                $sQuery = "SELECT a.route, a.activity_date, a.total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId AND b.is_type = '$currentTeamType' $dateCond $teamTypeWhere GROUP BY a.team_id ORDER BY b.team_name";
+                $sQuery = "SELECT a.route, a.activity_date, a.total_sellin_shops, a.total_sales_deliveries, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId AND b.is_type = '$currentTeamType' $dateCond $teamTypeWhere GROUP BY a.team_id ORDER BY b.team_name";
                 $rsAction = null;
                 $iRows = 0;
                 $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
@@ -916,8 +917,9 @@ class EvaluationReport
                     while ($row = $this->_dbConn->GetData($rsAction)) {
                         $routeName = $row["route"];
                         $teamId = $row["team_id"];
-                        $sellInShops = $row["total_sellin_shops"];
-                        $routeQuery = "SELECT DISTINCT a.route FROM $summaryTable as a WHERE a.dstatus = 0 AND a.team_id = $teamId $dateCond";
+                        $sellInShops = $row["total_sales_deliveries"];
+                        $activity_date = $row["activity_date"];
+                        $routeQuery = "SELECT  a.route FROM $summaryTable as a WHERE a.dstatus = 0 AND a.team_id = $teamId AND a.activity_date = '$activity_date'";
                         $this->_dbConn->ExecuteSelectQuery($routeQuery, $rsRoutes, $iRows);
 
                         $totalPlannedOutlet = 0;
@@ -943,20 +945,22 @@ class EvaluationReport
                             $district = $arrBranchDetails[$branchIndex][3];
                         }
 
-                        $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                        $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 IN ('Outlet Order','Outlet Survey') AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                         $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
 
                         $wdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_pop_group, wd_firm_name, wd_market", "wd_code = '$wdCode' AND dstatus = '0'");
                         $wdPopGroup = $wdDetails[0] ?? '';
                         $wdFirmName = $wdDetails[1] ?? '';
                         $wdMarket = $wdDetails[2] ?? '';
-                        $score = ($sellInShops > 0 && $totalPlannedOutlet > 0) ? round(($sellInShops / $totalPlannedOutlet) * 100, 2) : 0;
+                        $scoreBilled = ($sellInShops > 0 && $totalPlannedOutlet > 0) ? round(($sellInShops / $totalPlannedOutlet) * 100, 0) : 0;
                         $totalShops = $orderShop + $addShop;
+                        $scoreVisit = ($totalShops > 0 && $totalPlannedOutlet > 0) ? round(($totalShops / $totalPlannedOutlet) * 100, 0) : 0;
 
                         // Common row data
                         $rowData = [
                             $district,
                             $mainBranch,
+                            $branchName,
                             $row["circle"],
                             $row["section"],
                             $row["wd_code"],
@@ -969,9 +973,9 @@ class EvaluationReport
                         ];
 
                         // Add rows for each evaluation criteria
-                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Visit", "", $totalShops, $totalPlannedOutlet, $score]);
+                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Visit", "", $totalShops, $totalPlannedOutlet, $scoreVisit . "%"]);
                         $index++;
-                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Billed", "", $sellInShops, $totalPlannedOutlet, $score]);
+                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Billed", "", $sellInShops, $totalPlannedOutlet, $scoreBilled . "%"]);
                         $index++;
 
                         // Focus Brand Billed - ALWAYS show if there are focus products for this team type
@@ -980,24 +984,40 @@ class EvaluationReport
                             $focusOutletCount = 0;
 
                             // Calculate total focus brand sales and outlet count
+                            // Build SQL expression to sum all product columns
+                            $productSumParts = [];
                             foreach ($arrProductBought as $arrProduct) {
-                                $productName = strtoupper($arrProduct[0]);
+                                $productColumnName = $arrProduct[1];
+                                $productSumParts[] = "IFNULL($productColumnName, 0)";
+                            }
+                            $productSumExpr = implode(" + ", $productSumParts);
+
+                            // Get outlet count where total sum of products > $billedVal
+                            $focusOutletCount = getRowColumn(
+                                $this->_dbConn,
+                                $respTable,
+                                "COUNT(DISTINCT ques_3)",
+                                "ques_0 IN ('Outlet Order','Outlet Survey') AND ($productSumExpr) > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
+                            );
+
+                            // Optionally calculate total focus brand billed in PHP (optional if needed)
+                            $focusBrandBilled = 0;
+                            foreach ($arrProductBought as $arrProduct) {
                                 $productColumnName = $arrProduct[1];
                                 $iSale = floatval($row[$productColumnName] ?? 0);
                                 if ($iSale > $billedVal) {
                                     $focusBrandBilled += $iSale;
-                                    $focusOutletCount = getRowColumn(
-                                        $this->_dbConn,
-                                        $respTable,
-                                        "COUNT(DISTINCT ques_3)",
-                                        "ques_0 = 'Outlet Order' AND $productColumnName > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
-                                    );
                                 }
                             }
 
-                            $focusScore = ($focusBrandBilled > 0 && $totalPlannedOutlet > 0) ? round(($focusBrandBilled / $totalPlannedOutlet) * 100, 2) : 0;
+                            // Focus Score
+                            $focusScore = ($focusOutletCount > 0 && $totalPlannedOutlet > 0)
+                                ? round(($focusOutletCount / $totalPlannedOutlet) * 100, 0)
+                                : 0;
 
-                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "", $focusOutletCount, $totalPlannedOutlet, $focusScore]);
+                            // Add to summary
+                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "", $focusOutletCount, $totalPlannedOutlet, $focusScore . "%"]);
+
                             $index++;
 
                             $proCount = 1;
@@ -1005,20 +1025,20 @@ class EvaluationReport
                                 $productName = strtoupper($arrProduct[0]);
                                 $productColumnName = $arrProduct[1];
                                 $iSale = floatval($row[$productColumnName] ?? 0);
-                                $productScore = ($iSale > 0 && $totalPlannedOutlet > 0) ? round(($iSale / $totalPlannedOutlet) * 100, 2) : 0;
                                 $outletCount = 0;
-
+                                $productScore = 0;
                                 if ($iSale > $billedVal) {
                                     $outletCount = getRowColumn(
                                         $this->_dbConn,
                                         $respTable,
                                         "COUNT(DISTINCT ques_3)",
-                                        "ques_0 = 'Outlet Order' AND $productColumnName > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
+                                        "ques_0 IN ('Outlet Order','Outlet Survey') AND $productColumnName > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
                                     );
+                                    $productScore = ($outletCount > 0 && $totalPlannedOutlet > 0) ? round(($outletCount / $totalPlannedOutlet) * 100, 0) : 0;
                                 }
 
                                 // Always add product row (even if 0 sales) - SHOW PRODUCT NAME
-                                $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand $proCount Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore]);
+                                $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand $proCount Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore . "%"]);
                                 $proCount++;
                                 $index++;
                             }
