@@ -1042,7 +1042,7 @@ class EvaluationReport
                                 }
 
                                 // Always add product row (even if 0 sales) - SHOW PRODUCT NAME
-                                $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand $proCount Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore]);
+                                $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand $proCount Billed", $productName, $outletCount, $totalPlannedOutlet, $productScore . "%"]);
                                 $proCount++;
                                 $index++;
                             }
