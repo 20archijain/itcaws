@@ -834,11 +834,19 @@ class EvaluationReport
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
         $where = "";
         $dateCond = "";
+        $dateCond2 = "";
         $where .= $this->getCondition(true);
         $dateCond .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
             array(
                 "dateFrom" => array("a.activity_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+        $dateCond2 .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("capture_date", 2, "dateTo"),
             ),
             $this->_dbConn
         );
@@ -917,20 +925,20 @@ class EvaluationReport
                     while ($row = $this->_dbConn->GetData($rsAction)) {
                         $routeName = $row["route"];
                         $teamId = $row["team_id"];
-                        $sellInShops = $row["total_sales_deliveries"];
+                        // $sellInShops = $row["total_sales_deliveries"];
                         $activity_date = $row["activity_date"];
-                        $routeQuery = "SELECT  a.route FROM $summaryTable as a WHERE a.dstatus = 0 AND a.team_id = $teamId AND a.activity_date = '$activity_date'";
+                        $routeQuery = "SELECT  a.route FROM $summaryTable as a WHERE a.dstatus = 0 AND a.team_id = $teamId $dateCond";
                         $this->_dbConn->ExecuteSelectQuery($routeQuery, $rsRoutes, $iRows);
 
                         $totalPlannedOutlet = 0;
                         if ($iRows > 0) {
                             while ($routeRow = $this->_dbConn->GetData($rsRoutes)) {
-                                $routeName = $routeRow["route"];
+                                $route = $routeRow["route"];
                                 $plannedOutletCount = getRowColumn(
                                     $this->_dbConn,
                                     $routeTable,
                                     "COUNT(shop_uniq_code)",
-                                    "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId"
+                                    "dstatus = '0' AND route_name = '$route' AND team_id = $teamId"
                                 );
                                 $totalPlannedOutlet += intval($plannedOutletCount);
                             }
@@ -945,16 +953,17 @@ class EvaluationReport
                             $district = $arrBranchDetails[$branchIndex][3];
                         }
 
-                        $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 IN ('Outlet Order','Outlet Survey') AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
-                        $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                        $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 IN ('Outlet Order','Outlet Survey') AND dstatus = '0' $dateCond2 AND team_id = $teamId");
+                        $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' $dateCond2 AND team_id = $teamId");
+                        $sellInShops = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' $dateCond2 AND team_id = $teamId");
 
                         $wdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_pop_group, wd_firm_name, wd_market", "wd_code = '$wdCode' AND dstatus = '0'");
                         $wdPopGroup = $wdDetails[0] ?? '';
                         $wdFirmName = $wdDetails[1] ?? '';
                         $wdMarket = $wdDetails[2] ?? '';
-                        $scoreBilled = ($sellInShops > 0 && $totalPlannedOutlet > 0) ? round(($sellInShops / $totalPlannedOutlet) * 100, 0) : 0;
+                        $scoreBilled = ($sellInShops > 0 && $totalPlannedOutlet > 0) ? round(($sellInShops / $totalPlannedOutlet), 4) : 0;
                         $totalShops = $orderShop + $addShop;
-                        $scoreVisit = ($totalShops > 0 && $totalPlannedOutlet > 0) ? round(($totalShops / $totalPlannedOutlet) * 100, 0) : 0;
+                        $scoreVisit = ($totalShops > 0 && $totalPlannedOutlet > 0) ? round(($totalShops / $totalPlannedOutlet), 4) : 0;
 
                         // Common row data
                         $rowData = [
@@ -973,18 +982,15 @@ class EvaluationReport
                         ];
 
                         // Add rows for each evaluation criteria
-                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Visit", "", $totalShops, $totalPlannedOutlet, $scoreVisit . "%"]);
+                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Visit", "", $totalShops, $totalPlannedOutlet, $scoreVisit]);
                         $index++;
-                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Billed", "", $sellInShops, $totalPlannedOutlet, $scoreBilled . "%"]);
+                        $arrSummary["sale"][$index] = array_merge($rowData, ["Overall Billed", "", $sellInShops, $totalPlannedOutlet, $scoreBilled]);
                         $index++;
 
                         // Focus Brand Billed - ALWAYS show if there are focus products for this team type
                         if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                             $focusBrandBilled = 0;
                             $focusOutletCount = 0;
-
-                            // Calculate total focus brand sales and outlet count
-                            // Build SQL expression to sum all product columns
                             $productSumParts = [];
                             foreach ($arrProductBought as $arrProduct) {
                                 $productColumnName = $arrProduct[1];
@@ -1011,12 +1017,10 @@ class EvaluationReport
                             }
 
                             // Focus Score
-                            $focusScore = ($focusOutletCount > 0 && $totalPlannedOutlet > 0)
-                                ? round(($focusOutletCount / $totalPlannedOutlet) * 100, 0)
-                                : 0;
+                            $focusScore = ($focusOutletCount > 0 && $totalPlannedOutlet > 0) ? round(($focusOutletCount / $totalPlannedOutlet), 4) : 0;
 
                             // Add to summary
-                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "", $focusOutletCount, $totalPlannedOutlet, $focusScore . "%"]);
+                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "", $focusOutletCount, $totalPlannedOutlet, $focusScore]);
 
                             $index++;
 
@@ -1034,7 +1038,7 @@ class EvaluationReport
                                         "COUNT(DISTINCT ques_3)",
                                         "ques_0 IN ('Outlet Order','Outlet Survey') AND $productColumnName > $billedVal AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
                                     );
-                                    $productScore = ($outletCount > 0 && $totalPlannedOutlet > 0) ? round(($outletCount / $totalPlannedOutlet) * 100, 0) : 0;
+                                    $productScore = ($outletCount > 0 && $totalPlannedOutlet > 0) ? round(($outletCount / $totalPlannedOutlet), 4) : 0;
                                 }
 
                                 // Always add product row (even if 0 sales) - SHOW PRODUCT NAME
@@ -1044,7 +1048,7 @@ class EvaluationReport
                             }
                         } else {
                             // If no focus products defined for this team type, still show a placeholder
-                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "No Focus Products Defined", 0, $totalPlannedOutlet, 0]);
+                            $arrSummary["sale"][$index] = array_merge($rowData, ["Focus Brand Billed", "No Focus Products", 0, $totalPlannedOutlet, 0]);
                             $index++;
                         }
                     }
