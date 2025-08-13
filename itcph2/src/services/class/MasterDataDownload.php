@@ -5,113 +5,25 @@ require $PHP_SPREADSHEET_PATH;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Writer\Exception;
 
 // phpcs:ignore
-class MasterDataDownload
+class ActiveSKUReporting
 {
     private $_dbConn = null;
     private $_data = null;
-    private $_tables = [];
-    private $projectId = 1;
-    private $_arrAccessInfo = [];
     private $_iUserId = null;
+    private $_arrAccessInfo = [];
+    private $_tables = [];
 
-    public function __construct($dbConn, $data, $arrAccessInfo, $iUserId)
+
+    public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
         $this->_dbConn = $dbConn;
-        $this->_tables = $GLOBALS['TABLES'];
-        $this->_arrAccessInfo = $arrAccessInfo;
         $this->_iUserId = $iUserId;
+        $this->_arrAccessInfo = $arrAccessInfo;
+        $this->_tables = $GLOBALS['TABLES'];
     }
-
-    // private function getCondition()
-    // {
-    //     $where = "";
-    //     $branch = getFormData($this->_data, "branch");
-    //     $type = getFormData($this->_data, "dsType");
-    //     $team = getFormData($this->_data, "dsName");
-    //     $circle = getFormData($this->_data, "circle");
-    //     $section = getFormData($this->_data, "section");
-    //     $wdCode = getFormData($this->_data, "wdCode");
-
-    //     $teamList = $this->_arrAccessInfo["user_teams"];
-    //     if ($teamList) {
-    //         $where .= " AND a.team_id IN $teamList";
-    //     }
-
-    //     if ($branch) {
-    //         $branch = getFormData($branch);
-    //         $matchAll = checkIfAllSelected($branch);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($branch)) {
-    //                 $branch = "'" . implode("','", $branch) . "'";
-    //                 $where .= " AND c.branch_id IN ($branch)";
-    //             } else {
-    //                 $where .= " AND c.branch_id = '$branch'";
-    //             }
-    //         }
-    //     }
-    //     if ($circle) {
-    //         $matchAll = checkIfAllSelected($circle);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($circle)) {
-    //                 $circle = "'" . implode("','", $circle) . "'";
-    //                 $where .= " AND b.circle IN ($circle)";
-    //             } else {
-    //                 $where .= " AND b.circle = '$circle'";
-    //             }
-    //         }
-    //     }
-    //     if ($section) {
-    //         $matchAll = checkIfAllSelected($section);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($section)) {
-    //                 $section = "'" . implode("','", $section) . "'";
-    //                 $where .= " AND b.section IN ($section)";
-    //             } else {
-    //                 $where .= " AND b.section = '$section'";
-    //             }
-    //         }
-    //     }
-    //     if ($wdCode) {
-    //         $matchAll = checkIfAllSelected($wdCode);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($wdCode)) {
-    //                 $wdCode = "'" . implode("','", $wdCode) . "'";
-    //                 $where .= " AND b.wd_code IN ($wdCode)";
-    //             } else {
-    //                 $where .= " AND b.wd_code = '$wdCode'";
-    //             }
-    //         }
-    //     }
-    //     if ($type) {
-    //         $matchAll = checkIfAllSelected($type);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($type)) {
-    //                 $type = "'" . implode("','", $type) . "'";
-    //                 $where .= " AND b.is_type IN ($type)";
-    //             } else {
-    //                 $where .= " AND b.is_type = '$type'";
-    //             }
-    //         }
-    //     }
-    //     if ($team) {
-    //         $team = getFormData($team);
-    //         $matchAll = checkIfAllSelected($team);
-    //         if (!$matchAll) {
-    //             if (isNonEmptyArray($team)) {
-    //                 $team = implode(",", $team);
-    //                 $where .= " AND a.team_id IN ($team)";
-    //             } else {
-    //                 $where .= " AND a.team_id = $team";
-    //             }
-    //         }
-    //     }
-
-    //     return $where;
-    // }
 
     //SEARCH CONDITION
     private function getCondition()
@@ -120,811 +32,195 @@ class MasterDataDownload
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
             array(
-                // "dateFrom" => array($capDate, 4, "dateTo", true),
-                "district" => array("c.district", 0, true, true),
-                "branch" => array("b.branch_id", 0, true, true),
-                "circle" => array("b.circle", 0, true, true),
-                "section" => array("b.section", 0, true, true),
-                "dsName" => array("b.team_id", 0, true, true),
-                "wdCode" => array("b.wd_code", 0, true, true),
-                "wdMarket" => array("d.wd_market", 0, true, true),
-                "wdPopGroup" => array("d.wd_pop_group", 0, true, true),
-                // "dsType" => array("a.is_type", ),
+                "branch" => array("a.branch_id", 0, true, true),
+                "dsType" => array("a.team_type", 1),
             ),
             $this->_dbConn
         );
 
-        $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
-        if (isset($teamType) && $teamType != "" && $teamType >= 0) {
-            $matchAll = checkIfAllSelected($teamType);
-            if (!$matchAll) {
-                if (isNonEmptyArray($teamType)) {
-                    $teamTypes = "'" . implode("','", $teamType) . "'";
-                    $searchCond .= " AND b.is_type IN ($teamTypes)";
-                } else {
-                    $searchCond .= " AND b.is_type = $teamType";
-                }
-            }
-        }
-
         return $searchCond;
     }
 
-
-    final public function getDistrictList()
+    // MASTER DATA
+    final public function getViewSKUData()
     {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.district";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['district'],
-                    "value" => $row['district']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getBranchList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all",
-        );
-
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        // echo $where;die;
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.branch_name";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['branch_name'],
-                    "value" => $row['branch_id'],
-                    "mainBranch" => $row['main_branch']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getCircleList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.circle";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['circle'] . " - " . $row['circle_name'],
-                    "value" => $row['circle']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getSectionList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.section";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['section'] . " - " . $row['section_name'],
-                    "value" => $row['section']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-
-    final public function getWdCodeList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.wd_code";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
-                    "value" => $row['wd_code']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-
-    final public function getWdMarketList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_market";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['wd_market'],
-                    "value" => $row['wd_market']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getWdPopGroupList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_pop_group";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['wd_pop_group'],
-                    "value" => $row['wd_pop_group']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-
-    final public function getDsTypeList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $teamType = "";
-                if ($row['is_type'] == 0) {
-                    $teamType = "DS";
-                } elseif ($row['is_type'] == 1) {
-                    $teamType = "Niche";
-                } elseif ($row['is_type'] == 2) {
-                    $teamType = "Town SWD";
-                } elseif ($row['is_type'] == 3) {
-                    $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
-                } elseif ($row['is_type'] == 5) {
-                    $teamType = "NPSR";
-                }
-                $arrData[] = array(
-                    "label" => $teamType,
-                    "value" => $row['is_type']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-
-    final public function getTeamsList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $teamList = $this->_arrAccessInfo["user_teams"];
-        $where = "";
-        if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
-        }
-
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '99' $where order by b.team_name";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['team_name'],
-                    "value" => $row['team_id']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getBranch($district = "district")
-    {
-        $district = $this->_data['district'];
-        $districtCond = "";
-        if (!empty($district)) {
-            if (!is_array($district)) {
-                $district = array($district);
-            }
-            if (in_array('all', $district)) {
-                $districtCond = ""; // No condition for 'all'
-            } else {
-                $district = "'" . implode("','", $district) . "'";
-                $districtCond = " AND a.district IN ($district)";
-            }
-
-            $arrResult = array(
-                "branchList" => $this->getBranchList($districtCond),
-                "circleList" => $this->getCircleList($districtCond),
-                "sectionList" => $this->getSectionList($districtCond),
-                "wdCodeList" => $this->getWdCodeList($districtCond),
-                "teamType" => $this->getDsTypeList($districtCond),
-                "teamList" => $this->getTeamsList($districtCond),
-                "wdMarketList" => $this->getWdMarketList($districtCond),
-                "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+        $authDetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
+        $user_id = $this->_iUserId;
+        $groupId = getRowColumn($this->_dbConn, $authDetailsTable, "group_id", "user_id = $user_id");
+        if ($groupId == 1 || $groupId == 2) {
+            $branchList = getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch");
+            $branchFilter = true;
         } else {
-            $arrResult = array(
-                "branchList" => "",
-                "circleList" => "",
-                "sectionList" => "",
-                "wdCodeList" => "",
-                "teamType" => "",
-                "teamList" => "",
-                "wdMarketList" => "",
-                "wdPopGroupList" => "",
-            );
+            $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
+            $branchFilter = true;
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-
-    final public function getCircle($branch = "branch_id")
-    {
-        $branch = $this->_data['branch'];
-        $branchCond = "";
-        if ($branch) {
-            if (!is_array($branch)) {
-                $branch = array($branch);
-            }
-            if (in_array('all', $branch)) {
-                $branchCond = ""; // No condition for 'all'
-            } else {
-                $branch = "'" . implode("','", $branch) . "'";
-                $branchCond = " AND a.branch_id IN ($branch)";
-            }
-
-            $arrResult = array(
-                "circleList" => $this->getCircleList($branchCond),
-                "sectionList" => $this->getSectionList($branchCond),
-                "wdCodeList" => $this->getWdCodeList($branchCond),
-                "teamType" => $this->getDsTypeList($branchCond),
-                "teamList" => $this->getTeamsList($branchCond),
-                "wdMarketList" => $this->getWdMarketList($branchCond),
-                "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
-        } else {
-            $arrResult = array(
-                "circleList" => "",
-                "sectionList" => "",
-                "wdCodeList" => "",
-                "teamType" => "",
-                "teamList" => "",
-                "wdMarketList" => "",
-                "wdPopGroupList" => "",
-            );
-        }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-    final public function getSection($circle = "circle")
-    {
-        $circle = $this->_data['circle'];
-        $circleCond = "";
-        if ($circle) {
-            if ($circle) {
-                if (!is_array($circle)) {
-                    $circle = array($circle);
-                }
-                if (in_array('all', $circle)) {
-                    $circleCond = ""; // No condition for 'all'
-                } else {
-                    $circle = "'" . implode("','", $circle) . "'";
-                    $circleCond = " AND b.circle IN ($circle)";
-                }
-            }
-            $arrResult = array(
-                "sectionList" => $this->getSectionList($circleCond),
-                "wdCodeList" => $this->getWdCodeList($circleCond),
-                "teamType" => $this->getDsTypeList($circleCond),
-                "teamList" => $this->getTeamsList($circleCond),
-                "wdMarketList" => $this->getWdMarketList($circleCond),
-                "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
-        } else {
-            $arrResult = array(
-                "teamType" => "",
-                "sectionList" => "",
-                "wdCodeList" => "",
-                "teamList" => "",
-                "wdMarketList" => "",
-                "wdPopGroupList" => "",
-            );
-        }
-
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-    final public function getWDCode($section = "section")
-    {
-        $section = $this->_data['section'];
-        $sectionCond = "";
-        if ($section) {
-            if ($section) {
-                if (!is_array($section)) {
-                    $section = array($section);
-                }
-                if (in_array('all', $section)) {
-                    $sectionCond = ""; // No condition for 'all'
-                } else {
-                    $section = "'" . implode("','", $section) . "'";
-                    $sectionCond = " AND b.section IN ($section)";
-                }
-            }
-
-            $arrResult = array(
-                "wdCodeList" => $this->getWdCodeList($sectionCond),
-                "teamType" => $this->getDsTypeList($sectionCond),
-                "teamList" => $this->getTeamsList($sectionCond),
-                "wdMarketList" => $this->getWdMarketList($sectionCond),
-                "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
-        } else {
-            $arrResult = array(
-                "teamType" => "",
-                "wdCodeList" => "",
-                "teamList" => "",
-                "wdMarketList" => "",
-                "wdPopGroupList" => "",
-            );
-        }
-
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-    final public function getTeamType()
-    {
-        $wdCode = $this->_data['wdCode'];
-        $wdCodeCond = "";
-        if ($wdCode) {
-            if ($wdCode) {
-                if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
-                }
-                if (in_array('all', $wdCode)) {
-                    $wdCodeCond = ""; // No condition for 'all'
-                } else {
-                    $wdCode = "'" . implode("','", $wdCode) . "'";
-                    $wdCodeCond = " AND b.wd_code IN ($wdCode)";
-                }
-            }
-            $arrResult = array(
-                "teamType" => $this->getDsTypeList($wdCodeCond),
-                "teamList" => $this->getTeamsList($wdCodeCond),
-            );
-        } else {
-            $arrResult = array(
-                "teamType" => "",
-                "teamList" => "",
-            );
-        }
-
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-    final public function getTeamList()
-    {
-        $dsType = $this->_data['dsType'];
-        $dsTypeCond = "";
-        if (isset($dsType) && $dsType != "" && $dsType >= 0) {
-            if (!is_array($dsType)) {
-                $dsType = array($dsType);
-            }
-            if (in_array('all', $dsType)) {
-                $dsTypeCond = ""; // No condition for 'all'
-            } else {
-                $dsType = "'" . implode("','", $dsType) . "'";
-                $dsTypeCond = " AND b.is_type IN ($dsType)";
-            }
-            $arrResult = array(
-                "teamList" => $this->getTeamsList($dsTypeCond),
-            );
-        } else {
-            $arrResult = array(
-                "teamList" => "",
-            );
-        }
-
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        echo json_encode($arrMessage);
-    }
-
-    final public function getData()
-    {
-        // $rsAction = null;
-        // $iRows = 0;
-        // $arrBranch = [];
-        // $project = 1;
-
-        // $sAllowedProjects = $GLOBALS["arrAccessInfo"]["user_projects"];
-        // $sAllowedTeams = $GLOBALS["arrAccessInfo"]["user_teams"];
-
-        // $where = "";
-        // if ($sAllowedProjects) {
-        //     $where = " AND project_id IN $sAllowedProjects";
-        // }
-        // if ($project) {
-        //     $where .= $where ? " AND project_id = $project" : " AND project_id = $project";
-        // }
-        // if ($sAllowedTeams) {
-        //     $where .= $where ? " AND team_id IN $sAllowedTeams" : "team_id IN $sAllowedTeams";
-        // }
-
-        // $sQuery = "SELECT DISTINCT a.main_branch FROM tblbranch AS a, tblproject_team AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id $where ORDER BY a.main_branch DESC";
-        // $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-
-        // if ($iRows > 0) {
-        //     while ($row = $this->_dbConn->GetData($rsAction)) {
-        //         $arrBranch[] = array(
-        //             "label" => $row['main_branch'],
-        //             "value" => $row['main_branch'],
-        //         );
-        //     }
-        // }
-        // $authDetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
-        // $user_id = $this->_iUserId;
-        // $groupId = getRowColumn($this->_dbConn, $authDetailsTable, "group_id", "user_id = $user_id");
-        // if ($groupId == 1) {
-        //     $branchList = getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch");
-        //     $branchFilter = true;
-        // } elseif ($groupId == 2) {
-        //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
-        //     $branchFilter = true;
-        // } else {
-        //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
-        //     $branchFilter = false;
-        // }
-
         $arrResult = array(
-            "branchFilter" => true,
-            "districtList" => $this->getDistrictList(),
-            "branchList" => $this->getBranchList(),
-            "circleList" => $this->getCircleList(),
-            "sectionList" => $this->getSectionList(),
-            "wdCodeList" => $this->getWdCodeList(),
-            "teamType" => $this->getDsTypeList(),
-            "teamList" => $this->getTeamsList(),
-            "wdMarketList" => $this->getWdMarketList(),
-            "wdPopGroupList" => $this->getWdPopGroupList(),
-            "monthList" => getMonthList(),
-            "yearList" => getYearList(),
+            "branchFilter" => $branchFilter,
+            // Don't use dstatus = 0
+            "branchList" => $branchList,
+            "dsTypeList" => getTeamType($this->_dbConn),
+            "isSelectable" => false,
+            "sortOptions" => array(
+                array("label" => "Focus Brand", "value" => "a.is_focusbrand"),
+                array("label" => "DS Type", "value" => "a.team_type"),
+                array("label" => "SKU Name", "value" => "a.product_name"),
+            ),
+            "viewHeader" => array(
+                "app.reporting.activeUSers.branch",
+                "app.reporting.activeUSers.region",
+                "app.reporting.activeUSers.dsType",
+                "app.reporting.activeUSers.focusBrand",
+                "app.reporting.activeUSers.skucategory",
+                "app.reporting.activeUSers.skuName",
+                "app.reporting.activeUSers.baseRate",
+            ),
+            "viewBody" => array(
+                "region",
+                "branchName",
+                "dsType",
+                "focusBrand",
+                "category",
+                "skuName",
+                "prodRate",
+            ),
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
-    final public function getMasterData()
+    //DS DETAILS
+    final public function viewSKUData()
     {
-        $where = $this->getCondition();
-        $respTable = getRespTable(1, $this->projectId);
-
-        $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        $searchCondition = $this->getCondition();
+        $where = "";
+        $branchCond = "";
+        $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
-        $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
 
-        // Get month and year from form data
-        $month = getFormData($this->_data, "month");
-        $month = $month ? $month : "";
-        $year = getFormData($this->_data, "year");
-
-        $arrHeader = array(
-            "Rec Id",
-            "DS Id",
-            "DS Name",
-            "District",
-            "Branch",
-            "Region",
-            "Circle",
-            "Section",
-            "WD Code",
-            "WD Town",
-            "State",
-            "District",
-            "Sub District GOI",
-            "Week Day",
-            "Route Name",
-            "Market Name",
-            "GOI Market Id",
-            "Outlet Name",
-            "Outlet Mobile",
-            "Goi Pop Group",
-            "DS Sify Id",
-            "DS Mobile",
-            "Outlet Type",
-            "Outlet Type",
-            "Outlet ID",
-            "Lt",
-            "Lg",
-            "Outlet Last Visited"
-        );
-
-        $captureDateCondition = "";
-        if ($year && $month) {
-            $firstDate = "$year-$month-01";
-            $lastDate = date("Y-m-t", strtotime($firstDate)); // Gets the last date of the month
-            $captureDateCondition = "capture_date BETWEEN '$firstDate' AND '$lastDate'";
-            $arrHeader[] = "No of Times Visited";
+        // order by condition
+        $sOrderCond = getOrderByCond("a.rcd", $this->_data["sort"]);
+        // user has some specific permission
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        if ($teamList) {
+            $where .= " AND team_id IN $teamList";
+            $branchIds = getRowsColumn($this->_dbConn, $projectTeamTable, "branch_id", "dstatus = 0 $where", array(), true);
+            if (isNonEmptyArray($branchIds)) {
+                if (!is_array($branchIds)) {
+                    $branchIds = array($branchIds);
+                }
+                $branchIds = "'" . implode("','", $branchIds) . "'";
+                $branchCond .= " AND b.branch_id IN ($branchIds)";
+            }
         }
 
-        $arrData = array();
+
+        // Don't use b.dstatus = 0
+        $sAction = null;
         $iRows = 0;
-        $rsAction = null;
+        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $focusType = array(0 => "No", 1 => "Yes");
+        $sQuery = "SELECT a.branch_id, a.team_type, a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b" .
+            " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id $branchCond  $searchCondition $sOrderCond";
+        $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
+        $sQuery .= " " . $limit["limit"];
 
-        $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
-
-        $sQuery = "SELECT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code" .
-            ", a.lt, a.lg, a.team_id, b.team_name, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
-        $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $route_name = $row["route_name"];
-                $shopId = $row["rec_id"];
-                $arrParts = explode('_', $route_name);
-                $dayName = isset($arrParts[0]) ? $arrParts[0] : "";
+            while ($arrData = $this->_dbConn->GetData($sAction)) {
+                // $teamId = $arrData["branch_id"];
+                $focusBrand = $arrData["is_focusbrand"];
+                $dsType = $arrData["team_type"];
+                $category = $arrData["category_name"];
+                $skuName = $arrData["product_name"];
+                $mainBranch = $arrData["main_branch"];
+                $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
+                $prodRate = $arrData["net_rate"];
 
-                //$outletType = $row["outlet_type"];
-                // $cond = $outletType == 'ROC' ? "AND JSON_CONTAINS(ques_2, '\"$shopId\"')" : "AND ques_3 = '$shopId'";
-                $cond = "AND ques_3 = '$shopId'";
-
-                if ($captureDateCondition) {
-                    $arrDataLastVisitedAndCountofVisited = getRowColumns(
-                        $this->_dbConn,
-                        $respTable,
-                        "MAX(capture_date), COUNT(pro_id)",
-                        "dstatus = 0 $cond AND $captureDateCondition"
-                    );
-                    $noOfTimesVisited = isset($arrDataLastVisitedAndCountofVisited[1]) ?
-                        $arrDataLastVisitedAndCountofVisited[1] : 0;
-                } else {
-                    $arrDataLastVisitedAndCountofVisited = getRowColumns(
-                        $this->_dbConn,
-                        $respTable,
-                        "MAX(capture_date)",
-                        "dstatus = 0 $cond"
-                    );
-                    $noOfTimesVisited = ""; // No value when month is not selected
-                }
-
-                $rowData = array(
-                    $row["rec_id"],
-                    $row["team_id"],
-                    $row["team_name"],
-                    $row["main_branch"],
-                    $row["district"],
-                    $row["branch_name"],
-                    $row["circle"],
-                    $row["section"],
-                    $row["wd_code"],
-                    $row["wd_town"],
-                    $row["state"],
-                    $row["district"],
-                    $row["sub_district_goi"],
-                    $dayName,
-                    $route_name,
-                    $row["market_name"],
-                    $row["goi_market_id"],
-                    $row["outlet_name"],
-                    $row["outlet_mobile"],
-                    $row["goi_pop_group"],
-                    $row["ds_sify_id"],
-                    $row["ds_mobile"],
-                    $row["outlet_type"],
-                    $row["shop_type"],
-                    $row["shop_uniq_code"],
-                    $row["lt"],
-                    $row["lg"],
-                    isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : "",
+                $arrResult[] = array(
+                    "branchName" => $arrData["branch_name"],
+                    "region" => $mainBranch,
+                    "dsType" =>  $types[$dsType],
+                    "focusBrand" => $focusType[$focusBrand],
+                    "category" =>  $category,
+                    "skuName" =>  $skuName,
+                    "creationDate" => $creationDate,
+                    "prodRate" => $prodRate,
                 );
-
-                if ($captureDateCondition) {
-                    $rowData[] = $noOfTimesVisited;
-                }
-
-                $arrData[] = $rowData;
             }
         }
 
-        if (!empty($arrData)) {
-            $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
-            array_unshift($arrData, $arrHeader);
-            $sheet->fromArray($arrData);
+        $arrResult[] = array("total" => $limit["total"]);
 
-            // Adjust column width
-            $endColumnName = $sheet->getHighestDataColumn();
-            foreach (range('A', $endColumnName) as $columnID) {
-                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function downloadMasterData()
+    {
+        $dwnCond = $this->getCondition();
+        $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+
+        // order by condition
+        $sOrderCond = getOrderByCond("a.rcd");
+
+        // Don't use a.dstatus = 0 AND c.dstatus = 0
+        $arrExcelData = [];
+        $arrExcelData[] = array("District", "Branch", "Region", "DS Type", "Focus Brand", "SKU Category", "SKU Name", "Base Rate (M)");
+        $arrBody = array();
+        $sAction = null;
+        $iRows = 0;
+        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $focusType = array(0 => "No", 1 => "Yes");
+        $sQuery = "SELECT a.branch_id, a.team_type,a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.district,  b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0  AND a.branch_id = b.branch_id  $dwnCond $sOrderCond";
+
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($arrData = $this->_dbConn->GetData($sAction)) {
+                $focusBrand = $arrData["is_focusbrand"];
+                $dsType = $arrData["team_type"];
+                $district = $arrData["district"];
+                $mainBranch = $arrData["main_branch"];
+                $branchName = $arrData["branch_name"];
+                $categoryName = $arrData["category_name"];
+                $prodName = $arrData["product_name"];
+                $prodRate = $arrData["net_rate"];
+
+                $arrExcelData[] = array(
+                    $district,
+                    $mainBranch,
+                    $branchName,
+                    $types[$dsType],
+                    $focusType[$focusBrand],
+                    $categoryName,
+                    $prodName,
+                    $prodRate,
+                );
             }
-
-            $fileName = "Route_Report_" . date('Y-m-d_H-i-s') . ".xlsx";
-            $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-            $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
-                "filePath" => $downloadFileLocation,
-                "fileName" => $fileName,
-            );
-
-            $writer = new Xlsx($spreadsheet);
-            try {
-                $writer->save($filename);
-                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
-            } catch (Exception $e) {
-                $arrMessage = responseMessage(array($GLOBALS['FILE_NOT_DOWNLOADING']));
-            }
-        } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
         }
+        $currentDateTime = currentDateTime();
+        $fileName = "Active_SKU_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = [
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        ];
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
+        // } else {
+        //     $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+        // }
         echo json_encode($arrMessage);
     }
 }
