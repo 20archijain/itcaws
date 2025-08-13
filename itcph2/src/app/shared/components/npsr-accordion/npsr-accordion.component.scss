@@ -4,6 +4,8 @@ $blue2: #0066b2;
 $blue3: #b8d9f1;
 $black: #000;
 $color0: #8dcaef;
+$colorMonth: #aec7d6;
+$colorWeek: #c2dae9;
 $color1: #217cb5;
 $color2: #5f70b6;
 $color3: #725ca5;
@@ -285,4 +287,36 @@ td {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 1040;
+}
+
+.fixed-table-header {
+  .table {
+    th {
+      &.highlight {
+        background-color: $color0 !important;
+        color: #fff;
+        text-decoration: none;
+        z-index: 1000;
+        // color: white;
+      }
+      &.highlight-month {
+        background-color: $colorMonth !important;
+        color: #fff;
+        text-decoration: none;
+        z-index: 1000;
+        // color: white;
+      }
+      &.highlight-week {
+        background-color: $colorWeek !important;
+        color: #fff;
+        text-decoration: none;
+        z-index: 1000;
+        // color: white;
+      }
+      // &.white-bg-fix {
+      //   background-color: rgba(250,250,250,1) !important;
+      //   // color: white;
+      // }
+    }
+  }
 }

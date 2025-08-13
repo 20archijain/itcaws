@@ -26,15 +26,15 @@
     </div>
 
     <div class="items-center justify-content-center">
-      <div class="table-responsive">
+      <div class="table-responsive fixed-table-header">
         <table class="table table-custom">
           <thead>
             <tr class="table-header size-13">
-              <th class="size-13 p-1 district">District
+              <th class="size-13 p-1 district" [class.highlight]="true">District
               </th>
               <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
                 <th class="size-13 p-1 text-center" (click)="handleHeaderClick(i)"
-                  [@columnAnimation]="getColumnState(i)">
+                  [@columnAnimation]="getColumnState(i)" [class.highlight]="true" >
                   {{ monthYear }}
                 </th>
               </ng-container>
@@ -43,7 +43,7 @@
           <tbody>
             <ng-container *ngFor="let district of monthlySalesData.districtData">
               <tr class=" ">
-                <td class="district-cell" style="position: relative;">
+                <td class="district-cell">
                   <div>
                     <i class="fas fa-caret-{{ district.isExpanded ? 'up' : 'down' }}"
                       (click)="toggleExpand(district, 'district')" style="cursor: pointer; margin-right: 5px;"
@@ -63,7 +63,7 @@
                 </tr>
                 <ng-container *ngFor="let branch of district.branchData">
                   <tr class=" ">
-                    <td class=" nested-table2 branch-cell" style="position: relative;">
+                    <td class=" nested-table2 branch-cell">
                       <div style="margin-left:5px" class="size-10">
                         <i class="fas fa-caret-{{ branch.isExpanded ? 'up' : 'down' }}"
                           (click)="toggleExpand(branch, 'branch')" style="cursor: pointer;"></i>
@@ -82,7 +82,7 @@
                     </tr>
                     <ng-container *ngFor="let circle of branch.circleData">
                       <tr class=" ">
-                        <td class=" nested-table2 circle-cell" style="position: relative;">
+                        <td class=" nested-table2 circle-cell">
                           <div style="margin-left:10px" class="size-10">
                             <i class="fas fa-caret-{{ circle.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
                               (click)="toggleExpand(circle, 'circle')" style="cursor: pointer;">
@@ -101,7 +101,7 @@
                         </tr>
                         <ng-container *ngFor="let section of circle.sectionData">
                           <tr class=" ">
-                            <td class=" section-cell" style="position: relative;">
+                            <td class=" section-cell">
                               <div style="margin-left:15px" class="size-10">
                                 <i class="fas fa-caret-{{ section.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
                                   (click)="toggleExpand(section, 'section')" style="cursor: pointer;">
@@ -120,7 +120,7 @@
                             </tr>
                             <ng-container *ngFor="let wdData of section.wdData">
                               <tr class=" ">
-                                <td class=" wdCode-cell" style="position: relative;">
+                                <td class=" wdCode-cell">
                                   <div style="margin-left:20px" class="size-10">
                                     <i class="fas fa-caret-{{ wdData.isExpanded ? 'up' : 'down' }}" aria-hidden="true"
                                       (click)="toggleExpand(wdData, 'wd')" style="cursor: pointer;">
@@ -139,7 +139,7 @@
                                 </tr>
                                 <ng-container *ngFor="let teamData of wdData.teamData">
                                   <tr class=" ">
-                                    <td class=" team-cell" style="position: relative;">
+                                    <td class=" team-cell">
                                       <div style="margin-left:25px" class="size-10">
                                         {{ teamData.team_name }}
                                       </div>
