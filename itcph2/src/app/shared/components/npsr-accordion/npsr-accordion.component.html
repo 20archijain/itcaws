@@ -26,11 +26,11 @@
     </div>
 
     <div class="items-center justify-content-center">
-      <div class="table-responsive">
+      <div class="table-responsive fixed-table-header">
         <table class="table table-custom">
           <thead>
             <tr class="table-header size-13">
-              <th class="size-13 p-1 district">District
+              <th class="size-13 p-1 district" [class.highlight]="true">District
                 <button class="btn btn-sm btn-link p-0 ms-1" style="color: #fff; text-decoration: none;"
                   (click)="toggleAllColumns()">
                   {{ areAllGroupsExpanded() ? '-' : '+' }}
@@ -38,7 +38,7 @@
               </th>
               <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
                 <th *ngIf="shouldDisplayColumn(i)" class="size-13 p-1 text-center" (click)="handleHeaderClick(i)"
-                  [@columnAnimation]="getColumnState(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }"
+                  [@columnAnimation]="getColumnState(i)" [class.highlight-month]="!isWhiteColumn(i)" [class.highlight-week]="isWhiteColumn(i)" [ngClass]="{ 'white-bg': isWhiteColumn(i) }"
                   [style.cursor]="(i === 0 || i === 5 || i === 10) ? 'pointer' : 'default'">
                   {{ monthYear }}
                 </th>
