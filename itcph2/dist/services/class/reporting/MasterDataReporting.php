@@ -92,12 +92,27 @@ class ActiveSKUReporting
     final public function viewSKUData()
     {
         $searchCondition = $this->getCondition();
+        $where = "";
+        $branchCond = "";
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd", $this->_data["sort"]);
+        // user has some specific permission
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        if ($teamList) {
+            $where .= " AND team_id IN $teamList";
+            $branchIds = getRowsColumn($this->_dbConn, $projectTeamTable, "branch_id", "dstatus = 0 $where", array(), true);
+            if (isNonEmptyArray($branchIds)) {
+                if (!is_array($branchIds)) {
+                    $branchIds = array($branchIds);
+                }
+                $branchIds = "'" . implode("','", $branchIds) . "'";
+                $branchCond .= " AND b.branch_id IN ($branchIds)";
+            }
+        }
 
 
         // Don't use b.dstatus = 0
@@ -106,7 +121,7 @@ class ActiveSKUReporting
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $focusType = array(0 => "No", 1 => "Yes");
         $sQuery = "SELECT a.branch_id, a.team_type, a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b" .
-            " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id  $searchCondition $sOrderCond";
+            " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id $branchCond  $searchCondition $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 
