@@ -114,8 +114,8 @@ class AssignTarget
                     "label" => $row2["team_name"],
                     "value" => $row2["team_id"],
                     "wd_code" => $row2["wd_code"],
-                    "previousMonthTarget" => $previousMonthTarget,
-                    "previousMonthAchieve" => $previousmonthAchieve,
+                    "previousMonthTarget" => round($previousMonthTarget, 2),
+                    "previousMonthAchieve" => round($previousmonthAchieve, 2),
                 );
             }
         }

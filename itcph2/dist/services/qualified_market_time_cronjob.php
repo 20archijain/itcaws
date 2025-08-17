@@ -33,13 +33,9 @@ class processUpdateQualifiedMarketTime
         $currentDate = currentDate();
         $cond = "AND activity_date = '$currentDate'";
 
-        $minTotalShops =  (int) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
-        $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
-        $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
-
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime FROM $summaryTable WHERE dstatus = 0 $cond LIMIT 500";
+        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime FROM $summaryTable WHERE dstatus = 0 $cond";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -47,15 +43,21 @@ class processUpdateQualifiedMarketTime
                 $summaryId = $row["summary_id"];
                 $date = $row["activity_date"];
                 $teamId = $row["team_id"];
+                $teamType = (int) getRowColumn($this->dbConn, "tblproject_team", "is_type", "team_id = $teamId");
+                $teamTypeCondition = ($teamType == 5) ? "AND team_type = 5" : "AND team_type = 0";
+                $minTotalShops =  (int) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops' $teamTypeCondition");
+                $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin' $teamTypeCondition");
+                $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
                 $orderShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                 $addShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                 $totalShops = $orderShop + $addShop;
                 $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
+                $totalTime = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
                 $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? 1 : 0;
                 $timeInMarket = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
-                $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?";
+                $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                 $condition = "summary_id = ?";
-                updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$isQualifiedAttendance, $timeInMarket, $summaryId]);
+                updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$isQualifiedAttendance, $timeInMarket, $totalTime, $summaryId]);
             }
         }
     }

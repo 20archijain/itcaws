@@ -753,20 +753,53 @@ class VanDsReporting
     private function getBranchWiseProducts($branchId = null, $teamType = null)
     {
         $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+
         if ($branchId) {
-            if ($teamType !== null && $teamType !== "") {
+            if (is_array($teamType) && !empty($teamType)) {
+                $result = [];
+
+                foreach ($teamType as $type) {
+                    $result = array_merge($result, $this->arrBranchwiseProducts[$branchId][$type] ?? []);
+                }
+
+                return $result;
+            } elseif ($teamType !== null && $teamType !== "") {
                 return $this->arrBranchwiseProducts[$branchId][$teamType] ?? [];
             } else {
                 return $this->arrBranchwiseProducts[$branchId] ?? [];
             }
         } else {
-            if ($teamType !== null && $teamType !== "") {
+            if (is_array($teamType) && !empty($teamType)) {
+                $teamTypeIn = implode(",", array_map('intval', $teamType));
+
+                $arrProductSummaryColumns = getRowsColumns(
+                    $this->_dbConn,
+                    $branchProductsTable,
+                    "branch_id, team_type, product_name, summary_column_name",
+                    "dstatus = 0 AND team_type IN ($teamTypeIn) ORDER BY product_name",
+                    [],
+                    true
+                );
+
+                foreach ($arrProductSummaryColumns as $arrBranchColumns) {
+                    $branchId = $arrBranchColumns[0];
+                    $type     = $arrBranchColumns[1];
+                    $productName = $arrBranchColumns[2];
+                    $summaryColumnName = $arrBranchColumns[3];
+
+                    if (!isset($this->arrBranchwiseProducts[$branchId][$type])) {
+                        $this->arrBranchwiseProducts[$branchId][$type] = [];
+                    }
+                    $this->arrBranchwiseProducts[$branchId][$type][] = [$productName, $summaryColumnName];
+                }
+            } elseif ($teamType !== null && $teamType !== "") {
+                // handle string teamType (single value)
                 $arrProductSummaryColumns = getRowsColumns(
                     $this->_dbConn,
                     $branchProductsTable,
                     "branch_id, product_name, summary_column_name",
-                    "dstatus = 0 AND team_type = '$teamType' ORDER BY product_name",
-                    array(),
+                    "dstatus = 0 AND team_type = '" . intval($teamType) . "' ORDER BY product_name",
+                    [],
                     true
                 );
 
@@ -781,6 +814,7 @@ class VanDsReporting
                     $this->arrBranchwiseProducts[$branchId][$teamType][] = [$productName, $summaryColumnName];
                 }
             } else {
+                // No teamType provided
                 $sProductAction = null;
                 $iProductRows = 0;
                 $sProductQuery = "SELECT DISTINCT branch_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 ORDER BY product_name";
@@ -798,6 +832,7 @@ class VanDsReporting
             }
         }
     }
+
 
     private function getWeekNumber($date)
     {
@@ -842,7 +877,7 @@ class VanDsReporting
         $sQuery = "SELECT a.pro_id $partialQuery AND a.pro_id > 0";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
 
-        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, b.team_id, b.team_name,b.circle,b.section, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, b.team_id, b.team_name,b.circle,b.section,b.branch_id, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
         $sQuery .= " " . $limit["limit"];
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -850,8 +885,13 @@ class VanDsReporting
             $i = 0;
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $shopId = $row["ques_3"];
-                // Don't use dstatus = 0
-                $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                $branchId = $row["branch_id"];
+                if ($branchId == 40) {
+                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, "tblroute_details_delhi", "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                } else {
+                    // Don't use dstatus = 0
+                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                }
                 $shopType = $shopDetails[0];
                 $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
                 $mobileNumber = $shopDetails[2];
@@ -922,7 +962,7 @@ class VanDsReporting
         );
         // $branch = array();
         $branch = getFormData($this->_data['searchbar'], "branch");
-        $teamType = getFormData($this->_data['searchbar'], "teamType");
+        $teamType = getFormData($this->_data['searchbar'], "dsType");
         if (checkIfAllSelected($branch)) {
             $branch = $this->getBranches();
         }
@@ -998,7 +1038,6 @@ class VanDsReporting
 
             // create header with product list and competition list
             $arrProductBought = $this->getBranchWiseProducts($branchId, $teamType);
-
             $sProductSaleColumns = "";
             if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                 foreach ($arrProductBought as $arrProduct) {
@@ -1013,6 +1052,7 @@ class VanDsReporting
                     $sProductSaleColumns .= ", a.$productColumnName";
                 }
             }
+            // print_r($sProductSaleColumns);die;
 
             // $arrCompetition = $this->getBranchWiseProducts($branchId, false, $teamType);
             // if ($arrCompetition && isNonEmptyArray($arrCompetition)) {
@@ -1030,8 +1070,8 @@ class VanDsReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.pro_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.distance_in_meter" .
-                ", b.team_id, b.team_name, b.is_type,b.circle,b.section, b.wd_code, c.district, c.branch_name, c.main_branch $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
-                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = '99' AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.wd_code, b.branch_id, c.district, c.branch_name, c.main_branch $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id IN ('99',55) AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
@@ -1040,6 +1080,7 @@ class VanDsReporting
                 $index = count($arrDownload["sale"]);
                 while ($row = $this->_dbConn->GetData($rsAction)) {
                     $proId = $row["pro_id"];
+                    $branchId = $row["branch_id"];
                     $captureDate = $row["capture_date"];
                     $week = $this->getWeekNumber($captureDate);
                     $callTime = $row["call_time"];
@@ -1051,14 +1092,35 @@ class VanDsReporting
                     // Convert seconds to HH:MM:SS format
 
                     $shopId = $row["ques_3"];
-                    // Don't use dstatus = 0
-                    $shopDetails = $shopId && is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
+                    $branchId = $row["branch_id"];
+                    if ($branchId == 40) {
+                        $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, "tblroute_details_delhi", "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
+                    } else {
+                        // Don't use dstatus = 0
+                        $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
+                    }
                     $shopName = isset($shopDetails[0]) ? htmlentities($shopDetails[0]) : "";
                     $shopUniqCode = isset($shopDetails[1]) ? htmlentities($shopDetails[1]) : "";
                     $mobileNumber = isset($shopDetails[2]) ? htmlentities($shopDetails[2]) : "";
                     $shopType = isset($shopDetails[3]) ? htmlentities($shopDetails[3]) : "";
-                    $sellIinOrder = $row["ques_4"];
+                    if ($branchId == 40) {
+                        $allProductsSold = false;
 
+                        if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                            foreach ($arrProductBought as $arrProduct) {
+                                $productColumnName = $arrProduct[1];
+                                $iSale = isset($row[$productColumnName]) ? floatval($row[$productColumnName]) : 0;
+
+                                if ($iSale > 0) {
+                                    $allProductsSold = true;
+                                }
+                            }
+                        }
+
+                        $sellIinOrder = $allProductsSold ? "Yes" : "No";
+                    } else {
+                        $sellIinOrder = $row["ques_4"];
+                    }
 
                     // $arrDownload["competition"][$index] = array();
                     $arrDownload["sale"][$index][] = $proId;
@@ -1106,7 +1168,11 @@ class VanDsReporting
                                 $productName = strtoupper($arrProduct[0]);
                                 $productColumnName = $arrProduct[1];
 
-                                $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
+                                if ($branchId == 40) {
+                                    $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] / 100 : 0;
+                                } else {
+                                    $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
+                                }
                                 // Ensure the product value exists and is strictly greater than 0
                                 if (isset($iSale) && floatval($iSale) > 0) {
                                     $productCount++; // Count only if the value is greater than 0
@@ -1273,8 +1339,8 @@ class VanDsReporting
         $arrSummary["sale"][0][] = "Total Time Spent (Mins)";
         $arrSummary["sale"][0][] = "Time in Market (Mins)";
         $arrSummary["sale"][0][] = "KM Travelled";
-        $arrSummary["sale"][0][] = "Total CFT";
-        $arrSummary["sale"][0][] = "Avg CFT";
+        $arrSummary["sale"][0][] = "Total CFT (mins)";
+        $arrSummary["sale"][0][] = "Avg CFT/OL (mins)";
         $arrSummary["sale"][0][] = "Qualified Attendance";
         $arrSummary["sale"][0][] = "Ideal Route";
         $arrSummary["sale"][0][] = "Route Taken";
@@ -1371,18 +1437,18 @@ class VanDsReporting
 
             // get sales
             // Don't use b.dstatus = 0
-            $where .= getFilterResult(
-                $this->_data['searchbar'],
-                array(
-                    "dsType" => array("b.is_type", -1),
-                )
-            );
+            // $where .= getFilterResult(
+            //     $this->_data['searchbar'],
+            //     array(
+            //         "dsType" => array("b.is_type", -1),
+            //     )
+            // );
 
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.route, a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, SUM(a.total_sales_deliveries) AS total_sales_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops" .
-                ", SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
-                " AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
+                ", SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
+                " AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1396,16 +1462,23 @@ class VanDsReporting
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
-                    $callTime = getRowsColumn($this->_dbConn, $respTable, "call_time", "dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
+                    $callTime = getRowsColumn($this->_dbConn, $respTable, "call_time", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
+                    $totalTimeSpent = "";
                     if (!empty($callTime)) {
                         $totalTime = array_sum($callTime); // Sum all time values
                         $time = $totalTime / 1000;
                         // Convert time to H:i:s format
-                        $totalTimeSpent = gmdate("i:s", (int) round($time));
+                        $totalTimeSpent = gmdate("H:i:s", (int) round($time));
+                        $totalMinutes = floor($time / 60);
                     }
-
-                    $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
-                    $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                    $branchId = $row["branch_id"];
+                    if ($branchId == 40) {
+                        $idealRoute = getRowColumn($this->_dbConn, "tblroute_details_delhi", "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
+                        $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                    } else {
+                        $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
+                        $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                    }
 
                     $mainBranch = $branchName = $district = "";
                     if (($branchIndex = array_search($branchId, array_column($arrBranchDetails, 0))) !== false) {
@@ -1422,12 +1495,15 @@ class VanDsReporting
 
                     // Divide by total shops
                     $timePerShop = ($totalShops > 0) ? ($time / $totalShops) : 0;
+                    list($min, $sec) = explode(':', gmdate("i:s", (int) round($timePerShop)));
+                    $timePerShopFormatted = $min . '.' . $sec;
 
-                    // Convert back to H:i:s format
-                    $timePerShopFormatted = gmdate("i:s", (int) round($timePerShop));
+                    // Convert back to i:s format
+                    // $timePerShopFormatted = gmdate("i:s", (int) round($timePerShop));
                     // $totalShops = $row["total_sales_deliveries"] + $row["total_other_shops"];
                     $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
-                    $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
+                    // $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
+                    $isQualifiedAttendance = (string) $row["is_qualified"];
                     if ($row["is_beat_adherence"] == "Yes") {
                         $isBeatAdher = "1";
                     } elseif ($row["is_beat_adherence"] == "No") {
@@ -1454,8 +1530,8 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
                     $arrSummary["sale"][$index][] = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
-                    $arrSummary["sale"][$index][] = $totalTimeSpent;
-                    $arrSummary["sale"][$index][] = $timePerShopFormatted;
+                    $arrSummary["sale"][$index][] = $totalMinutes;
+                    $arrSummary["sale"][$index][] = (float) $timePerShopFormatted;
                     $arrSummary["sale"][$index][] = $isQualifiedAttendance;
                     $arrSummary["sale"][$index][] = $idealRoute;
                     $arrSummary["sale"][$index][] = $row["route"];
@@ -1506,8 +1582,8 @@ class VanDsReporting
             $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
             $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
 
-            $dateFrom = sprintf('%04d-%02d-%02d', isset($dateFrom['year']), isset($dateFrom['month']), isset($dateFrom['day']));
-            $dateTo = sprintf('%04d-%02d-%02d', isset($dateTo['year']), isset($dateTo['month']), isset($dateTo['day']));
+            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
 
             // Convert date strings to DateTime objects
             $startDate = new DateTime($dateFrom);
@@ -1525,10 +1601,9 @@ class VanDsReporting
                     $teamTypeCon = getFilterResult(
                         $this->_data['searchbar'],
                         array(
-                            "dsType" => array("a.is_type", -1),
+                            "dsType" => array("a.is_type", 0, true, true),
                         )
                     );
-
                     // Query to get teams who have not uploaded any record on that date
                     $iTeamRows = 0;
                     $rsTeamAction = 0;
@@ -1547,7 +1622,7 @@ class VanDsReporting
                             $arrSummary["sale"][$index][] = $rowTeam["wd_code"];
                             $arrSummary["sale"][$index][] = $rowTeam["team_id"];
                             $arrSummary["sale"][$index][] = $rowTeam["team_name"];
-                            $arrSummary["sale"][$index][] = $arrTeamType[$rowTeam["is_type"]];
+                            $arrSummary["sale"][$index][] = $rowTeam["is_type"] != "" ? $arrTeamType[$rowTeam["is_type"]] : "";
                             $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
                             $arrSummary["sale"][$index][] = $week;
                             $arrSummary["sale"][$index][] = "0";

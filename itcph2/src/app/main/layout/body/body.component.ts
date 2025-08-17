@@ -1,4 +1,4 @@
-import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 
@@ -24,7 +24,6 @@ export class BodyComponent implements OnDestroy, OnInit {
   toggleZIndex = false;
 
   constructor(private dynamicComponentService: DynamicComponentService,
-    private componentFactoryResolver: ComponentFactoryResolver,
     private route: ActivatedRoute) {
     this.nextConfig = NextConfig.config;
     this.windowWidth = window.innerWidth;
@@ -81,12 +80,10 @@ export class BodyComponent implements OnDestroy, OnInit {
 
           const mod = this.components.find(module => JSON.stringify(module.module) === JSON.stringify(route));
 
-          const componentFactory = this.componentFactoryResolver
-            .resolveComponentFactory(mod && mod.component ? mod.component : MAP_MAIN_COMPONENTS.ComingSoonComponent);
           const viewContainerRef = this.dynComp.viewContainerRef;
           viewContainerRef.clear();
 
-          viewContainerRef.createComponent(componentFactory);
+          viewContainerRef.createComponent(mod?.component || MAP_MAIN_COMPONENTS.ComingSoonComponent);
         })
     );
   }

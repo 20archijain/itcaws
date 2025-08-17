@@ -146,7 +146,7 @@ class DashboardManagement
 
         $where = "";
         if ($condition && $andCondition) {
-            $where .= " AND team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
+            $where .= " AND team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
         } elseif ($condition) {
             // $where .= " $condition";
             $where .= " $condition";
@@ -510,22 +510,20 @@ class DashboardManagement
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "DS";
+                    $teamType = "Van DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }

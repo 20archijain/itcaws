@@ -36,7 +36,7 @@ class NpsrDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.district";
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -72,7 +72,7 @@ class NpsrDashboard
         // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.branch_name";
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -168,7 +168,7 @@ class NpsrDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.circle";
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -203,7 +203,7 @@ class NpsrDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.section";
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -239,7 +239,7 @@ class NpsrDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct b.wd_code, c.wd_firm_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.wd_code";
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -274,7 +274,7 @@ class NpsrDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_market";
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -309,7 +309,7 @@ class NpsrDashboard
         $rsAction = null;
         $iActionRows = 0;
         $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_pop_group";
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -344,22 +344,20 @@ class NpsrDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "DS";
+                    $teamType = "Van DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
@@ -393,7 +391,7 @@ class NpsrDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '99' $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = 99 $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -868,17 +866,6 @@ class NpsrDashboard
         echo json_encode($arrMessage);
     }
 
-    private function getSumPart($arrSalesColumns)
-    {
-        $arrSum = array();
-        foreach ($arrSalesColumns as $branch_id => $salesColumns) {
-            $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
-            $arrSum[] = "SUM(IF(b.branch_id = $branch_id, $sSalesColumns, 0)) AS totalSales_$branch_id";
-        }
-
-        return implode(", ", $arrSum);
-    }
-
     public function getMonthlySalesData()
     {
         $where = $this->getCondition();
@@ -895,8 +882,8 @@ class NpsrDashboard
         $totalSumDistrictLevelSale = array();
 
         // Get all sales-related columns
-        $query = "SELECT a.summary_column_name, a.branch_id FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-            " WHERE a.branch_id = b.branch_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.is_type != 5  AND b.wd_code = e.wd_code $where $whereCategoryAndProduct GROUP BY a.branch_id, a.summary_column_name";
+        $query = "SELECT a.summary_column_name, d.main_branch FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+            " WHERE a.branch_id = b.branch_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where $whereCategoryAndProduct GROUP BY d.main_branch, a.summary_column_name";
 
         $rsAction = null;
         $iActionRows = 0;
@@ -904,12 +891,12 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $branch_id = $row["branch_id"];
+                $main_branch = $row["main_branch"];
                 // $circle = $row["circle"];
                 // $section = $row["section"];
                 $summary_column_name = $row["summary_column_name"];
-                $arrSalesColumns[$branch_id][] = $summary_column_name;  // Store sales columns by branch
-                // $BranchIds[] = $branch_id;
+                $arrSalesColumns[$main_branch][] = $summary_column_name;  // Store sales columns by branch
+                // $BranchIds[] = $main_branch;
             }
 
             $months = [
@@ -944,7 +931,7 @@ class NpsrDashboard
             // }
 
 
-            // $yearFilled = $this->_data['year'];
+            $yearFilled = $this->_data['year'];
             $monthFilled = $this->_data['month'];
 
             if (isset($monthFilled) && $monthFilled) {
@@ -972,215 +959,214 @@ class NpsrDashboard
             }
 
             // Process sales data per branch and month
-            // foreach ($arrSalesColumns as $branch_id => $salesColumns) {
-            // Reset $arrSalesColumns for the next branch
-            // $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
-            $arrWeekWiselabel = array();
-            foreach ($arrMonthYear as $monthAndYear) {
-                list($monthAlphabetic, $year) = explode(" ", $monthAndYear);
-                $shortMonth = substr($monthAlphabetic, 0, 3);
+            foreach ($arrSalesColumns as $main_branch => $salesColumns) {
+                // Reset $arrSalesColumns for the next branch
+                $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
+                $arrWeekWiselabel = array();
+                foreach ($arrMonthYear as $monthAndYear) {
+                    list($monthAlphabetic, $year) = explode(" ", $monthAndYear);
+                    $shortMonth = substr($monthAlphabetic, 0, 3);
 
-                $month = array_search($monthAlphabetic, $months) + 1;
+                    $month = sprintf('%02d', array_search($monthAlphabetic, $months) + 1);
 
-                // echo "<pre>";
-                // print_r($monthAndYear);
-                // Create a DateTime object from the string
-                // $date = DateTime::createFromFormat('F Y', $monthAndYear);
-                // // Extract month and year
-                // $month = $date->format('m');
-                // $year = $date->format('Y');
-                for ($i = 1; $i <= 5; $i++) {
-                    if ($i == 1) {
-                        $monthYear = $monthAndYear;
-                        $weekStartDate = "$year-$month-01";
-                        $weekEndDate = date("Y-m-d", strtotime("last day of $weekStartDate"));
-                        $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
-                        $arrWeekWiselabel[] = $monthAndYear;
-                    } elseif ($i == 2) {
-                        $monthYear =  $shortMonth . " - W1";
-                        $weekStartDate = "$year-$month-01";
-                        $weekEndDate = "$year-$month-07";
-                        $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
-                        $arrWeekWiselabel[] = $monthYear;
-                    } elseif ($i == 3) {
-                        $monthYear = $shortMonth . " - W2";
-                        $weekStartDate = "$year-$month-08";
-                        $weekEndDate = "$year-$month-14";
-                        $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
-                        $arrWeekWiselabel[] = $monthYear;
-                    } elseif ($i == 4) {
-                        $monthYear = $shortMonth . " - W3";
-                        $weekStartDate = "$year-$month-15";
-                        $weekEndDate = "$year-$month-21";
-                        $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
-                        $arrWeekWiselabel[] = $monthYear;
-                    } elseif ($i == 5) {
-                        $monthYear = $shortMonth . " - W4";
-                        $weekStartDate = "$year-$month-22";
-                        $weekEndDate = date("Y-m-d", strtotime("last day of $weekStartDate"));
-                        $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
-                        $arrWeekWiselabel[] = $monthYear;
-                    }
+                    // echo "<pre>";
+                    // print_r($monthAndYear);
+                    // Create a DateTime object from the string
+                    // $date = DateTime::createFromFormat('F Y', $monthAndYear);
+                    // // Extract month and year
+                    // $month = $date->format('m');
+                    // $year = $date->format('Y');
+                    for ($i = 1; $i <= 5; $i++) {
+                        if ($i == 1) {
+                            $monthYear = $monthAndYear;
+                            $weekStartDate = "$year-$month-01";
+                            $weekEndDate = date("Y-m-d", strtotime("last day of $weekStartDate"));
+                            $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
+                            $arrWeekWiselabel[] = $monthAndYear;
+                        } elseif ($i == 2) {
+                            $monthYear =  $shortMonth . " - W1";
+                            $weekStartDate = "$year-$month-01";
+                            $weekEndDate = "$year-$month-07";
+                            $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
+                            $arrWeekWiselabel[] = $monthYear;
+                        } elseif ($i == 3) {
+                            $monthYear = $shortMonth . " - W2";
+                            $weekStartDate = "$year-$month-08";
+                            $weekEndDate = "$year-$month-14";
+                            $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
+                            $arrWeekWiselabel[] = $monthYear;
+                        } elseif ($i == 4) {
+                            $monthYear = $shortMonth . " - W3";
+                            $weekStartDate = "$year-$month-15";
+                            $weekEndDate = "$year-$month-21";
+                            $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
+                            $arrWeekWiselabel[] = $monthYear;
+                        } elseif ($i == 5) {
+                            $monthYear = $shortMonth . " - W4";
+                            $weekStartDate = "$year-$month-22";
+                            $weekEndDate = date("Y-m-d", strtotime("last day of $weekStartDate"));
+                            $cond = " AND a.capture_date BETWEEN '$weekStartDate' AND '$weekEndDate'";
+                            $arrWeekWiselabel[] = $monthYear;
+                        }
 
-                    $sSumPart = $this->getSumPart($arrSalesColumns);
-                    $queryNew = "SELECT $sSumPart, b.branch_id, b.circle, b.section, b.wd_code, b.team_name, c.outlet_name, c.route_name, d.district FROM tblsurvey_response_details AS a, tblproject_team AS b, tblroute_details as c, tblbranch as d, tblmapping_wd as e" .
-                        " WHERE a.ques_3 = c.rec_id AND b.team_id = c.team_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND b.s_id = '99' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $where $cond" .
-                        " GROUP BY a.ques_3, c.route_name, b.team_id, b.branch_id, b.circle, b.section, b.wd_code ORDER BY d.district, d.main_branch, b.circle, b.section, b.wd_code, b.team_name, c.sort_order";
+                        // Get Monthly Sales Data
+                        // $queryNew = "SELECT SUM($sSalesColumns) as totalSales, c.branch_id, c.circle, c.section, c.wd_code, c.team_name, b.outlet_name, b.route_name FROM tblsurvey_response_details AS a" .
+                        //     ", tblroute_details as b, tblproject_team AS c WHERE a.ques_3 = b.rec_id AND b.team_id = c.team_id AND a.dstatus = 0 AND b.dstatus = 0 AND c.s_id = 99" .
+                        //     " AND c.branch_id = $branch_id $where $cond GROUP BY a.ques_3, b.route_name, c.team_id, c.branch_id, c.circle, c.section, c.wd_code ORDER BY c.branch_id, c.circle, c.section, c.wd_code";
 
-                    $rsAction1 = null;
-                    $iActionRows1 = 0;
-                    $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
 
-                    if ($iActionRows1 > 0) {
-                        $arrBranchNames = array();
-                        while ($row1 = $this->_dbConn->GetData($rsAction1)) {
-                            $branch_id = $row1['branch_id'];
-                            $district = $row1['district'];
-                            if (!isset($arrBranchNames[$branch_id])) {
-                                $branch_name = getRowColumn($this->_dbConn, $this->_tables["BRANCH_TABLE"], "main_branch", "branch_id = $branch_id");
-                                $arrBranchNames[$branch_id] = $branch_name;
-                            } else {
-                                $branch_name = $arrBranchNames[$branch_id];
-                            }
-                            $circle = $row1['circle'];
-                            $section = $row1['section'];
-                            $wd_code = $row1['wd_code'];
-                            $team_name = $row1['team_name'];
-                            $route_name = $row1['route_name'];
-                            $outlet_name = $row1['outlet_name'];
-                            $totalSales = isset($row1["totalSales_$branch_id"]) ? round($row1["totalSales_$branch_id"], 2) : 0;  // Round to 2 decimal places
+                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, e.circle, e.section, b.wd_code, b.team_name, c.outlet_name, c.route_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblroute_details as c, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND a.ques_3 = c.rec_id AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code AND b.s_id = 99 AND d.main_branch = '$main_branch' AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 $where $cond" .
+                            " GROUP BY c.rec_id, c.route_name, b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name, c.sort_order";
+                        // echo $queryNew;die;
+                        $rsAction1 = null;
+                        $iActionRows1 = 0;
+                        $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
 
-                            // District Level Sales
-                            $districtIndex = array_search($district, array_column($monthWiseSales, "district"));
-                            if ($districtIndex === false) {
-                                $monthWiseSales[] = array(
-                                    "district" => $district,
-                                    "districtLevelSale" => array(),
-                                    "branchData" => array()
+                        if ($iActionRows1 > 0) {
+                            while ($row1 = $this->_dbConn->GetData($rsAction1)) {
+                                $branch_id = $row1['main_branch'];
+                                $district = $row1['district'];
+                                $branch_name = $row1['main_branch'];
+                                $circle = $row1['circle'];
+                                $section = $row1['section'];
+                                $wd_code = $row1['wd_code'];
+                                $team_name = $row1['team_name'];
+                                $route_name = $row1['route_name'];
+                                $outlet_name = $row1['outlet_name'];
+                                $totalSales = round($row1['totalSales'] ? (float) $row1['totalSales'] : 0, 2);  // Round to 2 decimal places
+
+                                // District Level Sales
+                                $districtIndex = array_search($district, array_column($monthWiseSales, "district"));
+                                if ($districtIndex === false) {
+                                    $monthWiseSales[] = array(
+                                        "district" => $district,
+                                        "districtLevelSale" => array(),
+                                        "branchData" => array()
+                                    );
+                                    $districtIndex = count($monthWiseSales) - 1;
+                                }
+                                $monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+
+                                // Branch Level Sales
+                                $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
+                                if ($branchIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][] = array(
+                                        "branch_id" => $branch_id,
+                                        "branch_name" => $branch_name,
+                                        "branchLevelSale" => array(),
+                                        "circleData" => array()
+                                    );
+                                    $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
+                                }
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+                                // Circle Level Sales
+                                $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
+                                if ($circleIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = array(
+                                        "circle" => $circle,
+                                        "circleLevelSale" => array(),
+                                        "sectionData" => array()
+                                    );
+                                    $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
+                                }
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+                                // Section Level Sales
+                                $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
+                                if ($sectionIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
+                                        "section" => $section,
+                                        "sectionLevelSale" => array(),
+                                        "wdData" => array(),
+                                    );
+                                    $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
+                                }
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+                                // WD Level Sales
+                                $WDIndex = array_search($wd_code, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"], "wd_code"));
+                                if ($WDIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
+                                        "wd_code" => $wd_code,
+                                        "wdCode" => $wd_code,
+                                        "wdLevelSale" => array(),
+                                        "teamData" => array(),
+                                    );
+                                    $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
+                                }
+                                // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
+
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+                                // Team Sales
+                                $teamIndex = array_search($team_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"], "team_name"));
+                                if ($teamIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = array(
+                                        "team_name" => $team_name,
+                                        "teamLevelSale" => array(),
+                                        "routeData" => array(),
+                                    );
+                                    $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"]) - 1;
+                                }
+                                // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
+
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+
+                                // Route Sales
+                                $routeIndex = array_search($route_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"], "route_name"));
+                                if ($routeIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][] = array(
+                                        "route_name" => $route_name,
+                                        "routeLevelSale" => array(),
+                                        "outletData" => array(),
+                                    );
+                                    $routeIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"]) - 1;
+                                }
+                                // Round WD level sales
+                                // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] = round($totalSales, 2);
+
+
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
+
+
+                                // Outlet Sales
+                                $outletIndex = array_search(
+                                    $outlet_name,
+                                    array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"], "outlet_name")
                                 );
-                                $districtIndex = count($monthWiseSales) - 1;
+                                if ($outletIndex === false) {
+                                    $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][] = array(
+                                        "outlet_name" => $outlet_name,
+                                        "outletLevelSale" => array(),
+                                    );
+                                    $outletIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"]) - 1;
+                                }
+                                // Round WD level sales
+                                // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] =
+                                //     round($totalSales, 2);
+
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] =
+                                    round(
+                                        ($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] ?? 0)
+                                            + $totalSales,
+                                        2
+                                    );
                             }
-                            $monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-
-                            // Branch Level Sales
-                            $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
-                            if ($branchIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][] = array(
-                                    "branch_id" => $branch_id,
-                                    "branch_name" => $branch_name,
-                                    "branchLevelSale" => array(),
-                                    "circleData" => array()
-                                );
-                                $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
-                            }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-                            // Circle Level Sales
-                            $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
-                            if ($circleIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = array(
-                                    "circle" => $circle,
-                                    "circleLevelSale" => array(),
-                                    "sectionData" => array()
-                                );
-                                $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
-                            }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-                            // Section Level Sales
-                            $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
-                            if ($sectionIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
-                                    "section" => $section,
-                                    "sectionLevelSale" => array(),
-                                    "wdData" => array(),
-                                );
-                                $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
-                            }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-                            // WD Level Sales
-                            $WDIndex = array_search($wd_code, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"], "wd_code"));
-                            if ($WDIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
-                                    "wd_code" => $wd_code,
-                                    "wdCode" => $wd_code,
-                                    "wdLevelSale" => array(),
-                                    "teamData" => array(),
-                                );
-                                $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
-                            }
-                            // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
-
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-                            // Team Sales
-                            $teamIndex = array_search($team_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"], "team_name"));
-                            if ($teamIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = array(
-                                    "team_name" => $team_name,
-                                    "teamLevelSale" => array(),
-                                    "routeData" => array(),
-                                );
-                                $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"]) - 1;
-                            }
-                            // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
-
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-
-                            // Route Sales
-                            $routeIndex = array_search($route_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"], "route_name"));
-                            if ($routeIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][] = array(
-                                    "route_name" => $route_name,
-                                    "routeLevelSale" => array(),
-                                    "outletData" => array(),
-                                );
-                                $routeIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"]) - 1;
-                            }
-                            // Round WD level sales
-                            // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] = round($totalSales, 2);
-
-
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
-
-                            // Outlet Sales
-                            $outletIndex = array_search(
-                                $outlet_name,
-                                array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"], "outlet_name")
-                            );
-                            if ($outletIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][] = array(
-                                    "outlet_name" => $outlet_name,
-                                    "outletLevelSale" => array(),
-                                );
-                                $outletIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"]) - 1;
-                            }
-                            // Round WD level sales
-                            // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] =
-                            //     round($totalSales, 2);
-
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] =
-                                round(
-                                    ($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSale"][$monthYear] ?? 0)
-                                        + $totalSales,
-                                    2
-                                );
                         }
                     }
                 }
             }
-            // }
             // die;
 
             // echo "<pre>";

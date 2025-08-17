@@ -34,7 +34,7 @@
               </th>
               <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
                 <th class="size-13 p-1 text-center" (click)="handleHeaderClick(i)"
-                  [@columnAnimation]="getColumnState(i)" [class.highlight]="true" >
+                  [@columnAnimation]="getColumnState(i)" [class.highlight]="true">
                   {{ monthYear }}
                 </th>
               </ng-container>

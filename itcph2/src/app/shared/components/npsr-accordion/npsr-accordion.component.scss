@@ -299,6 +299,7 @@ td {
         z-index: 1000;
         // color: white;
       }
+
       &.highlight-month {
         background-color: $colorMonth !important;
         color: #fff;
@@ -306,6 +307,7 @@ td {
         z-index: 1000;
         // color: white;
       }
+
       &.highlight-week {
         background-color: $colorWeek !important;
         color: #fff;
@@ -313,6 +315,7 @@ td {
         z-index: 1000;
         // color: white;
       }
+
       // &.white-bg-fix {
       //   background-color: rgba(250,250,250,1) !important;
       //   // color: white;

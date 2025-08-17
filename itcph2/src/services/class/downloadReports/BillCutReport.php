@@ -120,7 +120,7 @@ class BillCutReport
         }
 
         $arrExcelData = [];
-        $arrExcelData[] = ["District", "Branch", "Region", "WD Code", "DS Type", "DS Id", "DS Name", "SKU", "Total Outlets Mapped", "Brand UOB", "Brand UOB%", 'Overall UOB'];
+        $arrExcelData[] = ["District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "DS Type", "DS Id", "DS Name", "Brand Family", "Variant", "Focus Variant", "Total Outlets Mapped", "Variant UOB", "Variant UOB%", 'Overall UOB'];
 
         $branchCond = "";
         // if ($branch) {
@@ -138,7 +138,7 @@ class BillCutReport
         // }
 
         foreach ($branch as $branchId) {
-            $sProductQuery = "SELECT DISTINCT product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $productCond $teamTypeCond ORDER BY product_name";
+            $sProductQuery = "SELECT DISTINCT rec_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $productCond $teamTypeCond ORDER BY product_name";
             $sProductAction = null;
             $iProductRows = 0;
             $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
@@ -146,13 +146,21 @@ class BillCutReport
             if ($iProductRows > 0) {
                 $summaryColName = [];
                 $productNames = [];
+                $productFamilies = []; // key = summary_column_name
+                $productFocuses = [];  // key = summary_column_name
                 while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
+                    $recId = $rowProduct["rec_id"];
+                    $summaryCol = $rowProduct["summary_column_name"];
                     $summaryColName[] = $rowProduct["summary_column_name"];
                     $productNames[] = $rowProduct["product_name"];
+                    $arrProductDetails = getRowColumns($this->_dbConn, "$branchProductsTable", "category_name, is_focusbrand", "dstatus = 0 AND rec_id = $recId");
+                    $productFamilies[$summaryCol] = $arrProductDetails[0];
+                    $productFocuses[$summaryCol] = $arrProductDetails[1];
                 }
+
                 $sProductSaleColumns = implode(",", $summaryColName);
 
-                $isType = array(0 => "Van DS", 1 => "Niches");
+                $isType = array(0 => "Van DS", 1 => "Niches", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD");
                 $rsAction = null;
                 $iRows = 0;
                 $sQuery = "SELECT a.capture_datetime, a.ques_0, b.team_id, b.team_name, b.is_type, b.wd_code, c.district, c.branch_name, c.main_branch, $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
@@ -171,6 +179,11 @@ class BillCutReport
                         $teamName = $row['team_name'];
                         $teamType = $isType[$row['is_type']];
                         $wdCode = $row['wd_code'];
+                        $arrDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "circle,section,wd_firm_name,wd_pop_group", "dstatus = 0 AND wd_code = '$wdCode'");
+                        $circle = $arrDetails[0];
+                        $section = $arrDetails[1];
+                        $wdFirmName = $arrDetails[2];
+                        $wdpopGroup = $arrDetails[3];
                         foreach ($summaryColName as $index => $colName) {
                             $allShops = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $where");
                             if (!isset($shopCount[$district][$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName])) {
@@ -212,19 +225,25 @@ class BillCutReport
                                                     $totalShops = $totalShopCount[$teamId];
                                                     $overallUob = $OverallShopCount[$teamId];
                                                     // Calculate UOB%
-                                                    $uobPercentage = $totalShops > 0 ? ($distinctShops / $totalShops) * 100 : 0;
+                                                    $uobPercentage = $totalShops > 0 ? $distinctShops / $totalShops : 0;
                                                     $arrExcelData[] = [
                                                         'District' => $district,
                                                         'Branch' => $mainBranchName,
                                                         'Region' => $branchName,
+                                                        'Circle' => $circle,
+                                                        'Section' => $section,
                                                         'WD Code' => $wdCode,
+                                                        'WD Name' => $wdFirmName,
+                                                        'WD Pop Group' => $wdpopGroup,
                                                         'DS Type' => $teamType,
                                                         'DS Id' => $teamId,
                                                         'DS Name' => $teamName,
-                                                        'SKU' => $productNames[array_search($colName, $summaryColName)],
+                                                        'Brand Family' => $productFamilies[$colName] ?? '',
+                                                        'Variant' => $productNames[array_search($colName, $summaryColName)],
+                                                        'Focus Variant' => (string) ($productFocuses[$colName] ?? ''),
                                                         'Total Outlets Mapped' => $totalShops,
-                                                        'Brand UOB' => $distinctShops,
-                                                        'Brand UOB%' => number_format($uobPercentage, 2),
+                                                        'Variant UOB' => $distinctShops,
+                                                        'Variant UOB%' => number_format($uobPercentage, 2),
                                                         'Overall UOB' => $overallUob,
                                                     ];
                                                 }

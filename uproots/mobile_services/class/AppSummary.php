@@ -1692,7 +1692,7 @@ class AppSummary extends Utilities
 
             if ($jsonId == 100) {
                 //wd code
-                $wdCode = ($dbName == $ITCPH2_DB) ? $this->tableUtil->getRowColumn("$dbName.tblproject_team", "wd_code", "team_id = $teamId AND s_id = 100") : null;
+                $wdCode = ($dbName == $ITCPH2_DB) ? $this->tableUtil->getRowColumn("$dbName.tblproject_team", "wd_code", "team_id = $teamId AND s_id = 99") : null;
                 $branchId = $this->tableUtil->getRowColumn("$dbName.tblproject_team", "branch_id", "dstatus = 0 AND wd_code = '$wdCode'");
                 $arrDsType = $this->tableUtil->getRowsColumn("$dbName.tblproject_team", "is_type", "dstatus = 0 AND wd_code = '$wdCode'", array(), true);
                 $selectedDsType = isset($this->requestGetData['dsTypelist']) ? $this->requestGetData['dsTypelist'] : null;
@@ -2063,25 +2063,30 @@ class AppSummary extends Utilities
                     ", sell_in_shops_count_mtd, total_sales_mtd, add_oulet_covered_today, add_oulet_covered_mtd, other_sell_in_shops_count_today, other_sell_in_shops_count_mtd",
                 "team_id = $teamId AND rcd = '$date'"
             );
+            $todaySummaryKey6 = isset($arrTodaySummary[6]) ? $arrTodaySummary[6] : 0;
             if ($arrTodaySummary[0] > 0 && $arrTodaySummary[1] > 0) {
-                $percentage = round(($arrTodaySummary[1] / $arrTodaySummary[0]) * 100, 0);
+                $percentage = (isset($arrTodaySummary[0], $arrTodaySummary[1]) && $arrTodaySummary[0] > 0)
+                    ? round(($arrTodaySummary[1] / $arrTodaySummary[0]) * 100, 0)
+                    : 0;
             }
-            if ($arrTodaySummary[7] > 0 && $arrTodaySummary[6] > 0) {
-                $percentageMtd = round(($arrTodaySummary[7] / $arrTodaySummary[6]) * 100, 0);
+            if ($arrTodaySummary[7] > 0 && $todaySummaryKey6 > 0) {
+                $percentageMtd = (isset($todaySummaryKey6, $arrTodaySummary[7]) && $todaySummaryKey6 > 0)
+                    ? round(($arrTodaySummary[7] / $todaySummaryKey6) * 100, 0)
+                    : 0;
             }
             // if ($arrTodaySummary[5] > 0) {
-            $totalMeterTravelled = round($arrTodaySummary[5] / 1000, 2);
+            $totalMeterTravelled = isset($arrTodaySummary[5]) ? round($arrTodaySummary[5] / 1000, 2) : 0;
             // }
-            $todayOutletCovered = $arrTodaySummary[1] + $arrTodaySummary[10];
-            $mtdOutletCovered = $arrTodaySummary[7] + $arrTodaySummary[11];
-            $sellInShopCount = $arrTodaySummary[2] + $arrTodaySummary[12];
-            $sellInShopCountMtd = $arrTodaySummary[8] + $arrTodaySummary[13];
-            $filteredValue = preg_replace('/\s*\d+s/', '', (string)$arrTodaySummary[4]);
+            $todayOutletCovered = ($arrTodaySummary[1] ?? 0) + ($arrTodaySummary[10] ?? 0);
+            $mtdOutletCovered = ($arrTodaySummary[7] ?? 0) + ($arrTodaySummary[11] ?? 0);
+            $sellInShopCount = ($arrTodaySummary[2] ?? 0) + ($arrTodaySummary[12] ?? 0);
+            $sellInShopCountMtd = ($arrTodaySummary[8] ?? 0) + ($arrTodaySummary[13] ?? 0);
+            $filteredValue = isset($arrTodaySummary[4]) ? preg_replace('/\s*\d+s/', '', (string)$arrTodaySummary[4]) : '0s';
             $arrOtherLabelList1 = array(
                 array(
                     "label" => "Outlets covered VS Outlets planned",
                     "value1" => (string)$todayOutletCovered,
-                    "value2" => (string)$arrTodaySummary[0],
+                    "value2" => (string)isset($arrTodaySummary[0]) ? $arrTodaySummary[0] : 0,
                     "percentage" => isset($percentage) ? $percentage : 0,
                     "typeofview" => "Progress",
                 ),
@@ -2093,7 +2098,7 @@ class AppSummary extends Utilities
                 ),
                 array(
                     "label" => "Survey Qty (M)",
-                    "value" => (string) round($arrTodaySummary[3], 1),
+                    "value" => (string) isset($arrTodaySummary[3]) ? round($arrTodaySummary[3], 1) : 0,
                     "typeofview" => "Simple",
                     "icon" => "sale"
                 ),
@@ -2111,6 +2116,7 @@ class AppSummary extends Utilities
                 ),
             );
 
+
             // Output summary
             $arrOtherSummary[] = $this->getFormattedSummary(
                 $appType,
@@ -2122,23 +2128,24 @@ class AppSummary extends Utilities
                 array(
                     "label" => "Outlets covered VS Outlets planned",
                     "value1" => (string)$mtdOutletCovered,
-                    "value2" => (string)$arrTodaySummary[6],
+                    "value2" => (string)$todaySummaryKey6,
                     "percentage" => isset($percentageMtd) ? $percentageMtd : 0,
                     "typeofview" => "Progress"
                 ),
                 array(
                     "label" => "Productive Outlets",
-                    "value" => "$sellInShopCountMtd" . "/" . "$arrTodaySummary[6]",
+                    "value" => "$sellInShopCountMtd" . "/" . "$todaySummaryKey6",
                     "typeofview" => "Simple",
                     "icon" => "store"
                 ),
                 array(
                     "label" => "Survey Qty (M)",
-                    "value" => (string) round($arrTodaySummary[9], 1),
+                    "value" => (string) isset($arrTodaySummary[9]) ? round($arrTodaySummary[9], 1) : 0,
                     "typeofview" => "Simple",
                     "icon" => "sale"
                 )
             );
+
             // Output summary
             $arrOtherSummary[] = $this->getFormattedSummary(
                 $appType,
@@ -2153,7 +2160,7 @@ class AppSummary extends Utilities
             $datasetCurrentMonth = [];
             $datasetPreviousMonth = [];
 
-            // // Loop through the jsonResponse to reformat each data point
+            // Loop through the jsonResponse to reformat each data point
             foreach ($jsonResponseOfCurrentMonth as $dataPoint) {
                 $datasetCurrentMonth[] = [
                     "x" => (string) $dataPoint['x'], // Convert to string if necessary
@@ -2232,8 +2239,10 @@ class AppSummary extends Utilities
                             $totalShops = (int)$orderShop + (int)$addShop;
 
                             $startEndTime = $this->tableUtil->getRowsColumns("$dbName.tblvands_summary", "start_datetime, end_datetime", "dstatus = 0 AND team_id = $teamId AND activity_date = '$activityDate'");
+                            $startTime = isset($startEndTime[0]) ? $startEndTime[0] : "";
+                            $endTime = isset($startEndTime[1]) ? $startEndTime[1] : "";
 
-                            $timeSpentInSec = $this->commonFunctions->getTimeDifference($startEndTime[0], $startEndTime[1], true);
+                            $timeSpentInSec = $this->commonFunctions->getTimeDifference($startTime, $endTime, true);
 
                             $isQualified = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? 1 : 0;
 

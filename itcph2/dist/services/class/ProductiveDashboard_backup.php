@@ -344,20 +344,22 @@ class ProductiveDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "Van DS";
+                    $teamType = "DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
+                } elseif ($row['is_type'] == 4) {
+                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
@@ -938,12 +940,10 @@ class ProductiveDashboard
             "Productive Outlets",
             "Survey (M) (MTD)",
             "Survey (M) (Daily Average)",
-            "Survey (M) (Daily Average Per User)",
             "KMs Travelled per Day",
-            "Total Time",
             "Time in market",
-            "CFT per outlet",
-            "CFT per days",
+            // "CFT per outlet",
+            // "CFT per days",
         ];
 
         $labels = [
@@ -958,18 +958,14 @@ class ProductiveDashboard
             "Survey (M) (Daily Average)",
             "KMs Travelled per Day",
             "Time in market",
-            "CFT per outlet",
-            "CFT per days",
-            "Total Transaction",
-            "Total Time",
+            // "CFT per outlet",
+            // "CFT per days",
+            // "Total Transaction",
         ];
 
-        //start the main_branch
-        //start per user change
-
         // Get all sales-related columns
-        $query = "SELECT a.summary_column_name, d.main_branch FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-            " WHERE a.branch_id = b.branch_id AND b.branch_id = d.branch_id AND a.dstatus = 0  AND b.wd_code = e.wd_code $where $whereCategoryAndProduct GROUP BY d.main_branch, a.summary_column_name";
+        $query = "SELECT a.summary_column_name, a.branch_id, b.team_id, b.circle, b.section, b.wd_code FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+            " WHERE a.branch_id = b.branch_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.is_type != 5 AND b.wd_code = e.wd_code $where $whereCategoryAndProduct GROUP BY a.branch_id, a.summary_column_name";
 
         $rsAction = null;
         $iActionRows = 0;
@@ -977,89 +973,90 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $main_branch = $row["main_branch"];
+                $branch_id = $row["branch_id"];
                 // $circle = $row["circle"];
                 // $section = $row["section"];
                 $summary_column_name = $row["summary_column_name"];
-                $arrSalesColumns[$main_branch][] = $summary_column_name;  // Store sales columns by branch
-                $BranchIds[] = $main_branch;
+                $arrSalesColumns[$branch_id][] = $summary_column_name;  // Store sales columns by branch
+                $BranchIds[] = $branch_id;
             }
 
 
             // Process sales data per branch and month
-            foreach ($arrSalesColumns as $main_branch => $salesColumns) {
+            foreach ($arrSalesColumns as $branch_id => $salesColumns) {
                 // Reset $arrSalesColumns for the next branch
                 $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
                 foreach ($labels as $index => $value) {
                     if ($index == 0) {
-                        $queryNew = "SELECT count(team_id) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND d.main_branch = '$main_branch' AND b.wd_code = e.wd_code $where GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code" .
+                        $queryNew = "SELECT count(team_id) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.branch_id = $branch_id AND b.wd_code = e.wd_code $where GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code" .
                             " ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 1) {
-                        $queryNew = "SELECT count(a.team_id) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT count(a.team_id) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                         // echo $queryNew;
                         // die;
                     } elseif ($index == 2) {
-                        $queryNew = "SELECT count(a.is_qualified) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND is_qualified = '1'" .
-                            " AND d.main_branch = '$main_branch' $where $yearAndMonthCond GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code" .
+                        $queryNew = "SELECT count(a.is_qualified) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND is_qualified = '1'" .
+                            " AND b.branch_id = $branch_id $where $yearAndMonthCond GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code" .
                             " ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 3) {
-                        $queryNew = "SELECT count(is_beat_adherence) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND a.is_beat_adherence = 'Yes' AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT count(is_beat_adherence) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND a.is_beat_adherence = 'Yes' AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 4) {
-                        $queryNew = "SELECT count(a.rec_id) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblroute_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT count(a.rec_id) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblroute_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 5) {
-                        $queryNew = "SELECT count(distinct a.ques_3) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond2" .
-                            " GROUP BY b.team_id,d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT count(distinct a.ques_3) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond2" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        // echo $queryNew;die;
+                        // } elseif ($index == 6) {
+                        //     $queryNew = "SELECT SUM(total_sellin_shops) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d" .
+                        //         " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' AND b.branch_id = $branch_id $where $yearAndMonthCond GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code" .
+                        //         " ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 6) {
-                        $queryNew = "SELECT count(distinct a.ques_3) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND a.ques_4 = 'Yes' AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond2" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT count(distinct a.ques_3) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND a.ques_4 = 'Yes' AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond2" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 7) {
-                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 8) {
-                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 9) {
-                        $queryNew = "SELECT SUM(total_meter_travelled / 1000) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM(total_meter_travelled / 1000) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 10) {
-                        $queryNew = "SELECT SUM(time_in_market) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM(time_in_market) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 11) {
-                        $queryNew = "SELECT SUM(a.call_time) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond2" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM(a.call_time) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblsurvey_response_new AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond2" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                         // echo $queryNew;die;
                     } elseif ($index == 12) {
-                        $queryNew = "SELECT SUM(a.call_time) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond2" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM(a.call_time) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblsurvey_response_new AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond2" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                         // echo $queryNew;die;
                     } elseif ($index == 13) {
-                        $queryNew = "SELECT SUM(total_sales_deliveries + total_other_shops) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
-                    } elseif ($index == 14) {
-                        $queryNew = "SELECT SUM(a.total_time) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM(total_sales_deliveries + total_other_shops) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where $yearAndMonthCond" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } else {
-                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, e.circle, e.section, b.wd_code, b.team_name, d.district, d.main_branch FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND d.main_branch = '$main_branch' $where" .
-                            " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, b.branch_id, e.circle, e.section, b.wd_code, b.team_name, d.district FROM tblvands_summary AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
+                            " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = '99' AND b.wd_code = e.wd_code AND b.branch_id = $branch_id $where" .
+                            " GROUP BY b.team_id, b.branch_id, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     }
 
                     $rsAction1 = null;
@@ -1068,9 +1065,9 @@ class ProductiveDashboard
 
                     if ($iActionRows1 > 0) {
                         while ($row1 = $this->_dbConn->GetData($rsAction1)) {
-                            $branch_id = $row1['main_branch'];
+                            $branch_id = $row1['branch_id'];
                             $district = $row1['district'];
-                            $branch_name = $row1['main_branch'];
+                            $branch_name = getRowColumn($this->_dbConn, $this->_tables["BRANCH_TABLE"], "branch_name", "branch_id = $branch_id");
                             $circle = $row1['circle'];
                             $section = $row1['section'];
                             $wd_code = $row1['wd_code'];
@@ -1220,17 +1217,6 @@ class ProductiveDashboard
                     $arrDistrictData['districtLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                 }
 
-                if (isset($arrDistrictData['districtLevelSale']['Survey (M) (Daily Average)']) && $arrDistrictData['districtLevelSale']['No of Users']) {
-                    $arrDistrictData['districtLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrDistrictData['districtLevelSale']['Survey (M) (Daily Average)'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
-                }
-
-                if (isset($arrDistrictData['districtLevelSale']['Total Time'])) {
-                    $time = ($arrDistrictData['districtLevelSale']['Total Time'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate;
-                    $hours = round((int)$time / 60);
-                    $minutes = ((int)$time) % 60;
-                    $arrDistrictData['districtLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
-                }
-
 
                 foreach ($arrDistrictData['branchData'] as &$arrBranchData) {
                     if (isset($arrBranchData['branchLevelSale']['CFT per days']) && isset($arrBranchData['branchLevelSale']['No of days present'])) {
@@ -1276,17 +1262,6 @@ class ProductiveDashboard
                         $hours = round((int)$minutes / 60);
                         // $minutes = $minutes % 60;
                         $arrBranchData['branchLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
-                    }
-
-                    if (isset($arrBranchData['branchLevelSale']['Survey (M) (Daily Average)']) && $arrBranchData['branchLevelSale']['No of Users']) {
-                        $arrBranchData['branchLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrBranchData['branchLevelSale']['Survey (M) (Daily Average)'] / $arrBranchData['branchLevelSale']['No of Users'], 0);
-                    }
-
-                    if (isset($arrBranchData['branchLevelSale']['Total Time'])) {
-                        $time = ($arrBranchData['branchLevelSale']['Total Time'] / $arrBranchData['branchLevelSale']['No of Users']) / $getDate;
-                        $hours = round((int)$time / 60);
-                        $minutes = ((int)$time) % 60;
-                        $arrBranchData['branchLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
                     }
 
                     foreach ($arrBranchData['circleData'] as &$arrCircleData) {
@@ -1335,17 +1310,6 @@ class ProductiveDashboard
                             $arrCircleData['circleLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                         }
 
-                        if (isset($arrCircleData['circleLevelSale']['Survey (M) (Daily Average)']) && $arrCircleData['circleLevelSale']['No of Users']) {
-                            $arrCircleData['circleLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrCircleData['circleLevelSale']['Survey (M) (Daily Average)'] / $arrCircleData['circleLevelSale']['No of Users'], 0);
-                        }
-
-                        if (isset($arrCircleData['circleLevelSale']['Total Time'])) {
-                            $time = ($arrCircleData['circleLevelSale']['Total Time'] / $arrCircleData['circleLevelSale']['No of Users']) / $getDate;
-                            $hours = round((int)$time / 60);
-                            $minutes = ((int)$time) % 60;
-                            $arrCircleData['circleLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
-                        }
-
                         foreach ($arrCircleData['sectionData'] as &$arrSectionData) {
                             if (isset($arrSectionData['sectionLevelSale']['CFT per days']) && isset($arrSectionData['sectionLevelSale']['No of days present'])) {
                                 $time = $arrSectionData['sectionLevelSale']['CFT per days'] / $arrSectionData['sectionLevelSale']['No of days present'];
@@ -1390,18 +1354,6 @@ class ProductiveDashboard
                                 $hours = round((int)$minutes / 60);
                                 // $minutes = $minutes % 60;
                                 $arrSectionData['sectionLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
-                            }
-
-                            if (isset($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)']) && $arrSectionData['sectionLevelSale']['No of Users']) {
-                                $arrSectionData['sectionLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)'] / $arrSectionData['sectionLevelSale']['No of Users'], 0);
-                            }
-
-
-                            if (isset($arrSectionData['sectionLevelSale']['Total Time'])) {
-                                $time = ($arrSectionData['sectionLevelSale']['Total Time'] / $arrSectionData['sectionLevelSale']['No of Users']) / $getDate;
-                                $hours = round((int)$time / 60);
-                                $minutes = ((int)$time) % 60;
-                                $arrSectionData['sectionLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
                             }
 
                             foreach ($arrSectionData['wdData'] as &$arrWdCodeData) {
@@ -1450,17 +1402,6 @@ class ProductiveDashboard
                                     $arrWdCodeData['wdLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
                                 }
 
-                                if (isset($arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average)']) && $arrWdCodeData['wdLevelSale']['No of Users']) {
-                                    $arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average)'] / $arrWdCodeData['wdLevelSale']['No of Users'], 0);
-                                }
-
-                                if (isset($arrWdCodeData['wdLevelSale']['Total Time'])) {
-                                    $time = ($arrWdCodeData['wdLevelSale']['Total Time'] / $arrWdCodeData['wdLevelSale']['No of Users']) / $getDate;
-                                    $hours = round((int)$time / 60);
-                                    $minutes = ((int)$time) % 60;
-                                    $arrWdCodeData['wdLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
-                                }
-
                                 foreach ($arrWdCodeData['teamData'] as &$arrTeamData) {
                                     if (isset($arrTeamData['teamLevelSale']['CFT per days']) && isset($arrTeamData['teamLevelSale']['No of days present'])) {
                                         $time = $arrTeamData['teamLevelSale']['CFT per days'] / $arrTeamData['teamLevelSale']['No of days present'];
@@ -1505,17 +1446,6 @@ class ProductiveDashboard
                                         $hours = round((int)$minutes / 60);
                                         // $minutes = $minutes % 60;
                                         $arrTeamData['teamLevelSale']['CFT per outlet'] = "{$hours} h {$minutes} m";
-                                    }
-
-                                    if (isset($arrTeamData['teamLevelSale']['Survey (M) (Daily Average)']) && $arrTeamData['teamLevelSale']['No of Users']) {
-                                        $arrTeamData['teamLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrTeamData['teamLevelSale']['Survey (M) (Daily Average)'] / $arrTeamData['teamLevelSale']['No of Users'], 0);
-                                    }
-
-                                    if (isset($arrTeamData['teamLevelSale']['Total Time'])) {
-                                        $time = ($arrTeamData['teamLevelSale']['Total Time'] / $arrTeamData['teamLevelSale']['No of Users']) / $getDate;
-                                        $hours = round((int)$time / 60);
-                                        $minutes = ((int)$time) % 60;
-                                        $arrTeamData['teamLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
                                     }
                                 }
                             }

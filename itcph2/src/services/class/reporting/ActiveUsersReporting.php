@@ -587,7 +587,7 @@ class ActiveUsersReporting
             $this->_dbConn
         );
 
-        $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
+        $teamType = getFormData($this->_data['searchbar'] ?? $this->_data['dsType'] ?? "");
         if (isset($teamType) && $teamType != "" && $teamType >= 0) {
             $matchAll = checkIfAllSelected($teamType);
             if (!$matchAll) {
@@ -753,7 +753,7 @@ class ActiveUsersReporting
             $where .= " AND a.project_id IN $projectList";
         }
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND a.team_id IN $teamList";
         }
 
         // Don't use a.dstatus = 0 AND c.dstatus = 0
