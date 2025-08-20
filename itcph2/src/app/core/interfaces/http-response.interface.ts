@@ -238,6 +238,8 @@ export interface StockProduct extends DropdownList {
   wd_code?: any;
   previousMonthTarget?: any;
   previousMonthAchieve?: any;
+  currentMonthTarget?: any;
+  currentMonthAchieve?: any;
 }
 
 export interface ReadyStockPickupResponse {
