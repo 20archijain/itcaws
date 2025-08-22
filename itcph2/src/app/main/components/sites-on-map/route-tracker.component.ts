@@ -20,6 +20,7 @@ import { Functions } from 'src/app/core/utils/functions.list';
 export class RouteTrackerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   group: UntypedFormGroup;
+  districtOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   teamTypeOptions: DropdownList[] = [];
@@ -53,6 +54,7 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
     this.group = this.fb.group({
       date: [currentDate, COMMON_VALIDATORS.validators.date],
       searchbar: this.fb.group({
+        district: [''],
         branch: [''],
         circle: [''],
         section: [''],
@@ -80,6 +82,7 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -120,6 +123,30 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
           })
       );
     }
+  }
+
+  getBranch() {
+    this.branchValue = null;
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('searchbar').get('district').value }, null, environment.getAttendanceDataUrl)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.branchOptions = resp.data.branchList;
+            this.circleOptions = resp.data.circleList;
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+          }
+        })
+    );
   }
 
   getCircle() {
@@ -215,10 +242,6 @@ export class RouteTrackerComponent implements OnDestroy, OnInit {
           }
         })
     );
-  }
-
-  get branchValue() {
-    return this.group && this.group.get('branch').value;
   }
 
   set branchValue(value: string) {

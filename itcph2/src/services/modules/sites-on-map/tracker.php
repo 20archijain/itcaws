@@ -15,6 +15,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_ROUTE_DATA']:
             $sites->getRouteTrackerData();
             break;
+        case $ACTION_LIST['GET_BRANCH']:
+            $sites->getBranch();
+            break;
         case $ACTION_LIST['GET_CIRCLE']:
             $sites->getCircle();
             break;

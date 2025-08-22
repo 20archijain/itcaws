@@ -96,6 +96,7 @@ export interface GetAttendanceDataResponse {
   cgConfig?: CustomGalleryConfig;
   attendanceTimeList: DropdownList[];
   clientList: DropdownList[];
+  districtList: DropdownList[];
   branchList: DropdownList[];
   teamList: DropdownList[];
   teamType: DropdownList[];

@@ -18,6 +18,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 export class LocationsCoveredComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   group: UntypedFormGroup;
+  districtOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   teamTypeOptions: DropdownList[] = [];
@@ -49,6 +50,7 @@ export class LocationsCoveredComponent implements OnDestroy, OnInit {
       dateTo: ['', COMMON_VALIDATORS.validators.date],
       rmdName: ['', this.isRmdNameRequired ? COMMON_VALIDATORS.validators.dropdownStringValue : []],
       searchbar: this.fb.group({
+        district: [''],
         branch: [''],
         circle: [''],
         section: [''],
@@ -76,6 +78,7 @@ export class LocationsCoveredComponent implements OnDestroy, OnInit {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -116,6 +119,30 @@ export class LocationsCoveredComponent implements OnDestroy, OnInit {
           })
       );
     }
+  }
+
+  getBranch() {
+    this.branchValue = null;
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('searchbar').get('district').value }, null, environment.getAttendanceDataUrl)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.branchOptions = resp.data.branchList;
+            this.circleOptions = resp.data.circleList;
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+          }
+        })
+    );
   }
 
   getCircle() {
