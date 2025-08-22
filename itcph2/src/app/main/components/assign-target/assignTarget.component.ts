@@ -24,6 +24,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   group: UntypedFormGroup;
   stockProductsList: StockProduct[] = [];
   previousMonth = Functions.previousMonth();
+  currentMonth = Functions.currentMonth();
   // monthOptions = [
   //   { label: 'January', value: '01' },
   //   { label: 'February', value: '02' },

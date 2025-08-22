@@ -85,6 +85,14 @@ export class Functions {
     return monthNames[previousMonthIndex];
   }
 
+  static currentMonth(customDate?: string): string {
+    const date = customDate ? new Date(customDate) : new Date();
+    const monthIndex = date.getMonth(); // 0 = Jan, 1 = Feb, ..., 11 = Dec
+    const previousMonthIndex = (monthIndex + 12) % 12; // handle January -> December
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[previousMonthIndex];
+  }
+
   static currentDate(customDate?: string, firstDay?: boolean) {
     let date = new Date();
     if (customDate) {
