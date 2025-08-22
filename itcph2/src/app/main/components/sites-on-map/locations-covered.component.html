@@ -16,6 +16,13 @@
       </div>
 
       <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="searchbarForm" controlName="district" [options]="districtOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.district' | translate }}" label="app.team.add.district"
+          (onChange)="getBranch()">
+        </app-select>
+      </div>
+
+      <div *ngIf="branchFilter" class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="branch" [options]="branchOptions" [multiple]="true"
           label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()"
           groupBy="mainBranch">

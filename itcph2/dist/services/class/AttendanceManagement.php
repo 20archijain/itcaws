@@ -130,6 +130,265 @@ class AttendanceManagement
         return $where;
     }
 
+    final public function getDistrictList()
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.district";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['district'],
+                    "value" => $row['district']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getCircleList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.circle";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['circle'] . " - " . $row['circle_name'],
+                    "value" => $row['circle']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getSectionList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.section";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['section'] . " - " . $row['section_name'],
+                    "value" => $row['section']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getWdCodeList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.wd_code";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
+                    "value" => $row['wd_code']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getTeamsList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.team_name";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['team_name'],
+                    "value" => $row['team_id']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getDsTypeList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $teamType = "";
+                if ($row['is_type'] == 0) {
+                    $teamType = "Van DS";
+                } elseif ($row['is_type'] == 1) {
+                    $teamType = "Niche";
+                } elseif ($row['is_type'] == 2) {
+                    $teamType = "Town SWD";
+                } elseif ($row['is_type'] == 3) {
+                    $teamType = "Hybrid";
+                } elseif ($row['is_type'] == 5) {
+                    $teamType = "NPSR";
+                }
+                $arrData[] = array(
+                    "label" => $teamType,
+                    "value" => $row['is_type']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
+    final public function getBranch($district = "district")
+    {
+        $district = $this->_data['district'];
+        $districtCond = "";
+        if (!empty($district)) {
+            if (!is_array($district)) {
+                $district = array($district);
+            }
+            if (in_array('all', $district)) {
+                $districtCond = ""; // No condition for 'all'
+            } else {
+
+                $district = "'" . implode("','", $district) . "'";
+                $districtCond = " AND a.district IN ($district)";
+            }
+
+            $arrResult = array(
+                "branchList" => getBranchList($this->_dbConn, false, "district IN ($district)", "", 1, false, true, "mainBranch"),
+                "teamType" => getTeamType($this->_dbConn, $district),
+                "circleList" => $this->getCircleList($districtCond),
+                "sectionList" => $this->getSectionList($districtCond),
+                "wdCodeList" => $this->getWdCodeList($districtCond),
+                "teamList" => $this->getTeamsList($districtCond),
+                "teamType" => $this->getDsTypeList($districtCond),
+            );
+        } else {
+            $arrResult = array(
+                "branchList" => "",
+                "circleList" => "",
+                "sectionList" => "",
+                "wdCodeList" => "",
+                "teamType" => "",
+                "teamList" => "",
+                "categoryList" => "",
+                "productList" => "",
+                "wdMarketList" => "",
+                "wdPopGroupList" => "",
+            );
+        }
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
     final public function getCircle($branch = "branch_id")
     {
         $branch = $this->_data['branch'];
@@ -142,16 +401,16 @@ class AttendanceManagement
                 $branchCond = ""; // No condition for 'all'
             } else {
                 $branch = "'" . implode("','", $branch) . "'";
-                $branchCond = " AND branch_id IN ($branch)";
+                $branchCond = " AND a.branch_id IN ($branch)";
             }
 
             $arrResult = array(
                 // Don't use dstatus = 0
-                "teamType" => getTeamType($this->_dbConn, $branch),
-                "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
-                "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
-                "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
-                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
+                "circleList" => $this->getCircleList($branchCond),
+                "sectionList" => $this->getSectionList($branchCond),
+                "wdCodeList" => $this->getWdCodeList($branchCond),
+                "teamType" => $this->getDsTypeList($branchCond),
+                "teamList" => $this->getTeamsList($branchCond),
             );
         } else {
             $arrResult = array(
@@ -168,11 +427,9 @@ class AttendanceManagement
 
     final public function getSection($circle = "circle")
     {
-        $branch = $this->_data['branch'];
         $circle = $this->_data['circle'];
         $circleCond = "";
-        $branchCond = "";
-        if ($circle || $branch) {
+        if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
                     $circle = array($circle);
@@ -181,39 +438,15 @@ class AttendanceManagement
                     $circleCond = ""; // No condition for 'all'
                 } else {
                     $circle = "'" . implode("','", $circle) . "'";
-                    $circleCond = " AND circle IN ($circle)";
-                }
-            }
-            if ($branch) {
-                if (!is_array($branch)) {
-                    $branch = array($branch);
-                }
-                if (in_array('all', $branch)) {
-                    $branchCond = ""; // No condition for 'all'
-                } else {
-                    $branch = "'" . implode("','", $branch) . "'";
-                    $branchCond = " AND branch_id IN ($branch)";
-                }
-            }
-            $branchIds = getRowsColumn($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", " dstatus = '0' AND s_id = '99' $branchCond $circleCond ");
-            $where = "";
-            if ($branchIds) {
-                $matchAll = checkIfAllSelected($branchIds);
-                if (!$matchAll) {
-                    if (isNonEmptyArray($branchIds)) {
-                        $branchIds = implode(",", $branchIds);
-                        $where = "$branchIds";
-                    } else {
-                        $where = "$branchIds";
-                    }
+                    $circleCond = " AND b.circle IN ($circle)";
                 }
             }
             $arrResult = array(
                 // Don't use dstatus = 0
-                "teamType" => getTeamType($this->_dbConn, $where),
-                "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99' $branchCond  $circleCond"),
-                "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
-                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
+               "sectionList" => $this->getSectionList($circleCond),
+                "wdCodeList" => $this->getWdCodeList($circleCond),
+                "teamType" => $this->getDsTypeList($circleCond),
+                "teamList" => $this->getTeamsList($circleCond),
             );
         } else {
             $arrResult = array(
@@ -230,13 +463,9 @@ class AttendanceManagement
 
     final public function getWDCode($section = "section")
     {
-        $branch = $this->_data['branch'];
-        $circle = $this->_data['circle'];
         $section = $this->_data['section'];
-        $circleCond = "";
-        $branchCond = "";
         $sectionCond = "";
-        if ($section || $branch || $section) {
+        if ($section) {
             if ($section) {
                 if (!is_array($section)) {
                     $section = array($section);
@@ -245,50 +474,15 @@ class AttendanceManagement
                     $sectionCond = ""; // No condition for 'all'
                 } else {
                     $section = "'" . implode("','", $section) . "'";
-                    $sectionCond = " AND section IN ($section)";
-                }
-            }
-            if ($circle) {
-                if (!is_array($circle)) {
-                    $circle = array($circle);
-                }
-                if (in_array('all', $circle)) {
-                    $circleCond = ""; // No condition for 'all'
-                } else {
-                    $circle = "'" . implode("','", $circle) . "'";
-                    $circleCond = " AND circle IN ($circle)";
-                }
-            }
-            if ($branch) {
-                if (!is_array($branch)) {
-                    $branch = array($branch);
-                }
-                if (in_array('all', $branch)) {
-                    $branchCond = ""; // No condition for 'all'
-                } else {
-                    $branch = "'" . implode("','", $branch) . "'";
-                    $branchCond = " AND branch_id IN ($branch)";
-                }
-            }
-            $branchIds = getRowsColumn($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", " dstatus = '0' AND s_id = '99' $branchCond $circleCond $sectionCond ");
-            $where = "";
-            if ($branchIds) {
-                $matchAll = checkIfAllSelected($branchIds);
-                if (!$matchAll) {
-                    if (isNonEmptyArray($branchIds)) {
-                        $branchIds = implode(",", $branchIds);
-                        $where = "$branchIds";
-                    } else {
-                        $where = "$branchIds";
-                    }
+                    $sectionCond = " AND b.section IN ($section)";
                 }
             }
 
             $arrResult = array(
                 // Don't use dstatus = 0
-                "teamType" => getTeamType($this->_dbConn, $where),
-                "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond"),
-                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond"),
+                "wdCodeList" => $this->getWdCodeList($sectionCond),
+                "teamType" => $this->getDsTypeList($sectionCond),
+                "teamList" => $this->getTeamsList($sectionCond),
             );
         } else {
             $arrResult = array(
@@ -305,14 +499,8 @@ class AttendanceManagement
     final public function getTeamType()
     {
         $wdCode = $this->_data['wdCode'];
-        $branch = $this->_data['branch'];
-        $circle = $this->_data['circle'];
-        $section = $this->_data['section'];
         $wdCodeCond = "";
-        $circleCond = "";
-        $branchCond = "";
-        $sectionCond = "";
-        if ($wdCode || $branch || $circle || $section) {
+        if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
                     $wdCode = array($wdCode);
@@ -321,60 +509,13 @@ class AttendanceManagement
                     $wdCodeCond = ""; // No condition for 'all'
                 } else {
                     $wdCode = "'" . implode("','", $wdCode) . "'";
-                    $wdCodeCond = " AND wd_code IN ($wdCode)";
-                }
-            }
-            if ($section) {
-                if (!is_array($section)) {
-                    $section = array($section);
-                }
-                if (in_array('all', $section)) {
-                    $sectionCond = ""; // No condition for 'all'
-                } else {
-                    $section = "'" . implode("','", $section) . "'";
-                    $sectionCond = " AND section IN ($section)";
-                }
-            }
-            if ($circle) {
-                if (!is_array($circle)) {
-                    $circle = array($circle);
-                }
-                if (in_array('all', $circle)) {
-                    $circleCond = ""; // No condition for 'all'
-                } else {
-                    $circle = "'" . implode("','", $circle) . "'";
-                    $circleCond = " AND circle IN ($circle)";
-                }
-            }
-            if ($branch) {
-                if (!is_array($branch)) {
-                    $branch = array($branch);
-                }
-                if (in_array('all', $branch)) {
-                    $branchCond = ""; // No condition for 'all'
-                } else {
-                    $branch = "'" . implode("','", $branch) . "'";
-                    $branchCond = " AND branch_id IN ($branch)";
-                }
-            }
-
-            $branchIds = getRowsColumn($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", " dstatus = '0' AND s_id = '99' $branchCond $circleCond $sectionCond $wdCodeCond ");
-            $where = "";
-            if ($branchIds) {
-                $matchAll = checkIfAllSelected($branchIds);
-                if (!$matchAll) {
-                    if (isNonEmptyArray($branchIds)) {
-                        $branchIds = implode(",", $branchIds);
-                        $where = "$branchIds";
-                    } else {
-                        $where = "$branchIds";
-                    }
+                    $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
             $arrResult = array(
                 // Don't use dstatus = 0
-                "teamType" => getTeamType($this->_dbConn, $where),
-                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond"),
+                "teamType" => $this->getDsTypeList($wdCodeCond),
+                "teamList" => $this->getTeamsList($wdCodeCond),
             );
         } else {
             $arrResult = array(
@@ -771,12 +912,13 @@ class AttendanceManagement
             "attendanceTimeList" => $this->getAttendanceTimeList(),
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
+            "districtList" => $this->getDistrictList(),
             "branchList" => $branchList,
             "teamList" => getTeamsOptions($this->_dbConn, "", "", 0, true, "s_id = '99' $where"),
             "teamType" => getTeamType($this->_dbConn),
-            "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "team_id IS NOT NULL AND s_id = '99' $where"),
-            "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99' $where"),
-            "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL  AND s_id = '99' $where"),
+            "circleList" => $this->getCircleList(),
+            "sectionList" => $this->getSectionList(),
+            "wdCodeList" => $this->getWdCodeList(),
         );
     }
 

@@ -12,6 +12,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_LIST']:
             $sites->getUniverseData();
             break;
+        case $ACTION_LIST['GET_BRANCH']:
+            $sites->getBranch();
+            break;
         case $ACTION_LIST['GET_CIRCLE']:
             $sites->getCircle();
             break;

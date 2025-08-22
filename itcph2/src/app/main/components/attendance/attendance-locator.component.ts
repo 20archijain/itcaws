@@ -20,6 +20,7 @@ export class AttendanceLocatorComponent implements OnDestroy, OnInit {
   group: UntypedFormGroup;
   total = 0;
   markers: MapConfig[] = [];
+  districtOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   teamTypeOptions: DropdownList[] = [];
@@ -44,6 +45,7 @@ export class AttendanceLocatorComponent implements OnDestroy, OnInit {
       attendanceTime: ['0', COMMON_VALIDATORS.validators.requiredOnly],
       branch: ['', COMMON_VALIDATORS.validators.dropdownAllOptional],
       date: [currentDate, COMMON_VALIDATORS.validators.date],
+      district: [''],
       teamType: [''],
       circle: [''],
       section: [''],
@@ -59,6 +61,7 @@ export class AttendanceLocatorComponent implements OnDestroy, OnInit {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -98,6 +101,30 @@ export class AttendanceLocatorComponent implements OnDestroy, OnInit {
           })
       );
     }
+  }
+
+  getBranch() {
+    this.branchValue = null;
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, environment.getAttendanceDataUrl)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.branchOptions = resp.data.branchList;
+            this.circleOptions = resp.data.circleList;
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+          }
+        })
+    );
   }
 
   getCircle() {
@@ -196,8 +223,9 @@ export class AttendanceLocatorComponent implements OnDestroy, OnInit {
   }
 
 
-  get branchValue() {
-    return this.group && this.group.get('branch').value;
+  set branchValue(value: string) {
+    this.branchOptions = [];
+    this.group.get('branch').setValue(value);
   }
 
   set circleValue(value: string) {

@@ -24,6 +24,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['DELETE_IMAGE']:
             $attendance->deleteAttendance();
             break;
+        case $ACTION_LIST['GET_BRANCH']:
+            $attendance->getBranch();
+            break;
         case $ACTION_LIST['GET_CIRCLE']:
             $attendance->getCircle();
             break;

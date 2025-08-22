@@ -13,6 +13,11 @@
         <!-- If Superadmin or Admin Login -->
         <div *ngIf="branchFilter" class="row">
           <div class="col-12 col-sm-4 col-md-3 col-xl-2">
+            <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.district' | translate }}" label="app.team.add.district" (onChange)="getBranch()">
+            </app-select>
+          </div>
+          <div class="col-12 col-sm-4 col-md-3 col-xl-2">
             <app-select [group]="group" controlName="branch" placeholder="{{ 'app.team.add.branch' | translate }}"
               label="app.team.add.branch" [options]="branchOptions" [errorMessages]="errorMessages.branch"
               [multiple]="true" (onChange)="getCircle()" groupBy="mainBranch">

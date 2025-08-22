@@ -12,6 +12,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_LIST']:
             $attendance->viewAttendanceLocator();
             break;
+        case $ACTION_LIST['GET_BRANCH']:
+            $attendance->getBranch();
+            break;
         case $ACTION_LIST['GET_CIRCLE']:
             $attendance->getCircle();
             break;
