@@ -25,6 +25,23 @@ class AssignTarget
 
     final public function getData()
     {
+        $firstDay = date('Y-m-01', strtotime('first day of previous month'));
+        $lastDay = date('Y-m-t', strtotime('last day of previous month'));
+
+        $prevMonth = date("m", strtotime("first day of previous month"));
+        $prevYear  = date("Y", strtotime("first day of previous month"));
+
+        $previousMonthCond = " AND activity_date BETWEEN '$firstDay' AND '$lastDay'";
+
+
+        $currentFirstDay = date('Y-m-01');
+        $currentLastDay = date('Y-m-t');
+
+        $currentMonth = date("m");
+        $currentYear  = date("Y");
+
+        $currentMonthCond = " AND activity_date BETWEEN '$currentFirstDay' AND '$currentLastDay'";
+
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         $where1 = "";
@@ -69,21 +86,16 @@ class AssignTarget
             }
         }
 
-        $year = currentDate("", 'Y');
-        $month = currentDate("", 'm');
+        // $year = currentDate("", 'Y');
+        // $month = currentDate("", 'm');
 
-        $firstDay = date('Y-m-01', strtotime('first day of previous month'));
-        $lastDay = date('Y-m-t', strtotime('last day of previous month'));
+        // $existTeam = getRowsColumn($this->_dbConn, "tblassign_target", "team_id", "dstatus = 0 AND year = $year AND month = $month $where1");
 
-        $previousMonthCond = " AND activity_date BETWEEN '$firstDay' AND '$lastDay'";
-
-        $existTeam = getRowsColumn($this->_dbConn, "tblassign_target", "team_id", "dstatus = 0 AND year = $year AND month = $month $where1");
-
-        $teamAlreadyExistCond = "";
-        if ($existTeam && is_array($existTeam)) {
-            $team = "'" . implode("', '", $existTeam) . "'";
-            $teamAlreadyExistCond .= "AND b.team_id NOT IN ($team)";
-        }
+        // $teamAlreadyExistCond = "";
+        // if ($existTeam && is_array($existTeam)) {
+        //     $team = "'" . implode("', '", $existTeam) . "'";
+        //     $teamAlreadyExistCond .= "AND b.team_id NOT IN ($team)";
+        // }
 
         $skuColumn = implode(" + ", $arrColumns);
         $skuColumnAllProduct = implode(" + ", $arrColumnsAllProduct);
@@ -91,14 +103,17 @@ class AssignTarget
 
         $sAction2 = null;
         $iRows2 = 0;
-        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 $where $teamAlreadyExistCond";
+        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 $where limit 10";
         // echo $sQuery2;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
         if ($iRows2 > 0) {
             while ($row2 = $this->_dbConn->GetData($sAction2)) {
                 $team_id = $row2["team_id"];
-                $monthTarget = getRowColumn($this->_dbConn, "tblassign_target", "SUM($skuColumn)", " team_id = $team_id");
+                $monthTarget =  $this->getResult("tblassign_target", "SUM($skuColumn)", " AND team_id = $team_id AND year = '$prevYear' AND month = '$prevMonth'");
                 $monthAchieve = $this->getResult("tblvands_summary", "SUM($skuColumnAllProduct)", " AND team_id = $team_id $previousMonthCond");
+
+                $currentMonthTarget =  $this->getResult("tblassign_target", "SUM($skuColumn)", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
+                $currentMonthAchieve = $this->getResult("tblvands_summary", "SUM($skuColumnAllProduct)", " AND team_id = $team_id $currentMonthCond");
 
                 if ($monthTarget) {
                     $previousMonthTarget = $monthTarget;
@@ -110,12 +125,25 @@ class AssignTarget
                 } else {
                     $previousmonthAchieve = 0;
                 }
+
+                if ($currentMonthTarget) {
+                    $showCurrentMonthTarget = $currentMonthTarget;
+                } else {
+                    $showCurrentMonthTarget = 0;
+                }
+                if ($currentMonthAchieve) {
+                    $showCurrentMonthAchieve = $currentMonthAchieve;
+                } else {
+                    $showCurrentMonthAchieve = 0;
+                }
                 $arrTeamList[] = array(
                     "label" => $row2["team_name"],
                     "value" => $row2["team_id"],
                     "wd_code" => $row2["wd_code"],
-                    "previousMonthTarget" => round($previousMonthTarget, 2),
-                    "previousMonthAchieve" => round($previousmonthAchieve, 2),
+                    "previousMonthTarget" => $previousMonthTarget,
+                    "previousMonthAchieve" => $previousmonthAchieve,
+                    "currentMonthTarget" => $showCurrentMonthTarget,
+                    "currentMonthAchieve" => $showCurrentMonthAchieve,
                 );
             }
         }
@@ -202,14 +230,18 @@ class AssignTarget
                 $arrValues = array_values($items);
             }
 
-            if (isset($arrKeys) && isset($arrValues) && $arrKeys && $arrValues) {
-                $cols = "team_id, year, month, rcd, rdt, ";
-                $vals = "?, ?, ?, ?, ?, ";
-                $arrParams = array($index, $year, $month, $currentDate, $currentDateTime);
-                $cols .= implode(', ', $arrKeys);
-                $vals .= implode(', ', array_fill(0, count($arrKeys), '?'));
-                $arrParams = array_merge($arrParams, $arrValues);
-                $iNum_rows = addRecord($this->_dbConn, "tblassign_target", $cols, $vals, $arrParams);
+            $existTeamProdId = getRowColumn($this->_dbConn, "tblassign_target", "prod_id", " dstatus = 0 AND year = $year AND month = $month AND team_id = $index");
+
+            if ($existTeamProdId == 0) {
+                if (isset($arrKeys) && isset($arrValues) && $arrKeys && $arrValues) {
+                    $cols = "team_id, year, month, rcd, rdt, ";
+                    $vals = "?, ?, ?, ?, ?, ";
+                    $arrParams = array($index, $year, $month, $currentDate, $currentDateTime);
+                    $cols .= implode(', ', $arrKeys);
+                    $vals .= implode(', ', array_fill(0, count($arrKeys), '?'));
+                    $arrParams = array_merge($arrParams, $arrValues);
+                    $iNum_rows = addRecord($this->_dbConn, "tblassign_target", $cols, $vals, $arrParams);
+                }
             }
         }
 
