@@ -120,6 +120,18 @@ class SitesOnMapManagement
         }
 
         $where = "";
+        $district = getFormData($this->_data["searchbar"], "district");
+        if ($district) {
+            $matchAll = checkIfAllSelected($district);
+            if (!$matchAll) {
+                if (isNonEmptyArray($district)) {
+                    $districts = "'" . implode("','", $district) . "'";
+                    $where .= " AND c.district IN ($districts)";
+                } else {
+                    $where .= " AND c.district = $district";
+                }
+            }
+        }
         if ($condition && $andCondition) {
             $where .= " AND a.team_id IN (SELECT team_id FROM $teamTable WHERE dstatus = '0' $condition)";
         } elseif ($condition) {
@@ -674,8 +686,8 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.uni_id, a.mob_img_id, a.capture_datetime, a.capture_date, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
-            " AND a.team_id = b.team_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
+        $sQueryAtt = "SELECT a.uni_id, a.mob_img_id, a.capture_datetime, a.capture_date, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+            " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
@@ -725,7 +737,7 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.capture_date, a.lt, a.lg, a.ques_3, a.ques_6, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code  FROM $respTable AS a, $projectTeamTable AS b WHERE a.team_id = b.team_id AND a.dstatus = 0  AND a.lt != 0 $where";
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.capture_date, a.lt, a.lg, a.ques_3, a.ques_6, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code  FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0  AND a.lt != 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -810,8 +822,8 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name,b.is_type,b.branch_id,b.circle,b.section,b.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
-            " AND a.team_id = b.team_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
+        $sQueryAtt = "SELECT a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name,b.is_type,b.branch_id,b.circle,b.section,b.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+            " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
@@ -861,7 +873,7 @@ class SitesOnMapManagement
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.uni_id, a.team_id, a.ques_3, a.ques_6, a.capture_datetime, a.capture_date, a.lt, a.lg, b.team_id, b.team_name,b.is_type,b.branch_id, b.circle, b.section, b.wd_code FROM $respTable AS a" .
-            ", $projectTeamTable AS b WHERE a.team_id = b.team_id AND a.dstatus = 0 AND a.lt != 0 $where";
+            ", $projectTeamTable AS b, $branchTable AS c WHERE a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0 AND a.lt != 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -1006,7 +1018,7 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND a.lt != 0  $where";
+        $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND B.branch_id = C.branch_id AND a.lt != 0  $where";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");

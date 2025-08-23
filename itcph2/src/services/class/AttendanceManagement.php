@@ -22,9 +22,10 @@ class AttendanceManagement
         $this->_tables = $GLOBALS['TABLES'];
     }
 
-    private function getAttendanceCondition($branchColumn = "c.branch_id", $circle = "c.circle", $section = "c.section", $wdCode = "c.wd_code", $teamTypeColumn = "c.is_type")
+    private function getAttendanceCondition($districtColumn = "b.district", $branchColumn = "c.branch_id", $circle = "c.circle", $section = "c.section", $wdCode = "c.wd_code", $teamTypeColumn = "c.is_type")
     {
         $condition = "";
+        $district = getFormData($this->_data, "district");
         $branch = getFormData($this->_data, "branch");
         $type = getFormData($this->_data, "teamType");
         $team = getFormData($this->_data, "dsName");
@@ -43,6 +44,18 @@ class AttendanceManagement
             $where .= " AND a.team_id IN $teamList";
         }
         $branchCond = "dstatus = 0";
+         if ($district) {
+            $district = getFormData($district);
+            $matchAll = checkIfAllSelected($district);
+            if (!$matchAll) {
+                if (isNonEmptyArray($district)) {
+                    $district = implode(",", $district);
+                    $where .= " AND $districtColumn IN ('$district')";
+                } else {
+                    $where .= " AND $districtColumn = '$district'";
+                }
+            }
+        }
         if ($branch) {
             $branch = getFormData($branch);
             $matchAll = checkIfAllSelected($branch);
@@ -664,8 +677,8 @@ class AttendanceManagement
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD", 5 => "NPSR");
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.att_id, a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg, c.team_name,c.is_type,c.branch_id,c.circle,c.section,c.wd_code FROM $attendanceTable AS a, $projectTeamTable AS c" .
-            " WHERE a.team_id = c.team_id AND a.dstatus = 0 AND c.dstatus = 0 $where GROUP BY a.team_id ORDER BY c.team_name";
+        $sQuery = "SELECT a.att_id, a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg, c.team_name,c.is_type,c.branch_id,c.circle,c.section,c.wd_code FROM $attendanceTable AS a, $projectTeamTable AS c, $branchTable AS b" .
+            " WHERE a.team_id = c.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 $where GROUP BY a.team_id ORDER BY c.team_name";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows, $arrParams);
 
         if ($iRows > 0) {
