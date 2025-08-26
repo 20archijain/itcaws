@@ -472,3 +472,10 @@ export interface ProductList {
   wdCode: string;
 }
 
+export interface teams {
+  aeName: DropdownList<string, string>[];
+  wdName: DropdownList<string, string>[];
+  tlName: DropdownList<string, string>[];
+  teamList: DropdownList<string, string>[];
+}
+

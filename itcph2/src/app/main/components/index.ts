@@ -38,6 +38,7 @@ import { AssignTargetComponent } from './assign-target/assignTarget.component';
 import { ViewWdMappingComponent } from './wd-mapping/view.wdmapping.component';
 import { EvaluationReportComponent } from './download-evaluation-report/evaluation-report.component';
 import { DownloadMisscallComponent } from './download-misscall/download-misscall.component';
+import { ViewRouteComponent } from './route/view-route.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -78,6 +79,7 @@ export const MAIN_COMPONENTS = [
   AssignTargetComponent,
   ViewWdMappingComponent,
   DownloadMisscallComponent,
+  ViewRouteComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -119,4 +121,6 @@ export const MAP_MAIN_COMPONENTS = {
   AssignTargetComponent,
   ViewWdMappingComponent,
   DownloadMisscallComponent,
+  ViewRouteComponent,
 };
+
