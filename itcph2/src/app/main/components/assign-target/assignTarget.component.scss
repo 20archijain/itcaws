@@ -47,9 +47,9 @@ $steelblue: #4682b4;
 }
 
 .fix-width {
-  max-width: 200px;
-  min-width: 200px;
-  width: 200px;
+  max-width: 80px;
+  min-width: 80px;
+  width: 80px;
 }
 
 .fix-width2 {
@@ -69,3 +69,20 @@ $steelblue: #4682b4;
   min-width: 120px;
   width: 120px;
 }
+
+.blink-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-left: 6px;
+  background-color: green;
+  border-radius: 50%;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+

@@ -11,13 +11,21 @@
           <table class="table table-xxs table-hover table-bordered">
             <thead>
               <tr class="fixed-header">
-                <th class="f-16 fix-width " [class.highlight]="true">WD Code</th>
-                <th class="f-16 fix-width2 " [class.highlight]="true">NPSR</th>
-                <th class="f-16 fix-width2 " [class.highlight]="true">{{previousMonth}} : Target</th>
-                <th class="f-16 fix-width2 " [class.highlight]="true">{{previousMonth}} : Achieved</th>
-                <th class="f-16 fix-width2 " [class.highlight]="true">{{currentMonth}} : Target</th>
-                <th class="f-16 fix-width2 " [class.highlight]="true">{{currentMonth}} : Achieved</th>
-                <th class="f-16 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
+                <th class="f-12 fix-width " [class.highlight]="true">WD Code</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">NPSR</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{previousMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{previousMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{previousMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{previousMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{previousMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{previousMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{currentMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{currentMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{currentMonth}} : Target</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{currentMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{currentMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{currentMonth}} : Achieved</th>
+                <th class="f-12 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
                   {{ team.label }}
                 </th>
               </tr>
@@ -27,11 +35,22 @@
               <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
                 [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
                 <td>{{ stockProductsList[pi]?.wd_code }}</td>
-                <td>{{ stockProductsList[pi]?.label }}</td>
-                <td>{{ stockProductsList[pi]?.previousMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.previousMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.currentMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.currentMonthAchieve }}</td>
+                <td>
+                  <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
+                {{ stockProductsList[pi]?.label }}
+                </td>
+                <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
+                <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
+                <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
+                <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
+                <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
+                <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
+                <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
                 <td *ngFor="let team of teamsList" class="">
                   <div class="d-flex justify-content-center fix-width4">
                     <app-input maxLength="10" [group]="productControl" [id]="pi + ''"

@@ -237,13 +237,24 @@ export interface StockProduct extends DropdownList {
   stockIssued?: number;
   brand?: any;
   wd_code?: any;
-  previousMonthTarget?: any;
-  previousMonthAchieve?: any;
-  currentMonthTarget?: any;
-  currentMonthAchieve?: any;
+  productOnePreMonthTarget?: number;
+  productOnepreviousMonthAchieve?: number;
+  productTwoPreMonthTarget?: number;
+  productTwopreviousMonthAchieve?: number;
+  productOneCurrentMonthTarget?: number;
+  productOnecurrentMonthAchieve?: number;
+  productTwoCurrentMonthTarget?: number;
+  productTwocurrentMonthAchieve?: number;
+  overAllPreMonthTarget?: number;
+  overallPreviousMonthAchieve?: number;
+  overallCurrentMonthTarget?: number;
+  overallCurrentMonthAchieve?: number;
+  existTeamTableCond?: number;
 }
 
 export interface ReadyStockPickupResponse {
+  product1: string;
+  product2: string;
   monthList: DropdownList[];
   yearList: DropdownList[];
   todaysSales: DropdownList[];
