@@ -11,20 +11,29 @@
           <table class="table table-xxs table-hover table-bordered">
             <thead>
               <tr class="fixed-header">
+                <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">Enter {{currentMonth}} Target</th>
+
+              </tr>
+              <tr class="fixed-header">
                 <th class="f-12 fix-width " [class.highlight]="true">WD Code</th>
                 <th class="f-12 fix-width2 " [class.highlight]="true">NPSR</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{previousMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{previousMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{previousMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{previousMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{previousMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{previousMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{currentMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{currentMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{currentMonth}} : Target</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}} {{currentMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}} {{currentMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true">Overall {{currentMonth}} : Achieved</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
                 <th class="f-12 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
                   {{ team.label }}
                 </th>
