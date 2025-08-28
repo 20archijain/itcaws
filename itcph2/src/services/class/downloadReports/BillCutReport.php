@@ -180,10 +180,10 @@ class BillCutReport
                         $teamType = $isType[$row['is_type']];
                         $wdCode = $row['wd_code'];
                         $arrDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "circle,section,wd_firm_name,wd_pop_group", "dstatus = 0 AND wd_code = '$wdCode'");
-                        $circle = $arrDetails[0];
-                        $section = $arrDetails[1];
-                        $wdFirmName = $arrDetails[2];
-                        $wdpopGroup = $arrDetails[3];
+                        $circle     = isset($arrDetails[0]) ? $arrDetails[0] : "";
+                        $section    = isset($arrDetails[1]) ? $arrDetails[1] : "";
+                        $wdFirmName = isset($arrDetails[2]) ? $arrDetails[2] : "";
+                        $wdpopGroup = isset($arrDetails[3]) ? $arrDetails[3] : "";
                         foreach ($summaryColName as $index => $colName) {
                             $allShops = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $where");
                             if (!isset($shopCount[$district][$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName])) {
