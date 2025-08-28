@@ -47,6 +47,8 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   rowClasses: { [key: string]: string } = {};
   currentColorIndex = 0;
   colors = ['bg-light-gray', 'bg-white'];
+  product1 : string;
+  product2 : string;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private toastrService: ToastrService, private confirmationModalService: ConfirmationModalService) { }
@@ -102,6 +104,8 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.stockProductsList = resp.data.stockProductsList;
             this.teamsList = resp.data.teamsList;
+            this.product1 = resp.data.product1;
+            this.product2 = resp.data.product2;
 
             if (this.stockProductsList.length > 0) {
               // create dynamic control
@@ -134,7 +138,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
         });
         (this.group.get('qty') as UntypedFormArray).push(this.fb.group(controls));
       });
-      (this.group.get('qty') as UntypedFormArray).setValidators([GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(2)]);
+      (this.group.get('qty') as UntypedFormArray).setValidators([GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(3)]);
 
       this.canGoBackGuard.markAsPristine();
     }
@@ -184,7 +188,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
   resetDynamicForm() {
     this.group.removeControl('qty');
-    this.group.addControl('qty', new UntypedFormArray([], [GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(2)]));
+    this.group.addControl('qty', new UntypedFormArray([], [GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(3)]));
   }
 
   getTeamTotalQty(teamId: string): number {
