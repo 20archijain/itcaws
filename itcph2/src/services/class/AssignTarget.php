@@ -25,6 +25,7 @@ class AssignTarget
 
     final public function getData()
     {
+        $monthCheck = $this->_data['monthCheck'];
         $firstDay = date('Y-m-01', strtotime('first day of previous month'));
         $lastDay = date('Y-m-t', strtotime('last day of previous month'));
 
@@ -42,6 +43,9 @@ class AssignTarget
 
         $currentMonthCond = " AND activity_date BETWEEN '$currentFirstDay' AND '$currentLastDay'";
 
+        $nextMonth = date("m", strtotime("first day of next month"));
+        $nextYear  = date("Y", strtotime("first day of next month"));
+
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         $where1 = "";
@@ -52,7 +56,7 @@ class AssignTarget
         $arrStockProductsList = array();
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
+        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id = 5 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -75,7 +79,7 @@ class AssignTarget
 
         $sAction3 = null;
         $iRows3 = 0;
-        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name";
+        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id = 5 $where ORDER BY a.category_name, a.product_name";
         // echo $sQuery3;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
@@ -97,129 +101,174 @@ class AssignTarget
 
         $sAction2 = null;
         $iRows2 = 0;
-        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id != 40 $where";
+        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id = 5 $where";
         // echo $sQuery2;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
         if ($iRows2 > 0) {
             while ($row2 = $this->_dbConn->GetData($sAction2)) {
                 $team_id = $row2["team_id"];
-                $preMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$prevYear' AND month = '$prevMonth'");
+                if ($monthCheck == 2) {
+                    $NextMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$nextYear' AND month = '$nextMonth'");
 
-                $currentMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
 
-                $previousMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $previousMonthCond");
+                    if (isset($NextMonthTarget[0]) && $NextMonthTarget[0]) {
+                        $productOneNextMonthTarget = $NextMonthTarget[0];
+                    } else {
+                        $productOneNextMonthTarget = 0;
+                    }
 
-                $currentMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $currentMonthCond");
+                    if (isset($NextMonthTarget[1]) && $NextMonthTarget[1]) {
+                        $productTwoNextMonthTarget = $NextMonthTarget[1];
+                    } else {
+                        $productTwoNextMonthTarget = 0;
+                    }
 
-                $overallPreviousMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $previousMonthCond");
+                    if (isset($NextMonthTarget[2]) && $NextMonthTarget[2]) {
+                        $overAllNextMonthTarget = $NextMonthTarget[2];
+                    } else {
+                        $overAllNextMonthTarget = 0;
+                    }
 
-                $overallCurrentMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $currentMonthCond");
+                    $existTeam = getRowColumn($this->_dbConn, "tblassign_target", "prod_id", "  dstatus = 0 AND year = $nextYear AND month = $nextMonth AND team_id = $team_id");
 
-                if (isset($preMonthTarget[0]) && $preMonthTarget[0]) {
-                    $productOnePreMonthTarget = $preMonthTarget[0];
+                    $existTeamTableCond = 0;
+                    if ($existTeam > 0) {
+                        $existTeamTableCond = 1;
+                    }
+
+                    $arrTeamList[] = array(
+                        "label" => $row2["team_name"],
+                        "value" => $row2["team_id"],
+                        "wd_code" => $row2["wd_code"],
+                        "productOneNextMonthTarget" => (int) $productOneNextMonthTarget,
+                        "productTwoNextMonthTarget" => (int) $productTwoNextMonthTarget,
+                        "overAllNextMonthTarget" => (int) $overAllNextMonthTarget,
+                        "existTeamTableCond" => (int) $existTeamTableCond
+                    );
                 } else {
-                    $productOnePreMonthTarget = 0;
+                    $preMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$prevYear' AND month = '$prevMonth'");
+
+                    $currentMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
+
+                    $previousMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $previousMonthCond");
+
+                    $currentMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $currentMonthCond");
+
+                    $overallPreviousMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $previousMonthCond");
+
+                    $overallCurrentMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $currentMonthCond");
+
+                    if (isset($preMonthTarget[0]) && $preMonthTarget[0]) {
+                        $productOnePreMonthTarget = $preMonthTarget[0];
+                    } else {
+                        $productOnePreMonthTarget = 0;
+                    }
+
+                    if (isset($preMonthTarget[1]) && $preMonthTarget[1]) {
+                        $productTwoPreMonthTarget = $preMonthTarget[1];
+                    } else {
+                        $productTwoPreMonthTarget = 0;
+                    }
+
+                    if (isset($preMonthTarget[2]) && $preMonthTarget[2]) {
+                        $overAllPreMonthTarget = $preMonthTarget[2];
+                    } else {
+                        $overAllPreMonthTarget = 0;
+                    }
+
+                    if (isset($currentMonthTarget[0]) && $currentMonthTarget[0]) {
+                        $productOneCurrentMonthTarget = $currentMonthTarget[0];
+                    } else {
+                        $productOneCurrentMonthTarget = 0;
+                    }
+
+                    if (isset($currentMonthTarget[1]) && $currentMonthTarget[1]) {
+                        $productTwoCurrentMonthTarget = $currentMonthTarget[1];
+                    } else {
+                        $productTwoCurrentMonthTarget = 0;
+                    }
+
+                    if (isset($currentMonthTarget[2]) && $currentMonthTarget[2]) {
+                        $overallCurrentMonthTarget = $currentMonthTarget[2];
+                    } else {
+                        $overallCurrentMonthTarget = 0;
+                    }
+
+                    //Achieve
+
+                    if (isset($previousMonthAchieve[0]) && $previousMonthAchieve[0]) {
+                        $productOnepreviousMonthAchieve = $previousMonthAchieve[0];
+                    } else {
+                        $productOnepreviousMonthAchieve = 0;
+                    }
+
+                    if (isset($previousMonthAchieve[1]) && $previousMonthAchieve[1]) {
+                        $productTwopreviousMonthAchieve = $previousMonthAchieve[1];
+                    } else {
+                        $productTwopreviousMonthAchieve = 0;
+                    }
+
+                    if (isset($currentMonthAchieve[0]) && $currentMonthAchieve[0]) {
+                        $productOnecurrentMonthAchieve = $currentMonthAchieve[0];
+                    } else {
+                        $productOnecurrentMonthAchieve = 0;
+                    }
+
+                    if (isset($currentMonthAchieve[1]) && $currentMonthAchieve[1]) {
+                        $productTwocurrentMonthAchieve = $currentMonthAchieve[1];
+                    } else {
+                        $productTwocurrentMonthAchieve = 0;
+                    }
+
+
+                    if (isset($overallPreviousMonthArrAchieve[0]) && $overallPreviousMonthArrAchieve[0]) {
+                        $overallPreviousMonthAchieve = $overallPreviousMonthArrAchieve[0];
+                    } else {
+                        $overallPreviousMonthAchieve = 0;
+                    }
+
+                    if (isset($overallCurrentMonthArrAchieve[0]) && $overallCurrentMonthArrAchieve[0]) {
+                        $overallCurrentMonthAchieve = $overallCurrentMonthArrAchieve[0];
+                    } else {
+                        $overallCurrentMonthAchieve = 0;
+                    }
+
+                    $year = currentDate("", 'Y');
+                    $month = currentDate("", 'm');
+
+                    $existTeam = getRowColumn($this->_dbConn, "tblassign_target", "prod_id", "  dstatus = 0 AND year = $year AND month = $month AND team_id = $team_id");
+
+                    $existTeamTableCond = 0;
+                    if ($existTeam > 0) {
+                        $existTeamTableCond = 1;
+                    }
+
+                    $arrTeamList[] = array(
+                        "label" => $row2["team_name"],
+                        "value" => $row2["team_id"],
+                        "wd_code" => $row2["wd_code"],
+                        "productOnePreMonthTarget" => (int) $productOnePreMonthTarget,
+                        "productOnepreviousMonthAchieve" => (int) $productOnepreviousMonthAchieve,
+                        "productTwoPreMonthTarget" => (int) $productTwoPreMonthTarget,
+                        "productTwopreviousMonthAchieve" => (int) $productTwopreviousMonthAchieve,
+                        "productOneCurrentMonthTarget" => (int) $productOneCurrentMonthTarget,
+                        "productOnecurrentMonthAchieve" => (int) $productOnecurrentMonthAchieve,
+                        "productTwoCurrentMonthTarget" => (int) $productTwoCurrentMonthTarget,
+                        "productTwocurrentMonthAchieve" => (int) $productTwocurrentMonthAchieve,
+                        "overAllPreMonthTarget" => (int) $overAllPreMonthTarget,
+                        "overallPreviousMonthAchieve" => (int) $overallPreviousMonthAchieve,
+                        "overallCurrentMonthTarget" => (int) $overallCurrentMonthTarget,
+                        "overallCurrentMonthAchieve" => (int) $overallCurrentMonthAchieve,
+                        "existTeamTableCond" => (int) $existTeamTableCond
+                    );
                 }
-
-                if (isset($preMonthTarget[1]) && $preMonthTarget[1]) {
-                    $productTwoPreMonthTarget = $preMonthTarget[1];
-                } else {
-                    $productTwoPreMonthTarget = 0;
-                }
-
-                if (isset($preMonthTarget[2]) && $preMonthTarget[2]) {
-                    $overAllPreMonthTarget = $preMonthTarget[2];
-                } else {
-                    $overAllPreMonthTarget = 0;
-                }
-
-                if (isset($currentMonthTarget[0]) && $currentMonthTarget[0]) {
-                    $productOneCurrentMonthTarget = $currentMonthTarget[0];
-                } else {
-                    $productOneCurrentMonthTarget = 0;
-                }
-
-                if (isset($currentMonthTarget[1]) && $currentMonthTarget[1]) {
-                    $productTwoCurrentMonthTarget = $currentMonthTarget[1];
-                } else {
-                    $productTwoCurrentMonthTarget = 0;
-                }
-
-                if (isset($currentMonthTarget[2]) && $currentMonthTarget[2]) {
-                    $overallCurrentMonthTarget = $currentMonthTarget[2];
-                } else {
-                    $overallCurrentMonthTarget = 0;
-                }
-
-                //Achieve
-
-                if (isset($previousMonthAchieve[0]) && $previousMonthAchieve[0]) {
-                    $productOnepreviousMonthAchieve = $previousMonthAchieve[0];
-                } else {
-                    $productOnepreviousMonthAchieve = 0;
-                }
-
-                if (isset($previousMonthAchieve[1]) && $previousMonthAchieve[1]) {
-                    $productTwopreviousMonthAchieve = $previousMonthAchieve[1];
-                } else {
-                    $productTwopreviousMonthAchieve = 0;
-                }
-
-                if (isset($currentMonthAchieve[0]) && $currentMonthAchieve[0]) {
-                    $productOnecurrentMonthAchieve = $currentMonthAchieve[0];
-                } else {
-                    $productOnecurrentMonthAchieve = 0;
-                }
-
-                if (isset($currentMonthAchieve[1]) && $currentMonthAchieve[1]) {
-                    $productTwocurrentMonthAchieve = $currentMonthAchieve[1];
-                } else {
-                    $productTwocurrentMonthAchieve = 0;
-                }
-
-
-                if (isset($overallPreviousMonthArrAchieve[0]) && $overallPreviousMonthArrAchieve[0]) {
-                    $overallPreviousMonthAchieve = $overallPreviousMonthArrAchieve[0];
-                } else {
-                    $overallPreviousMonthAchieve = 0;
-                }
-
-                if (isset($overallCurrentMonthArrAchieve[0]) && $overallCurrentMonthArrAchieve[0]) {
-                    $overallCurrentMonthAchieve = $overallCurrentMonthArrAchieve[0];
-                } else {
-                    $overallCurrentMonthAchieve = 0;
-                }
-
-                $year = currentDate("", 'Y');
-                $month = currentDate("", 'm');
-
-                $existTeam = getRowColumn($this->_dbConn, "tblassign_target", "prod_id", "  dstatus = 0 AND year = $year AND month = $month AND team_id = $team_id");
-
-                $existTeamTableCond = 0;
-                if ($existTeam > 0) {
-                    $existTeamTableCond = 1;
-                }
-
-
-                $arrTeamList[] = array(
-                    "label" => $row2["team_name"],
-                    "value" => $row2["team_id"],
-                    "wd_code" => $row2["wd_code"],
-                    "productOnePreMonthTarget" => (int) $productOnePreMonthTarget,
-                    "productOnepreviousMonthAchieve" => (int) $productOnepreviousMonthAchieve,
-                    "productTwoPreMonthTarget" => (int) $productTwoPreMonthTarget,
-                    "productTwopreviousMonthAchieve" => (int) $productTwopreviousMonthAchieve,
-                    "productOneCurrentMonthTarget" => (int) $productOneCurrentMonthTarget,
-                    "productOnecurrentMonthAchieve" => (int) $productOnecurrentMonthAchieve,
-                    "productTwoCurrentMonthTarget" => (int) $productTwoCurrentMonthTarget,
-                    "productTwocurrentMonthAchieve" => (int) $productTwocurrentMonthAchieve,
-                    "overAllPreMonthTarget" => (int) $overAllPreMonthTarget,
-                    "overallPreviousMonthAchieve" => (int) $overallPreviousMonthAchieve,
-                    "overallCurrentMonthTarget" => (int) $overallCurrentMonthTarget,
-                    "overallCurrentMonthAchieve" => (int) $overallCurrentMonthAchieve,
-                    "existTeamTableCond" => (int) $existTeamTableCond,
-                );
             }
+        }
+
+        if ($monthCheck == 2) {
+            $tableColumnCondition = false;
+        } else {
+            $tableColumnCondition = true;
         }
 
         $arrResult = array(
@@ -227,6 +276,7 @@ class AssignTarget
             "teamsList" => $arrStockProductsList,
             "product1" => $arrProducts[0],
             "product2" => $arrProducts[1],
+            "tableColumnCondition" => $tableColumnCondition,
         );
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
 
@@ -251,9 +301,16 @@ class AssignTarget
     final public function addData()
     {
         $arrQty = getFormData($this->_data, "qty");
+        $monthCheck = $this->_data['monthCheck'];
+        if ($monthCheck == 2) {
+            $year  = date("Y", strtotime("first day of next month"));
+            $month = date("m", strtotime("first day of next month"));
+        } else {
+            $year = currentDate("", "Y");
+            $month = currentDate("", "m");
+        }
         $arrTeamwiseQty = array();
-        $year = currentDate("", "Y");
-        $month = currentDate("", "m");
+
         $currentDate = currentDate();
         $currentDateTime = currentDateTime();
 
