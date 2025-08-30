@@ -125,7 +125,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
               this.toastrService.toastr({
                 type: 'error',
-                msg: 'Target Already Assigned to all Teams'
+                msg: 'Team Not Found'
               });
             }
 

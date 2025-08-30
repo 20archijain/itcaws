@@ -56,7 +56,7 @@ class AssignTarget
         $arrStockProductsList = array();
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id = 5 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
+        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -79,7 +79,7 @@ class AssignTarget
 
         $sAction3 = null;
         $iRows3 = 0;
-        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id = 5 $where ORDER BY a.category_name, a.product_name";
+        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name";
         // echo $sQuery3;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
@@ -101,7 +101,7 @@ class AssignTarget
 
         $sAction2 = null;
         $iRows2 = 0;
-        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id = 5 $where";
+        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id != 40 $where";
         // echo $sQuery2;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
         if ($iRows2 > 0) {
@@ -140,9 +140,9 @@ class AssignTarget
                         "label" => $row2["team_name"],
                         "value" => $row2["team_id"],
                         "wd_code" => $row2["wd_code"],
-                        "productOneNextMonthTarget" => (int) $productOneNextMonthTarget,
-                        "productTwoNextMonthTarget" => (int) $productTwoNextMonthTarget,
-                        "overAllNextMonthTarget" => (int) $overAllNextMonthTarget,
+                        "productOneNextMonthTarget" => round((float) $productOneNextMonthTarget, 2),
+                        "productTwoNextMonthTarget" => round((float) $productTwoNextMonthTarget, 2),
+                        "overAllNextMonthTarget" => round((float) $overAllNextMonthTarget, 2),
                         "existTeamTableCond" => (int) $existTeamTableCond
                     );
                 } else {
@@ -247,18 +247,18 @@ class AssignTarget
                         "label" => $row2["team_name"],
                         "value" => $row2["team_id"],
                         "wd_code" => $row2["wd_code"],
-                        "productOnePreMonthTarget" => (int) $productOnePreMonthTarget,
-                        "productOnepreviousMonthAchieve" => (int) $productOnepreviousMonthAchieve,
-                        "productTwoPreMonthTarget" => (int) $productTwoPreMonthTarget,
-                        "productTwopreviousMonthAchieve" => (int) $productTwopreviousMonthAchieve,
-                        "productOneCurrentMonthTarget" => (int) $productOneCurrentMonthTarget,
-                        "productOnecurrentMonthAchieve" => (int) $productOnecurrentMonthAchieve,
-                        "productTwoCurrentMonthTarget" => (int) $productTwoCurrentMonthTarget,
-                        "productTwocurrentMonthAchieve" => (int) $productTwocurrentMonthAchieve,
-                        "overAllPreMonthTarget" => (int) $overAllPreMonthTarget,
-                        "overallPreviousMonthAchieve" => (int) $overallPreviousMonthAchieve,
-                        "overallCurrentMonthTarget" => (int) $overallCurrentMonthTarget,
-                        "overallCurrentMonthAchieve" => (int) $overallCurrentMonthAchieve,
+                        "productOnePreMonthTarget" => round((float) $productOnePreMonthTarget, 2),
+                        "productOnepreviousMonthAchieve" => round((float) $productOnepreviousMonthAchieve, 2),
+                        "productTwoPreMonthTarget" => round((float) $productTwoPreMonthTarget, 2),
+                        "productTwopreviousMonthAchieve" => round((float) $productTwopreviousMonthAchieve, 2),
+                        "productOneCurrentMonthTarget" => round((float) $productOneCurrentMonthTarget, 2),
+                        "productOnecurrentMonthAchieve" => round((float) $productOnecurrentMonthAchieve, 2),
+                        "productTwoCurrentMonthTarget" => round((float) $productTwoCurrentMonthTarget, 2),
+                        "productTwocurrentMonthAchieve" => round((float) $productTwocurrentMonthAchieve, 2),
+                        "overAllPreMonthTarget" => round((float) $overAllPreMonthTarget, 2),
+                        "overallPreviousMonthAchieve" => round((float) $overallPreviousMonthAchieve, 2),
+                        "overallCurrentMonthTarget" => round((float) $overallCurrentMonthTarget, 2),
+                        "overallCurrentMonthAchieve" => round((float) $overallCurrentMonthAchieve, 2),
                         "existTeamTableCond" => (int) $existTeamTableCond
                     );
                 }
