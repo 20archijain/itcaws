@@ -2,24 +2,40 @@
   <div class="row">
     <div class="col-sm-12">
       <form [formGroup]="group">
-        <!-- <div class="col-xxl-2 col-md-2 mb-2">
-          <app-select [options]="monthOptions"
-            placeholder="{{ 'app.team.add.month' | translate }}" [group]="group" controlName="month"
-            [errorMessages]="errorMessages.month" [isRequired]="true" (onChange)="initialData()"></app-select>
-        </div> -->
+        <div class="col-xxl-2 col-md-2 mb-2" *ngIf="tabCondition">
+          <button class="btn btn-success m-1" (click)="onTypeChange(1)" [disabled]="tableColumnCondition">
+            Current Month
+          </button>
+          <button class="btn btn-success m-1" (click)="onTypeChange(2)" [disabled]="!tableColumnCondition">
+            Next Month
+          </button>
+        </div>
         <div class="table-responsive custom-scrollbar fixed-table-header" *ngIf="stockProductsList?.length">
           <table class="table table-xxs table-hover table-bordered">
             <thead>
-              <tr class="fixed-header">
+              <tr class="fixed-header" *ngIf="tableColumnCondition">
                 <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">Enter {{currentMonth}} Target</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target
+                </th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} :
+                  Achieved</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target
+                </th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved
+                </th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">Enter {{currentMonth}}
+                  Target</th>
 
               </tr>
-              <tr class="fixed-header">
+              <tr class="fixed-header" *ngIf="!tableColumnCondition">
+                <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{nextMonth}} : Target
+                </th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">Enter {{nextMonth}}
+                  Target</th>
+
+              </tr>
+              <tr class="fixed-header" *ngIf="tableColumnCondition">
                 <th class="f-12 fix-width " [class.highlight]="true">WD Code</th>
                 <th class="f-12 fix-width2 " [class.highlight]="true">NPSR</th>
                 <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
@@ -38,38 +54,72 @@
                   {{ team.label }}
                 </th>
               </tr>
+              <tr class="fixed-header" *ngIf="!tableColumnCondition">
+                <th class="f-12 fix-width " [class.highlight]="true">WD Code</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">NPSR</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
+                <th class="f-12 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
+                  {{ team.label }}
+                </th>
+              </tr>
             </thead>
 
             <tbody>
-              <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
-                [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
-                <td>{{ stockProductsList[pi]?.wd_code }}</td>
-                <td>
-                  <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
-                {{ stockProductsList[pi]?.label }}
-                </td>
-                <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
-                <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
-                <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
-                <td *ngFor="let team of teamsList" class="">
-                  <div class="d-flex justify-content-center fix-width4">
-                    <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
-                      [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
-                      placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
-                      [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
-                    </app-input>
-                  </div>
-                </td>
-              </tr>
+              <ng-container *ngIf="tableColumnCondition">
+                <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
+                  [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
+                  <td>{{ stockProductsList[pi]?.wd_code }}</td>
+                  <td>
+                    <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
+                    {{ stockProductsList[pi]?.label }}
+                  </td>
+                  <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
+                  <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
+                  <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
+                  <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
+                  <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
+                  <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
+                  <td *ngFor="let team of teamsList" class="">
+                    <div class="d-flex justify-content-center fix-width4">
+                      <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
+                        [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
+                        placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
+                        [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
+                      </app-input>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+              <ng-container *ngIf="!tableColumnCondition">
+                <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
+                  [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
+                  <td>{{ stockProductsList[pi]?.wd_code }}</td>
+                  <td>
+                    <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
+                    {{ stockProductsList[pi]?.label }}
+                  </td>
+                  <td>{{ stockProductsList[pi]?.productOneNextMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.productTwoNextMonthTarget }}</td>
+                  <td>{{ stockProductsList[pi]?.overAllNextMonthTarget }}</td>
+                  <td *ngFor="let team of teamsList" class="">
+                    <div class="d-flex justify-content-center fix-width4">
+                      <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
+                        [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
+                        placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
+                        [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
+                      </app-input>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
 
           </table>

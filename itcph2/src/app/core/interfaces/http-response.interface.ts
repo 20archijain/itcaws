@@ -249,10 +249,14 @@ export interface StockProduct extends DropdownList {
   overallPreviousMonthAchieve?: number;
   overallCurrentMonthTarget?: number;
   overallCurrentMonthAchieve?: number;
+  productOneNextMonthTarget?: number;
+  productTwoNextMonthTarget?: number;
+  overAllNextMonthTarget?: number;
   existTeamTableCond?: number;
 }
 
 export interface ReadyStockPickupResponse {
+  tableColumnCondition: boolean;
   product1: string;
   product2: string;
   monthList: DropdownList[];
