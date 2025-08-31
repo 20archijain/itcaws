@@ -14,7 +14,8 @@
         <div *ngIf="branchFilter" class="row">
           <div class="col-12 col-sm-4 col-md-3 col-xl-2">
             <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true"
-              placeholder="{{ 'app.team.add.district' | translate }}" label="app.team.add.district" (onChange)="getBranch()">
+              placeholder="{{ 'app.team.add.district' | translate }}" label="app.team.add.district"
+              (onChange)="getBranch()">
             </app-select>
           </div>
           <div class="col-12 col-sm-4 col-md-3 col-xl-2">

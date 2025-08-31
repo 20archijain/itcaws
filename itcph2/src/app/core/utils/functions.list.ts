@@ -94,13 +94,13 @@ export class Functions {
   }
 
   static nextMonth(customDate?: string): string {
-  const date = customDate ? new Date(customDate) : new Date();
-  const monthIndex = date.getMonth(); // 0 = Jan, 1 = Feb, ..., 11 = Dec
-  const nextMonthIndex = (monthIndex + 1) % 12; // handle Dec -> Jan
-  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-                      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return monthNames[nextMonthIndex];
-}
+    const date = customDate ? new Date(customDate) : new Date();
+    const monthIndex = date.getMonth(); // 0 = Jan, 1 = Feb, ..., 11 = Dec
+    const nextMonthIndex = (monthIndex + 1) % 12; // handle Dec -> Jan
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return monthNames[nextMonthIndex];
+  }
 
 
   static currentDate(customDate?: string, firstDay?: boolean) {

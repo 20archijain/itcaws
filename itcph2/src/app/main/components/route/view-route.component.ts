@@ -6,12 +6,9 @@ import { finalize } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { FormService } from 'src/app/core/services/form.service';
 import { DropdownList, GetAddTeamDataResponse, teams } from 'src/app/core/interfaces/http-response.interface';
-import { CsvDataFormat, EditConfig, ListingActions } from 'src/app/core/interfaces/helpers.interface';
+import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { CONTROL_CONFIG, REQUEST_STATUS, STATIC_MODULES, USER_ACTION } from 'src/app/app.constants';
-import { COMMON_VALIDATORS, TEAM_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.list';
-import { Functions } from 'src/app/core/utils/functions.list';
+import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 
 @Component({
   templateUrl: './view-route.component.html'
@@ -19,7 +16,7 @@ import { Functions } from 'src/app/core/utils/functions.list';
 export class ViewRouteComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
-  isSelectable: boolean = true;
+  isSelectable = true;
   body: string[] = [];
   editConfig: EditConfig[] = [];
   sortOptions: DropdownList[] = [];
@@ -84,5 +81,5 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
         })
     );
   }
- 
+
 }

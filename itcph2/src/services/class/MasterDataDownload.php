@@ -416,22 +416,20 @@ class MasterDataDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "DS";
+                    $teamType = "Van DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
@@ -821,7 +819,7 @@ class MasterDataDownload
 
         $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
-        $sQuery = "SELECT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code" .
+        $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code" .
             ", a.lt, a.lg, a.team_id, b.team_name, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 

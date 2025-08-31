@@ -37,7 +37,7 @@ class RouteDataUpload
 
             // Indexes you want to keep
 
-            $selectedIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 28];
+            $selectedIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 29];
 
             $filteredColumns = array_intersect_key($columns, array_flip($selectedIndexes));
 

@@ -1483,7 +1483,7 @@ class VanDsReporting
                         $idealRoute = $dayOfWeek;
                         $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
                         $arrPlannedOutletBeatDay = array(0 => $arrPlannedOutlet, 1 => $dayOfWeek);
-                         if ($totalSale > 0) {
+                        if ($totalSale > 0) {
                             $sellInShop = getRowColumn(
                                 $this->_dbConn,
                                 $respTable,
@@ -1512,8 +1512,8 @@ class VanDsReporting
                         for ($i = 0; $i < count($arrLtLg) - 1; $i++) {
                             $lat1 = $arrLtLg[$i][0];
                             $lon1 = $arrLtLg[$i][1];
-                            $lat2 = $arrLtLg[$i+1][0];
-                            $lon2 = $arrLtLg[$i+1][1];
+                            $lat2 = $arrLtLg[$i + 1][0];
+                            $lon2 = $arrLtLg[$i + 1][1];
 
                             $distance = $this->haversineDistance($lat1, $lon1, $lat2, $lon2);
                             $totalDistance += $distance;
@@ -1527,7 +1527,6 @@ class VanDsReporting
 
                         // Final distance in KM (rounded 2 decimals)
                         $distanceInKm = round($totalDistance, 2);
-
                     } else {
                         $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                         $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
@@ -1604,13 +1603,13 @@ class VanDsReporting
                         foreach ($arrProductBought as $productIndex => $arrProduct) {
                             $productName = strtoupper($arrProduct[0]);
                             if ($branchId == 40) {
-                                    $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] / 100 : 0;
+                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] / 100 : 0;
                             } else {
-                                    $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
+                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
                             }
                             // $iSale = $row[$arrProduct[1]];
-                                    // Accumulate the product sale
-                                    $totalProductSale += $iSale;
+                            // Accumulate the product sale
+                            $totalProductSale += $iSale;
 
 
                             // get index of product
@@ -1624,7 +1623,7 @@ class VanDsReporting
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
                         if ($branchId == 40) {
-                             $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] / 100 : 0;
+                            $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] / 100 : 0;
                         } else {
                             $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
                         }
@@ -2017,17 +2016,18 @@ class VanDsReporting
     }
 
     // Haversine formula function
-    function haversineDistance($lat1, $lon1, $lat2, $lon2) {
+    private function haversineDistance($lat1, $lon1, $lat2, $lon2)
+    {
         $earthRadius = 6371; // Earth radius in km
 
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
 
-        $a = sin($dLat/2) * sin($dLat/2) +
-             cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-             sin($dLon/2) * sin($dLon/2);
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
 
-        $c = 2 * atan2(sqrt($a), sqrt(1-$a));
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earthRadius * $c; // Distance in km
     }

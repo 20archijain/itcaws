@@ -120,9 +120,9 @@ class RouteManagement
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name, 
+        $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name,
               a.outlet_mobile FROM $RouteTable AS a LEFT JOIN $projectTeamTable AS b ON a.team_id = b.team_id AND b.dstatus = 0 WHERE a.dstatus = 0 $where $sOrderCond";
-              
+
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 
@@ -136,7 +136,7 @@ class RouteManagement
                 $teamId = $arrData["team_id"];
 
                 $arrResult[] = array(
-                    "id"=> $recId,
+                    "id" => $recId,
                     "teamId" => $teamId,
                     "wdCode" => $arrData["wd_code"],
                     "teamName" => $arrData["team_name"],
@@ -153,5 +153,4 @@ class RouteManagement
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
         echo json_encode($arrMessage);
     }
-
 }

@@ -5,6 +5,7 @@ $whitish1: #f9f9f9;
 $whitish2: #ddd;
 $lightgray: #d3d3d3;
 $steelblue: #4682b4;
+$red: rgb(225, 9, 9);
 
 .fixed-header {
   background-color: $white;
@@ -71,18 +72,25 @@ $steelblue: #4682b4;
 }
 
 .blink-dot {
+  animation: blink 1s infinite;
+  background-color: $red;
+  border-radius: 50%;
   display: inline-block;
-  width: 10px;
   height: 10px;
   margin-left: 6px;
-  background-color: rgb(225, 9, 9);
-  border-radius: 50%;
-  animation: blink 1s infinite;
+  width: 10px;
 }
 
 @keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
+  0% {
+    opacity: 1;
+  }
 
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

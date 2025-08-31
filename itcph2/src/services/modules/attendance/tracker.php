@@ -9,9 +9,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_DATA']:
             $attendance->getAttendanceTrackerData();
             break;
-        // case $ACTION_LIST['GET_TEAM_TYPE_LIST']:
-        //     $attendance->getBranchTeamTypeList();
-        //     break;
+            // case $ACTION_LIST['GET_TEAM_TYPE_LIST']:
+            //     $attendance->getBranchTeamTypeList();
+            //     break;
         case $ACTION_LIST['GET_TEAM_LIST']:
             $attendance->getTeamList();
             break;

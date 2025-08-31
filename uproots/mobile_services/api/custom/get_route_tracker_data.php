@@ -57,8 +57,8 @@ class GetRouteTracker extends Utilities
                         "icon" => "green_flag",
                         "shopName" => "Attendance",
                         "dateTime" => $attCaptureTime,
-                        "lt" => $arDataAtt["lt"],
-                        "lg" => $arDataAtt["lg"]
+                        "lt" => (string)$arDataAtt["lt"],
+                        "lg" => (string)$arDataAtt["lg"]
                     ];
                 }
             }
@@ -91,8 +91,8 @@ class GetRouteTracker extends Utilities
                         "icon" => $icon,
                         "shopName" => $shopCount . "-" . $shopName,
                         "dateTime" => $time,
-                        "lt" => $lt,
-                        "lg" => $lg
+                        "lt" => (string)$lt,
+                        "lg" => (string)$lg
                     ];
                     $index++;
                     $shopCount++;
@@ -115,8 +115,8 @@ class GetRouteTracker extends Utilities
                             "icon" => "red_flag",
                             "shopName" => "Dayend",
                             "dateTime" => $attCaptureTime,
-                            "lt" => $arDataDayend["lt"],
-                            "lg" => $arDataDayend["lg"]
+                            "lt" => (string) $arDataDayend["lt"],
+                            "lg" => (string)$arDataDayend["lg"]
                         ];
                     }
                 }

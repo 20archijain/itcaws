@@ -514,9 +514,9 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
             }
             if (isNonEmptyArray($branchId)) {
                 $branchIds = implode(",", $branchId);
-                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND branch_id IN ($branchIds))";
+                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND is_type != 4 AND branch_id IN ($branchIds))";
             } else {
-                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND branch_id = $branchId)";
+                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND is_type != 4 AND branch_id = $branchId)";
             }
         }
     }
@@ -529,9 +529,9 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
             }
             if (isNonEmptyArray($wdCode)) {
                 $wdCodes = implode(",", $wdCode);
-                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND wd_code IN ('$wdCodes')) ";
+                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND is_type != 4 AND wd_code IN ('$wdCodes')) ";
             } else {
-                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND wd_code = '$wdCode')";
+                $where .= " AND team_type IN (SELECT is_type FROM tblproject_team WHERE dstatus = 0 AND is_type != 4 AND wd_code = '$wdCode')";
             }
         }
     }

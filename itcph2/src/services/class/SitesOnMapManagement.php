@@ -398,7 +398,6 @@ class SitesOnMapManagement
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
             } else {
-
                 $district = "'" . implode("','", $district) . "'";
                 $districtCond = " AND a.district IN ($district)";
             }
@@ -737,7 +736,8 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.capture_date, a.lt, a.lg, a.ques_3, a.ques_6, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code  FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0  AND a.lt != 0 $where";
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.capture_date, a.lt, a.lg, a.ques_3, a.ques_6, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code  FROM $respTable AS a" .
+            ", $projectTeamTable AS b, $branchTable AS c WHERE a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.dstatus = 0  AND a.lt != 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -1018,7 +1018,8 @@ class SitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND B.branch_id = C.branch_id AND a.lt != 0  $where";
+        $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c" .
+            " WHERE a.dstatus = 0 AND a.team_id = b.team_id AND B.branch_id = C.branch_id AND a.lt != 0  $where";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");

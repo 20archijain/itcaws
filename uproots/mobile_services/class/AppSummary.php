@@ -2236,6 +2236,14 @@ class AppSummary extends Utilities
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
                     foreach ($months as $month) {
+                        list($year, $newMonth) = explode('-', $month);
+                        $focusBrand1TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[0]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+
+                        $focusBrand1Target = isset($focusBrand1TargetArr) && $focusBrand1TargetArr ? $focusBrand1TargetArr : 1;
+
+                        $focusBrand2Target = isset($focusBrand2TargetArr) && $focusBrand2TargetArr ? $focusBrand2TargetArr : 1;
+
                         $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
 
@@ -2300,7 +2308,7 @@ class AppSummary extends Utilities
                                 $title = "Focus Brand 1";
                                 $color = "#0000FF";
                                 $achieved = isset($focusBrand1[0]) ? (float) $focusBrand1[0] : 0;
-                                $target = 500;
+                                $target = $focusBrand1Target;
                                 $rewardMoney = 500;
                                 $earnedMoney = ($achieved / $target) * $rewardMoney;
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_rupees.PNG";
@@ -2309,7 +2317,7 @@ class AppSummary extends Utilities
                                 $title = "Focus Brand 2";
                                 $color = "#FF00FF";
                                 $achieved = isset($focusBrand2[0]) ? (float) $focusBrand2[0] : 0;
-                                $target = 500;
+                                $target = $focusBrand2Target;
                                 $rewardMoney = 500;
                                 $earnedMoney = ($achieved / $target) * $rewardMoney;
                             }

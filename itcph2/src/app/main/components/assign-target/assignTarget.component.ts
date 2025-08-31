@@ -77,8 +77,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
         })
     );
 
-    if(this.currentDate['day'] > 21)
-    {
+    if (this.currentDate['day'] > 21) {
       this.tabCondition = true;
     }
     this.initialData();

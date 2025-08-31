@@ -56,8 +56,8 @@ class AssignTarget
         $arrStockProductsList = array();
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
-        // echo $sQuery;die;
+        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         $arrProductColumns = array();
@@ -79,8 +79,8 @@ class AssignTarget
 
         $sAction3 = null;
         $iRows3 = 0;
-        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name";
-        // echo $sQuery3;die;
+        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name";
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
         $arrProductColumnsAllProduct = array();
