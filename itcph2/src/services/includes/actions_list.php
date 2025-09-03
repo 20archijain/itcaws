@@ -45,4 +45,5 @@ $ACTION_LIST = array(
     'GET_MAP_DATA' => 'get_mapdata',
     'GET_BRANCH' => 'get_branch',
     'GET_PRODUCT' => 'get_product',
+    'RESTORE_DATA' => 'restore_data',
 );

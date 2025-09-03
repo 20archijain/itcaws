@@ -105,6 +105,59 @@ function deleteListingRecord($dbConn, $tblName, $column, $iUserId = 0, $conditio
     }
 }
 
+// restore deleted record
+function restoreRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $arrParams = array(), $cloud = false, $containMultipleIds = false, $paramKey = "")
+{
+    global $DB_DBNAME_CLOUD;
+    $sAction = null;
+    $iNum_rows = 0;
+    if ($cloud) {
+        $tblName = $DB_DBNAME_CLOUD . "." . $tblName;
+    }
+    if (!isEmptyString($column)) {
+        if ($containMultipleIds) {
+            $sQuery = "UPDATE $tblName SET dstatus = 0, modif_id = $iUserId WHERE dstatus = 1 AND $column IN ($arrParams[$paramKey])";
+            $arrParams = array();
+        } else {
+            $sQuery = "UPDATE $tblName SET dstatus = 0, modif_id = $iUserId WHERE dstatus = 1 AND $column = ?";
+        }
+
+        if (!matchValue($condition, "")) {
+            $sQuery .= $condition;
+        }
+        $dbConn->ExecuteQuery($sQuery, $sAction, $iNum_rows, $arrParams);
+
+        if ($iNum_rows > 0) {
+            return 1;
+        }
+        return 0;
+    }
+    return -1;
+}
+
+// retore deleted record from response table
+function restoreListingRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $data = "", $paramKey = "", $cloud = false, $printMsg = true)
+{
+    $arrParams = array();
+    if (!isEmptyString($paramKey)) {
+        $arrParams[$paramKey] = getStringFromArray($data[$paramKey]);
+    }
+
+    $iStatus = restoreRecord($dbConn, $tblName, $column, $iUserId, $condition, $arrParams, $cloud, true, $paramKey);
+
+    if ($printMsg) {
+        if (matchValue($iStatus, 1, true)) {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_RESTORED_SUCCESSFULL']), 1);
+        } else {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_RESTORED']));
+        }
+
+        echo json_encode($arrMessage);
+    } else {
+        return $iStatus;
+    }
+}
+
 //Add new record in table
 function addRecord($dbConn, $table, $cols, $vals, $arrParams = array(), $cloud = false, $checkExist = 0, $existCol = "id", $existCond = "", $arrExistParams = array())
 {
