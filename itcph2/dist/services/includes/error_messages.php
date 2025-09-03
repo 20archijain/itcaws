@@ -16,6 +16,8 @@ $DATA_EDITED_SUCCESSFULL = "Data modified succesfully";
 $DATA_NOT_EDITED = "Data not modified";
 $NO_RECORD_FOUND = "No record found";
 $PERMISSION_ISSUE = "This project is not linked to your location";
+$DATA_RESTORED_SUCCESSFULL = "Data restored succesfully";
+$DATA_NOT_RESTORED = "Data not restored";
 
 // AUTH
 $INVALID_USER = "Invalid username or password";

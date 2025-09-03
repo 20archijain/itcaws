@@ -71,6 +71,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() unlockCondition: [string, boolean];
   @Input() getListingOnInit = true;
   @Input() extraButtons: ListingExtraButtons[] = [];
+  @Input() deleteCondition: [string, number];
   clickedIndex = -1;
   actions: ListingActions[] = [];
   singleActions: ListingActions[] = [];
@@ -142,6 +143,13 @@ export class TableListingComponent implements OnInit, OnDestroy {
               // user confirms unlock
               if (resp.data && this.actionData !== null) {
                 this.onUnlockConfirm();
+              }
+            } else if (this.confirmationModalService.data === 'modal.confirmation.restore') {
+              // Restore action chosen
+
+              // user confirms Restore
+              if (resp.data && this.actionData !== null) {
+                this.onRestoreConfirm();
               }
             }
           }
@@ -329,6 +337,10 @@ export class TableListingComponent implements OnInit, OnDestroy {
           this.confirmationModalService.show('modal.confirmation.delete');
           this.actionData = data ? this.getCheckedKeyValue(data) : this.selectedRecords;
           break;
+        case USER_ACTION.RESTORE:
+          this.confirmationModalService.show('modal.confirmation.restore');
+          this.actionData = data ? this.getCheckedKeyValue(data) : this.selectedRecords;
+          break;
         case USER_ACTION.UNLK:
           this.confirmationModalService.show('modal.confirmation.unlock');
           this.actionData = data ? this.getCheckedKeyValue(data) : this.selectedRecords;
@@ -349,6 +361,19 @@ export class TableListingComponent implements OnInit, OnDestroy {
   onDeleteConfirm() {
     this.subscription.push(
       this.formService.deleteData(this.url, this.actionData)
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.onSearch();
+            this.actionData = null;
+          }
+        })
+    );
+  }
+
+  // restore record
+  onRestoreConfirm() {
+    this.subscription.push(
+      this.formService.restoreData(this.url, this.actionData)
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.onSearch();
@@ -383,7 +408,24 @@ export class TableListingComponent implements OnInit, OnDestroy {
 
   isActionAllowed(action: ListingActions, data: any) {
     let isActionAllowed = true;
-    if (action.id === USER_ACTION.EDIT) {
+    // if value is present and record is deleted, Don't allow any action except Restore
+    // if value is present and record is not deleted, Don't allow restore option
+    // if value is not present, Don't allow restore option
+    const delVariableNameToCheck: string = this.deleteCondition?.length ? this.deleteCondition[0] : 'deleteValue';
+    const delIconAllowedValue: number = this.deleteCondition?.length ? +this.deleteCondition[1] : 0;
+    const currentDeleteValue = delVariableNameToCheck in data ? +data[delVariableNameToCheck] : null;
+    // Don't allow any action except Restore
+    if (currentDeleteValue !== null && delIconAllowedValue !== currentDeleteValue) {
+      if (action.id !== USER_ACTION.RESTORE) {
+        isActionAllowed = false;
+      }
+    } else if (currentDeleteValue !== null && delIconAllowedValue === currentDeleteValue && action.id === USER_ACTION.RESTORE) {
+      // Don't allow restore option
+      isActionAllowed = false;
+    } else if (currentDeleteValue === null && action.id === USER_ACTION.RESTORE) {
+      // if value is not present, Don't allow restore option
+      isActionAllowed = false;
+    } else if (action.id === USER_ACTION.EDIT) {
       if (this.editCondition) {
         const variablePositionToCheck: string = this.editCondition[0];
         const arrAllowedValues: string[] = this.editCondition[1];

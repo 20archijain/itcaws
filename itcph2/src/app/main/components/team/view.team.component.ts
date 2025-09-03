@@ -22,6 +22,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
   body: string[] = [];
   editConfig: EditConfig[] = [];
   sortOptions: DropdownList[] = [];
+  dsTypeOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   url = environment.viewTeamsUrl;
@@ -34,6 +35,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
       branch: [],
       json: [''],
       password: [''],
+      dsType: [''],
       dsName: [''],
       phone: [''],
       wdCode: [''],
@@ -57,6 +59,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.sortOptions = resp.data.sortOptions;
             this.branchOptions = resp.data.branchList;
+            this.dsTypeOptions = resp.data.dsTypeList;
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
 

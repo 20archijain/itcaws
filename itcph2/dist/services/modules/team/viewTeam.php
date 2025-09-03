@@ -22,6 +22,10 @@ if (!isEmptyString($requestAction)) {
             deleteListingRecord($dbConn, $TABLES["CLOUD_AUTHPIN_TABLE"], "team_id", $iUserId, "AND db_name = '{$GLOBALS['DB_DBNAME']}'", $requestData, "id", true, false);
             deleteListingRecord($dbConn, $TABLES["PROJECT_TEAM_TABLE"], "team_id", $iUserId, "", $requestData, "id");
             break;
+        case $ACTION_LIST['RESTORE_DATA']:
+            restoreListingRecord($dbConn, $TABLES["CLOUD_AUTHPIN_TABLE"], "team_id", $iUserId, "AND db_name = '{$GLOBALS['DB_DBNAME']}'", $requestData, "id", true, false);
+            restoreListingRecord($dbConn, $TABLES["PROJECT_TEAM_TABLE"], "team_id", $iUserId, "", $requestData, "id");
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);
