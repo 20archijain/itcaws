@@ -281,6 +281,12 @@
         "shopType": "Shop Type",
         "sellIinOrder": "Sell-in order",
         "reportingType": "Reporting Type"
+      },
+      "mdo": {
+        "heading": "View MDO Reporting",
+        "workType": "Type Of Market Work",
+        "dsName": "DS Name",
+        "mdoName": "MDO Name"
       }
     },
     "missCall": {

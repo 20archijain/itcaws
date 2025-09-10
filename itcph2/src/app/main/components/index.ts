@@ -39,6 +39,7 @@ import { ViewWdMappingComponent } from './wd-mapping/view.wdmapping.component';
 import { EvaluationReportComponent } from './download-evaluation-report/evaluation-report.component';
 import { DownloadMisscallComponent } from './download-misscall/download-misscall.component';
 import { ViewRouteComponent } from './route/view-route.component';
+import { MdoListingComponent } from './reporting/mdo/mdo-listing.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -80,6 +81,7 @@ export const MAIN_COMPONENTS = [
   ViewWdMappingComponent,
   DownloadMisscallComponent,
   ViewRouteComponent,
+  MdoListingComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -122,4 +124,5 @@ export const MAP_MAIN_COMPONENTS = {
   ViewWdMappingComponent,
   DownloadMisscallComponent,
   ViewRouteComponent,
+  MdoListingComponent,
 };
