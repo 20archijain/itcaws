@@ -391,19 +391,21 @@ class SitesOnMapManagement
     {
         $district = $this->_data['district'];
         $districtCond = "";
+        $districtAllCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
                 $district = array($district);
             }
             if (in_array('all', $district)) {
-                $districtCond = ""; // No condition for 'all'
+                $districtAllCond = ""; // No condition for 'all'
             } else {
                 $district = "'" . implode("','", $district) . "'";
                 $districtCond = " AND a.district IN ($district)";
+                $districtAllCond = "district IN ($district)";
             }
 
             $arrResult = array(
-                "branchList" => getBranchList($this->_dbConn, false, "district IN ($district)", "", 1, false, true, "mainBranch"),
+                "branchList" => getBranchList($this->_dbConn, false, "$districtAllCond", "", 1, false, true, "mainBranch"),
                 "teamType" => getTeamType($this->_dbConn, $district),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -1019,7 +1021,7 @@ class SitesOnMapManagement
         $sActionAtt = null;
         $iRowsAtt = 0;
         $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c" .
-            " WHERE a.dstatus = 0 AND a.team_id = b.team_id AND B.branch_id = C.branch_id AND a.lt != 0  $where";
+            " WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.lt != 0  $where";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
