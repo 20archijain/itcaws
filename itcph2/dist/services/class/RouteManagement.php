@@ -111,18 +111,21 @@ class RouteManagement
         $sOrderCond = getOrderByCond("a.rlm", $this->_data["sort"]);
 
         // filter by search query
-        $where = getFilterResult(
-            $this->_data['searchbar'],
-            array(
-                "team" => array("b.team_id", 0),
-            )
-        );
+        $team = isset($this->_data['searchbar']['team']) ? $this->_data['searchbar']['team'] : [];
+        // print_r($team);die;
+        $teamId = '';
+        $where = '';
+
+        if (!empty($team) && is_array($team)) {
+            $teamId = implode(',', $team);
+            $where = "AND a.team_id IN($teamId)";
+        }
 
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name, 
               a.outlet_mobile FROM $RouteTable AS a LEFT JOIN $projectTeamTable AS b ON a.team_id = b.team_id AND b.dstatus = 0 WHERE a.dstatus = 0 $where $sOrderCond";
-              
+
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 
@@ -136,7 +139,7 @@ class RouteManagement
                 $teamId = $arrData["team_id"];
 
                 $arrResult[] = array(
-                    "id"=> $recId,
+                    "id" => $recId,
                     "teamId" => $teamId,
                     "wdCode" => $arrData["wd_code"],
                     "teamName" => $arrData["team_name"],
@@ -154,4 +157,29 @@ class RouteManagement
         echo json_encode($arrMessage);
     }
 
+    final public function deleteData($data, $iUserId)
+    {
+        $requestData = $data;
+        $assign_id = $iUserId;
+        $where = "";
+        $whereMob = "";
+        $istatus = array();
+        $rec_id = implode(',', $requestData['id']);
+        if ($rec_id) {
+            $where .= "rec_id IN ($rec_id) AND dstatus = 0";
+        };
+        $mobNo = getRowsColumn($this->_dbConn, "tblroute_details", "outlet_mobile", $where);
+        if (isset($mobNo) && isNonEmptyArray($mobNo)) {
+            $mobImplode = implode(',', $mobNo);
+            $whereMob .= "rec_who IN ($mobImplode)";
+            $istatus[] = updateRecord($this->_dbConn, "tblcloudring_live", "dstatus =1 , modif_id = $assign_id", $whereMob);
+        };
+        $istatus[] = updateRecord($this->_dbConn, "tblroute_details", "dstatus = 1 ,modif_id = $assign_id ", "$where");
+        if (in_array(0, $istatus)) {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']), 1);
+        } else {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+        }
+        echo json_encode($arrMessage);
+    }
 }
