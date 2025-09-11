@@ -64,4 +64,5 @@ $arrCustomMessages = array(
     "CUST03" => "Branch not found",
     "CUST04" => "API is not applicable",
     "CUST05" => "No data found",
+    "CUST06" => "Deleted successfully",
 );

@@ -44,7 +44,7 @@ class AttendanceManagement
             $where .= " AND a.team_id IN $teamList";
         }
         $branchCond = "dstatus = 0";
-         if ($district) {
+        if ($district) {
             $district = getFormData($district);
             $matchAll = checkIfAllSelected($district);
             if (!$matchAll) {
@@ -57,7 +57,7 @@ class AttendanceManagement
             }
         }
         if ($branch) {
-            $branch = getFormData($branch);
+            // $branch = getFormData($branch);
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
                 if (isNonEmptyArray($branch)) {
@@ -363,20 +363,24 @@ class AttendanceManagement
     {
         $district = $this->_data['district'];
         $districtCond = "";
+        $branchFilter = "";
         if (!empty($district)) {
             if (!is_array($district)) {
                 $district = array($district);
             }
-            if (in_array('all', $district)) {
-                $districtCond = ""; // No condition for 'all'
-            } else {
 
-                $district = "'" . implode("','", $district) . "'";
+            if (in_array('all', $district)) {
+                // no filter condition
+                $districtCond = "";
+                $branchFilter = "";
+            } else {
+                $district     = "'" . implode("','", $district) . "'";
                 $districtCond = " AND a.district IN ($district)";
+                $branchFilter = "district IN ($district)";
             }
 
             $arrResult = array(
-                "branchList" => getBranchList($this->_dbConn, false, "district IN ($district)", "", 1, false, true, "mainBranch"),
+                "branchList" => getBranchList($this->_dbConn, false, "$branchFilter", "", 1, false, true, "mainBranch"),
                 "teamType" => getTeamType($this->_dbConn, $district),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -456,7 +460,7 @@ class AttendanceManagement
             }
             $arrResult = array(
                 // Don't use dstatus = 0
-               "sectionList" => $this->getSectionList($circleCond),
+                "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
@@ -755,7 +759,7 @@ class AttendanceManagement
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
 
-        $where = $this->getAttendanceCondition("b.branch_id", "b.is_type");
+        $where = $this->getAttendanceCondition("c.district", "b.branch_id", "b.is_type");
         $where2 = "AND a.capture_date LIKE ?";
         $where2 .= " AND a.call_type = ?";
         $arrParams = array("$year-$month-%");

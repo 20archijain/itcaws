@@ -183,7 +183,8 @@
         "mdoNumber": "MDO Number",
         "separator": "Separator",
         "endError": "End Index should not be smaller than Start Index",
-        "accessType": "Access Type"
+        "accessType": "Access Type",
+        "status": "Status"
       },
       "view": {
         "heading": "View Teams",
@@ -280,6 +281,12 @@
         "shopType": "Shop Type",
         "sellIinOrder": "Sell-in order",
         "reportingType": "Reporting Type"
+      },
+      "mdo": {
+        "heading": "View MDO Reporting",
+        "workType": "Type Of Market Work",
+        "dsName": "DS Name",
+        "mdoName": "MDO Name"
       }
     },
     "missCall": {
@@ -445,7 +452,8 @@
       "text": "You have unsaved changes. If you leave, your changes will be lost.",
       "title": "Are you sure?",
       "unlock": "Unlock the record(s)?",
-      "add": "Add the data?"
+      "add": "Add the data?",
+      "restore": "Restore the record(s)?"
     }
   },
   "not": {

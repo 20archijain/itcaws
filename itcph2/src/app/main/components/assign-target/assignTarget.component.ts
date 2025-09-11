@@ -22,9 +22,13 @@ import { environment } from 'src/environments/environment';
 export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   group: UntypedFormGroup;
+  tabCondition = false;
   stockProductsList: StockProduct[] = [];
   previousMonth = Functions.previousMonth();
   currentMonth = Functions.currentMonth();
+  nextMonth = Functions.nextMonth();
+  currentDate = Functions.currentDate();
+
   // monthOptions = [
   //   { label: 'January', value: '01' },
   //   { label: 'February', value: '02' },
@@ -47,6 +51,9 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   rowClasses: { [key: string]: string } = {};
   currentColorIndex = 0;
   colors = ['bg-light-gray', 'bg-white'];
+  product1: string;
+  product2: string;
+  tableColumnCondition = true;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private toastrService: ToastrService, private confirmationModalService: ConfirmationModalService) { }
@@ -54,6 +61,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   ngOnInit() {
     this.group = this.fb.group({
       qty: this.fb.array([]),
+      monthCheck: [null]
     });
 
     // subscribe to confirmation modal
@@ -69,6 +77,9 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
         })
     );
 
+    if (this.currentDate['day'] > 21) {
+      this.tabCondition = true;
+    }
     this.initialData();
   }
 
@@ -102,6 +113,9 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.stockProductsList = resp.data.stockProductsList;
             this.teamsList = resp.data.teamsList;
+            this.product1 = resp.data.product1;
+            this.product2 = resp.data.product2;
+            this.tableColumnCondition = resp.data.tableColumnCondition;
 
             if (this.stockProductsList.length > 0) {
               // create dynamic control
@@ -110,7 +124,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
               this.toastrService.toastr({
                 type: 'error',
-                msg: 'Target Already Assigned to all Teams'
+                msg: 'Team Not Found'
               });
             }
 
@@ -119,7 +133,12 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
     );
   }
 
-  onTypeChange() {
+  onTypeChange(monthCheck: number) {
+    if (monthCheck === 2) {
+      this.group.get('monthCheck').setValue(monthCheck);
+    } else {
+      this.group.get('monthCheck').setValue(null);
+    }
     this.resetDynamicForm();
     this.initialData();
   }
@@ -134,7 +153,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
         });
         (this.group.get('qty') as UntypedFormArray).push(this.fb.group(controls));
       });
-      (this.group.get('qty') as UntypedFormArray).setValidators([GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(2)]);
+      (this.group.get('qty') as UntypedFormArray).setValidators([GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(3)]);
 
       this.canGoBackGuard.markAsPristine();
     }
@@ -184,7 +203,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
   resetDynamicForm() {
     this.group.removeControl('qty');
-    this.group.addControl('qty', new UntypedFormArray([], [GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(2)]));
+    this.group.addControl('qty', new UntypedFormArray([], [GROUPED_VALUES_ALL_OR_NONE_VALIDATOR(3)]));
   }
 
   getTeamTotalQty(teamId: string): number {

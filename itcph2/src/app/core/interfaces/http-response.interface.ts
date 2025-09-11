@@ -237,13 +237,28 @@ export interface StockProduct extends DropdownList {
   stockIssued?: number;
   brand?: any;
   wd_code?: any;
-  previousMonthTarget?: any;
-  previousMonthAchieve?: any;
-  currentMonthTarget?: any;
-  currentMonthAchieve?: any;
+  productOnePreMonthTarget?: number;
+  productOnepreviousMonthAchieve?: number;
+  productTwoPreMonthTarget?: number;
+  productTwopreviousMonthAchieve?: number;
+  productOneCurrentMonthTarget?: number;
+  productOnecurrentMonthAchieve?: number;
+  productTwoCurrentMonthTarget?: number;
+  productTwocurrentMonthAchieve?: number;
+  overAllPreMonthTarget?: number;
+  overallPreviousMonthAchieve?: number;
+  overallCurrentMonthTarget?: number;
+  overallCurrentMonthAchieve?: number;
+  productOneNextMonthTarget?: number;
+  productTwoNextMonthTarget?: number;
+  overAllNextMonthTarget?: number;
+  existTeamTableCond?: number;
 }
 
 export interface ReadyStockPickupResponse {
+  tableColumnCondition: boolean;
+  product1: string;
+  product2: string;
   monthList: DropdownList[];
   yearList: DropdownList[];
   todaysSales: DropdownList[];
@@ -287,6 +302,26 @@ export interface VanDsListingData<T = any> extends ListingDataResponse<T> {
   userBranch?: string;
 }
 
+export interface MdoListingData<T = any> extends ListingDataResponse<T> {
+  wdPopGroupList: DropdownList[];
+  wdMarketList: DropdownList[];
+  districtList: DropdownList[];
+  branchList: DropdownList[];
+  circleList: DropdownList[];
+  sectionList: DropdownList[];
+  wdCodeList: DropdownList[];
+  sortOptions?: DropdownList[];
+  teamList: DropdownList[];
+  wdList: DropdownList[];
+  viewHeader?: string[];
+  viewBody?: string[];
+  teamType: DropdownList[];
+  showTransactionDownloadBtn?: boolean;
+  showSummaryDownloadBtn?: boolean;
+  branchFilter?: boolean;
+  userBranch?: string;
+}
+
 export interface GetActiveDsDataResponse extends GetViewHeaderBody {
   branchList: DropdownList[];
   sortOptions?: DropdownList[];
@@ -303,6 +338,27 @@ export interface GetActiveDsDataResponse extends GetViewHeaderBody {
 export interface VanDsListing {
   reportingType: string;
   route: string;
+  section: string;
+  shopName: string;
+  mobileNumber: string;
+  shopType: string;
+  sellIinOrder: string;
+  timestamp: string;
+  team: string;
+  branchName: string;
+  circle: string;
+  wdCode: string;
+  team_id: number;
+  lt: number;
+  lg: number;
+  images: GalleryImagesList[];
+}
+
+export interface MdoListing {
+  reportingType: string;
+  workType: string;
+  route: string;
+  dsName: string;
   section: string;
   shopName: string;
   mobileNumber: string;

@@ -5,6 +5,7 @@ $whitish1: #f9f9f9;
 $whitish2: #ddd;
 $lightgray: #d3d3d3;
 $steelblue: #4682b4;
+$red: rgb(225, 9, 9);
 
 .fixed-header {
   background-color: $white;
@@ -47,15 +48,15 @@ $steelblue: #4682b4;
 }
 
 .fix-width {
-  max-width: 200px;
-  min-width: 200px;
-  width: 200px;
+  max-width: 80px;
+  min-width: 80px;
+  width: 80px;
 }
 
 .fix-width2 {
-  max-width: 120px;
-  min-width: 120px;
-  width: 120px;
+  max-width: 90px;
+  min-width: 90px;
+  width: 90px;
 }
 
 .fix-width3 {
@@ -68,4 +69,28 @@ $steelblue: #4682b4;
   max-width: 120px;
   min-width: 120px;
   width: 120px;
+}
+
+.blink-dot {
+  animation: blink 1s infinite;
+  background-color: $red;
+  border-radius: 50%;
+  display: inline-block;
+  height: 10px;
+  margin-left: 6px;
+  width: 10px;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
 }

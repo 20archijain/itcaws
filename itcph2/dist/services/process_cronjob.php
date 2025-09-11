@@ -388,6 +388,28 @@ class ProcessResponse
                                     if ($sellin == "Yes") {
                                         $productsBought = $arrParams[18];
                                     }
+                                    // Update route coordinates if not updated
+                                    $shopId = $arrParams[16];
+                                    if ($lt && $lt > 0 && $shopId && is_numeric($shopId)) {
+                                        // Don't use dstatus = 0
+                                        $shopLt = getRowColumn(
+                                            $this->_dbConn,
+                                            $routeDetailsTable,
+                                            "lt",
+                                            "rec_id = $shopId"
+                                        );
+
+                                        if (!$shopLt || $shopLt <= 0) {
+                                            // Don't use dstatus = 0
+                                            updateRecord(
+                                                $this->_dbConn,
+                                                $routeDetailsTable,
+                                                "lt = ?, lg = ?",
+                                                "rec_id = $shopId",
+                                                array($lt, $lg)
+                                            );
+                                        }
+                                    }
                                 }
 
                                 // Add each product bought Qty in separate column

@@ -53,3 +53,8 @@ $VARIABLES_NAMES = array(
     "MORE_INFO" => "moreInfo",
     "MORE_TABLE_INFO" => "moreTableInfo",
 );
+
+$ARR_DELETE_STATUS = array(
+    0 => "Active",
+    1 => "Deleted"
+);

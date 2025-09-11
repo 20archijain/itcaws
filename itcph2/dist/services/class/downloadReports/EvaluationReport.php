@@ -429,22 +429,21 @@ class EvaluationReport
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b, tblbranch_pickupstock_products as c where a.branch_id = b.branch_id AND a.branch_id = c.branch_id AND b.is_type = c.team_type AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b, tblbranch_pickupstock_products as c where a.branch_id = b.branch_id AND a.branch_id = c.branch_id AND b.is_type != 4" .
+            " AND b.is_type = c.team_type AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "DS";
+                    $teamType = "Van DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
@@ -912,7 +911,7 @@ class EvaluationReport
                     }
                 }
                 $teamTypeWhere = $where;
-                $sQuery = "SELECT a.route, a.activity_date, a.total_sellin_shops, a.total_sales_deliveries, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
+                $sQuery = "SELECT a.total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.wd_code $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
                     " AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId AND b.is_type = '$currentTeamType' $dateCond $teamTypeWhere GROUP BY a.team_id ORDER BY b.team_name";
                 $rsAction = null;
                 $iRows = 0;
@@ -924,10 +923,7 @@ class EvaluationReport
                     $arrBranchDetails = getRowsColumns($this->_dbConn, $branchTable, "branch_id, branch_name, main_branch, district");
 
                     while ($row = $this->_dbConn->GetData($rsAction)) {
-                        $routeName = $row["route"];
                         $teamId = $row["team_id"];
-                        // $sellInShops = $row["total_sales_deliveries"];
-                        $activity_date = $row["activity_date"];
                         $routeQuery = "SELECT  a.route FROM $summaryTable as a WHERE a.dstatus = 0 AND a.team_id = $teamId $dateCond";
                         $this->_dbConn->ExecuteSelectQuery($routeQuery, $rsRoutes, $iRows);
 
@@ -945,7 +941,6 @@ class EvaluationReport
                             }
                         }
 
-                        $date = $row["activity_date"];
                         $wdCode = $row["wd_code"];
                         $mainBranch = $branchName = $district = "";
                         if (($branchIndex = array_search($branchId, array_column($arrBranchDetails, 0))) !== false) {

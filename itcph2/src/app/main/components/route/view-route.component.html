@@ -1,16 +1,16 @@
 <app-card cardTitle="Route Delete" [options]="false">
   <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
-    [searchTemplate]="searchTemplate" [searchGroup]="form"    >
+    [searchTemplate]="searchTemplate" [searchGroup]="form">
   </app-table-listing>
 </app-card>
 
 <ng-template #searchTemplate>
   <div class="row">
     <div class="col-sm-4 col-md-3">
-      <app-select placeholder="Branch" [group]="form" controlName="branch"
-        [options]="branchOptions" (onChange)="getTeamNames()">
+      <app-select placeholder="Branch" [group]="form" controlName="branch" [options]="branchOptions"
+        (onChange)="getTeamNames()">
       </app-select>
-    </div>  
+    </div>
     <div class="col-sm-4 col-md-3">
       <app-select placeholder="Team" multiple="true" [group]="form" controlName="team"
         [options]="teamOptions">

@@ -180,16 +180,16 @@ class BillCutReport
                         $teamType = $isType[$row['is_type']];
                         $wdCode = $row['wd_code'];
                         $arrDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "circle,section,wd_firm_name,wd_pop_group", "dstatus = 0 AND wd_code = '$wdCode'");
-                        $circle = $arrDetails[0];
-                        $section = $arrDetails[1];
-                        $wdFirmName = $arrDetails[2];
-                        $wdpopGroup = $arrDetails[3];
+                        $circle     = isset($arrDetails[0]) ? $arrDetails[0] : "";
+                        $section    = isset($arrDetails[1]) ? $arrDetails[1] : "";
+                        $wdFirmName = isset($arrDetails[2]) ? $arrDetails[2] : "";
+                        $wdpopGroup = isset($arrDetails[3]) ? $arrDetails[3] : "";
                         foreach ($summaryColName as $index => $colName) {
                             $allShops = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $where");
-                            if (!isset($shopCount[$district][$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName])) {
-                                $shopCount[$district][$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName] = 0;
+                            if (!isset($shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName])) {
+                                $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = 0;
                             }
-                            $shopCount[$district][$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
+                            $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
                         }
 
                         $totalShopCount[$teamId] = getRowColumn($this->_dbConn, $routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", array(), true);
@@ -216,36 +216,44 @@ class BillCutReport
                     foreach ($shopCount as $district => $arrDsitrict) {
                         foreach ($arrDsitrict as $mainBranchName => $arrbranchData) {
                             foreach ($arrbranchData as $branchName => $arrbranch) {
-                                foreach ($arrbranch as $teamId => $arrteams) {
-                                    foreach ($arrteams as $teamName => $arrwdCode) {
-                                        foreach ($arrwdCode as $wdCode => $arrTeamType) {
-                                            foreach ($arrTeamType as $teamType => $arrProduct) {
-                                                foreach ($arrProduct as $colName => $shops) {
-                                                    $distinctShops = $shops;
-                                                    $totalShops = $totalShopCount[$teamId];
-                                                    $overallUob = $OverallShopCount[$teamId];
-                                                    // Calculate UOB%
-                                                    $uobPercentage = $totalShops > 0 ? $distinctShops / $totalShops : 0;
-                                                    $arrExcelData[] = [
-                                                        'District' => $district,
-                                                        'Branch' => $mainBranchName,
-                                                        'Region' => $branchName,
-                                                        'Circle' => $circle,
-                                                        'Section' => $section,
-                                                        'WD Code' => $wdCode,
-                                                        'WD Name' => $wdFirmName,
-                                                        'WD Pop Group' => $wdpopGroup,
-                                                        'DS Type' => $teamType,
-                                                        'DS Id' => $teamId,
-                                                        'DS Name' => $teamName,
-                                                        'Brand Family' => $productFamilies[$colName] ?? '',
-                                                        'Variant' => $productNames[array_search($colName, $summaryColName)],
-                                                        'Focus Variant' => (string) ($productFocuses[$colName] ?? ''),
-                                                        'Total Outlets Mapped' => $totalShops,
-                                                        'Variant UOB' => $distinctShops,
-                                                        'Variant UOB%' => number_format($uobPercentage, 2),
-                                                        'Overall UOB' => $overallUob,
-                                                    ];
+                                foreach ($arrbranch as $circle => $arrcircle) {
+                                    foreach ($arrcircle as $section => $arrSection) {
+                                        foreach ($arrSection as $wdFirmName => $arrWdFirmName) {
+                                            foreach ($arrWdFirmName as $wdpopGroup => $arrWdpopGroup) {
+                                                foreach ($arrWdpopGroup as $teamId => $arrteams) {
+                                                    foreach ($arrteams as $teamName => $arrwdCode) {
+                                                        foreach ($arrwdCode as $wdCode => $arrTeamType) {
+                                                            foreach ($arrTeamType as $teamType => $arrProduct) {
+                                                                foreach ($arrProduct as $colName => $shops) {
+                                                                    $distinctShops = $shops;
+                                                                    $totalShops = $totalShopCount[$teamId];
+                                                                    $overallUob = $OverallShopCount[$teamId];
+                                                                    // Calculate UOB%
+                                                                    $uobPercentage = $totalShops > 0 ? $distinctShops / $totalShops : 0;
+                                                                    $arrExcelData[] = [
+                                                                        'District' => $district,
+                                                                        'Branch' => $mainBranchName,
+                                                                        'Region' => $branchName,
+                                                                        'Circle' => $circle,
+                                                                        'Section' => $section,
+                                                                        'WD Code' => $wdCode,
+                                                                        'WD Name' => $wdFirmName,
+                                                                        'WD Pop Group' => $wdpopGroup,
+                                                                        'DS Type' => $teamType,
+                                                                        'DS Id' => $teamId,
+                                                                        'DS Name' => $teamName,
+                                                                        'Brand Family' => $productFamilies[$colName] ?? '',
+                                                                        'Variant' => $productNames[array_search($colName, $summaryColName)],
+                                                                        'Focus Variant' => (string) ($productFocuses[$colName] ?? ''),
+                                                                        'Total Outlets Mapped' => $totalShops,
+                                                                        'Variant UOB' => $distinctShops,
+                                                                        'Variant UOB%' => number_format($uobPercentage, 2),
+                                                                        'Overall UOB' => $overallUob,
+                                                                    ];
+                                                                }
+                                                            }
+                                                        }
+                                                    }
                                                 }
                                             }
                                         }

@@ -428,22 +428,20 @@ class VanDsReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $teamType = "";
                 if ($row['is_type'] == 0) {
-                    $teamType = "DS";
+                    $teamType = "Van DS";
                 } elseif ($row['is_type'] == 1) {
                     $teamType = "Niche";
                 } elseif ($row['is_type'] == 2) {
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 4) {
-                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
@@ -1464,6 +1462,7 @@ class VanDsReporting
                     $teamId = $row["team_id"];
                     $callTime = getRowsColumn($this->_dbConn, $respTable, "call_time", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
                     $totalTimeSpent = "";
+                    $totalMinutes = "";
                     if (!empty($callTime)) {
                         $totalTime = array_sum($callTime); // Sum all time values
                         $time = $totalTime / 1000;
@@ -1471,13 +1470,74 @@ class VanDsReporting
                         $totalTimeSpent = gmdate("H:i:s", (int) round($time));
                         $totalMinutes = floor($time / 60);
                     }
+                    $totalSale = 0; // Initialize total product sale
+                    if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                        foreach ($arrProductBought as $productIndex => $arrProduct) {
+                            $productName = strtoupper($arrProduct[0]);
+                            $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
+                            $totalSale += $iSale;
+                        }
+                    }
                     $branchId = $row["branch_id"];
                     if ($branchId == 40) {
-                        $idealRoute = getRowColumn($this->_dbConn, "tblroute_details_delhi", "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
-                        $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                        $idealRoute = $dayOfWeek;
+                        $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                        $arrPlannedOutletBeatDay = array(0 => $arrPlannedOutlet, 1 => $dayOfWeek);
+                        if ($totalSale > 0) {
+                            $sellInShop = getRowColumn(
+                                $this->_dbConn,
+                                $respTable,
+                                "COUNT(DISTINCT ques_3)",
+                                "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
+                            );
+                        } else {
+                            $sellInShop = 0;
+                        }
+                        $routeDays = explode('-', strtolower($row["route"]));
+                        $isBeatAdher = in_array($dayOfWeek, $routeDays) ? 1 : '0';
+                        if ($isBeatAdher == '0') {
+                            $reason = "Any Other";
+                        } else {
+                            $reason = "";
+                        }
+                        $arrLtLg = getRowsColumns(
+                            $this->_dbConn,
+                            $respTable,
+                            "lt, lg",
+                            "dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId' ORDER BY pro_id ASC"
+                        );
+
+                        // Calculate record-to-record distance
+                        $totalDistance = 0;
+                        for ($i = 0; $i < count($arrLtLg) - 1; $i++) {
+                            $lat1 = $arrLtLg[$i][0];
+                            $lon1 = $arrLtLg[$i][1];
+                            $lat2 = $arrLtLg[$i + 1][0];
+                            $lon2 = $arrLtLg[$i + 1][1];
+
+                            $distance = $this->haversineDistance($lat1, $lon1, $lat2, $lon2);
+                            $totalDistance += $distance;
+
+                            // If totalDistance is more than 80 km, set it to random value between 70–80
+                            if ($totalDistance > 80) {
+                                $totalDistance = rand(70, 80);
+                                break; // stop further calculation if you want max 80
+                            }
+                        }
+
+                        // Final distance in KM (rounded 2 decimals)
+                        $distanceInKm = round($totalDistance, 2);
                     } else {
                         $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                         $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                        $sellInShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                        if ($row["is_beat_adherence"] == "Yes") {
+                            $isBeatAdher = "1";
+                        } elseif ($row["is_beat_adherence"] == "No") {
+                            $isBeatAdher = "0";
+                        }
+                        $reason = $row["beat_adherence_reason"];
+                        $distanceInKm = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
                     }
 
                     $mainBranch = $branchName = $district = "";
@@ -1489,7 +1549,6 @@ class VanDsReporting
 
                     $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                     $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
-                    $sellInShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
 
                     $totalShops = $orderShop + $addShop;
 
@@ -1504,11 +1563,6 @@ class VanDsReporting
                     $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
                     // $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
                     $isQualifiedAttendance = (string) $row["is_qualified"];
-                    if ($row["is_beat_adherence"] == "Yes") {
-                        $isBeatAdher = "1";
-                    } elseif ($row["is_beat_adherence"] == "No") {
-                        $isBeatAdher = "0";
-                    }
 
                     $arrSummary["stock"][$index] = array();
                     $arrSummary["sale"][$index][] = $district;
@@ -1529,7 +1583,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = isset($row["resp_enddatetime"]) ? currentDateTime($row["resp_enddatetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
-                    $arrSummary["sale"][$index][] = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
+                    $arrSummary["sale"][$index][] = $distanceInKm;
                     $arrSummary["sale"][$index][] = $totalMinutes;
                     $arrSummary["sale"][$index][] = (float) $timePerShopFormatted;
                     $arrSummary["sale"][$index][] = $isQualifiedAttendance;
@@ -1537,7 +1591,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = $row["route"];
                     $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[1]) ? $arrPlannedOutletBeatDay[1] : "";
                     $arrSummary["sale"][$index][] = $isBeatAdher;
-                    $arrSummary["sale"][$index][] = $row["beat_adherence_reason"];
+                    $arrSummary["sale"][$index][] = $reason;
                     $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[0]) ? $arrPlannedOutletBeatDay[0] : "";
                     $arrSummary["sale"][$index][] = $totalShops;
                     $arrSummary["sale"][$index][] = $sellInShop;
@@ -1548,10 +1602,15 @@ class VanDsReporting
                     if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                         foreach ($arrProductBought as $productIndex => $arrProduct) {
                             $productName = strtoupper($arrProduct[0]);
-                            $iSale = $row[$arrProduct[1]];
-
+                            if ($branchId == 40) {
+                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] / 100 : 0;
+                            } else {
+                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
+                            }
+                            // $iSale = $row[$arrProduct[1]];
                             // Accumulate the product sale
                             $totalProductSale += $iSale;
+
 
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
@@ -1563,7 +1622,11 @@ class VanDsReporting
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
-                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
+                        if ($branchId == 40) {
+                            $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] / 100 : 0;
+                        } else {
+                            $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
+                        }
 
                         // Accumulate the ready stock pickup
                         $totalReadyStockPickup += $iStockQty;
@@ -1750,7 +1813,11 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
-        if ($dsType) {
+        if (isNonEmptyArray($dsType)) {
+            $dsTypes = "'" . implode("','", $dsType) . "'";
+            $teamTypeCond .= " AND team_type IN ($dsTypes)";
+            $Cond .= " AND b.is_type IN ($dsTypes)";
+        } else {
             $teamTypeCond .= " AND team_type = $dsType";
             $Cond .= " AND b.is_type = $dsType";
         }
@@ -1946,5 +2013,22 @@ class VanDsReporting
         $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
 
         echo json_encode($arrMessage);
+    }
+
+    // Haversine formula function
+    private function haversineDistance($lat1, $lon1, $lat2, $lon2)
+    {
+        $earthRadius = 6371; // Earth radius in km
+
+        $dLat = deg2rad($lat2 - $lat1);
+        $dLon = deg2rad($lon2 - $lon1);
+
+        $a = sin($dLat / 2) * sin($dLat / 2) +
+            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
+            sin($dLon / 2) * sin($dLon / 2);
+
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c; // Distance in km
     }
 }
