@@ -39,6 +39,7 @@ class ProcessResponse
         $processTable = $this->_commonSettings["PROCESS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $currentDate = currentDate();
+        $currentMonth = date('Y-m', strtotime($currentDate));
         $cond = "AND rcd = '$currentDate'";
 
         // Get branch wise products
@@ -200,6 +201,9 @@ class ProcessResponse
                         if ($iStatus === 2) {
                             $this->_dbConn->GetLastInsertId($lastRecId);
                             $this->updateProcessStatus($processTable, $respId, $jsonId);
+                            if ($jsonId == 10) {
+                                $this->getAttendanceAddress($attendanceTable, $lt, $lg, $lastRecId);
+                            }
                         }
                     } elseif ($processDayend && is_string($dayendValue) && $dayendValue && strtolower(substr($dayendValue, 0, 7)) === "day end") {
                         // Dayend
@@ -228,6 +232,9 @@ class ProcessResponse
                         if ($iStatus === 2) {
                             $this->_dbConn->GetLastInsertId($lastRecId);
                             $this->updateProcessStatus($processTable, $respId, $jsonId);
+                            if ($jsonId == 10) {
+                                $this->getAttendanceAddress($attendanceTable, $lt, $lg, $lastRecId);
+                            }
                         }
                     } elseif ($processOther) {
                         // Other
@@ -521,40 +528,62 @@ class ProcessResponse
                                 $this->_dbConn->GetLastInsertId($lastRecId);
                                 $this->updateProcessStatus($processTable, $respId, $jsonId);
 
+
                                 // add each Products Bought stock in separate column if not exists in stock summary table
                                 if ($projectId == 1) {
-                                    if ($arrParams[13] == "Outlet Survey") {
-                                        updateRecord($this->_dbConn, "tblsurvey_response_details", "ques_0 = 'Outlet Order'", "pro_id = $lastRecId");
-                                    }
-
-                                    // Add each product bought Qty in separate column
-                                    if ($productsBought && $jsonId = 99) {
-                                        $stockColumns = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
-                                        $stockValues = "?, ?, ?, ?, ?, ?";
-                                        $arrStockParams = array($teamId, $captureDate, 2, $lastRecId, $rcd, $rdt);
-
-                                        // Get branch products
-                                        $arrProductSummaryColumns = $this->getBranchWiseProducts($branchId, $jsonId);
-                                        $arrProductsBought = is_string($productsBought) ? json_decode($productsBought, true) : $productsBought;
-                                        // Get sales
-                                        $arrSales = getGridDataAsArray($arrProductsBought["ansGrid"], 2, count($arrProductSummaryColumns));
-
-                                        if (isNonEmptyArray($arrProductSummaryColumns)) {
-                                            foreach ($arrProductSummaryColumns as $productIndex => $productSummaryColumn) {
-                                                $stockColumns .= ", $productSummaryColumn";
-                                                $stockValues .= ", ?";
-                                                $arrStockParams[] = isset($arrSales[1][$productIndex]) && floatval($arrSales[1][$productIndex]) ? floatval($arrSales[1][$productIndex]) : 0;
-                                            }
+                                    if ($jsonId == 10) {
+                                        if ($arrParams[13] == 'Outlet Survey') {
+                                            $arrType = array("VAN DS" => 0, "NPSR" => 5, "Stokiest DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
+                                            $arrDetails = json_decode($arrParams[15], true);
+                                            $wdCode = $arrDetails[0];
+                                            $dsName = $arrDetails[1];
+                                            $route = $arrDetails[2];
+                                            // Split by " - "
+                                            $parts = explode(" - ", $dsName);
+                                            // Take last part (after "-")
+                                            $vanDs = trim(end($parts));
+                                            updateRecord(
+                                                $this->_dbConn,
+                                                $responseTable,
+                                                "wd_code = ?, ds_name = ?, route_name = ?, month = ?, type = ?, distance_in_meter = ?",
+                                                "pro_id = $lastRecId",
+                                                array($wdCode, $dsName, $route, $currentMonth, $arrType[$vanDs], $distanceTravelledInKm)
+                                            );
+                                        }
+                                    } else {
+                                        if ($arrParams[13] == "Outlet Survey") {
+                                            updateRecord($this->_dbConn, "tblsurvey_response_details", "ques_0 = 'Outlet Order'", "pro_id = $lastRecId");
                                         }
 
-                                        addRecord($this->_dbConn, $stockSummaryTable, $stockColumns, $stockValues, $arrStockParams, false, 1, "sp_id", "team_id = $teamId AND capture_date = '$captureDate' AND stock_type = 2 AND rec_id = $lastRecId");
+                                        // Add each product bought Qty in separate column
+                                        if ($productsBought && $jsonId = 99) {
+                                            $stockColumns = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
+                                            $stockValues = "?, ?, ?, ?, ?, ?";
+                                            $arrStockParams = array($teamId, $captureDate, 2, $lastRecId, $rcd, $rdt);
+
+                                            // Get branch products
+                                            $arrProductSummaryColumns = $this->getBranchWiseProducts($branchId, $jsonId);
+                                            $arrProductsBought = is_string($productsBought) ? json_decode($productsBought, true) : $productsBought;
+                                            // Get sales
+                                            $arrSales = getGridDataAsArray($arrProductsBought["ansGrid"], 2, count($arrProductSummaryColumns));
+
+                                            if (isNonEmptyArray($arrProductSummaryColumns)) {
+                                                foreach ($arrProductSummaryColumns as $productIndex => $productSummaryColumn) {
+                                                    $stockColumns .= ", $productSummaryColumn";
+                                                    $stockValues .= ", ?";
+                                                    $arrStockParams[] = isset($arrSales[1][$productIndex]) && floatval($arrSales[1][$productIndex]) ? floatval($arrSales[1][$productIndex]) : 0;
+                                                }
+                                            }
+
+                                            addRecord($this->_dbConn, $stockSummaryTable, $stockColumns, $stockValues, $arrStockParams, false, 1, "sp_id", "team_id = $teamId AND capture_date = '$captureDate' AND stock_type = 2 AND rec_id = $lastRecId");
+                                        }
                                     }
                                 }
                             }
                         }
                     }
 
-                    if ($jsonId != 100) {
+                    if ($jsonId != 100 || $jsonId != 10) {
                         $this->updateSummary($lastRecId, $jsonId, $teamId, $captureDate, $captureDatetime, $lt, $lg, $activityType, $arrParams, $isOtherRecord, $branchId, $isAttendanceRecord, $isDayendRecord, $distanceTravelledInKm, $isUnAdherence, $reasonForNoBeatAdherence, $route, $userType);
                     }
                 }
@@ -783,6 +812,44 @@ class ProcessResponse
 
             addRecord($this->_dbConn, $summaryTable, $columns, $values, $arrParams);
         }
+    }
+
+    private function getAttendanceAddress($attendanceTable, $lt, $lg, $lastRecId)
+    {
+        $ch = curl_init();
+        $url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' . trim($lt) . ',' . trim($lg) . '&key=' . constant("GOOGLE_MAP_API_KEY");
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = curl_exec($ch);
+        $result = json_decode($result, true);
+
+        if ($result && $result['status'] == 'OK') {
+            //Get address from json data
+            $formattedAddress = str_replace("'", "", $result['results']['0']['formatted_address']);
+            $locality = str_replace("'", "", $result['results']['0']['address_components']['1']['long_name']);
+        } else {
+            $locality = $formattedAddress = "";
+        }
+        $components = $result['results'][0]['address_components'];
+
+        $state = $district = $city = $pincode = "";
+
+        foreach ($components as $component) {
+            if (in_array("administrative_area_level_1", $component["types"])) {
+                $state = $component["long_name"];
+            }
+            if (in_array("locality", $component["types"])) {
+                $district = $component["long_name"];
+            }
+            if (in_array("administrative_area_level_3", $component["types"])) {
+                $city = $component["long_name"];
+            }
+            if (in_array("postal_code", $component["types"])) {
+                $pincode = $component["long_name"];
+            }
+        }
+        updateRecord($this->_dbConn, $attendanceTable, "google_address = ?, state = ?, district = ?, city = ?, pincode = ?", "att_id = $lastRecId", array($formattedAddress, $state, $district, $city, $pincode));
+        curl_close($ch);
     }
 
     // private function getBranchWiseProducts($branchId = null, $jsonId = null)

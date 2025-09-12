@@ -61,6 +61,7 @@ define('CLIENTS_UPLOAD_MEDIA_FOLDER', "m_files");
 define('CLIENTS_UPLOAD_IMAGE_FOLDER', "m_img");
 define('CLIENTS_JSON_FOLDER', "p_xml");
 define('CLIENTS_RES_FOLDER', "res/android/drawable");
+define("GOOGLE_MAP_API_KEY", "AIzaSyCQl11SJbdomqoqquBRoOzWpVbjcQ6Sroo");
 
 // DB DETAILS
 // define("DB_HOSTNAME", "3.109.90.46");

@@ -135,7 +135,7 @@
         </div>
         <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
-            placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+            placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}" (onChange)="getTeamsName()">
           </app-select>
         </div>
         <!-- <div class="col-sm-4 col-lg-2">
@@ -158,7 +158,7 @@
             btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button [isFaIcon]="true" iconName="fa fa-download" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadBinder" (onClick)="downloadBinderReport()" [showSpinner]="isDownloading"
+            btnTitle="button.downloadAttendance" (onClick)="downloadAttendanceReport()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
             (onClick)="clearForm()"></app-button>
@@ -181,7 +181,7 @@
         </div>
         <div class="col-12 col-sm-4 col-md-2">
           <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
-            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsName()">
           </app-select>
         </div>
         <!-- <div class="col-12 col-sm-4 col-md-2">
@@ -204,7 +204,7 @@
             btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button [isFaIcon]="true" iconName="fa-solid fa-download" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="Binder Report" (onClick)="downloadBinderReport()" [showSpinner]="isDownloading"
+            btnTitle="button.downloadAttendance" (onClick)="downloadAttendanceReport()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
             (onClick)="clearForm()"></app-button>

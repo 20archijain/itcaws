@@ -189,7 +189,7 @@ class BillCutReport
                             if (!isset($shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName])) {
                                 $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = 0;
                             }
-                            $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
+                            $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
                         }
 
                         $totalShopCount[$teamId] = getRowColumn($this->_dbConn, $routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", array(), true);

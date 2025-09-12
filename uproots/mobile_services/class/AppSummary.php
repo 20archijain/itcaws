@@ -2064,17 +2064,41 @@ class AppSummary extends Utilities
             $outletId = isset($route_outletId[1]) ? $route_outletId[1] : "";
             $dsId = $route && $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "team_id", "dstatus = 0 AND route_name = '$route' AND rec_id = $outletId") : "";
             $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : "";
-            $coverdOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'") : "";
-            $productiveOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0") : "";
-            $surveyQty = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'") : "";
-            $min_max_time = $dsId ? $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'") : "";
-            $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], true);
+            $coverdOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
+            $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
             $distance = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(distance_in_meter)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
             $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
-            $vanDsMtdCount = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND team_id = $teamId AND type = '0' AND capture_date LIKE '%$month%'");
-            $swdMtdCount = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND team_id = $teamId AND type = '2' AND capture_date LIKE '%$month%'");
-            $npsrMtdCount = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND team_id = $teamId AND type = '5' AND capture_date LIKE '%$month%'");
-            $arrWdcodes = $this->tableUtil->getRowsColumn("$dbName.tblmdo_offline_data", "wd_code", "dstatus = 0 AND team_id = $teamId", array(), true);
+            $Query = "SELECT type, COUNT(DISTINCT ds_name) AS cnt FROM $dbName.tblsurvey_response_details_mdo WHERE dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND type IN (0, 2, 5, 6, 8, 9) GROUP BY type";
+            $sAction = null;
+            $sRows = 0;
+            $this->dbConn->ExecuteSelectQuery($Query, $sAction, $sRows);
+            // Default values (in case a type is missing from the result)
+            $vanDsMtdCount    = 0;
+            $swdMtdCount      = 0;
+            $npsrMtdCount     = 0;
+            $rmdDsMtdCount    = 0;
+            $stokiestMtdCount = 0;
+            $fmcgMtdCount     = 0;
+            
+            if ($sRows > 0) {
+                while ($row = $this->dbConn->GetData($sAction)) {
+                    switch ($row['type']) {
+                        case 0: $vanDsMtdCount    = $row['cnt']; break;
+                        case 2: $swdMtdCount      = $row['cnt']; break;
+                        case 5: $npsrMtdCount     = $row['cnt']; break;
+                        case 6: $rmdDsMtdCount    = $row['cnt']; break;
+                        case 8: $stokiestMtdCount = $row['cnt']; break;
+                        case 9: $fmcgMtdCount     = $row['cnt']; break;
+                    }
+                }
+            }
+            $gtTlCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND other_details LIKE '%Market work with GT TL%'");
+            $aeCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND other_details LIKE '%Market work with AE%'");
+            $independentCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND other_details LIKE '%Independent market work%'");
+            $arrWdcodes = $this->tableUtil->getRowsColumn("$dbName.tblsurvey_response_details_mdo", "wd_code", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%'", array(), true);
             $arrWdcodeData = array();
             foreach ($arrWdcodes as $wdcode) {
                 $wdCodeName = $wdcode;
@@ -2089,8 +2113,8 @@ class AppSummary extends Utilities
                     array(
                         "typeofview" => "Progress",
                         "label" => "Outlet Covered VS Outlets Planned",
-                        "value1" => $pannedOutlets ? (string)$pannedOutlets : "0",
-                        "value2" => $coverdOutlets ? (string)$coverdOutlets : "0"
+                        "value1" => $coverdOutlets ? (string)$coverdOutlets : "0",
+                        "value2" => $pannedOutlets ? (string)$pannedOutlets : "0"
                     ),
                     array(
                         "label" => "Productive Outlets",
@@ -2116,6 +2140,7 @@ class AppSummary extends Utilities
                 "dsTypeDistributionData" => [
                     array(
                         "pieDataTittle" => "Market Work Information",
+                        "pieInternalTittle" => "Total Count",
                         "label" => "VAN DS",
                         "value" => isset($vanDsMtdCount) ? (string)$vanDsMtdCount : "0",
                         "color" => "#9400D3"
@@ -2129,6 +2154,31 @@ class AppSummary extends Utilities
                         "label" => "NPSR",
                         "value" => isset($npsrMtdCount) ? (string)$npsrMtdCount : "0",
                         "color" => "#FF6B35"
+                    ),
+                    array(
+                        "label" => "RMD",
+                        "value" => isset($rmdDsMtdCount) ? (string)$rmdDsMtdCount : "0",
+                        "color" => "#073763"
+                    ),
+                    array(
+                        "label" => "Stokiest DS",
+                        "value" => isset($stokiestMtdCount) ? (string)$stokiestMtdCount : "0",
+                        "color" => "#660000"
+                    ),
+                    array(
+                        "label" => "GT TL",
+                        "value" => isset($gtTlCount) ? (string)$gtTlCount : "0",
+                        "color" => "#CE7E00"
+                    ),
+                    array(
+                        "label" => "AE",
+                        "value" => isset($aeCount) ? (string)$aeCount : "0",
+                        "color" => "#741B47"
+                    ),
+                    array(
+                        "label" => "Independent",
+                        "value" => isset($independentCount) ? (string)$independentCount : "0",
+                        "color" => "#6AA84F"
                     ),
                 ],
                 "wdCodeData" => $arrWdcodeData
