@@ -124,6 +124,7 @@ export const STATIC_MODULES = {
     getAeName: 'get_ae_name',
     getJson: 'get_json',
     getDownloadBinderReport: 'get_download_binder_report',
+    getDownloadAttendanceReport: 'get_download_attendance_report',
     getMapdata: 'get_mapdata',
     getMonth: 'get_month',
   },

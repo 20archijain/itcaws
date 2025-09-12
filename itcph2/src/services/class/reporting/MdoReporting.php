@@ -396,7 +396,6 @@ class MdoReporting
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
         $arrData = array();
@@ -462,7 +461,7 @@ class MdoReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -710,20 +709,22 @@ class MdoReporting
 
     final public function getTeamList()
     {
-        $dsType = $this->_data['dsType'];
-        $dsTypeCond = "";
-        if (isset($dsType) && $dsType != "" && $dsType >= 0) {
-            if (!is_array($dsType)) {
-                $dsType = array($dsType);
-            }
-            if (in_array('all', $dsType)) {
-                $dsTypeCond = ""; // No condition for 'all'
-            } else {
-                $dsType = "'" . implode("','", $dsType) . "'";
-                $dsTypeCond = " AND b.is_type IN ($dsType)";
+        $wdCode = $this->_data['wdCode'];
+        $wdCodeCond = "";
+        if ($wdCode) {
+            if ($wdCode) {
+                if (!is_array($wdCode)) {
+                    $wdCode = array($wdCode);
+                }
+                if (in_array('all', $wdCode)) {
+                    $wdCodeCond = ""; // No condition for 'all'
+                } else {
+                    $wdCode = "'" . implode("','", $wdCode) . "'";
+                    $wdCodeCond = " AND c.wd_code IN ($wdCode)";
+                }
             }
             $arrResult = array(
-                "teamList" => $this->getTeamsList($dsTypeCond),
+                "teamList" => $this->getTeamsList($wdCodeCond),
             );
         } else {
             $arrResult = array(
@@ -734,90 +735,6 @@ class MdoReporting
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
-    private function getBranchWiseProducts($branchId = null, $teamType = null)
-    {
-        $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
-
-        if ($branchId) {
-            if (is_array($teamType) && !empty($teamType)) {
-                $result = [];
-
-                foreach ($teamType as $type) {
-                    $result = array_merge($result, $this->arrBranchwiseProducts[$branchId][$type] ?? []);
-                }
-
-                return $result;
-            } elseif ($teamType !== null && $teamType !== "") {
-                return $this->arrBranchwiseProducts[$branchId][$teamType] ?? [];
-            } else {
-                return $this->arrBranchwiseProducts[$branchId] ?? [];
-            }
-        } else {
-            if (is_array($teamType) && !empty($teamType)) {
-                $teamTypeIn = implode(",", array_map('intval', $teamType));
-
-                $arrProductSummaryColumns = getRowsColumns(
-                    $this->_dbConn,
-                    $branchProductsTable,
-                    "branch_id, team_type, product_name, summary_column_name",
-                    "dstatus = 0 AND team_type IN ($teamTypeIn) ORDER BY product_name",
-                    [],
-                    true
-                );
-
-                foreach ($arrProductSummaryColumns as $arrBranchColumns) {
-                    $branchId = $arrBranchColumns[0];
-                    $type     = $arrBranchColumns[1];
-                    $productName = $arrBranchColumns[2];
-                    $summaryColumnName = $arrBranchColumns[3];
-
-                    if (!isset($this->arrBranchwiseProducts[$branchId][$type])) {
-                        $this->arrBranchwiseProducts[$branchId][$type] = [];
-                    }
-                    $this->arrBranchwiseProducts[$branchId][$type][] = [$productName, $summaryColumnName];
-                }
-            } elseif ($teamType !== null && $teamType !== "") {
-                // handle string teamType (single value)
-                $arrProductSummaryColumns = getRowsColumns(
-                    $this->_dbConn,
-                    $branchProductsTable,
-                    "branch_id, product_name, summary_column_name",
-                    "dstatus = 0 AND team_type = '" . intval($teamType) . "' ORDER BY product_name",
-                    [],
-                    true
-                );
-
-                foreach ($arrProductSummaryColumns as $arrBranchColumns) {
-                    $branchId = $arrBranchColumns[0];
-                    $productName = $arrBranchColumns[1];
-                    $summaryColumnName = $arrBranchColumns[2];
-
-                    if (!isset($this->arrBranchwiseProducts[$branchId][$teamType])) {
-                        $this->arrBranchwiseProducts[$branchId][$teamType] = [];
-                    }
-                    $this->arrBranchwiseProducts[$branchId][$teamType][] = [$productName, $summaryColumnName];
-                }
-            } else {
-                // No teamType provided
-                $sProductAction = null;
-                $iProductRows = 0;
-                $sProductQuery = "SELECT DISTINCT branch_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 ORDER BY product_name";
-                $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
-
-                if ($iProductRows > 0) {
-                    while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
-                        $branchId = $rowProduct["branch_id"];
-                        if (!isset($this->arrBranchwiseProducts[$branchId])) {
-                            $this->arrBranchwiseProducts[$branchId] = [];
-                        }
-                        $this->arrBranchwiseProducts[$branchId][] = [$rowProduct["product_name"], $rowProduct["summary_column_name"]];
-                    }
-                }
-            }
-        }
-    }
-
 
     private function getWeekNumber($date)
     {
@@ -872,13 +789,13 @@ class MdoReporting
                 $route = $row["route_name"];
                 $sellIinOrder = $row["ques_4"];
                 $itcVisiblity = $row["ques_8"];
-                if ($itcVisiblity == 'Yes') {
+                if ($itcVisiblity == 'YES') {
                     $visibilityPicture = $row["ques_6"];
                 } else {
                     $visibilityPicture = "";
                 }
                 $implimentItcVisiblity = $row["ques_10"];
-                if ($implimentItcVisiblity == 'Yes') {
+                if ($implimentItcVisiblity == 'YES') {
                     $outletPicture = $row["ques_11"];
                 } else {
                     $outletPicture = "";
@@ -927,15 +844,10 @@ class MdoReporting
         echo json_encode($arrMessage);
     }
 
-    private function getBranches()
-    {
-        return getBranchList($this->_dbConn, false, "", "", 0, true);
-    }
-
     final public function getDownloadData()
     {
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -1029,23 +941,25 @@ class MdoReporting
                     $shopId = $row["ques_4"];
                     $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "dstatus = 0 AND route_name = '$route' AND rec_id = $shopId") : "";
                     $dsName = $row["ds_name"];
+                    $parts = explode(" - ", $dsName, 2);
+                    $dsNameOnly = $parts[0];
                     $dsType = $row["type"];
                     $surveyVol = $row["ques_5"];
                     $surveyVal = $row["ques_6"];
                     $lineCut = $row["ques_7"];
                     $itcVisibility = $row["ques_8"];
-                    if ($itcVisibility == 'Yes') {
+                    if ($itcVisibility == 'YES') {
                         $visibilityPic = $row["ques_9"];
                     } else {
                         $visibilityPic = "";
                     }
                     $implementVisibility = $row["ques_10"];
-                    if ($implementVisibility == 'Yes') {
+                    if ($implementVisibility == 'YES') {
                         $outletPic = $row["ques_11"];
                     } else {
                         $outletPic = "";
                     }
-                    $arrImg1 = $visibilityPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId' AND mob_img_id = '{$visibilityPic}'") : null;
+                    $arrImg1 = $visibilityPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId' AND mob_img_id = '$visibilityPic'") : null;
 
                     $filepath1 = isset($arrImg1, $arrImg1[0]) ? $arrImg1[0] : "";
                     $filename1 = isset($arrImg1, $arrImg1[1]) ? $arrImg1[1] : "";
@@ -1078,7 +992,7 @@ class MdoReporting
                         isset($arrWdDetails[1]) ? $arrWdDetails[1] : "",
                         isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
                         isset($arrRoute[0]) ? $arrRoute[0] : "",
-                        $dsName,
+                        $dsNameOnly,
                         $arrTeamType[$dsType],
                         $route,
                         isset($arrRoute[1]) ? $arrRoute[1] : "",
@@ -1118,11 +1032,9 @@ class MdoReporting
 
     final public function getDownloadSummary()
     {
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-
-        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
@@ -1149,10 +1061,10 @@ class MdoReporting
         $branch = getFormData($this->_data['searchbar'], "branch");
 
         // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
-        $arrSummary = array();
+        $arrExcelData = array();
 
         // create header
-        $arrSummary[] = [
+        $arrExcelData[] = [
             "District",
             "Branch",
             "Region",
@@ -1199,9 +1111,9 @@ class MdoReporting
                 if (!$matchAll) {
                     if (isNonEmptyArray($branchId)) {
                         $branchIds = implode(",", $branchId);
-                        $branchCond = " AND a.branch_id IN ($branchIds)";
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
                     } else {
-                        $branchCond = " AND a.branch_id = $branchId";
+                        $branchCond = " AND b.branch_id = $branchId";
                     }
                 }
             }
@@ -1228,10 +1140,12 @@ class MdoReporting
                     $shopId = $row["ques_4"];
                     $dsId = $routeName && $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "dstatus = 0 AND route_name = '$routeName' AND rec_id = $shopId") : "";
                     $dsName = $row["ds_name"];
+                    $parts = explode(" - ", $dsName, 2);
+                    $dsNameOnly = $parts[0];
                     $dsType = $arrTeamType[$row["type"]];
-                    $arrAteendance = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime) AS startTime, MAX(capture_datetime) AS endTime", "capture_date = '$date' AND team_id = $teamId");
-                    $startTime = isset($arrAteendance['startTime']) ? $arrAteendance['startTime'] : "";
-                    $endTime = isset($arrAteendance['endTime']) ? $arrAteendance['endTime'] : "";
+                    $arrAteendance = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
+                    $startTime = isset($arrAteendance[0]) ? $arrAteendance[0] : "";
+                    $endTime = isset($arrAteendance[1]) ? $arrAteendance[1] : "";
                     $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
                     $firstOutletTime = isset($arrfist_lastTime[0]) ? $arrfist_lastTime[0] : "";
                     $lastOutletTime = isset($arrfist_lastTime[1]) ? $arrfist_lastTime[1] : "";
@@ -1288,7 +1202,7 @@ class MdoReporting
                         isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
                         $dsId,
                         $dsType,
-                        $dsName,
+                        $dsNameOnly,
                         $routeName,
                         $startTime,
                         $endTime,
@@ -1319,20 +1233,234 @@ class MdoReporting
         // Pass complete data
         $sheet->fromArray($arrExcelData);
         foreach (range('A', $sheet->getHighestDataColumn()) as $columnID) {
-                $sheet->getColumnDimension($columnID)->setAutoSize(true);
-            }
-            $headerRow = '1';
-            $styleHeader = $sheet->getStyle('A' . $headerRow . ':' . $sheet->getHighestDataColumn() . $headerRow);
-            $styleHeader->getFont()->setBold(true);
-            $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF00');
-            $styleHeader->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);   // set border
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+        $headerRow = '1';
+        $styleHeader = $sheet->getStyle('A' . $headerRow . ':' . $sheet->getHighestDataColumn() . $headerRow);
+        $styleHeader->getFont()->setBold(true);
+        $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFC000');
+        $styleHeader->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);   // set border
+        $styleHeader->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // center align text
+        $styleHeader->getAlignment()->setVertical(Alignment::VERTICAL_CENTER); // center align text
+        $styleHeader->getFill()->setFillType(Fill::FILL_SOLID);  // fill style
+        $styleHeader->getFont()->getColor()->setARGB("FF000000"); // font color
+        $styleHeader->getAlignment()->setWrapText(true);   // wrap text
 
-            $allStyle = [
-                'alignment' => array(
-                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ),
-            ];
-            $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
+        $allStyle = [
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ),
+        ];
+        $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+
+        echo json_encode($arrMessage);
+    }
+
+    final public function attendanceDayEndReport()
+    {
+        // $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
+        $where = "";
+        // filter query
+        $where .= $this->getCondition(true);
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        // prepare missing team condition
+        $sTeamCond = getFilterResult(
+            $this->_data['searchbar'],
+            array("dsName" => array("team_id", 0, true, true)),
+            $this->_dbConn
+        );
+        // $branch = array();
+        $branch = getFormData($this->_data['searchbar'], "branch");
+
+        // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
+        $arrExcelData = array();
+
+        // create header
+        $arrExcelData[] = [
+            "District",
+            "Branch",
+            "Region",
+            "Circle",
+            "Section",
+            "MDO ID",
+            "MDO Name",
+            "Date",
+            "Week",
+            "WD Code",
+            "WD Name",
+            "WD Market",
+            "WD Pop Group",
+            "DS ID",
+            "DS Type",
+            "DS Name",
+            "Start Time",
+            "Day Start Google Address",
+            "State",
+            "District",
+            "City",
+            "Pincode",
+            "End Time",
+            "Day End Google Address",
+            "State",
+            "District",
+            "City",
+            "Pincode",
+            "Same Location"
+        ];
+
+        // Loop through each brach data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.capture_date, a.capture_datetime, a.lt, a.lg, a.other_details, a.google_address, a.state, a.district, a.city, a.pincode" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows > 0) {
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $branchId = $row["branch_id"];
+                    $teamId = $row["team_id"];
+                    $date = $row["capture_date"];
+                    $week = $this->getWeekNumber($date);
+                    $dayOfWeek = date('D', strtotime($date));
+                    $mdoName = $row["team_name"];
+                    $arrOtherDetails = json_decode($row["other_details"], true);
+                    $workingWith = $arrOtherDetails['workingWith'];
+                    if ($workingWith == 'Market work with DS') {
+                        $arrRouteDetails = $arrOtherDetails["selectRouteYouAreGoingOn"];
+                        $wdCode = $arrRouteDetails[0];
+                        $dsName = $arrRouteDetails[1];
+                        $routeName = $arrRouteDetails[2];
+                        $parts = explode(" - ", $dsName, 2);
+                        $dsNameOnly = $parts[0];
+                        $dsType = $parts[1];
+                        $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'");
+                        $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND route_name = '$routeName' AND wd_code = '$wdCode' AND team_id = $teamId");
+                    } else {
+                        $arrRouteDetails = "";
+                        $wdCode = "";
+                        $dsName = "";
+                        $dsId = "";
+                        $dsType = "";
+                        $parts = "";
+                        $dsNameOnly = "";
+                        $arrWdDetails = array();
+                    }
+                    $startTime = $row['capture_datetime'];
+                    $googleAddress = $row['google_address'];
+                    $state = $row['state'];
+                    $district = $row['district'];
+                    $city = $row['city'];
+                    $pinCode = $row['pincode'];
+                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "capture_datetime, google_address, state, district, city, pincode", "call_type = '1' AND team_id = $teamId AND capture_date = '$date'");
+                    $endTime = $arrDayEndDetails[0];
+                    $endGoogleAddress = $arrDayEndDetails[1];
+                    $endState = $arrDayEndDetails[2];
+                    $endDistrict = $arrDayEndDetails[3];
+                    $endCity = $arrDayEndDetails[4];
+                    $endPinCode = $arrDayEndDetails[5];
+
+                    $arrExcelData[] = [
+                        $row["district"],
+                        $row["main_branch"],
+                        $row["branch_name"],
+                        $row["circle"],
+                        $row["section"],
+                        $teamId,
+                        $mdoName,
+                        $date,
+                        $week,
+                        $wdCode,
+                        isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
+                        isset($arrWdDetails[1]) ? $arrWdDetails[1] : "",
+                        isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
+                        $dsId,
+                        $dsType,
+                        $dsNameOnly,
+                        $startTime,
+                        $googleAddress,
+                        $state,
+                        $district,
+                        $city,
+                        $pinCode,
+                        $endTime,
+                        $endGoogleAddress,
+                        $endState,
+                        $endDistrict,
+                        $endCity,
+                        $endPinCode,
+                    ];
+                }
+            }
+        }
+
+        $fileName = "Attendance_Report_$currentDateTime.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Pass complete data
+        $sheet->fromArray($arrExcelData);
+        foreach (range('A', $sheet->getHighestDataColumn()) as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+        $headerRow = '1';
+        $styleHeader = $sheet->getStyle('A' . $headerRow . ':' . $sheet->getHighestDataColumn() . $headerRow);
+        $styleHeader->getFont()->setBold(true);
+        $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFC000');
+        $styleHeader->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);   // set border
+        $styleHeader->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // center align text
+        $styleHeader->getAlignment()->setVertical(Alignment::VERTICAL_CENTER); // center align text
+        $styleHeader->getFill()->setFillType(Fill::FILL_SOLID);  // fill style
+        $styleHeader->getFont()->getColor()->setARGB("FF000000"); // font color
+        $styleHeader->getAlignment()->setWrapText(true);   // wrap text
+
+        $allStyle = [
+            'alignment' => array(
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ),
+        ];
+        $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
         if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
             mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
