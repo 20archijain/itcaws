@@ -111,12 +111,15 @@ class RouteManagement
         $sOrderCond = getOrderByCond("a.rlm", $this->_data["sort"]);
 
         // filter by search query
-        $where = getFilterResult(
-            $this->_data['searchbar'],
-            array(
-                "team" => array("b.team_id", 0),
-            )
-        );
+        $team = isset($this->_data['searchbar']['team']) ? $this->_data['searchbar']['team'] : [];
+        // print_r($team);die;
+        $teamId = '';
+        $where = '';
+
+        if (!empty($team) && is_array($team)) {
+            $teamId = implode(',', $team);
+            $where = "AND a.team_id IN($teamId)";
+        }
 
         $sAction = null;
         $iRows = 0;
@@ -151,6 +154,32 @@ class RouteManagement
         $arrResult[] = array("total" => $limit["total"]);
 
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        echo json_encode($arrMessage);
+    }
+    
+    final public function deleteData($data, $iUserId)
+    {
+        $requestData = $data;
+        $assign_id = $iUserId;
+        $where = "";
+        $whereMob = "";
+        $istatus = array();
+        $rec_id = implode(',', $requestData['id']);
+        if ($rec_id) {
+            $where .= "rec_id IN ($rec_id) AND dstatus = 0";
+        };
+        $mobNo = getRowsColumn($this->_dbConn, "tblroute_details", "outlet_mobile", $where);
+        if (isset($mobNo) && isNonEmptyArray($mobNo)) {
+            $mobImplode = implode(',', $mobNo);
+            $whereMob .= "rec_who IN ($mobImplode)";
+            $istatus[] = updateRecord($this->_dbConn, "tblcloudring_live", "dstatus =1 , modif_id = $assign_id", $whereMob);
+        };
+        $istatus[] = updateRecord($this->_dbConn, "tblroute_details", "dstatus = 1 ,modif_id = $assign_id ", "$where");
+        if (in_array(0, $istatus)) {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']), 1);
+        } else {
+            $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+        }
         echo json_encode($arrMessage);
     }
 }
