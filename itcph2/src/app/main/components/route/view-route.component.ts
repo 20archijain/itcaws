@@ -62,7 +62,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   }
 
   getTeamNames() {
-    // this.form.get("team").setValue("");
+    this.form.get("team").setValue("");
     this.teamOptions = [];
     this.loaderService.startLoader();
     this.subscription.push(
@@ -82,4 +82,11 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
     );
   }
 
+  onClearFilters() {
+    if (this.form) {
+      this.form.reset();
+    }
+  this.getInitialData();
+  }
+ 
 }

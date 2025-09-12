@@ -12,13 +12,16 @@
       </app-select>
     </div>
     <div class="col-sm-4 col-md-3">
-      <app-select placeholder="Team" [group]="form" controlName="team" [options]="teamOptions">
+      <app-select placeholder="Team" multiple="true" [group]="form" controlName="team"
+        [options]="teamOptions">
       </app-select>
     </div>
 
 
-    <div class="col-sm-4 col-md-3">
+    <div class="col-sm-4 col-md-3 d-flex gap-2">
       <app-button type="submit" text="button.search"></app-button>
+      <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
     </div>
+
   </div>
 </ng-template>
