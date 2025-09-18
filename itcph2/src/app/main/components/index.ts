@@ -40,6 +40,8 @@ import { EvaluationReportComponent } from './download-evaluation-report/evaluati
 import { DownloadMisscallComponent } from './download-misscall/download-misscall.component';
 import { ViewRouteComponent } from './route/view-route.component';
 import { MdoListingComponent } from './reporting/mdo/mdo-listing.component';
+import { SystemOfflineComponent } from './system-offline/system-offline.component';
+import { MdoRouteTrackerComponent } from './sites-on-map/mdo-route-tracker.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -82,6 +84,8 @@ export const MAIN_COMPONENTS = [
   DownloadMisscallComponent,
   ViewRouteComponent,
   MdoListingComponent,
+  SystemOfflineComponent,
+  MdoRouteTrackerComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -125,4 +129,6 @@ export const MAP_MAIN_COMPONENTS = {
   DownloadMisscallComponent,
   ViewRouteComponent,
   MdoListingComponent,
+  SystemOfflineComponent,
+  MdoRouteTrackerComponent,
 };

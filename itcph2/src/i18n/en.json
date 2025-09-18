@@ -21,6 +21,10 @@
         "editHeading": "Edit Client"
       }
     },
+    "systemOffline": {
+      "heading": "Offline",
+      "delete" : "Delete Team"
+    },
     "readystockPickup": {
       "heading": "Readystock Pickup",
       "productName": "Product Name",
