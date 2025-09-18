@@ -1,0 +1,30 @@
+<app-card cardTitle="{{ 'app.systemOffline.heading' | translate }}" [options]="false">
+
+  <form (ngSubmit)="deleteTeam()" [formGroup]="form" autocomplete="off" novalidate>
+    <div class="row">
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.project.add.name" placeholder="{{ 'app.project.add.name' | translate }}" [group]="form"
+          [isRequired]="true" controlName="project" [options]="projectOptions" [errorMessages]="errorMessages.project" (onChange)="getTeams()">
+        </app-select>
+
+      </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select label="app.reporting.team" placeholder="{{ 'app.reporting.team' | translate }}" [group]="form"
+           [options]="teamOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.team" controlName="team" [multiple]="true">
+        </app-select>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-2 col-sm-3 col-md-2 mb-1">
+        <app-button type="submit" text="app.systemOffline.delete" [appScrollToFirstInvalidInput]="form"
+         spinnerText="spinnerText.adding">
+        </app-button>
+      </div>
+      <div class="col-2 col-sm-3 col-md-2 mb-1">
+      <button class="btn btn-success text-white" (click)="trigger()">Run Offline</button></div>
+    </div>
+
+  </form>
+</app-card>
