@@ -1,22 +1,19 @@
 <?php
 
 require_once $include_path . "defined_index.php";
-require_once $include_path . "class/RouteManagement.php";
+require_once $include_path . "class/SystemOfflineManagement.php";
 
 if (!isEmptyString($requestAction)) {
-    $route = new RouteManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
+    $team = new SystemOfflineManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
-            $route->getViewRouteData();
-            break;
-        case $ACTION_LIST['GET_LIST']:
-            $route->viewRoute();
+            $team->getData();
             break;
         case $ACTION_LIST['GET_TEAM_LIST']:
-            $route->getTeam();
+            $team->getTeam();
             break;
         case $ACTION_LIST['DELETE_DATA']:
-            deleteListingRecord($dbConn, "tblroute_details", "rec_id", $iUserId, "", $requestData, "id", false,);
+            $team->deleteTeam();
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
