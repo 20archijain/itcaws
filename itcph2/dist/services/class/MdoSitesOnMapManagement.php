@@ -23,122 +23,362 @@ class MdoSitesOnMapManagement
         $this->_iUserId = $iUserId;
     }
 
+    // final public function getSitesOnMapCondition($andCondition = true)
+    // {
+    //     $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+    //     $condition = "";
+    //     // $branch = getFormData($this->_data["searchbar"], "branch");
+    //     // if ($branch) {
+    //     //     $matchAll = checkIfAllSelected($branch);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($branch)) {
+    //     //             $branchIds = "'" . implode("','", $branch) . "'";
+    //     //             $condition .= " AND branch_id IN ($branchIds)";
+    //     //         } else {
+    //     //             $condition .= " AND branch_id = $branch";
+    //     //         }
+    //     //     }
+    //     // }
+    //     // $circle = getFormData($this->_data["searchbar"], "circle");
+    //     // if ($circle) {
+    //     //     $matchAll = checkIfAllSelected($circle);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($circle)) {
+    //     //             $circleIds = "'" . implode("','", $circle) . "'";
+    //     //             $condition .= " AND circle IN ($circleIds)";
+    //     //         } else {
+    //     //             $condition .= " AND circle = '$circle'";
+    //     //         }
+    //     //     }
+    //     // }
+    //     // $section = getFormData($this->_data["searchbar"], "section");
+    //     // if ($section) {
+    //     //     $matchAll = checkIfAllSelected($section);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($section)) {
+    //     //             $sectionIds = "'" . implode("','", $section) . "'";
+    //     //             $condition .= " AND section IN ($sectionIds)";
+    //     //         } else {
+    //     //             $condition .= " AND section = '$section'";
+    //     //         }
+    //     //     }
+    //     // }
+    //     // $wdCode = getFormData($this->_data["searchbar"], "wdCode");
+    //     // if ($wdCode) {
+    //     //     $matchAll = checkIfAllSelected($wdCode);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($wdCode)) {
+    //     //             $wdCodeIds = "'" . implode("','", $wdCode) . "'";
+    //     //             $condition .= " AND wd_code IN ($wdCodeIds)";
+    //     //         } else {
+    //     //             $condition .= " AND wd_code = '$wdCode'";
+    //     //         }
+    //     //     }
+    //     // }
+    //     // $teamType = getFormData($this->_data["searchbar"], "dsType");
+    //     // if ($teamType) {
+    //     //     $matchAll = checkIfAllSelected($teamType);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($teamType)) {
+    //     //             $teamTypes = "'" . implode("','", $teamType) . "'";
+    //     //             $condition .= " AND is_type IN ($teamTypes)";
+    //     //         } else {
+    //     //             $condition .= " AND is_type = $teamType";
+    //     //         }
+    //     //     }
+    //     // }
+    //     $teamName = getFormData($this->_data["searchbar"], "dsName");
+    //     if ($teamName) {
+    //         $matchAll = checkIfAllSelected($teamName);
+    //         if (!$matchAll) {
+    //             if (isNonEmptyArray($teamName)) {
+    //                 $teamNames = "'" . implode("','", $teamName) . "'";
+    //                 $condition .= " AND team_id IN ($teamNames)";
+    //             } else {
+    //                 $condition .= " AND team_id = $teamName";
+    //             }
+    //         }
+    //     }
+
+    //     $clientList = $this->_arrAccessInfo["user_clients"];
+    //     $projectList = $this->_arrAccessInfo["user_projects"];
+    //     $teamList = $this->_arrAccessInfo["user_teams"];
+
+    //     $where = "";
+    //     // user has some specific permission
+    //     if ($clientList) {
+    //         $where = "AND a.client_id IN $clientList";
+    //     }
+    //     if ($projectList) {
+    //         $where .= " AND a.project_id IN $projectList";
+    //     }
+    //     if ($teamList) {
+    //         $where .= " AND a.team_id IN $teamList";
+    //     }
+    //     // if (isset($type) && $type != "" && $type >= 0) {
+    //     //     $where .= " AND a.is_type = '$type'";
+    //     // }
+
+    //     $where = "";
+    //     // $district = getFormData($this->_data["searchbar"], "district");
+    //     // if ($district) {
+    //     //     $matchAll = checkIfAllSelected($district);
+    //     //     if (!$matchAll) {
+    //     //         if (isNonEmptyArray($district)) {
+    //     //             $districts = "'" . implode("','", $district) . "'";
+    //     //             $where .= " AND c.district IN ($districts)";
+    //     //         } else {
+    //     //             $where .= " AND c.district = $district";
+    //     //         }
+    //     //     }
+    //     // }
+    //     if ($condition && $andCondition) {
+    //         $where .= " AND a.team_id IN (SELECT team_id FROM $teamTable WHERE dstatus = '0' $condition)";
+    //     } elseif ($condition) {
+    //         $where .= " $condition";
+    //     }
+
+    //     // echo $where;die;
+    //     return $where;
+    // }
+
+
+
     final public function getSitesOnMapCondition($andCondition = true)
     {
         $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $branchTable = $GLOBALS['TABLES']['BRANCH_TABLE'];
+        $mappingTable = $GLOBALS['TABLES']['WD_MAPPING_TABLE'];
         $condition = "";
-        // $branch = getFormData($this->_data["searchbar"], "branch");
-        // if ($branch) {
-        //     $matchAll = checkIfAllSelected($branch);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($branch)) {
-        //             $branchIds = "'" . implode("','", $branch) . "'";
-        //             $condition .= " AND branch_id IN ($branchIds)";
-        //         } else {
-        //             $condition .= " AND branch_id = $branch";
-        //         }
-        //     }
-        // }
-        // $circle = getFormData($this->_data["searchbar"], "circle");
-        // if ($circle) {
-        //     $matchAll = checkIfAllSelected($circle);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($circle)) {
-        //             $circleIds = "'" . implode("','", $circle) . "'";
-        //             $condition .= " AND circle IN ($circleIds)";
-        //         } else {
-        //             $condition .= " AND circle = '$circle'";
-        //         }
-        //     }
-        // }
-        // $section = getFormData($this->_data["searchbar"], "section");
-        // if ($section) {
-        //     $matchAll = checkIfAllSelected($section);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($section)) {
-        //             $sectionIds = "'" . implode("','", $section) . "'";
-        //             $condition .= " AND section IN ($sectionIds)";
-        //         } else {
-        //             $condition .= " AND section = '$section'";
-        //         }
-        //     }
-        // }
-        // $wdCode = getFormData($this->_data["searchbar"], "wdCode");
-        // if ($wdCode) {
-        //     $matchAll = checkIfAllSelected($wdCode);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($wdCode)) {
-        //             $wdCodeIds = "'" . implode("','", $wdCode) . "'";
-        //             $condition .= " AND wd_code IN ($wdCodeIds)";
-        //         } else {
-        //             $condition .= " AND wd_code = '$wdCode'";
-        //         }
-        //     }
-        // }
-        // $teamType = getFormData($this->_data["searchbar"], "dsType");
-        // if ($teamType) {
-        //     $matchAll = checkIfAllSelected($teamType);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($teamType)) {
-        //             $teamTypes = "'" . implode("','", $teamType) . "'";
-        //             $condition .= " AND is_type IN ($teamTypes)";
-        //         } else {
-        //             $condition .= " AND is_type = $teamType";
-        //         }
-        //     }
-        // }
-        $teamName = getFormData($this->_data["searchbar"], "dsName");
-        if ($teamName) {
-            $matchAll = checkIfAllSelected($teamName);
+        $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
+        if ($district) {
+            $matchAll = checkIfAllSelected($district);
             if (!$matchAll) {
-                if (isNonEmptyArray($teamName)) {
-                    $teamNames = "'" . implode("','", $teamName) . "'";
-                    $condition .= " AND team_id IN ($teamNames)";
+                if (isNonEmptyArray($district)) {
+                    $districts = "'" . implode("','", $district) . "'";
+                    $condition .= " AND b.district IN ($districts)";
                 } else {
-                    $condition .= " AND team_id = $teamName";
+                    $condition .= " AND b.district = $district";
+                }
+            }
+        }
+        $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
+        if ($branch) {
+            $matchAll = checkIfAllSelected($branch);
+            if (!$matchAll) {
+                if (isNonEmptyArray($branch)) {
+                    $branchIds = "'" . implode("','", $branch) . "'";
+                    $condition .= " AND b.branch_id IN ($branchIds)";
+                } else {
+                    $condition .= " AND b.branch_id = $branch";
+                }
+            }
+        }
+        $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
+        if ($circle) {
+            $matchAll = checkIfAllSelected($circle);
+            if (!$matchAll) {
+                if (isNonEmptyArray($circle)) {
+                    $circleIds = "'" . implode("','", $circle) . "'";
+                    $condition .= " AND b.circle IN ($circleIds)";
+                } else {
+                    $condition .= " AND b.circle = '$circle'";
+                }
+            }
+        }
+        $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
+        if ($section) {
+            $matchAll = checkIfAllSelected($section);
+            if (!$matchAll) {
+                if (isNonEmptyArray($section)) {
+                    $sectionIds = "'" . implode("','", $section) . "'";
+                    $condition .= " AND b.section IN ($sectionIds)";
+                } else {
+                    $condition .= " AND b.section = '$section'";
+                }
+            }
+        }
+        $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
+        if ($wdCode) {
+            $matchAll = checkIfAllSelected($wdCode);
+            if (!$matchAll) {
+                if (isNonEmptyArray($wdCode)) {
+                    $wdCodeIds = "'" . implode("','", $wdCode) . "'";
+                    $condition .= " AND c.wd_code IN ($wdCodeIds)";
+                } else {
+                    $condition .= " AND c.wd_code = '$wdCode'";
+                }
+            }
+        }
+        $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
+        if ($wdMarket) {
+            if (!is_array($wdMarket)) {
+                $wdMarket = array($wdMarket);
+            }
+            if (in_array('all', $wdMarket)) {
+                $condition .= " ";
+            } else {
+                $wdMarket = "'" . implode("','", $wdMarket) . "'";
+                $condition .= " AND c.wd_market IN ($wdMarket)";
+            }
+        }
+        $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
+        if ($wdPopGroup) {
+            if (!is_array($wdPopGroup)) {
+                $wdPopGroup = array($wdPopGroup);
+            }
+            if (in_array('all', $wdPopGroup)) {
+                $condition .= " ";
+            } else {
+                $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
+                $condition .= " AND c.wd_pop_group IN ($wdPopGroup)";
+            }
+        }
+
+        $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
+        if ($dsName) {
+            $matchAll = checkIfAllSelected($dsName);
+            if (!$matchAll) {
+                if (isNonEmptyArray($dsName)) {
+                    $dsNames = "'" . implode("','", $dsName) . "'";
+                    $condition .= " AND a.team_id IN ($dsNames)";
+                } else {
+                    $condition .= " AND a.team_id = $dsName";
                 }
             }
         }
 
-        $clientList = $this->_arrAccessInfo["user_clients"];
-        $projectList = $this->_arrAccessInfo["user_projects"];
-        $teamList = $this->_arrAccessInfo["user_teams"];
-
         $where = "";
-        // user has some specific permission
-        if ($clientList) {
-            $where = "AND a.client_id IN $clientList";
+        if ($condition && $andCondition) {
+            $where .= " AND a.team_id IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as c, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+        } elseif ($condition) {
+            $where .= " AND a.team_id IN (SELECT a.ateam_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
         }
-        if ($projectList) {
-            $where .= " AND a.project_id IN $projectList";
-        }
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
         if ($teamList) {
             $where .= " AND a.team_id IN $teamList";
         }
-        // if (isset($type) && $type != "" && $type >= 0) {
-        //     $where .= " AND a.is_type = '$type'";
-        // }
 
-        $where = "";
-        // $district = getFormData($this->_data["searchbar"], "district");
-        // if ($district) {
-        //     $matchAll = checkIfAllSelected($district);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($district)) {
-        //             $districts = "'" . implode("','", $district) . "'";
-        //             $where .= " AND c.district IN ($districts)";
-        //         } else {
-        //             $where .= " AND c.district = $district";
-        //         }
-        //     }
-        // }
-        if ($condition && $andCondition) {
-            $where .= " AND a.team_id IN (SELECT team_id FROM $teamTable WHERE dstatus = '0' $condition)";
-        } elseif ($condition) {
-            $where .= " $condition";
+        return $where;
+    }
+
+    final public function getSitesOnMapConditionForTeams($andCondition = true)
+    {
+        $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $branchTable = $GLOBALS['TABLES']['BRANCH_TABLE'];
+        $mappingTable = $GLOBALS['TABLES']['WD_MAPPING_TABLE'];
+        $condition = "";
+        $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
+        if ($district) {
+            $matchAll = checkIfAllSelected($district);
+            if (!$matchAll) {
+                if (isNonEmptyArray($district)) {
+                    $districts = "'" . implode("','", $district) . "'";
+                    $condition .= " AND b.district IN ($districts)";
+                } else {
+                    $condition .= " AND b.district = $district";
+                }
+            }
+        }
+        $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
+        if ($branch) {
+            $matchAll = checkIfAllSelected($branch);
+            if (!$matchAll) {
+                if (isNonEmptyArray($branch)) {
+                    $branchIds = "'" . implode("','", $branch) . "'";
+                    $condition .= " AND b.branch_id IN ($branchIds)";
+                } else {
+                    $condition .= " AND b.branch_id = $branch";
+                }
+            }
+        }
+        $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
+        if ($circle) {
+            $matchAll = checkIfAllSelected($circle);
+            if (!$matchAll) {
+                if (isNonEmptyArray($circle)) {
+                    $circleIds = "'" . implode("','", $circle) . "'";
+                    $condition .= " AND b.circle IN ($circleIds)";
+                } else {
+                    $condition .= " AND b.circle = '$circle'";
+                }
+            }
+        }
+        $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
+        if ($section) {
+            $matchAll = checkIfAllSelected($section);
+            if (!$matchAll) {
+                if (isNonEmptyArray($section)) {
+                    $sectionIds = "'" . implode("','", $section) . "'";
+                    $condition .= " AND b.section IN ($sectionIds)";
+                } else {
+                    $condition .= " AND b.section = '$section'";
+                }
+            }
+        }
+        $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
+        if ($wdCode) {
+            $matchAll = checkIfAllSelected($wdCode);
+            if (!$matchAll) {
+                if (isNonEmptyArray($wdCode)) {
+                    $wdCodeIds = "'" . implode("','", $wdCode) . "'";
+                    $condition .= " AND c.wd_code IN ($wdCodeIds)";
+                } else {
+                    $condition .= " AND c.wd_code = '$wdCode'";
+                }
+            }
+        }
+        $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
+        if ($wdMarket) {
+            if (!is_array($wdMarket)) {
+                $wdMarket = array($wdMarket);
+            }
+            if (in_array('all', $wdMarket)) {
+                $condition .= " ";
+            } else {
+                $wdMarket = "'" . implode("','", $wdMarket) . "'";
+                $condition .= " AND c.wd_market IN ($wdMarket)";
+            }
+        }
+        $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
+        if ($wdPopGroup) {
+            if (!is_array($wdPopGroup)) {
+                $wdPopGroup = array($wdPopGroup);
+            }
+            if (in_array('all', $wdPopGroup)) {
+                $condition .= " ";
+            } else {
+                $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
+                $condition .= " AND c.wd_pop_group IN ($wdPopGroup)";
+            }
         }
 
-        // echo $where;die;
+        $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
+        if ($dsName) {
+            $matchAll = checkIfAllSelected($dsName);
+            if (!$matchAll) {
+                if (isNonEmptyArray($dsName)) {
+                    $dsNames = "'" . implode("','", $dsName) . "'";
+                    $condition .= " AND a.team_id IN ($dsNames)";
+                } else {
+                    $condition .= " AND a.team_id = $dsName";
+                }
+            }
+        }
+
+        $where = "";
+        if ($condition && $andCondition) {
+            $where .= " AND teams IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as c, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+        } elseif ($condition) {
+            $where .= " AND teams IN (SELECT a.ateam_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+        }
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        if ($teamList) {
+            $where .= " AND teams IN $teamList";
+        }
+
         return $where;
     }
 
@@ -987,7 +1227,7 @@ class MdoSitesOnMapManagement
                     $imgName = "no-image.jpg";
                     $thumbImg = $imgPath . $imgName;
                 }
-                $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $shopCount . "- " . $OutletName . "</b>". "</p> <p class='attendance-label'>" . $arData["team_name"] . "<br>" . "Time - " . $time .
+                $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $shopCount . "- " . $OutletName . "</b>" . "</p> <p class='attendance-label'>" . $arData["team_name"] . "<br>" . "Time - " . $time .
                     "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arData["circle"] . "<br>" . "Section - " . $arData["section"] . "<br>" . "WDCode - " . $arData["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] .  "<br>" . "Survey Volume - " . $ques_5 . "<br>" . "Survey Value - " . $ques_6 . "<br>" . "Linecut - " . $ques_7 . "</p></div>";
                 $arrData["markers"][] = array(
                     "date" => $arData["capture_datetime"],
@@ -1050,7 +1290,7 @@ class MdoSitesOnMapManagement
         $arrData["columnSize"] = 12; // size of map column, values can be 1 to 12
         $arrData["repeatMapBy"] = 1; // times to repeat same map, values can be >=1
         $arrData["markers"] = array();
-        $respTable = getRespTable(1, $this->_projectId);
+        $respTable = "tblsurvey_response_details_mdo";
         $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
@@ -1061,13 +1301,13 @@ class MdoSitesOnMapManagement
         $orangeDot = "/orange-dot.png";
 
         // // filter by search query and Condition
-        // $dateCond = getFilterResult(
-        //     $this->_data,
-        //     array(
-        //         "dateFrom" => array("capture_date", 2, "dateTo"),
-        //     ),
-        //     $this->_dbConn
-        // );
+        $dateCond = getFilterResult(
+            $this->_data,
+            array(
+                "dateFrom" => array("capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
 
         // Get the current month's first and last day
         $currentMonthStart = (new DateTime('first day of this month'))->format('Y-m-d');
@@ -1077,61 +1317,92 @@ class MdoSitesOnMapManagement
         $dateCond = "AND capture_date BETWEEN '$currentMonthStart' AND '$currentMonthEnd'";
 
         $where = $this->getSitesOnMapCondition();
+        $where2 = $this->getSitesOnMapConditionForTeams();
+        // echo "<pre>";
+        // print_r($where);die;
 
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.rec_id, a.lt, a.lg, a.outlet_name, b.team_id, b.team_name, b.is_type, b.branch_id, b.circle, b.section, b.wd_code FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c" .
-            " WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.lt != 0  $where";
-        $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
+        $sActionAtt2 = null;
+        $iRowsAtt2 = 0;
 
-        // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
+        $sQueryAtt = "SELECT mdo_id, teams, is_type FROM tblmdo_access where dstatus = 0 $where2";
+        $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
+        // echo $sQueryAtt;die;
         if ($iRowsAtt > 0) {
             while ($arDataAtt = $this->_dbConn->GetData($sActionAtt)) {
-                $recId = $arDataAtt["rec_id"];
-                $branchId = $arDataAtt["branch_id"];
-                $dsType = $arDataAtt["is_type"];
-                $ARR_TEAM_TYPES[$dsType];
-                $shopDone = getRowColumn($this->_dbConn, $respTable, "pro_id", "dstatus = 0 AND ques_3 = '$recId' $dateCond");
-                if ($shopDone) {
-                    $isBilled = getRowColumn($this->_dbConn, $respTable, "pro_id", "dstatus = 0 AND ques_3 = '$recId' AND ques_4 = 'Yes' $dateCond");
-                    if ($isBilled) {
-                        $flagColor = $greenDot;
-                    } else {
-                        $flagColor = $orangeDot;
-                    }
-                } else {
-                    $flagColor = $redDot;
+
+                $mdoId = $arDataAtt['mdo_id'];
+                $teams = $arDataAtt['teams'];
+                $is_type = $arDataAtt['is_type'];
+
+                if($is_type == 6 || $is_type == 8 || $is_type == 9)
+                {
+                    $teamTable = "tblbreeze_team";
+                    $routeTable = "tblroute_details_breeze";
+                }else
+                {
+                    $teamTable = "tblproject_team";
+                    $routeTable = "tblroute_details";
                 }
 
-                $shopLastVisted = getRowColumn($this->_dbConn, $respTable, "MAX(capture_date)", "dstatus = 0 AND ques_3 = '$recId'");
-                $branchName = getRowColumn($this->_dbConn, $branchTable, "main_branch", "dstatus = 0 AND branch_id = '$branchId' ");
 
-                $trackerDescription = "<div class='attendance-marker'>
-                <p class='attendance-label'>
-                  DS ID - " . $arDataAtt["team_id"] . "<br>
-                  DS Name - " . $arDataAtt["team_name"] . "<br>
-                </p>
-                <p class='attendance-label'>
-                    Outlet Name - " . $arDataAtt["outlet_name"] . "<br>
-                    Branch - " . $branchName . "<br>
-                    Circle - " . $arDataAtt["circle"] . "<br>
-                    Section - " . $arDataAtt["section"] . "<br>
-                    WDCode - " . $arDataAtt["wd_code"] . "<br>
-                    DS Type - " . $ARR_TEAM_TYPES[$dsType] . "<br>
-                    Outlet Last Visited - " . $shopLastVisted . "<br>
-                </p>
-                </div>";
+                $sQueryAtt2 = "SELECT b.lt, b.lg, c.main_branch, b.rec_id, b.outlet_name, a.team_id, a.team_name, a.branch_id, d.circle, d.section, d.wd_code FROM $teamTable AS a, $routeTable as b, $branchTable AS c, tblmapping_wd as d" .
+                    " WHERE a.team_id = b.team_id AND a.branch_id = c.branch_id AND a.wd_code = d.wd_code AND a.team_id = '$teams' $where";
+                    // echo $sQueryAtt2;die;
+                $this->_dbConn->ExecuteSelectQuery($sQueryAtt2, $sActionAtt2, $iRowsAtt2);
 
-                $arrData["markers"][] = array(
-                    "latitude" => $arDataAtt["lt"],
-                    "longitude" => $arDataAtt["lg"],
-                    "markerUrl" => $GLOBALS['MARKER_URL'] . $flagColor, // default icon is green
-                    "markerTitle" => "", // text to display on hover of marker
-                    "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                // // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
+                if ($iRowsAtt2 > 0) {
+                    while ($arDataAtt2 = $this->_dbConn->GetData($sActionAtt2)) {
+                        $recId = $arDataAtt2["rec_id"];
+                        $branchName = $arDataAtt2["main_branch"];
+                        $dsType = $arDataAtt["is_type"];
+                        $ARR_TEAM_TYPES[$dsType];
+                        $shopDone = getRowColumn($this->_dbConn, $respTable, "pro_id", "dstatus = 0 AND ques_4 = '$recId' $dateCond");
+                        if ($shopDone) {
+                            // $isBilled = getRowColumn($this->_dbConn, $respTable, "pro_id", "dstatus = 0 AND ques_3 = '$recId' AND ques_4 = 'Yes' $dateCond");
+                            // if ($isBilled) {
+                            //     $flagColor = $greenDot;
+                            // } else {
+                                $flagColor = $orangeDot;
+                            // }
+                        } else {
+                            $flagColor = $redDot;
+                        }
+
+                        $shopLastVisted = getRowColumn($this->_dbConn, $respTable, "MAX(capture_date)", "dstatus = 0 AND ques_4 = '$recId'");
+
+
+                        $trackerDescription = "<div class='attendance-marker'>
+                                <p class='attendance-label'>
+                                DS ID - " . $arDataAtt2["team_id"] . "<br>
+                                DS Name - " . $arDataAtt2["team_name"] . "<br>
+                                </p>
+                                <p class='attendance-label'>
+                                    Outlet Name - " . $arDataAtt2["outlet_name"] . "<br>
+                                    Branch - " . $branchName . "<br>
+                                    Circle - " . $arDataAtt2["circle"] . "<br>
+                                    Section - " . $arDataAtt2["section"] . "<br>
+                                    WDCode - " . $arDataAtt2["wd_code"] . "<br>
+                                    DS Type - " . $ARR_TEAM_TYPES[$dsType] . "<br>
+                                    Outlet Last Visited - " . $shopLastVisted . "<br>
+                                </p>
+                                </div>";
+
+                        $arrData["markers"][] = array(
+                            "latitude" => $arDataAtt2["lt"],
+                            "longitude" => $arDataAtt2["lg"],
+                            "markerUrl" => $GLOBALS['MARKER_URL'] . $flagColor, // default icon is green
+                            "markerTitle" => "", // text to display on hover of marker
+                            "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
+                        );
+                    }
+                }
             }
         }
+
 
         if (isNonEmptyArray($arrData["markers"])) {
             $arrMessage = responseMessage(array(), 1, $arrData, true);

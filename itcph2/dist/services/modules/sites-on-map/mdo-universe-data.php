@@ -7,10 +7,10 @@ if (!isEmptyString($requestAction)) {
     $sites = new MdoSitesOnMapManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
-            $sites->getData();
+            $sites->getData(true);
             break;
-        case $ACTION_LIST['GET_ROUTE_DATA']:
-            $sites->getRouteTrackerData();
+        case $ACTION_LIST['GET_LIST']:
+            $sites->getUniverseData();
             break;
         case $ACTION_LIST['GET_BRANCH']:
             $sites->getBranch();
