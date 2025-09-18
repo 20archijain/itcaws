@@ -110,3 +110,7 @@ $UPDATE_SUCCESS = "Updated Successfully";
 
 $TARGET_ASSIGNED = "Target Assigned";
 $TARGET_NOT_ASSIGNED = "Target Not Assigned";
+
+// Messages for offline
+$TEAM_DELETED_SUCCESSFULLY = "Team Deleted Successfully from Offline, Now You Can Run Offline Button";
+$TEAM_NOT_FOUND_IN_OFFLINE = "No Team Found in Offline, You Can Directly Run the Offline Button";
