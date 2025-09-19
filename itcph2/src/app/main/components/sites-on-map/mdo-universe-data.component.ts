@@ -39,22 +39,22 @@ export class MdoUniverseDataComponent implements OnDestroy, OnInit {
   isRmdNameRequired = false;
   branchFilter = false;
   searchbarForm: UntypedFormGroup;
-  // errorMessages = {
-  //   dateFrom: COMMON_VALIDATORS.messages.requiredOnly('From'),
-  //   dateTo: COMMON_VALIDATORS.messages.requiredOnly('To'),
-  //   // branch: COMMON_VALIDATORS.messages.dropdownAll('Branch'),
-  // };
+  errorMessages = {
+    dateFrom: COMMON_VALIDATORS.messages.requiredOnly('From Date'),
+    dateTo: COMMON_VALIDATORS.messages.requiredOnly('To Date'),
+    branch: COMMON_VALIDATORS.messages.dropdownAll('Branch'),
+  };
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
   ngOnInit() {
     this.group = this.fb.group({
-      // dateFrom: ['', COMMON_VALIDATORS.validators.date],
-      // dateTo: ['', COMMON_VALIDATORS.validators.date],
       rmdName: ['', this.isRmdNameRequired ? COMMON_VALIDATORS.validators.dropdownStringValue : []],
       searchbar: this.fb.group({
+        dateFrom: ['', COMMON_VALIDATORS.validators.date],
+        dateTo: ['', COMMON_VALIDATORS.validators.date],
         district: [''],
-        branch: [''],
+        branch: ['', COMMON_VALIDATORS.validators.requiredOnly],
         circle: [''],
         section: [''],
         wdCode: [''],

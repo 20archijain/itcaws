@@ -2,6 +2,18 @@
   <form (ngSubmit)="getData()" [formGroup]="group" novalidate>
     <!-- If Superadmin or Admin Login -->
     <div *ngIf="branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-date [group]="searchbarForm" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+          [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+          [maxDate]="group.get('searchbar').get('dateTo').value" label="placeholder.from" [errorMessages]="errorMessages.dateFrom" [isRequired]="true">
+        </app-date>
+      </div>
+      <div class="w-2 m-1">
+        <app-date [group]="searchbarForm" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+          [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+          [minDate]="group.get('searchbar').get('dateFrom').value" label="placeholder.to" [errorMessages]="errorMessages.dateTo" [isRequired]="true">
+        </app-date>
+      </div>
 
       <div class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="district" [options]="districtOptions" [multiple]="true"
@@ -13,7 +25,7 @@
       <div class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="branch" [options]="branchOptions" [multiple]="true"
           label="app.team.add.branch" placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()"
-          groupBy="mainBranch">
+          groupBy="mainBranch" [errorMessages]="errorMessages.branch" [isRequired]="true">
         </app-select>
       </div>
       <div class="w-2 m-1">
@@ -31,7 +43,7 @@
           placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsName()" label="app.team.add.wdCode">
         </app-select>
       </div>
-       <div class="w-2 m-1">
+      <div class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="wdMarket" [options]="wdMarketOptions" [multiple]="true"
           placeholder="{{ 'app.wdMapping.wd_market' | translate }}" label="app.wdMapping.wd_market">
         </app-select>
@@ -43,7 +55,7 @@
       </div>
       <div class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
-          placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
+          placeholder="{{ 'app.team.add.mdoName' | translate }}" label="app.team.add.mdoName">
         </app-select>
       </div>
       <div class="col-12 col-sm-3 col-md-2">
@@ -66,7 +78,7 @@
       </div> -->
       <div class="w-2 m-1">
         <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
-           placeholder="{{ 'app.team.add.dsName' | translate }}" label="app.team.add.dsName">
+          placeholder="{{ 'app.team.add.mdoName' | translate }}" label="app.team.add.mdoName">
         </app-select>
       </div>
       <div class="col-12 col-sm-3 col-md-2">

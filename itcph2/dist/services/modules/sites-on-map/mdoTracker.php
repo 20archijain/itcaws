@@ -4,7 +4,7 @@ require_once $include_path . "defined_index.php";
 require_once $include_path . "class/MdoSitesOnMapManagement.php";
 
 if (!isEmptyString($requestAction)) {
-    $sites = new MdoSitesOnMapManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
+    $sites = new MdoSitesOnMapManagement($dbConn, $requestData, $arrAccessInfo, $iUserId, 1);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
             $sites->getData();
