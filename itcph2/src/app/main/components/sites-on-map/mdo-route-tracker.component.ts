@@ -44,7 +44,7 @@ export class MdoRouteTrackerComponent implements OnDestroy, OnInit {
     // circle: COMMON_VALIDATORS.messages.requiredOnly('Circle'),
     // section: COMMON_VALIDATORS.messages.requiredOnly('Section'),
     // wdCode: COMMON_VALIDATORS.messages.requiredOnly('WD Code'),
-    dsName: COMMON_VALIDATORS.messages.requiredOnly('Surveyor Name'),
+    dsName: COMMON_VALIDATORS.messages.requiredOnly('MDO Name'),
   };
   searchbarForm: UntypedFormGroup;
 

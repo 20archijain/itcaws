@@ -13,14 +13,16 @@ class MdoSitesOnMapManagement
     private $session;
     private $_iUserId = null;
     private $arrBranchwiseProducts = [];
+    private $_teamAllCond = 0;
 
-    public function __construct($dbConn, $data, $arrAccessInfo = array(), $iUserId = null)
+    public function __construct($dbConn, $data, $arrAccessInfo = array(), $iUserId = null, $teamAllCond = 0)
     {
         $this->_data = $data;
         $this->_dbConn = $dbConn;
         $this->_arrAccessInfo = $arrAccessInfo;
         $this->_tables = $GLOBALS['TABLES'];
         $this->_iUserId = $iUserId;
+        $this->_teamAllCond = $teamAllCond;
     }
 
     // final public function getSitesOnMapCondition($andCondition = true)
@@ -369,14 +371,14 @@ class MdoSitesOnMapManagement
 
         $where = "";
         if ($condition && $andCondition) {
-            $where .= " AND teams IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as c, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+            $where .= " AND mdo_id IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as c, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
         } elseif ($condition) {
-            $where .= " AND teams IN (SELECT a.ateam_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+            $where .= " AND mdo_id IN (SELECT a.ateam_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
         }
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         if ($teamList) {
-            $where .= " AND teams IN $teamList";
+            $where .= " AND mdo_id IN $teamList";
         }
 
         return $where;
@@ -662,6 +664,13 @@ class MdoSitesOnMapManagement
     final public function getTeamsList($cond = "")
     {
         $arrData = array();
+        if($this->_teamAllCond == 2)
+        {
+            $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        }
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1160,8 +1169,41 @@ class MdoSitesOnMapManagement
                 }
                 $time = currentDateTime($arDataAtt["capture_datetime"], "h:i:s A");
                 $branchName = getRowColumn($this->_dbConn, $branchTable, "main_branch", "dstatus = 0 AND branch_id = '$attbranchId' ");
-                $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $attTime . "</b>" . "<br>" . "</p> <p class='attendance-label'>" . $arDataAtt["team_name"] . "<br>" . "Time - " . $time .
-                    "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arDataAtt["circle"] . "<br>" . "Section - " . $arDataAtt["section"] . "<br>" . "WDCode - " . $arDataAtt["wd_code"]  . "</p></div>";
+
+                $trackerDescription = "
+                <div class='attendance-marker' style='font-size:12px;'>
+                    <table border='1' cellspacing='0' cellpadding='2' style='border-collapse:collapse; font-size:8px;'>
+                        <tr>
+                            <th style='padding:2px 4px;'>Attendance</th>
+                            <td style='padding:2px 4px;'><b></b></td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Surveyor Name</th>
+                            <td style='padding:2px 4px;'>" . $arDataAtt["team_name"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Time</th>
+                            <td style='padding:2px 4px;'>" . $time . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Branch</th>
+                            <td style='padding:2px 4px;'>" . $branchName . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Circle</th>
+                            <td style='padding:2px 4px;'>" . $arDataAtt["circle"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Section</th>
+                            <td style='padding:2px 4px;'>" . $arDataAtt["section"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>WDCode</th>
+                            <td style='padding:2px 4px;'>" . $arDataAtt["wd_code"] . "</td>
+                        </tr>
+                    </table>
+                </div>";
+
                 $arrData["markers"][] = array(
                     "date" => $arDataAtt["capture_datetime"],
                     "latitude" => $arDataAtt["lt"],
@@ -1203,9 +1245,13 @@ class MdoSitesOnMapManagement
                 }
 
                 if ($type == 6 || $type == 8 || $type == 9) {
-                    $OutletName = getRowColumn($this->_dbConn, "tblroute_details_breeze", "outlet_name", "dstatus = 0 AND rec_id = '$shopId' ");
+                    $outletDetails = getRowColumns($this->_dbConn, "tblroute_details_breeze", "outlet_name, shop_uniq_code", "dstatus = 0 AND rec_id = '$shopId' ");
+                    $OutletName = $outletDetails[0];
+                    $OutletID = $outletDetails[1];
                 } else {
-                    $OutletName = getRowColumn($this->_dbConn, "tblroute_details", "outlet_name", "dstatus = 0 AND rec_id = '$shopId' ");
+                    $outletDetails = getRowColumns($this->_dbConn, "tblroute_details", "outlet_name, shop_uniq_code", "dstatus = 0 AND rec_id = '$shopId' ");
+                    $OutletName = $outletDetails[0];
+                    $OutletID = $outletDetails[1];
                 }
 
 
@@ -1227,8 +1273,61 @@ class MdoSitesOnMapManagement
                     $imgName = "no-image.jpg";
                     $thumbImg = $imgPath . $imgName;
                 }
-                $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $shopCount . "- " . $OutletName . "</b>" . "</p> <p class='attendance-label'>" . $arData["team_name"] . "<br>" . "Time - " . $time .
-                    "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arData["circle"] . "<br>" . "Section - " . $arData["section"] . "<br>" . "WDCode - " . $arData["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] .  "<br>" . "Survey Volume - " . $ques_5 . "<br>" . "Survey Value - " . $ques_6 . "<br>" . "Linecut - " . $ques_7 . "</p></div>";
+
+                $trackerDescription = "
+                <div class='attendance-marker' style='font-size:12px;'>
+                    <table border='1' cellspacing='0' cellpadding='2' style='border-collapse:collapse; font-size:8px;'>
+                        <tr>
+                            <th style='padding:2px 4px;'>Outlet</th>
+                            <td style='padding:2px 4px;'><b>" . $shopCount . " - " . $OutletName . "</b></td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Outlet ID</th>
+                            <td style='padding:2px 4px;'><b>" . $OutletID . "</b></td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Surveyor Name</th>
+                            <td style='padding:2px 4px;'>" . $arData["team_name"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Time</th>
+                            <td style='padding:2px 4px;'>" . $time . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Branch</th>
+                            <td style='padding:2px 4px;'>" . $branchName . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Circle</th>
+                            <td style='padding:2px 4px;'>" . $arData["circle"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Section</th>
+                            <td style='padding:2px 4px;'>" . $arData["section"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>WDCode</th>
+                            <td style='padding:2px 4px;'>" . $arData["wd_code"] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>DS Type</th>
+                            <td style='padding:2px 4px;'>" . $ARR_TEAM_TYPES[$dsType] . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Survey Volume</th>
+                            <td style='padding:2px 4px;'>" . $ques_5 . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Survey Value</th>
+                            <td style='padding:2px 4px;'>" . $ques_6 . "</td>
+                        </tr>
+                        <tr>
+                            <th style='padding:2px 4px;'>Linecut</th>
+                            <td style='padding:2px 4px;'>" . $ques_7 . "</td>
+                        </tr>
+                    </table>
+                </div>";
+
                 $arrData["markers"][] = array(
                     "date" => $arData["capture_datetime"],
                     "latitude" => $arData["lt"],
@@ -1302,19 +1401,12 @@ class MdoSitesOnMapManagement
 
         // // filter by search query and Condition
         $dateCond = getFilterResult(
-            $this->_data,
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
             array(
-                "dateFrom" => array("capture_date", 2, "dateTo"),
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
             ),
             $this->_dbConn
         );
-
-        // Get the current month's first and last day
-        $currentMonthStart = (new DateTime('first day of this month'))->format('Y-m-d');
-        $currentMonthEnd = (new DateTime('last day of this month'))->format('Y-m-d');
-
-        // Construct the date condition for the current month
-        $dateCond = "AND capture_date BETWEEN '$currentMonthStart' AND '$currentMonthEnd'";
 
         $where = $this->getSitesOnMapCondition();
         $where2 = $this->getSitesOnMapConditionForTeams();
@@ -1337,20 +1429,18 @@ class MdoSitesOnMapManagement
                 $teams = $arDataAtt['teams'];
                 $is_type = $arDataAtt['is_type'];
 
-                if($is_type == 6 || $is_type == 8 || $is_type == 9)
-                {
+                if ($is_type == 6 || $is_type == 8 || $is_type == 9) {
                     $teamTable = "tblbreeze_team";
                     $routeTable = "tblroute_details_breeze";
-                }else
-                {
+                } else {
                     $teamTable = "tblproject_team";
                     $routeTable = "tblroute_details";
                 }
 
 
                 $sQueryAtt2 = "SELECT b.lt, b.lg, c.main_branch, b.rec_id, b.outlet_name, a.team_id, a.team_name, a.branch_id, d.circle, d.section, d.wd_code FROM $teamTable AS a, $routeTable as b, $branchTable AS c, tblmapping_wd as d" .
-                    " WHERE a.team_id = b.team_id AND a.branch_id = c.branch_id AND a.wd_code = d.wd_code AND a.team_id = '$teams' $where";
-                    // echo $sQueryAtt2;die;
+                    " WHERE a.team_id = b.team_id AND a.branch_id = c.branch_id AND a.wd_code = d.wd_code AND a.team_id = '$teams'";
+                // echo $sQueryAtt2;die;
                 $this->_dbConn->ExecuteSelectQuery($sQueryAtt2, $sActionAtt2, $iRowsAtt2);
 
                 // // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
@@ -1366,7 +1456,7 @@ class MdoSitesOnMapManagement
                             // if ($isBilled) {
                             //     $flagColor = $greenDot;
                             // } else {
-                                $flagColor = $orangeDot;
+                            $flagColor = $orangeDot;
                             // }
                         } else {
                             $flagColor = $redDot;
