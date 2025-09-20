@@ -1137,7 +1137,7 @@ class MdoSitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id,e.circle,e.section,e.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b, $branchTable AS c, tblmdo_wd_mapping as d, tblmapping_wd as e WHERE a.dstatus = 0" .
+        $sQueryAtt = "SELECT a.other_details, a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id,e.circle,e.section,e.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b, $branchTable AS c, tblmdo_wd_mapping as d, tblmapping_wd as e WHERE a.dstatus = 0" .
             " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.team_id = d.mdo_id AND d.wd_id = e.rec_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
@@ -1148,6 +1148,8 @@ class MdoSitesOnMapManagement
                 $mobImgId = $arDataAtt["mob_img_id"];
                 $attbranchId = $arDataAtt["branch_id"];
                 $callType = $arDataAtt["call_type"];
+                $other_details = json_decode($arDataAtt["other_details"], true);
+                $arrData['workingWith'] = "Route Follow - ". $other_details['workingWith'];
                 if ($callType == 0) {
                     $flagColor = $greenFlag;
                     $attTime = "Attendance";
@@ -1174,8 +1176,8 @@ class MdoSitesOnMapManagement
                 <div class='attendance-marker' style='font-size:12px;'>
                     <table border='1' cellspacing='0' cellpadding='2' style='border-collapse:collapse; font-size:8px;'>
                         <tr>
-                            <th style='padding:2px 4px;'>Attendance</th>
-                            <td style='padding:2px 4px;'><b></b></td>
+                            <th style='padding:2px 4px;'>Attendance Type</th>
+                            <td style='padding:2px 4px;'><b>". $attTime ."</b></td>
                         </tr>
                         <tr>
                             <th style='padding:2px 4px;'>Surveyor Name</th>
@@ -1310,7 +1312,7 @@ class MdoSitesOnMapManagement
                             <td style='padding:2px 4px;'>" . $arData["wd_code"] . "</td>
                         </tr>
                         <tr>
-                            <th style='padding:2px 4px;'>DS Type</th>
+                            <th style='padding:2px 4px;'>Infra Type</th>
                             <td style='padding:2px 4px;'>" . $ARR_TEAM_TYPES[$dsType] . "</td>
                         </tr>
                         <tr>
@@ -1403,7 +1405,7 @@ class MdoSitesOnMapManagement
         $dateCond = getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
             array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+                "dateFrom" => array("capture_date", 2, "dateTo"),
             ),
             $this->_dbConn
         );
