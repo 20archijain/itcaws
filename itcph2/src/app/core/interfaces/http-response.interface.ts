@@ -142,6 +142,7 @@ export interface ViewAttendanceLocatorResponse {
 }
 
 export interface GetLocationCoveredResponse {
+  workingWith: string;
   wdPopGroupList: DropdownList[];
   wdMarketList: DropdownList[];
   districtList: DropdownList[];

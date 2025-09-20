@@ -34,6 +34,7 @@ export class MdoRouteTrackerComponent implements OnDestroy, OnInit {
   noOfMaps: string[] = [];
   markers: MapConfig[] = [];
   branchFilter = false;
+  headerFromBackend = "";
   // isTeamRequired = false;
   // isTeamTypeRequired = false;
   // isDateRequired = true;
@@ -114,6 +115,7 @@ export class MdoRouteTrackerComponent implements OnDestroy, OnInit {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
 
               // column size of map
+              this.headerFromBackend = resp.data.workingWith;
               this.columnSize = +resp.data.columnSize || 12;
               // repeat map by given number
               this.noOfMaps = Array(+resp.data.repeatMapBy || 1).fill('');
