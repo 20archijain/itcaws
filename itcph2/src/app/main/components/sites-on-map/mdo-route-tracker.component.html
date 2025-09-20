@@ -92,7 +92,7 @@
 
 <ng-container *ngIf="markers && markers.length > 0">
   <app-card [options]="false">
-    <h3>{{ 'app.sitesOnMap.routeFollow' | translate }}</h3>
+    <h3>{{ headerFromBackend }}</h3>
     <div class="row m-b-20">
       <div *ngFor="let index of noOfMaps" class="m-b-20 col-lg-{{ columnSize }}">
         <app-line-map [markers]="markers"></app-line-map>
