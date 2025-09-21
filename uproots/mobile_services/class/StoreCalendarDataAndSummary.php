@@ -196,59 +196,102 @@ class StoreCalendarDataAndSummary
         if ($dbName === $GLOBALS["DELHI_DB"] || $dbName === $GLOBALS["ITC_DB"] || $dbName === $GLOBALS["SOUTH_DB"] || $dbName === $GLOBALS["ITCPH2_DB"]) {
             $summaryTable = $GLOBALS["TBL_VANDS_SUMMARY"];
 
-            if (!$this->minTotalShops) {
-                $this->minTotalShops = $this->tableUtil->getRowColumn(
-                    "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
-                    "con_value",
-                    "dstatus = 0 AND con_name = 'minTotalShops'"
-                );
-                $minQualifiedAttendanceTimeInMin = $this->tableUtil->getRowColumn(
-                    "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
-                    "con_value",
-                    "dstatus = 0 AND con_name = 'minWorkingTimeInMin'"
-                );
-                $this->minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
-            }
-
-            if ($dbName === $GLOBALS["DELHI_DB"]) {
-                $rocDeliveryColumn = "total_sellin_shops";
-                $otherDeliveryColumn = "total_other_shops";
-            } elseif ($dbName === $GLOBALS["ITC_DB"]) {
-                $rocDeliveryColumn = "total_roc_deliveries";
-                $otherDeliveryColumn = "total_other_shops";
-            } elseif ($dbName === $GLOBALS["SOUTH_DB"]) {
-                $rocDeliveryColumn = "total_deliveries";
-                $otherDeliveryColumn = "";
-            } elseif ($dbName === $GLOBALS["ITCPH2_DB"]) {
-                $rocDeliveryColumn = "total_sales_deliveries";
-                $otherDeliveryColumn = "total_other_shops";
-            }
-
-            $arrSummaryData = $this->tableUtil->getRowColumns(
-                "$dbName.$summaryTable",
-                "start_datetime, end_datetime, SUM($rocDeliveryColumn) AS deliveries_1" .
-                    ($otherDeliveryColumn ? ", SUM($otherDeliveryColumn) AS deliveries_2" : ""),
-                "dstatus = 0 AND team_id = ? AND activity_date = ?",
-                array($teamId, $date)
+            $teamType = $this->tableUtil->getRowColumn(
+                "$dbName.tblproject_team",
+                "is_type",
+                "team_id = $teamId"
             );
+            $teamTypeCondition = ($teamType == 5) ? "AND team_type = 5" : "AND team_type = 0";
+            if ($teamType == 7) {
+                $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                $arrOtherDetails = json_decode($attendanceDetails, true);
+                $workingWith = $arrOtherDetails['workingWith'];
+                if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
+                    $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                    $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                    $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
+                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                    // Convert time spent into seconds
+                    $timeSpentInSec = strtotime($startTime) - strtotime($endTime);
+                } else {
+                    $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
+                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    // Convert time spent into seconds
+                    $timeSpentInSec = strtotime($min_max_time[1]) - strtotime($min_max_time[0]);
+                }
 
-            // Present
-            if ($arrSummaryData && isset($arrSummaryData, $arrSummaryData[0]) && $arrSummaryData[0]) {
-                $startDatetime = $arrSummaryData[0];
-                $endDatetime = $arrSummaryData[1];
-                $totalROCShops = $arrSummaryData[2];
-                $totalOtherShops = isset($arrSummaryData[3]) ? $arrSummaryData[3] : 0;
-                $totalShops = $totalROCShops + $totalOtherShops;
 
-                $timeSpentInSec = $this->commonFunctions->getTimeDifference($startDatetime, $endDatetime, true);
-                $isQualifiedAttendance = $totalShops >= $this->minTotalShops &&
-                    $timeSpentInSec >= $this->minQualifiedAttendanceTimeInSec ?
-                    $this->arrStatus["QUALIFIED"] : $this->arrStatus["UNQUALIFIED"];
+                // Convert 6 hours into seconds
+                $requiredSeconds = 6 * 3600;
 
-                return $isQualifiedAttendance;
+                // Check Present
+                if ($timeSpent && $distanceInKm) {
+                    if ($timeSpentInSec >= $requiredSeconds && $distanceInKm >= 10) {
+                        $isQualifiedAttendance = $this->arrStatus["QUALIFIED"];
+                    } else {
+                        $isQualifiedAttendance = $this->arrStatus["UNQUALIFIED"];
+                    }
+                    return $isQualifiedAttendance;
+                } else {
+                    // Absent
+                    return $this->arrStatus["ABSENT"];
+                }
             } else {
-                // Absent
-                return $this->arrStatus["ABSENT"];
+                if (!$this->minTotalShops) {
+                    $this->minTotalShops = $this->tableUtil->getRowColumn(
+                        "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
+                        "con_value",
+                        "dstatus = 0 AND con_name = 'minTotalShops' $teamTypeCondition"
+                    );
+                    $minQualifiedAttendanceTimeInMin = $this->tableUtil->getRowColumn(
+                        "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
+                        "con_value",
+                        "dstatus = 0 AND con_name = 'minWorkingTimeInMin' $teamTypeCondition"
+                    );
+                    $this->minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
+                }
+
+                if ($dbName === $GLOBALS["DELHI_DB"]) {
+                    $rocDeliveryColumn = "total_sellin_shops";
+                    $otherDeliveryColumn = "total_other_shops";
+                } elseif ($dbName === $GLOBALS["ITC_DB"]) {
+                    $rocDeliveryColumn = "total_roc_deliveries";
+                    $otherDeliveryColumn = "total_other_shops";
+                } elseif ($dbName === $GLOBALS["SOUTH_DB"]) {
+                    $rocDeliveryColumn = "total_deliveries";
+                    $otherDeliveryColumn = "";
+                } elseif ($dbName === $GLOBALS["ITCPH2_DB"]) {
+                    $rocDeliveryColumn = "total_sales_deliveries";
+                    $otherDeliveryColumn = "total_other_shops";
+                }
+
+                $arrSummaryData = $this->tableUtil->getRowColumns(
+                    "$dbName.$summaryTable",
+                    "start_datetime, end_datetime, SUM($rocDeliveryColumn) AS deliveries_1" .
+                        ($otherDeliveryColumn ? ", SUM($otherDeliveryColumn) AS deliveries_2" : ""),
+                    "dstatus = 0 AND team_id = ? AND activity_date = ?",
+                    array($teamId, $date)
+                );
+
+                // Present
+                if ($arrSummaryData && isset($arrSummaryData, $arrSummaryData[0]) && $arrSummaryData[0]) {
+                    $startDatetime = $arrSummaryData[0];
+                    $endDatetime = $arrSummaryData[1];
+                    $totalROCShops = $arrSummaryData[2];
+                    $totalOtherShops = isset($arrSummaryData[3]) ? $arrSummaryData[3] : 0;
+                    $totalShops = $totalROCShops + $totalOtherShops;
+
+                    $timeSpentInSec = $this->commonFunctions->getTimeDifference($startDatetime, $endDatetime, true);
+                    $isQualifiedAttendance = $totalShops >= $this->minTotalShops &&
+                        $timeSpentInSec >= $this->minQualifiedAttendanceTimeInSec ?
+                        $this->arrStatus["QUALIFIED"] : $this->arrStatus["UNQUALIFIED"];
+
+                    return $isQualifiedAttendance;
+                } else {
+                    // Absent
+                    return $this->arrStatus["ABSENT"];
+                }
             }
         }
     }
@@ -373,52 +416,79 @@ class StoreCalendarDataAndSummary
             );
 
             if ($dbName === $GLOBALS["ITCPH2_DB"]) {
-                $SummaryDetails = $this->tableUtil->getRowColumns(
-                    "$dbName.tblmobile_calendar_summary_keydetails",
-                    "planned_outlets, oulet_covered_today, add_oulet_covered_today, sell_in_shops_count_today, other_sell_in_shops_count_today, total_sales_today, time_spent_today, total_meter_travelled",
-                    "team_id = $teamId AND rcd = '$date'"
+                $teamType = $this->tableUtil->getRowColumn(
+                    "$dbName.tblproject_team",
+                    "is_type",
+                    "team_id = $teamId"
                 );
-                $coveredOutlet = (isset($SummaryDetails[1]) ? $SummaryDetails[1] : 0) +
-                    (isset($SummaryDetails[2]) ? $SummaryDetails[2] : 0);
-                $outletPlanned = isset($SummaryDetails[0]) ? $SummaryDetails[0] : 0;
-                $sellInOutlet = (isset($SummaryDetails[3]) ? $SummaryDetails[3] : 0) +
-                    (isset($SummaryDetails[4]) ? $SummaryDetails[4] : 0);
-                $salesQty = isset($SummaryDetails[5]) ? round($SummaryDetails[5], 1) : 0;
-                $timeSpent = isset($SummaryDetails[6]) ? preg_replace('/\s*\d+s/', '', $SummaryDetails[6]) : ""; // Removes seconds;
-                $totalMeterTravelled =  isset($SummaryDetails[7]) ? round($SummaryDetails[7] / 1000, 2) : 0;
+                if ($teamType == 7) {
+                    $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
+                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
 
-                $arrExtraSummary = array(
-                    array(
-                        "label" => "Outlets Covered VS Outlets Planned",
-                        "value" => (!empty($coveredOutlet) && !empty($outletPlanned)) ? "$coveredOutlet / $outletPlanned" : "0 / 0",
-                        "viewType" => "progress",
-                        "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
-                    ),
-                    array(
-                        "label" => "Productive Outlets",
-                        "value" => (!empty($sellInOutlet) && !empty($outletPlanned)) ? "$sellInOutlet / $outletPlanned" : "0 / 0",
-                        "viewType" => "label",
-                        "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
-                    ),
-                    array(
-                        "label" => "Survey (M)",
-                        "value" => !empty($salesQty) ? $salesQty : "0",
-                        "viewType" => "label",
-                        "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_stock.png"
-                    ),
-                    array(
-                        "label" => "Time spent",
-                        "value" => !empty($timeSpent) ? $timeSpent : "0s",
-                        "viewType" => "label",
-                        "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_clock.png"
-                    ),
-                    array(
-                        "label" => "Distance",
-                        "value" => isset($totalMeterTravelled) ? (string) $totalMeterTravelled . " Km" : "0 Km",
-                        "viewType" => "label",
-                        "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_km.png"
-                    )
-                );
+                    $arrExtraSummary = array(
+                        array(
+                            "label" => "Time Spent",
+                            "value" => (!empty($timeSpent)) ? "$timeSpent" : "0",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                        ),
+                        array(
+                            "label" => "Distance",
+                            "value" => (!empty($distanceInKm)) ? "$distanceInKm" : "0",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                        ),
+                    );
+                } else {
+                    $SummaryDetails = $this->tableUtil->getRowColumns(
+                        "$dbName.tblmobile_calendar_summary_keydetails",
+                        "planned_outlets, oulet_covered_today, add_oulet_covered_today, sell_in_shops_count_today, other_sell_in_shops_count_today, total_sales_today, time_spent_today, total_meter_travelled",
+                        "team_id = $teamId AND rcd = '$date'"
+                    );
+                    $coveredOutlet = (isset($SummaryDetails[1]) ? $SummaryDetails[1] : 0) +
+                        (isset($SummaryDetails[2]) ? $SummaryDetails[2] : 0);
+                    $outletPlanned = isset($SummaryDetails[0]) ? $SummaryDetails[0] : 0;
+                    $sellInOutlet = (isset($SummaryDetails[3]) ? $SummaryDetails[3] : 0) +
+                        (isset($SummaryDetails[4]) ? $SummaryDetails[4] : 0);
+                    $salesQty = isset($SummaryDetails[5]) ? round($SummaryDetails[5], 1) : 0;
+                    $timeSpent = isset($SummaryDetails[6]) ? preg_replace('/\s*\d+s/', '', $SummaryDetails[6]) : ""; // Removes seconds;
+                    $totalMeterTravelled =  isset($SummaryDetails[7]) ? round($SummaryDetails[7] / 1000, 2) : 0;
+
+                    $arrExtraSummary = array(
+                        array(
+                            "label" => "Outlets Covered VS Outlets Planned",
+                            "value" => (!empty($coveredOutlet) && !empty($outletPlanned)) ? "$coveredOutlet / $outletPlanned" : "0 / 0",
+                            "viewType" => "progress",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                        ),
+                        array(
+                            "label" => "Productive Outlets",
+                            "value" => (!empty($sellInOutlet) && !empty($outletPlanned)) ? "$sellInOutlet / $outletPlanned" : "0 / 0",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                        ),
+                        array(
+                            "label" => "Survey (M)",
+                            "value" => !empty($salesQty) ? $salesQty : "0",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_stock.png"
+                        ),
+                        array(
+                            "label" => "Time spent",
+                            "value" => !empty($timeSpent) ? $timeSpent : "0s",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_clock.png"
+                        ),
+                        array(
+                            "label" => "Distance",
+                            "value" => isset($totalMeterTravelled) ? (string) $totalMeterTravelled . " Km" : "0 Km",
+                            "viewType" => "label",
+                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_km.png"
+                        )
+                    );
+                }
 
                 $dayData["summary_data"] = $arrExtraSummary;
             }

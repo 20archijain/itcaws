@@ -2056,7 +2056,6 @@ class AppSummary extends Utilities
                 );
             }
         } elseif ($jsonId == 10) {
-            
             // Get DS route and outlet id for getting the team id with MDO work's today
             $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             $arrRouteDetails = json_decode($route_outletId[0], true);
@@ -2068,9 +2067,19 @@ class AppSummary extends Utilities
             $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
             $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
             $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-            $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
-            $distance = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(distance_in_meter)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-            $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
+            $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+            $arrOtherDetails = json_decode($attendanceDetails, true);
+            $workingWith = $arrOtherDetails['workingWith'];
+            if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
+                $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
+                $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+            } else {
+                $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
+                $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+            }
+            // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
             $Query = "SELECT type, COUNT(DISTINCT ds_name) AS cnt FROM $dbName.tblsurvey_response_details_mdo WHERE dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND type IN (0, 2, 5, 6, 8, 9) GROUP BY type";
             $sAction = null;
             $sRows = 0;
@@ -2082,16 +2091,28 @@ class AppSummary extends Utilities
             $rmdDsMtdCount    = 0;
             $stokiestMtdCount = 0;
             $fmcgMtdCount     = 0;
-            
+
             if ($sRows > 0) {
                 while ($row = $this->dbConn->GetData($sAction)) {
                     switch ($row['type']) {
-                        case 0: $vanDsMtdCount    = $row['cnt']; break;
-                        case 2: $swdMtdCount      = $row['cnt']; break;
-                        case 5: $npsrMtdCount     = $row['cnt']; break;
-                        case 6: $rmdDsMtdCount    = $row['cnt']; break;
-                        case 8: $stokiestMtdCount = $row['cnt']; break;
-                        case 9: $fmcgMtdCount     = $row['cnt']; break;
+                        case 0:
+                            $vanDsMtdCount    = $row['cnt'];
+                            break;
+                        case 2:
+                            $swdMtdCount      = $row['cnt'];
+                            break;
+                        case 5:
+                            $npsrMtdCount     = $row['cnt'];
+                            break;
+                        case 6:
+                            $rmdDsMtdCount    = $row['cnt'];
+                            break;
+                        case 8:
+                            $stokiestMtdCount = $row['cnt'];
+                            break;
+                        case 9:
+                            $fmcgMtdCount     = $row['cnt'];
+                            break;
                     }
                 }
             }
@@ -2116,16 +2137,16 @@ class AppSummary extends Utilities
                         "value1" => $coverdOutlets ? (string)$coverdOutlets : "0",
                         "value2" => $pannedOutlets ? (string)$pannedOutlets : "0"
                     ),
-                    array(
-                        "label" => "Productive Outlets",
-                        "value" => $productiveOutlets ? (string)$productiveOutlets : "0",
-                        "icon"  => "store"
-                    ),
-                    array(
-                        "label" => "Survey Qty (M)",
-                        "value" => $surveyQty ? (string)$surveyQty : "0",
-                        "icon"  => "sale"
-                    ),
+                    // array(
+                    //     "label" => "Productive Outlets",
+                    //     "value" => $productiveOutlets ? (string)$productiveOutlets : "0",
+                    //     "icon"  => "store"
+                    // ),
+                    // array(
+                    //     "label" => "Survey Qty (M)",
+                    //     "value" => $surveyQty ? (string)$surveyQty : "0",
+                    //     "icon"  => "sale"
+                    // ),
                     array(
                         "label" => "Time Spent",
                         "value" => isset($timeSpent) ? (string)$timeSpent : "0s",
@@ -2139,44 +2160,44 @@ class AppSummary extends Utilities
                 ),
                 "dsTypeDistributionData" => [
                     array(
-                        "pieDataTittle" => "Market Work Information",
+                        "pieDataTittle" => "Market Work Information (MTD)",
                         "pieInternalTittle" => "Total Count",
                         "label" => "VAN DS",
                         "value" => isset($vanDsMtdCount) ? (string)$vanDsMtdCount : "0",
                         "color" => "#9400D3"
                     ),
-                    array(
-                        "label" => "SWD",
-                        "value" => isset($swdMtdCount) ? (string)$swdMtdCount : "0",
-                        "color" => "#21AD35"
-                    ),
-                    array(
-                        "label" => "NPSR",
-                        "value" => isset($npsrMtdCount) ? (string)$npsrMtdCount : "0",
-                        "color" => "#FF6B35"
-                    ),
+                    // array(
+                    //     "label" => "SWD",
+                    //     "value" => isset($swdMtdCount) ? (string)$swdMtdCount : "0",
+                    //     "color" => "#21AD35"
+                    // ),
+                    // array(
+                    //     "label" => "NPSR",
+                    //     "value" => isset($npsrMtdCount) ? (string)$npsrMtdCount : "0",
+                    //     "color" => "#FF6B35"
+                    // ),
                     array(
                         "label" => "RMD",
                         "value" => isset($rmdDsMtdCount) ? (string)$rmdDsMtdCount : "0",
                         "color" => "#073763"
                     ),
                     array(
-                        "label" => "Stokiest DS",
+                        "label" => "SCP DS",
                         "value" => isset($stokiestMtdCount) ? (string)$stokiestMtdCount : "0",
                         "color" => "#660000"
                     ),
-                    array(
-                        "label" => "GT TL",
-                        "value" => isset($gtTlCount) ? (string)$gtTlCount : "0",
-                        "color" => "#CE7E00"
-                    ),
+                    // array(
+                    //     "label" => "GT TL",
+                    //     "value" => isset($gtTlCount) ? (string)$gtTlCount : "0",
+                    //     "color" => "#CE7E00"
+                    // ),
                     array(
                         "label" => "AE",
                         "value" => isset($aeCount) ? (string)$aeCount : "0",
                         "color" => "#741B47"
                     ),
                     array(
-                        "label" => "Independent",
+                        "label" => "Independent Work",
                         "value" => isset($independentCount) ? (string)$independentCount : "0",
                         "color" => "#6AA84F"
                     ),
@@ -2363,8 +2384,8 @@ class AppSummary extends Utilities
                     $focusBrand2Column = $arrFocusProduct[1][0]; // total_sale_product15
                     $focusBrand1Name = $arrFocusProduct[0][1];
                     $focusBrand2Name = $arrFocusProduct[1][1];
-                    $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops'");
-                    $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin'");
+                    $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops' AND team_type = $teamType");
+                    $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin' AND team_type = $teamType");
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
                     foreach ($months as $month) {

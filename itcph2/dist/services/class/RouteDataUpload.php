@@ -37,7 +37,7 @@ class RouteDataUpload
 
             // Indexes you want to keep
 
-            $selectedIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 29];
+            $selectedIndexes = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23, 24, 29];
 
             $filteredColumns = array_intersect_key($columns, array_flip($selectedIndexes));
 
@@ -156,8 +156,8 @@ class RouteDataUpload
             "text" => 5,
             "nchar" => 5,
             "nvarchar" => 5,
-            "binary" => 5,
-            "varbinary" => 5,
+            "float" => 1,
+            "float" => 1,
             "blob" => 5,
             "clob" => 5,
             "json" => 5,
@@ -186,8 +186,17 @@ class RouteDataUpload
                 $isAnyDataFound = false;
                 if ($index > 0) {
                     // Loop through each selected column
-                    foreach ($arrExcelDataColumnHeader as $excelColumnHeader) {
-                        $columnData = $arrExcelData[$excelColumnHeader][$index];
+                    foreach ($arrExcelDataColumnHeader as $colIndex => $excelColumnHeader) {
+                        $columnData = trim($arrExcelData[$excelColumnHeader][$index]);
+
+                        // ✅ Clean lt/lg columns (force numeric or NULL)
+                        if (in_array($arrSelectedColumns[$colIndex], ['lt', 'lg'])) {
+                            if ($columnData === '' || !is_numeric($columnData)) {
+                                $columnData = 0; // store NULL if not valid
+                            } else {
+                                $columnData = (float)$columnData; // cast to float
+                            }
+                        }
 
                         $arrSubData[] = $columnData;
 

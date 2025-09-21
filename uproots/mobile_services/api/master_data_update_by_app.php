@@ -33,8 +33,9 @@ class UpdateMasterData extends Utilities
         $shopName = isset($this->requestPostData["shopName"]) ? htmlentities($this->requestPostData["shopName"]) : "";
         $mobileNo = isset($this->requestPostData["mobileNo"]) ? htmlentities($this->requestPostData["mobileNo"]) : "";
         $shopId = isset($this->requestPostData["shopId"]) ? htmlentities($this->requestPostData["shopId"]) : "";
-        $lt = isset($this->requestPostData["lt"]) ? htmlentities($this->requestPostData["lt"]) : "";
-        $lg = isset($this->requestPostData["lg"]) ? htmlentities($this->requestPostData["lg"]) : "";
+        $lt = isset($this->requestPostData["lt"]) && $this->requestPostData["lt"] !== "" ? (float) $this->requestPostData["lt"] : 0;
+        $lg = isset($this->requestPostData["lg"]) && $this->requestPostData["lg"] !== "" ? (float) $this->requestPostData["lg"] : 0;
+
 
         $iStatus = $this->tableUtil->isRecordExist("$dbName.tblroute_details", "rec_id", "dstatus = 0 AND outlet_mobile = $mobileNo AND rec_id != $shopId");
         if ($iStatus) {

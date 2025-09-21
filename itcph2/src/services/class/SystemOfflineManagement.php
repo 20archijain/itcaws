@@ -57,15 +57,11 @@ class SystemOfflineManagement
             $sql = "DELETE FROM tbloffline_dropdown_options WHERE team_id IN ($teamCond)";
             $this->_dbConn->ExecuteSelectQuery($sql, $rsAction, $iRows);
 
-            if($iRows > 0)
-            {
-                 $arrMessage = responseMessage(array($GLOBALS['TEAM_DELETED_SUCCESSFULLY']), 1);
-            }else
-            {
-                 $arrMessage = responseMessage(array($GLOBALS['TEAM_NOT_FOUND_IN_OFFLINE']));
+            if ($iRows > 0) {
+                $arrMessage = responseMessage(array($GLOBALS['TEAM_DELETED_SUCCESSFULLY']), 1);
+            } else {
+                $arrMessage = responseMessage(array($GLOBALS['TEAM_NOT_FOUND_IN_OFFLINE']));
             }
-
-
         }
         echo json_encode($arrMessage);
     }

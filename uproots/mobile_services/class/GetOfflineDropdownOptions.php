@@ -118,6 +118,8 @@ class GetOfflineDropdownOptions
                     $otherDetails["listKpiFirst"] ? $otherDetails["listKpiFirst"] : array();
                 $arrListKpiSecond = isset($otherDetails["listKpiSecond"]) &&
                     $otherDetails["listKpiSecond"] ? $otherDetails["listKpiSecond"] : array();
+                $arrOutletOuterDetails = isset($otherDetails["outletOuterDetails"]) &&
+                    $otherDetails["outletOuterDetails"] ? $otherDetails["outletOuterDetails"] : array();
                 $showMapIcon = isset($otherDetails["showMapIcon"]) ? $otherDetails["showMapIcon"] : false;
                 $ltColumn = isset($otherDetails["ltColumn"]) ? $otherDetails["ltColumn"] : "lt";
                 $lgColumn = isset($otherDetails["lgColumn"]) ? $otherDetails["lgColumn"] : "lg";
@@ -149,6 +151,16 @@ class GetOfflineDropdownOptions
                             $arrlistKpiSecondConfig["value"] : null;
                         if ($listKpiSecondValue) {
                             $columns .= ", $listKpiSecondValue";
+                        }
+                    }
+                }
+                // add OutletOuterDetailsValue
+                if ($this->commonFunctions->isNonEmptyArray($arrOutletOuterDetails)) {
+                    foreach ($arrOutletOuterDetails as $arrOutletOuterDetailsConfig) {
+                        $outletOuterDetailsValue = isset($arrOutletOuterDetailsConfig["value"]) && $arrOutletOuterDetailsConfig["value"] ?
+                            $arrOutletOuterDetailsConfig["value"] : null;
+                        if ($outletOuterDetailsValue) {
+                            $columns .= ", $outletOuterDetailsValue";
                         }
                     }
                 }
@@ -306,6 +318,20 @@ class GetOfflineDropdownOptions
                                 );
                             }
                         }
+                        $outletOuterDetailsValue = array();
+                        if ($this->commonFunctions->isNonEmptyArray($arrOutletOuterDetails)) {
+                            foreach ($arrOutletOuterDetails as $arrOutletOuterDetailsConfig) {
+                                $label = isset($arrOutletOuterDetailsConfig["label"]) && $arrOutletOuterDetailsConfig["label"] ?
+                                    $arrOutletOuterDetailsConfig["label"] : "";
+                                $value = isset($arrOutletOuterDetailsConfig["value"]) && $arrOutletOuterDetailsConfig["value"] ?
+                                    $arrOutletOuterDetailsConfig["value"] : null;
+
+                                $outletOuterDetailsValue[] = array(
+                                    "label" => $label,
+                                    "value" => $row[$value],
+                                );
+                            }
+                        }
 
                         $arrOptions[$iOptionsCount]["otherDetails"] = array(
                             "htmlText" => $sHtmlCompleteText,
@@ -321,6 +347,7 @@ class GetOfflineDropdownOptions
                                 $row[$contactNoColumn] ? $row[$contactNoColumn] : "",
                             "listKpiFirst" => $listFirstKpiValues,
                             "listKpiSecond" => $listSecondKpiValues,
+                            "outletOuterDetails" => $outletOuterDetailsValue,
                             "showMapIcon" => $showMapIcon && isset($row[$ltColumn]) && $row[$ltColumn] ? true : false,
                             "lt" => $ltColumn && $row[$ltColumn] ? 1 * number_format(floatval($row[$ltColumn]), 8) : 0,
                             "lg" => $lgColumn && $row[$lgColumn] ? 1 * number_format(floatval($row[$lgColumn]), 8) : 0,

@@ -25,7 +25,7 @@ export class SystemOfflineComponent implements OnInit {
   };
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService,
-     private loaderService: LoaderService,
+    private loaderService: LoaderService,
   ) { }
 
   ngOnInit() {
@@ -64,24 +64,23 @@ export class SystemOfflineComponent implements OnInit {
   }
 
   deleteTeam() {
-    if(this.form.valid){
-    this.loaderService.startLoader();
-    this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.listing.deleteData, this.form.getRawValue(),
-        null, environment.getTeamDataUrl)
-        .pipe(finalize(() => this.loaderService.stopLoader()))
-        .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.getTeams();
-          }
-        })
-    );
+    if (this.form.valid) {
+      this.loaderService.startLoader();
+      this.subscription.push(
+        this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.listing.deleteData, this.form.getRawValue(),
+          null, environment.getTeamDataUrl)
+          .pipe(finalize(() => this.loaderService.stopLoader()))
+          .subscribe(resp => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              this.getTeams();
+            }
+          })
+      );
     }
   }
 
-  trigger()
-  {
-      window.open('https://radardashboard.com/uproots/mobile_services/cronjob/store_offline_dropdown_options_new_setups.php', '_blank', 'noopener,noreferrer');
+  trigger() {
+    window.open('https://radardashboard.com/uproots/mobile_services/cronjob/store_offline_dropdown_options_new_setups.php', '_blank', 'noopener,noreferrer');
   }
 
   set teamValue(value: string) {

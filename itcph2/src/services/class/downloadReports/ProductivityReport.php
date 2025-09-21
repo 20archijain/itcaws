@@ -53,7 +53,7 @@ class ProductivityReport
         $attendanceTable = $this->_tables["ATTENDANCE_TABLE"];
 
         $arrExcelData = [];
-        $arrExcelData[] = ["District", "Branch", "No of DS registered", " No of DS Using the App", "% of P1 DS", "Avg Route per Ds", "% of DS having >6 routes", "% of DS marking attendance (>=15 days)", "% of DS with qualified attendance (>=15 days)"];
+        $arrExcelData[] = ["District", "Branch", "No of DS registered", " No of DS Using the App", "% of P1 DS", "Avg Route per Ds", "% of DS having >6 routes", "% of DS marking attendance (>=15 days)", "% of DS with qualified attendance (>=15 days)", "Total Outlet Mapped"];
 
 
         $sbranchQuery = "SELECT DISTINCT branch_name, branch_id, district FROM $branchTable WHERE dstatus = 0 ORDER BY branch_name";

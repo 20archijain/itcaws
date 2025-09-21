@@ -548,7 +548,7 @@ class TeamManagement
             $where .= " AND a.team_id IN $teamList";
         }
 
-        $dsType = array(0 => "DS", 2 => "Town SWD", 5 => "NPSR");
+        $dsType = array(0 => "DS", 2 => "Town SWD", 4 => "SCP", 5 => "NPSR", 7 => "MDO A", 10 => "MDO B");
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;

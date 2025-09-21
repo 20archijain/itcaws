@@ -461,7 +461,8 @@ class MdoReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -777,7 +778,8 @@ class MdoReporting
         $sQuery = "SELECT a.pro_id $partialQuery AND a.pro_id > 0";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
 
-        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, b.team_id, b.team_name,b.circle,b.section,b.branch_id, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10" .
+            ", a.ques_11, b.team_id, b.team_name,b.circle,b.section,b.branch_id, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
         $sQuery .= " " . $limit["limit"];
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -847,7 +849,7 @@ class MdoReporting
     final public function getDownloadData()
     {
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -878,7 +880,6 @@ class MdoReporting
             "Region",
             "Circle",
             "Section",
-            "WD Code",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -892,6 +893,7 @@ class MdoReporting
             "DS Name",
             "DS Type",
             "Route Taken",
+            "Outlet Id",
             "Outlet Name",
             "Timestamp",
             "Survey Volume (Ms)",
@@ -939,24 +941,32 @@ class MdoReporting
                     $mdoName = $row["team_name"];
                     $route = $row["route_name"];
                     $shopId = $row["ques_4"];
-                    $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "dstatus = 0 AND route_name = '$route' AND rec_id = $shopId") : "";
+                    $dsType = $row["type"];
+                    if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
+                        $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "dstatus = 0 AND rec_id = $shopId") : "";
+                    } else {
+                        $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "dstatus = 0 AND route_name = '$route' AND rec_id = $shopId") : "";
+                    }
                     $dsName = $row["ds_name"];
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
-                    $dsType = $row["type"];
                     $surveyVol = $row["ques_5"];
                     $surveyVal = $row["ques_6"];
                     $lineCut = $row["ques_7"];
                     $itcVisibility = $row["ques_8"];
-                    if ($itcVisibility == 'YES') {
+                    if ($itcVisibility == 'Yes') {
+                        $itcVisibility = "1";
                         $visibilityPic = $row["ques_9"];
                     } else {
+                        $itcVisibility = "0";
                         $visibilityPic = "";
                     }
                     $implementVisibility = $row["ques_10"];
-                    if ($implementVisibility == 'YES') {
+                    if ($implementVisibility == 'Yes') {
+                        $implementVisibility = "1";
                         $outletPic = $row["ques_11"];
                     } else {
+                        $implementVisibility = "0";
                         $outletPic = "";
                     }
                     $arrImg1 = $visibilityPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId' AND mob_img_id = '$visibilityPic'") : null;
@@ -981,7 +991,6 @@ class MdoReporting
                         $row["branch_name"],
                         $row["circle"],
                         $row["section"],
-                        "",
                         $row["team_id"],
                         $mdoName,
                         $captureDate,
@@ -995,8 +1004,9 @@ class MdoReporting
                         $dsNameOnly,
                         $arrTeamType[$dsType],
                         $route,
+                        $shopId,
                         isset($arrRoute[1]) ? $arrRoute[1] : "",
-                        currentDateTime($row["capture_datetime"], "d-m-Y h:i:s A"),
+                        currentDateTime($row["capture_datetime"], "H:i:s"),
                         $surveyVol,
                         $surveyVal,
                         $lineCut,
@@ -1032,7 +1042,7 @@ class MdoReporting
 
     final public function getDownloadSummary()
     {
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -1093,9 +1103,12 @@ class MdoReporting
             "KM Travelled",
             "Planned Outlets",
             "Surveyed Outlets (by MDO)",
-            "Survey Volume (Ms) (MDO Day-End)",
-            "Survey Value (Rs) (MDO Day-End)",
-            "Lines Cut (MDO Day-End)",
+            "Survey Volume (Ms) (Surveyed outlets)",
+            "Survey Value (Rs) (Surveyed outlets)",
+            "Lines Cut",
+            "Outlet Visited (MDO Day-End)",
+            "Sales Volume (Ms) (MDO Day-End)",
+            "Sales Value (Rs) (MDO Day-End)",
             "Visited Outlets (by DS)",
             "Billed Outlets (by DS)",
             "Total Sale (M) (by DS)",
@@ -1120,9 +1133,10 @@ class MdoReporting
 
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
-                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
+            $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
+                ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
+                ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
+                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1138,51 +1152,127 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $shopId = $row["ques_4"];
-                    $dsId = $routeName && $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "dstatus = 0 AND route_name = '$routeName' AND rec_id = $shopId") : "";
+                    $dsType = $arrTeamType[$row["type"]];
+                    if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
+                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "dstatus = 0 AND rec_id = $shopId") : "";
+                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "dstatus = 0 AND team_id = '$dsId'") : "";
+                        $orderShop = "";
+                        $addShop = "";
+                        $totalShops = "";
+                        $sellInShop = "";
+                        $totalSale = "";
+                        $totalUlc = "";
+                        $arrMdoSurveyedOutlets = array();
+                        $mdoSurveyedOutlets = "";
+                        $sellbByDsMdoSurveyed = "";
+                    } else {
+                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "dstatus = 0 AND rec_id = $shopId") : "";
+                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$routeName' AND team_id = $dsId") : "";
+                        $orderShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
+                        $addShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
+                        $totalShops = $orderShop + $addShop;
+                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                        $productCols = [];
+                        $productNames = [];
+
+                        foreach ($allBrandCols as $colRow) {
+                            $productCols[] = $colRow[0];
+                            $productNames[] = $colRow[1];
+                        }
+                        $summaryColumns = implode(") + SUM(", $productCols);
+                        $sumColumns = "SUM($summaryColumns)";
+                        $totalSale = 0;
+                        if ($dsId) {
+                            $sQuery2 = "SELECT $sumColumns AS totalSum FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date = '$date'";
+
+                            $sAction2 = null;
+                            $iRows2 = 0;
+
+                            $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
+                            if ($iRows2 > 0) {
+                                while ($row2 = $this->_dbConn->GetData($sAction2)) {
+                                    $totalSale = $row2['totalSum'] ?? 0;
+                                }
+                            }
+
+                            $summaryColumnsUlc = implode(",", $productCols);
+                            $sQuery3 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date = '$date'";
+
+                            $sAction3 = null;
+                            $iRows3 = 0;
+                            $totalUniqueProducts = []; // store unique products across ALL records
+                            $recordCount = 0;
+                            $perRecordUlc = []; // store ULC per record
+
+                            $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
+                            if ($iRows3 > 0) {
+                                while ($row3 = $this->_dbConn->GetData($sAction3)) {
+                                    $recordCount++;
+                                    $seenProducts = []; // for this record only
+                                    $ulc = 0;
+                                    foreach ($allBrandCols as $colRow) {
+                                        $colName     = $colRow[0]; // summary_column_name
+                                        $productName = $colRow[1]; // product name
+                                        $value       = floatval($row3[$colName]);
+
+                                        if ($value > 0) {
+                                            // Count for this record
+                                            if (!in_array($productName, $seenProducts)) {
+                                                $seenProducts[] = $productName;
+                                                $ulc++;
+                                            }
+
+                                            // Count for total unique across all records
+                                            if (!in_array($productName, $totalUniqueProducts)) {
+                                                $totalUniqueProducts[] = $productName;
+                                            }
+                                        }
+                                    }
+
+                                    $perRecordUlc[] = $ulc;
+                                }
+                            }
+                            // Final totals
+                            $totalUlc = count($totalUniqueProducts); // unique products across all records
+                        }
+                        $sellInShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0") : 0;
+                        $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                        $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
+                        $sellbByDsMdoSurveyed = $dsId ? getRowColumn($this->_dbConn, $respTable, "$sumColumns AS totalSum", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)") : 0;
+                    }
+
                     $dsName = $row["ds_name"];
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
-                    $dsType = $arrTeamType[$row["type"]];
-                    $arrAteendance = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
-                    $startTime = isset($arrAteendance[0]) ? $arrAteendance[0] : "";
-                    $endTime = isset($arrAteendance[1]) ? $arrAteendance[1] : "";
+                    $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
+                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
+                    if ($arrDayEndDetails) {
+                        $endTime = isset($arrDayEndDetails[0]) ? $arrDayEndDetails[0] : "";
+                        $arrDayEndOtherDetails = json_decode($arrDayEndDetails[1], true);
+                        $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
+                        $salesVol = $arrDayEndOtherDetails['SalesVolume'];
+                        $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                    }
+                    $marketStartTime = isset($row["startMarket"]) ? $row["startMarket"] : "";
+                    $marketEndTime = isset($row["lastMarket"]) ? $row["lastMarket"] : "";
+                    $timeInMarket = getTimeDifferenceInString($marketStartTime, $marketEndTime, false, false, true);
+                    $timeSpent =  getTimeDifferenceInString($startTime, $endTime ? $endTime : $marketEndTime, false, false, true);
                     $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
                     $firstOutletTime = isset($arrfist_lastTime[0]) ? $arrfist_lastTime[0] : "";
                     $lastOutletTime = isset($arrfist_lastTime[1]) ? $arrfist_lastTime[1] : "";
-                    $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$routeName' AND team_id = $dsId") : "";
                     $coverdOutlets = getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
                     $surveyVol = $row["surveyVol"];
                     $surveyVal = $row["surveyVal"];
                     $lineCut = $row["lineCut"];
-                    $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId");
-                    $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId");
-                    $totalShops = $orderShop + $addShop;
-                    $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
-                    $productCols = [];
-                    $productNames = [];
-
-                    foreach ($allBrandCols as $colRow) {
-                        $productCols[] = $colRow[0];
-                        $productNames[] = $colRow[1];
+                    $distanceInKm = getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    // Convert 6 hours into minutes
+                    $requiredmin = 360;
+                    if ($timeSpent >= $requiredmin && $distanceInKm >= 10) {
+                        $qualified = '1';
+                    } else {
+                        $qualified = '0';
                     }
-                    $summaryColumns = implode(") + SUM(", $productCols);
-                    $sumColumns = "SUM($summaryColumns)";
-                    $sQuery2 = "SELECT $sumColumns AS totalSum FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date = '$date'";
-
-                    $sAction2 = null;
-                    $iRows2 = 0;
-                    $totalSale = 0;
-
-                    $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
-                    if ($iRows2 > 0) {
-                        while ($row2 = $this->_dbConn->GetData($sAction2)) {
-                            $totalSale = $row2['totalSum'] ?? 0;
-                        }
-                    }
-                    $sellInShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0");
-                    $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
-                    $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
-                    $sellbByDsMdoSurveyed = getRowColumn($this->_dbConn, $respTable, "$sumColumns", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)");
+                    // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
 
                     $arrExcelData[] = [
                         $row["district"],
@@ -1194,7 +1284,7 @@ class MdoReporting
                         $mdoName,
                         currentDate($date, "d-m-Y"),
                         $week,
-                        "",
+                        $qualified,
                         $typeOfWork,
                         $workWdCode,
                         isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
@@ -1204,31 +1294,135 @@ class MdoReporting
                         $dsType,
                         $dsNameOnly,
                         $routeName,
-                        $startTime,
-                        $endTime,
-                        $firstOutletTime,
-                        $lastOutletTime,
-                        "",
-                        "",
-                        "",
+                        $startTime ? currentDateTime($startTime, "H:i:s") : "",
+                        $endTime ? currentDateTime($endTime, "H:i:s") : "",
+                        $firstOutletTime ? currentDateTime($firstOutletTime, "H:i:s") : "",
+                        $lastOutletTime ? currentDateTime($lastOutletTime, "H:i:s") : "",
+                        $timeSpent,
+                        $timeInMarket,
+                        $distanceInKm,
                         $pannedOutlets,
                         $coverdOutlets,
                         $surveyVol,
                         $surveyVal,
                         $lineCut,
+                        $dayEndOutlet,
+                        $salesVol,
+                        $salesValue,
                         $totalShops,
                         $sellInShop,
                         $totalSale,
                         $sellbByDsMdoSurveyed,
-                        ""
+                        $totalUlc
                     ];
                 }
             }
+
+            $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
+            $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
+
+            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+
+            // Convert date strings to DateTime objects
+            $startDate = new DateTime($dateFrom);
+            $endDate = new DateTime($dateTo);
+
+            while ($startDate <= $endDate) {
+                $date = $startDate->format('Y-m-d'); // Format the current date
+                $week = $this->getWeekNumber($date);
+                $arrDates = array();
+
+                if (!in_array($date, $arrDates)) {
+                    $arrDates[] = $date;
+                    // Query to get teams who have not work with DS
+                    $iTeamRows = 0;
+                    $rsTeamAction = 0;
+                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name" .
+                        ", c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10" .
+                        " AND a.capture_date = '$date' AND a.work_with != '0' $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
+                    $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
+
+                    if ($iTeamRows) {
+                        while ($rowTeam = $this->_dbConn->GetData($rsTeamAction)) {
+                            $date = $rowTeam["capture_date"];
+                            $week = $this->getWeekNumber($date);
+                            $teamId = $rowTeam["team_id"];
+                            $mdoName = $rowTeam["team_name"];
+                            $workWith = $rowTeam["work_with"];
+                            $startTime = $rowTeam["capture_datetime"];
+                            $endDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), distance, other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                            $endTime = isset($endDetails[0]) ? $endDetails[0] : "";
+                            $timeSpent = $endDetails[0] ? getTimeDifferenceInString($startTime, $endDetails[0], false, false, true) : 0;
+                            $distanceInKm = $endDetails[1] ? $endDetails[1] : 0;
+                            $arrDayEndOtherDetails = json_decode($endDetails[2], true);
+                            $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
+                            $salesVol = $arrDayEndOtherDetails['SalesVolume'];
+                            $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                            if ($workWith == 1) {
+                                $typeOfWork = "Market work with AE";
+                            } elseif ($workWith == 2) {
+                                $typeOfWork = "Market work with GT TL";
+                            } elseif ($workWith == 3) {
+                                $typeOfWork = "Independent market work";
+                            }
+                            // Convert 6 hours into seconds
+                            $requiredSeconds = 360;
+                            if ($timeSpent >= $requiredSeconds && $distanceInKm >= 10) {
+                                $qualified = "1";
+                            } else {
+                                $qualified = "0";
+                            }
+
+                            $arrExcelData[] = [
+                                $rowTeam["district"],
+                                $rowTeam["main_branch"],
+                                $rowTeam["branch_name"],
+                                $rowTeam["circle"],
+                                $rowTeam["section"],
+                                $teamId,
+                                $mdoName,
+                                currentDate($date, "d-m-Y"),
+                                $week,
+                                $qualified,
+                                $typeOfWork,
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                $startTime ? currentDateTime($startTime, "H:i:s") : "",
+                                $endTime ? currentDateTime($endTime, "H:i:s") : "",
+                                "",
+                                "",
+                                $timeSpent,
+                                "",
+                                $distanceInKm,
+                                "",
+                                "",
+                                "",
+                                "",
+                                "",
+                                $dayEndOutlet,
+                                $salesVol,
+                                $salesValue
+                            ];
+                        }
+                    }
+                }
+
+                // Move to the next date
+                $startDate->modify('+1 day');
+            }
         }
 
-        $fileName = "VanDs_Summary_$currentDateTime.xlsx";
+        $fileName = "MDO_Summary_$currentDateTime.xlsx";
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        // $mergedArrExcelData = array_merge($arrExcelData, $arrData);
 
         // Pass complete data
         $sheet->fromArray($arrExcelData);
@@ -1317,15 +1511,23 @@ class MdoReporting
             "WD Name",
             "WD Market",
             "WD Pop Group",
+            "tYpe of Work",
             "DS ID",
             "DS Type",
             "DS Name",
+            "Qualified",
+            "Total Time",
+            "KM Travelled",
+            "Start Lt",
+            "Start Lg",
             "Start Time",
             "Day Start Google Address",
             "State",
             "District",
             "City",
             "Pincode",
+            "End Lt",
+            "End Lg",
             "End Time",
             "Day End Google Address",
             "State",
@@ -1352,7 +1554,7 @@ class MdoReporting
 
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.capture_date, a.capture_datetime, a.lt, a.lg, a.other_details, a.google_address, a.state, a.district, a.city, a.pincode" .
+            $sQuery = "SELECT a.capture_date, a.capture_datetime, a.lt, a.lg, a.other_details, a.google_address, a.state, a.district AS googleDistrict, a.city, a.pincode" .
                 ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
@@ -1361,6 +1563,8 @@ class MdoReporting
                 while ($row = $this->_dbConn->GetData($rsAction)) {
                     $branchId = $row["branch_id"];
                     $teamId = $row["team_id"];
+                    $startLt = $row["lt"];
+                    $startLg = $row["lg"];
                     $date = $row["capture_date"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
@@ -1390,16 +1594,27 @@ class MdoReporting
                     $startTime = $row['capture_datetime'];
                     $googleAddress = $row['google_address'];
                     $state = $row['state'];
-                    $district = $row['district'];
+                    $district = $row['googleDistrict'];
                     $city = $row['city'];
                     $pinCode = $row['pincode'];
-                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "capture_datetime, google_address, state, district, city, pincode", "call_type = '1' AND team_id = $teamId AND capture_date = '$date'");
-                    $endTime = $arrDayEndDetails[0];
-                    $endGoogleAddress = $arrDayEndDetails[1];
-                    $endState = $arrDayEndDetails[2];
-                    $endDistrict = $arrDayEndDetails[3];
-                    $endCity = $arrDayEndDetails[4];
-                    $endPinCode = $arrDayEndDetails[5];
+                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "capture_datetime, google_address, state, district, city, pincode, distance, lt, lg", "call_type = '1' AND team_id = $teamId AND capture_date = '$date'");
+                    $endTime = $arrDayEndDetails[0] ?? "";
+                    $endGoogleAddress = $arrDayEndDetails[1] ?? "";
+                    $endState = $arrDayEndDetails[2] ?? "";
+                    $endDistrict = $arrDayEndDetails[3] ?? "";
+                    $endCity = $arrDayEndDetails[4] ?? "";
+                    $endPinCode = $arrDayEndDetails[5] ?? "";
+                    $timeSpent = $endTime ? getTimeDifferenceInString($startTime, $endTime, false, false, true) : 0;
+                    $distanceInKm = $arrDayEndDetails[6] ?? 0;
+                    // Convert 6 hours into seconds
+                    $requiredSeconds = 6 * 3600;
+                    if ($timeSpent >= $requiredSeconds && $distanceInKm >= 10) {
+                        $qualified = "1";
+                    } else {
+                        $qualified = "0";
+                    }
+                    $endLt = $arrDayEndDetails[7] ?? "";
+                    $endLg = $arrDayEndDetails[8] ?? "";
 
                     $arrExcelData[] = [
                         $row["district"],
@@ -1415,16 +1630,24 @@ class MdoReporting
                         isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
                         isset($arrWdDetails[1]) ? $arrWdDetails[1] : "",
                         isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
+                        $workingWith,
                         $dsId,
                         $dsType,
                         $dsNameOnly,
-                        $startTime,
+                        $qualified,
+                        $timeSpent,
+                        $distanceInKm,
+                        $startLt,
+                        $startLg,
+                        currentDateTime($startTime, "H:i:s"),
                         $googleAddress,
                         $state,
                         $district,
                         $city,
                         $pinCode,
-                        $endTime,
+                        $endLt,
+                        $endLg,
+                        currentDateTime($endTime, "H:i:s"),
                         $endGoogleAddress,
                         $endState,
                         $endDistrict,

@@ -30,12 +30,12 @@ class processUpdateQualifiedMarketTime
         $constantsTable = $this->tables["CONSTANTS_TABLE"];
         $summaryTable = $this->tables["VANDS_SUMMARY_TABLE"];
         $respTable = $this->tables["RESPONSE_DETAILS_TABLE"];
-        $currentDate = currentDate();
-        $cond = "AND activity_date BETWEEN '2025-08-01' AND '2025-08-31'";
+        $previousDate = date("Y-m-d", strtotime("-1 day")); // yesterday's date
+        $cond = "AND activity_date = '$previousDate'";
 
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime FROM $summaryTable WHERE dstatus = 0 AND is_update = 0 $cond";
+        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime FROM $summaryTable WHERE dstatus = 0 $cond";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -57,9 +57,7 @@ class processUpdateQualifiedMarketTime
                 $timeInMarket = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
                 $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                 $condition = "summary_id = ?";
-                if ($isQualifiedAttendance == '1') {
-                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$isQualifiedAttendance, $timeInMarket, $totalTime, $summaryId]);
-                }
+                updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$isQualifiedAttendance, $timeInMarket, $totalTime, $summaryId]);
             }
         }
     }

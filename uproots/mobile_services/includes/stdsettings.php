@@ -132,7 +132,7 @@ define("MOVE_IMAGES_ON_DIGITALOCEAN", array(
     $ZX_DB => false,
     $DELHI_DB => false,
     $ITC_DB => false,
-    $ITCNEW_DB => true,
+    $ITCNEW_DB => false,
     $ITCPH2_DB => false,
     $JAIPUR_DB => false,
     $SNPL_DB => false,

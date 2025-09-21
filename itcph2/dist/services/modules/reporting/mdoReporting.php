@@ -36,9 +36,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_DOWNLOAD_SUMMARY']:
             $reporting->getDownloadSummary();
             break;
-        // case $ACTION_LIST['GET_DOWNLOAD_BINDER_REPORT']:
-        //     $reporting->getDownloadBinderReport();
-        //     break;
+        case $ACTION_LIST['ATTENDANCE_REPORT']:
+            $reporting->attendanceDayEndReport();
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);

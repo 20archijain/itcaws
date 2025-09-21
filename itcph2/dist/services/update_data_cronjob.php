@@ -55,16 +55,18 @@ class UpdateDataCronjob
                 $rdt = $row["rdt"];
 
                 // Check if summary already exists, if not, add summary else don't add summary
-                $isExist = isRecordExist($this->_dbConn, $stockSummaryTable, "sp_id", "team_id = $teamId AND capture_date = '$captureDate' AND stock_type = 0");
+                $isExist = isRecordExist($this->_dbConn, $stockSummaryTable, "sp_id", "team_id = $teamId AND capture_date = '$captureDate' AND stock_type = 0 AND dstatus = 0");
 
                 if ($isExist == 0) {
                     // get team branch
                     if (isset($arrTeamBranch[$teamId])) {
                         $branchId = $arrTeamBranch[$teamId];
                     } else {
-                        $branchId = getRowColumn($this->_dbConn, $projectTeamTable, "branch_id", "team_id = $teamId");
-                        $branchId = $branchId ? $branchId : 1;
+                        $arrTeamDetails = getRowColumns($this->_dbConn, $projectTeamTable, "branch_id, is_type", "team_id = $teamId");
+                        $branchId = $arrTeamDetails[0] ? $arrTeamDetails[0] : 1;
+                        $teamType = $arrTeamDetails[1] ? $arrTeamDetails[1] : "";
                         $arrTeamBranch[$teamId] = $branchId;
+                        $arrTeamBranch[$teamType] = $arrTeamDetails[1];
                     }
 
                     $colsQty = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
@@ -74,7 +76,7 @@ class UpdateDataCronjob
                     $arrOtherDetails = $otherDetails ? json_decode($otherDetails, true) : array();
                     $arrPickupDetails = isset($arrOtherDetails["pickupDetails"]) ? $arrOtherDetails["pickupDetails"] : array();
                     // Get branch stock pickup products
-                    $arrStockProductColumns = $this->getBranchWiseStockPickupProducts($branchId, $jsonId);
+                    $arrStockProductColumns = $this->getBranchWiseStockPickupProducts($branchId, $jsonId, $teamType);
                     // Get stock
                     $arrStock = getGridDataAsArray($arrPickupDetails["ansGrid"], 2, count($arrStockProductColumns));
                     // Add stock for each product
@@ -100,27 +102,79 @@ class UpdateDataCronjob
         }
     }
 
-    private function getBranchWiseStockPickupProducts($branchId = null, $jsonId = null)
+
+    // private function getBranchWiseStockPickupProducts($branchId = null, $jsonId = null)
+    // {
+    //     $branchPickupstockProducts = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+
+    //     if ($branchId) {
+    //         return isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId]) &&
+    //             $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] ?
+    //             $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] : array();
+    //     } else {
+    //         // ORDER BY is important
+    //         $arrProductSummaryColumns = getRowsColumns($this->_dbConn, $branchPickupstockProducts, "branch_id, json_id, summary_column_name", "dstatus = 0 ORDER BY json_id, sort_order");
+
+    //         foreach ($arrProductSummaryColumns as $arrProduct) {
+    //             $branchId = $arrProduct[0];
+    //             $jsonId = $arrProduct[1];
+    //             $summaryColumnName = $arrProduct[2];
+
+    //             if (!isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId])) {
+    //                 $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] = array();
+    //             }
+    //             $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][] = $summaryColumnName;
+    //         }
+    //     }
+    // }
+
+    private function getBranchWiseStockPickupProducts($branchId = null, $jsonId = null, $teamType = null)
     {
-        $branchPickupstockProducts = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
-
+        $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         if ($branchId) {
-            return isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId]) &&
-                $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] ?
-                $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] : array();
+            $teamTypeKey = ($teamType !== null && $teamType !== "") ? $teamType : 'default';
+
+            // Avoid undefined index warning
+            $value = $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamTypeKey] ?? [];
+            return (array)$value;
         } else {
-            // ORDER BY is important
-            $arrProductSummaryColumns = getRowsColumns($this->_dbConn, $branchPickupstockProducts, "branch_id, json_id, summary_column_name", "dstatus = 0 ORDER BY json_id, sort_order");
+            if ($teamType !== null && $teamType !== "") {
+                $arrProductSummaryColumns = getRowsColumns(
+                    $this->_dbConn,
+                    $branchProductsTable,
+                    "branch_id, json_id, summary_column_name",
+                    "dstatus = 0 AND team_type = '$teamType' AND branch_id = '$branchId' ORDER BY json_id, sort_order",
+                    array(),
+                    true
+                );
 
-            foreach ($arrProductSummaryColumns as $arrProduct) {
-                $branchId = $arrProduct[0];
-                $jsonId = $arrProduct[1];
-                $summaryColumnName = $arrProduct[2];
+                foreach ($arrProductSummaryColumns as $arrBranchColumns) {
+                    $branchId = $arrBranchColumns[0];
+                    $jsonId = $arrBranchColumns[1];
+                    $summaryColumnName = $arrBranchColumns[2];
 
-                if (!isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId])) {
-                    $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId] = array();
+                    if (!isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType])) {
+                        $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType] = array();
+                    }
+                    $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType][] = $summaryColumnName;
                 }
-                $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][] = $summaryColumnName;
+            } else {
+                $sProductAction = null;
+                $iProductRows = 0;
+                $sProductQuery = "SELECT branch_id, json_id, summary_column_name, team_type FROM $branchProductsTable  WHERE dstatus = 0 ORDER BY json_id, sort_order";
+                $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
+
+                if ($iProductRows > 0) {
+                    while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
+                        $branchId = $rowProduct["branch_id"];
+                        $jsonId = $rowProduct["json_id"];
+                        $team_type = $rowProduct["team_type"];
+                        if (!isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$team_type])) {
+                            $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$team_type] = [];
+                        }
+                        $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$team_type][] = $rowProduct["summary_column_name"];
+                    }
+                }
             }
         }
     }

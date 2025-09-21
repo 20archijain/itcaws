@@ -80,6 +80,9 @@ $arrDBProjectDetails = array(
                 "smsSenderId" => "APILRY",
                 "smsProvider" => 6,
                 "smsTemplateId" => "1707172923172729093",
+                "otpValidateConfig" => array(
+                    "noMissCallFoundErrorMsgKey" => "OTP11",
+                ),
             ),
         ),
     ),

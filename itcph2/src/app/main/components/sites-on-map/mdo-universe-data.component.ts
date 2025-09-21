@@ -125,7 +125,7 @@ export class MdoUniverseDataComponent implements OnDestroy, OnInit {
     }
   }
 
-   getBranch() {
+  getBranch() {
     this.branchValue = null;
     this.circleValue = null;
     this.sectionValue = null;

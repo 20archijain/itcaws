@@ -383,7 +383,8 @@ class MdoTeamManagement
         if ($accessType == 1) {
             if ($wdCode) {
                 $wdCodes = "'" . implode("','", $wdCode) . "'";
-                $arrTeams = getRowsColumn($this->_dbConn, "tblproject_team", "team_id", "dstatus = 0 AND wd_code IN ($wdCodes)");
+                $arrTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type", "dstatus = 0 AND wd_code IN ($wdCodes) AND s_id = '99'");
+                $arrWdId = getRowsColumn($this->_dbConn, "tblmapping_wd", "rec_id", "dstatus = 0 AND wd_code IN ($wdCodes)");
             }
         } else {
             if ($team) {
@@ -464,10 +465,17 @@ class MdoTeamManagement
                         $token = $this->getToken($teamId);
 
                         foreach ($arrTeams as $accesteam) {
-                            $accessCol = "mdo_id, teams, rcd, rdt";
-                            $accessVal = "?, ?, ?, ?";
-                            $arraccessParams = array($teamId, $accesteam, $cD, $cDT);
+                            $accessCol = "mdo_id, teams, is_type, rcd, rdt";
+                            $accessVal = "?, ?, ?, ?, ?";
+                            $arraccessParams = array($teamId, $accesteam[0], $accesteam[1], $cD, $cDT);
                             addRecord($this->_dbConn, "tblmdo_access", $accessCol, $accessVal, $arraccessParams);
+                        }
+
+                        foreach ($arrWdId as $wdId) {
+                            $wdCol = "mdo_id, wd_id, rcd, rdt";
+                            $wdVal = "?, ?, ?, ?";
+                            $arrWdParams = array($teamId, $wdId, $cD, $cDT);
+                            addRecord($this->_dbConn, "tblmdo_wd_mapping", $wdCol, $wdVal, $arrWdParams);
                         }
 
                         // Add username in cloud table

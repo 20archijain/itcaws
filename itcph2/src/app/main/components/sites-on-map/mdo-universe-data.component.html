@@ -5,13 +5,15 @@
       <div class="w-2 m-1">
         <app-date [group]="searchbarForm" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
           [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
-          [maxDate]="group.get('searchbar').get('dateTo').value" label="placeholder.from" [errorMessages]="errorMessages.dateFrom" [isRequired]="true">
+          [maxDate]="group.get('searchbar').get('dateTo').value" label="placeholder.from"
+          [errorMessages]="errorMessages.dateFrom" [isRequired]="true">
         </app-date>
       </div>
       <div class="w-2 m-1">
         <app-date [group]="searchbarForm" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
           [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
-          [minDate]="group.get('searchbar').get('dateFrom').value" label="placeholder.to" [errorMessages]="errorMessages.dateTo" [isRequired]="true">
+          [minDate]="group.get('searchbar').get('dateFrom').value" label="placeholder.to"
+          [errorMessages]="errorMessages.dateTo" [isRequired]="true">
         </app-date>
       </div>
 

@@ -664,12 +664,11 @@ class MdoSitesOnMapManagement
     final public function getTeamsList($cond = "")
     {
         $arrData = array();
-        if($this->_teamAllCond == 2)
-        {
+        if ($this->_teamAllCond == 2) {
             $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
+                "label" => "All",
+                "value" => "all"
+            );
         }
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -683,7 +682,8 @@ class MdoSitesOnMapManagement
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -1137,8 +1137,8 @@ class MdoSitesOnMapManagement
         // Don't use b.dstatus = 0
         $sActionAtt = null;
         $iRowsAtt = 0;
-        $sQueryAtt = "SELECT a.other_details, a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id,e.circle,e.section,e.wd_code FROM $attendanceTable AS a, $projectTeamTable AS b, $branchTable AS c, tblmdo_wd_mapping as d, tblmapping_wd as e WHERE a.dstatus = 0" .
-            " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.team_id = d.mdo_id AND d.wd_id = e.rec_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
+        $sQueryAtt = "SELECT a.other_details, a.uni_id, a.mob_img_id, a.capture_datetime, a.lt, a.lg,a.call_type, b.team_id, b.team_name, b.is_type, b.branch_id,e.circle,e.section,e.wd_code FROM $attendanceTable AS a" .
+            ", $projectTeamTable AS b, $branchTable AS c, tblmdo_wd_mapping as d, tblmapping_wd as e WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.team_id = d.mdo_id AND d.wd_id = e.rec_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
@@ -1149,7 +1149,7 @@ class MdoSitesOnMapManagement
                 $attbranchId = $arDataAtt["branch_id"];
                 $callType = $arDataAtt["call_type"];
                 $other_details = json_decode($arDataAtt["other_details"], true);
-                $arrData['workingWith'] = "Route Follow - ". $other_details['workingWith'];
+                $arrData['workingWith'] = "Route Follow - " . $other_details['workingWith'];
                 if ($callType == 0) {
                     $flagColor = $greenFlag;
                     $attTime = "Attendance";
@@ -1177,7 +1177,7 @@ class MdoSitesOnMapManagement
                     <table border='1' cellspacing='0' cellpadding='2' style='border-collapse:collapse; font-size:8px;'>
                         <tr>
                             <th style='padding:2px 4px;'>Attendance Type</th>
-                            <td style='padding:2px 4px;'><b>". $attTime ."</b></td>
+                            <td style='padding:2px 4px;'><b>" . $attTime . "</b></td>
                         </tr>
                         <tr>
                             <th style='padding:2px 4px;'>Surveyor Name</th>
@@ -1421,13 +1421,12 @@ class MdoSitesOnMapManagement
         $sActionAtt2 = null;
         $iRowsAtt2 = 0;
 
-        $sQueryAtt = "SELECT mdo_id, teams, is_type FROM tblmdo_access where dstatus = 0 $where2";
+        $sQueryAtt = "SELECT teams, is_type FROM tblmdo_access where dstatus = 0 $where2";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
         // echo $sQueryAtt;die;
         if ($iRowsAtt > 0) {
             while ($arDataAtt = $this->_dbConn->GetData($sActionAtt)) {
-
-                $mdoId = $arDataAtt['mdo_id'];
+                // $mdoId = $arDataAtt['mdo_id'];
                 $teams = $arDataAtt['teams'];
                 $is_type = $arDataAtt['is_type'];
 
