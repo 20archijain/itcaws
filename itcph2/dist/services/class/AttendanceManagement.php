@@ -298,7 +298,7 @@ class AttendanceManagement
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id IN (99,10) $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -616,7 +616,7 @@ class AttendanceManagement
 
             $arrResult = array(
                 // Don't use dstatus = 0
-                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond"),
+                "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id IN ('99',10) $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond"),
             );
         } else {
             $arrResult = array(

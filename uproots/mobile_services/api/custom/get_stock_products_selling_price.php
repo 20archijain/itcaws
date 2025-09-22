@@ -274,7 +274,7 @@ class GetStockProductsSellingPrice extends Utilities
                     }
                 }
 
-                $sProductsQuery = "SELECT category_name, product_name, is_focusbrand, net_rate, sort_order FROM $dbName.tblbranch_pickupstock_products WHERE branch_id = ? AND team_type = ? AND dstatus = 0 ORDER BY sort_order";
+                $sProductsQuery = "SELECT category_name, product_name, is_focusbrand, net_rate, sort_order FROM $dbName.tblbranch_pickupstock_products WHERE branch_id = ? AND team_type = ? AND dstatus = 0 AND is_focusbrand != 2 ORDER BY sort_order";
                 $this->dbConn->ExecuteSelectQuery(
                     $sProductsQuery,
                     $rsProductsAction,

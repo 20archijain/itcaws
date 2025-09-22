@@ -21,6 +21,10 @@
         "editHeading": "Edit Client"
       }
     },
+    "systemOffline": {
+      "heading": "Offline",
+      "delete" : "Delete Team"
+    },
     "readystockPickup": {
       "heading": "Readystock Pickup",
       "productName": "Product Name",
@@ -375,6 +379,7 @@
     "downloadList": "Download List",
     "downloadSummary": "Download Summary",
     "downloadBinder": "Download Binder Report",
+    "downloadAttendance": "Download Attendance Report",
     "logout": "Logout",
     "login": "Login",
     "next": "Next",

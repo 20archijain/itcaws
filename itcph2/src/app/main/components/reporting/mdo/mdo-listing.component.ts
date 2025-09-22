@@ -198,13 +198,13 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     }
   }
 
-  downloadBinderReport() {
+  downloadAttendanceReport() {
     if (this.branchValue && this.branchValue.length) {
       this.isDownloading = true;
       this.loaderService.startLoader();
 
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadBinderReport,
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadAttendanceReport,
           this.group.getRawValue(), null, environment.getListingExcelUrl)
           .pipe(
             finalize(() => {

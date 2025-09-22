@@ -107,7 +107,38 @@ $PROJECT_SPECIFIC_SETTINGS = array(
             100 => array(
                 "NO_OF_QUESTIONS" => array(1),
                 "PROCESS_OTHER" => true,
-            )
+            ),
+            // MDO
+            10 => array(
+                "PROCESS_TABLE" => "tblsurvey_response_new",
+                "RESPONSE_TABLE" => "tblsurvey_response_details_mdo",
+                "IMG_TABLE" => "tblsurvey_response_file_new",
+                "NO_OF_QUESTIONS" => array(4, 1, 9, 9, 9, 9, 9, 9, 9, 2, 4),
+                "PROCESS_BASED_ON_SKIP_LOGIC" => array(
+                    1 => array(
+                        "QUES_ID" => 1,
+                        // needs to be in lowercase
+                        "attendance" => array(1, 0),
+                        "day end selfie" => array(1, 11)
+                    ),
+                ),
+                "PROCESS_ATTENDANCE" => true,
+                "ATTENDANCE_FORM" => array(1, 1),           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
+                "ATTENDANCE_DATA" => array(
+                    array("label" => "workingWith", "valueIndex" => array(1, 2)),
+                    array("label" => "selectRouteYouAreGoingOn", "valueIndex" => array(1, 3))
+                ),
+
+                "PROCESS_DAYEND" => true,
+                "DAYEND_FORM" => array(1, 1),               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
+                "DAYEND_DATA" => array(
+                    array("label" => "outlet", "valueIndex" => array(11, 1)),
+                    array("label" => "SalesVolume", "valueIndex" => array(11, 2)),
+                    array("label" => "SalesValue", "valueIndex" => array(11, 3)),
+                ),
+
+                "PROCESS_OTHER" => true,
+            ),
         ),
     ),
 );

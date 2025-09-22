@@ -943,6 +943,12 @@ class VanDsReporting
         return getBranchList($this->_dbConn, false, "", "", 0, true);
     }
 
+    private function safeValue($value)
+    {
+        // If value has characters that need encoding
+        return preg_match('/[<>&"\']/', $value) ? htmlentities($value) : $value;
+    }
+
     final public function getDownloadData()
     {
         $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
@@ -1081,9 +1087,10 @@ class VanDsReporting
                     $branchId = $row["branch_id"];
                     $captureDate = $row["capture_date"];
                     $week = $this->getWeekNumber($captureDate);
-                    $callTime = $row["call_time"];
-                    $time = $callTime / 1000;
-                    $timeSpent = gmdate("i:s", (int) round($time));
+                    $time = round($row["call_time"] / 1000);  // convert ms → seconds
+                    $minutes = floor($time / 60);
+                    $seconds = $time % 60;
+                    $timeSpent = sprintf("%d:%02d", $minutes, $seconds);
                     $meters = $row["distance_in_meter"] / 1000;
                     $roundedMeters = round($meters, 2);
 
@@ -1097,10 +1104,10 @@ class VanDsReporting
                         // Don't use dstatus = 0
                         $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
                     }
-                    $shopName = isset($shopDetails[0]) ? htmlentities($shopDetails[0]) : "";
-                    $shopUniqCode = isset($shopDetails[1]) ? htmlentities($shopDetails[1]) : "";
-                    $mobileNumber = isset($shopDetails[2]) ? htmlentities($shopDetails[2]) : "";
-                    $shopType = isset($shopDetails[3]) ? htmlentities($shopDetails[3]) : "";
+                    $shopName     = isset($shopDetails[0]) ? $this->safeValue($shopDetails[0]) : "";
+                    $shopUniqCode = isset($shopDetails[1]) ? $this->safeValue($shopDetails[1]) : "";
+                    $mobileNumber = isset($shopDetails[2]) ? $this->safeValue($shopDetails[2]) : "";
+                    $shopType     = isset($shopDetails[3]) ? $this->safeValue($shopDetails[3]) : "";
                     if ($branchId == 40) {
                         $allProductsSold = false;
 
@@ -1417,7 +1424,7 @@ class VanDsReporting
             $arrTeamWiseStock = array();
             $sStockAction = null;
             $iStockRows = 0;
-            $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0, 1) $stockWhere";
+            $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0) $stockWhere";
             $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
 
             if ($iStockRows > 0) {
@@ -1530,7 +1537,7 @@ class VanDsReporting
                     } else {
                         $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                         $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
-                        $sellInShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                        $sellInShop = $row['total_sellin_shops'];
                         if ($row["is_beat_adherence"] == "Yes") {
                             $isBeatAdher = "1";
                         } elseif ($row["is_beat_adherence"] == "No") {
@@ -1813,13 +1820,18 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
-        if (isNonEmptyArray($dsType)) {
-            $dsTypes = "'" . implode("','", $dsType) . "'";
-            $teamTypeCond .= " AND team_type IN ($dsTypes)";
-            $Cond .= " AND b.is_type IN ($dsTypes)";
-        } else {
-            $teamTypeCond .= " AND team_type = $dsType";
-            $Cond .= " AND b.is_type = $dsType";
+        if ($dsType) {
+            $matchAll = checkIfAllSelected($dsType);
+            if (!$matchAll) {
+                if (isNonEmptyArray($dsType)) {
+                    $dsTypes = "'" . implode("','", $dsType) . "'";
+                    $teamTypeCond .= " AND team_type IN ($dsTypes)";
+                    $Cond .= " AND b.is_type IN ($dsTypes)";
+                } else {
+                    $teamTypeCond .= " AND team_type = $dsType";
+                    $Cond .= " AND b.is_type = $dsType";
+                }
+            }
         }
 
         if ($branch) {

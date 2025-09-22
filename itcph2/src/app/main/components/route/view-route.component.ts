@@ -86,7 +86,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
     if (this.form) {
       this.form.reset();
     }
-  this.getInitialData();
+    this.getInitialData();
   }
- 
+
 }

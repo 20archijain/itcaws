@@ -156,7 +156,7 @@ class RouteManagement
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
         echo json_encode($arrMessage);
     }
-    
+
     final public function deleteData($data, $iUserId)
     {
         $requestData = $data;
@@ -170,10 +170,25 @@ class RouteManagement
         };
         $mobNo = getRowsColumn($this->_dbConn, "tblroute_details", "outlet_mobile", $where);
         if (isset($mobNo) && isNonEmptyArray($mobNo)) {
-            $mobImplode = implode(',', $mobNo);
-            $whereMob .= "rec_who IN ($mobImplode)";
-            $istatus[] = updateRecord($this->_dbConn, "tblcloudring_live", "dstatus =1 , modif_id = $assign_id", $whereMob);
-        };
+            // remove empty values
+            $mobNo = array_filter($mobNo, function ($v) {
+                return !empty($v);
+            });
+
+            if (!empty($mobNo)) {
+                // wrap values in quotes if rec_who is varchar
+                $mobImplode = implode(',', array_map('intval', $mobNo)); // for numeric
+                // $mobImplode = "'" . implode("','", $mobNo) . "'";    // for string
+
+                $whereMob = "rec_who IN ($mobImplode)";
+                $istatus[] = updateRecord(
+                    $this->_dbConn,
+                    "tblcloudring_live",
+                    "dstatus = 1, modif_id = $assign_id",
+                    $whereMob
+                );
+            }
+        }
         $istatus[] = updateRecord($this->_dbConn, "tblroute_details", "dstatus = 1 ,modif_id = $assign_id ", "$where");
         if (in_array(0, $istatus)) {
             $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']), 1);

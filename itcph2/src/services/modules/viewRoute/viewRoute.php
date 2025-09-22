@@ -16,7 +16,7 @@ if (!isEmptyString($requestAction)) {
             $route->getTeam();
             break;
         case $ACTION_LIST['DELETE_DATA']:
-            $route -> deleteData($requestData, $iUserId);
+            deleteListingRecord($dbConn, "tblroute_details", "rec_id", $iUserId, "", $requestData, "id", false);
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));

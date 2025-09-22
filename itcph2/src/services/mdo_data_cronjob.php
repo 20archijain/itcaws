@@ -28,10 +28,10 @@ class ProcessMdoData
         $currentMonth = date("Y-m");
         $branchPickupStockTable = $this->tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
 
-        $type = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD", 8 => "Stokiest DS", 9 => "Common FMCG Lite DS");
+        $type = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD", 8 => "SCP DS", 9 => "Common FMCG Lite DS");
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0";
+        $sQuery = "SELECT mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5)";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -42,169 +42,173 @@ class ProcessMdoData
                 $mdoName = getRowColumn($this->dbConn, "tblproject_team", "team_name", "dstatus = 0 AND team_id = $mdoId");
 
                 if ($teamType == 6 || $teamType == 8 || $teamType == 9) {
-                    $arrTeamDetails = getRowColumns($this->dbConn, "tblbreeze_team", "branch_id", "dstatus = 0 AND team_id = '$team'");
-                    $branchId = $arrTeamDetails[0];
+                    $branchId = getRowColumn($this->dbConn, "tblbreeze_team", "branch_id", "dstatus = 0 AND team_id = '$team'");
                     $dsName = getRowColumn($this->dbConn, "tblbreeze_team", "team_name", "dstatus = 0 AND team_id = '$team'");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details_breeze", "rec_id, route_name, outlet_name, outlet_mobile, outlet_address, wd_code, lt, lg", "dstatus = 0 AND team_id = '$team'");
+                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details_breeze", "rec_id, route_name, outlet_name, outlet_mobile, outlet_address, wd_code, lt, lg, sort_order", "dstatus = 0 AND team_id = '$team'");
                 } else {
-                    $arrTeamDetails = getRowColumns($this->dbConn, "tblproject_team", "branch_id", "dstatus = 0 AND team_id = $team");
-                    $branchId = $arrTeamDetails[0];
+                    $branchId = getRowColumn($this->dbConn, "tblproject_team", "branch_id", "dstatus = 0 AND team_id = $team");
                     $dsName = getRowColumn($this->dbConn, "tblproject_team", "team_name", "dstatus = 0 AND team_id = $team");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details", "rec_id, route_name, outlet_name, outlet_mobile, market_name, wd_code, lt, lg", "dstatus = 0 AND team_id = $team");
+                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details", "rec_id, route_name, outlet_name, outlet_mobile, market_name, wd_code, lt, lg, sort_order", "dstatus = 0 AND team_id = $team");
                 }
 
                 foreach ($getRouteDetails as $row) {
                     $shopId = $row[0];
-                    $route = $row[1];
+                    $route = $row[1] && !empty($row[1]) ? $row[1] : "NA";
                     $outletName = $row[2];
                     $outletMobile = $row[3];
                     $market = $row[4];
                     $wdCode = $row[5];
                     $lt = $row[6];
                     $lg = $row[7];
+                    $shortOrder = $row[8];
 
-                    $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
-                    $productCols = [];
-                    $productNames = [];
+                    if ($teamType != 6 && $teamType != 8 && $teamType != 9) {
+                        $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                        $productCols = [];
+                        $productNames = [];
 
-                    foreach ($allBrandCols as $colRow) {
-                        $productCols[] = $colRow[0];
-                        $productNames[] = $colRow[1];
-                    }
-
-                    $summaryColumns = implode(") + SUM(", $productCols);
-                    $sumColumns = "SUM($summaryColumns)";
-                    $sQuery2 = "SELECT $sumColumns AS totalSum, COUNT(*) AS entryCount, MAX(capture_date) AS last_visit FROM tblsurvey_response_details WHERE dstatus = 0 AND ques_3 = $shopId AND team_id = '$team' AND capture_date LIKE '$currentMonth'";
-
-                    $sAction2 = null;
-                    $iRows2 = 0;
-                    $totalSale = 0;
-                    $entryCount = 0;
-                    $lastVisit = null;
-
-                    $this->dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
-                    if ($iRows2 > 0) {
-                        while ($row2 = $this->dbConn->GetData($sAction2)) {
-                            $totalSale = $row2['totalSum'] ?? 0;
-                            $entryCount = $row2['entryCount'];
-                            $lastVisit = $row2['last_visit'];
+                        foreach ($allBrandCols as $colRow) {
+                            $productCols[] = $colRow[0];
+                            $productNames[] = $colRow[1];
                         }
-                    }
-                    $averageSale = $entryCount > 0 ? ($totalSale / $entryCount) : 0;
 
-                    $summaryColumnsUlc = implode(",", $productCols);
+                        $summaryColumns = implode(") + SUM(", $productCols);
+                        $sumColumns = "SUM($summaryColumns)";
+                        $sQuery2 = "SELECT $sumColumns AS totalSum, COUNT(*) AS entryCount, MAX(capture_date) AS last_visit FROM tblsurvey_response_details WHERE dstatus = 0 AND ques_3 = $shopId AND team_id = $team AND capture_date LIKE '%$currentMonth%'";
 
-                    $sAction3 = null;
-                    $iRows3 = 0;
-                    $sQuery3 = "SELECT $summaryColumnsUlc FROM tblsurvey_response_details WHERE dstatus = 0 AND ques_3 = $shopId AND team_id = '$team'
-                    AND capture_date LIKE '$currentMonth'";
+                        $sAction2 = null;
+                        $iRows2 = 0;
+                        $totalSale = 0;
+                        $entryCount = 0;
+                        $lastVisit = null;
 
-                    $totalUniqueProducts = []; // store unique products across ALL records
-                    $recordCount = 0;
-                    $perRecordUlc = []; // store ULC per record
+                        $this->dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
+                        if ($iRows2 > 0) {
+                            while ($row2 = $this->dbConn->GetData($sAction2)) {
+                                $totalSale = $row2['totalSum'] ?? 0;
+                                $entryCount = $row2['entryCount'];
+                                $lastVisit = $row2['last_visit'];
+                            }
+                        }
+                        $averageSale = $entryCount > 0 ? ($totalSale / $entryCount) : 0;
 
-                    $this->dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
+                        $summaryColumnsUlc = implode(",", $productCols);
 
-                    if ($iRows3 > 0) {
-                        while ($row3 = $this->dbConn->GetData($sAction3)) {
-                            $recordCount++;
-                            $seenProducts = []; // for this record only
-                            $ulc = 0;
+                        $sAction3 = null;
+                        $iRows3 = 0;
+                        $sQuery3 = "SELECT $summaryColumnsUlc FROM tblsurvey_response_details WHERE dstatus = 0 AND ques_3 = $shopId AND team_id = $team
+                        AND capture_date LIKE '%$currentMonth%'";
 
-                            foreach ($allBrandCols as $colRow) {
-                                $colName     = $colRow[0]; // summary_column_name
-                                $productName = $colRow[1]; // product name
-                                $value       = floatval($row3[$colName]);
+                        $totalUniqueProducts = []; // store unique products across ALL records
+                        $recordCount = 0;
+                        $perRecordUlc = []; // store ULC per record
 
-                                if ($value > 0) {
-                                    // Count for this record
-                                    if (!in_array($productName, $seenProducts)) {
-                                        $seenProducts[] = $productName;
-                                        $ulc++;
-                                    }
+                        $this->dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
-                                    // Count for total unique across all records
-                                    if (!in_array($productName, $totalUniqueProducts)) {
-                                        $totalUniqueProducts[] = $productName;
+                        if ($iRows3 > 0) {
+                            while ($row3 = $this->dbConn->GetData($sAction3)) {
+                                $recordCount++;
+                                $seenProducts = []; // for this record only
+                                $ulc = 0;
+
+                                foreach ($allBrandCols as $colRow) {
+                                    $colName     = $colRow[0]; // summary_column_name
+                                    $productName = $colRow[1]; // product name
+                                    $value       = floatval($row3[$colName]);
+
+                                    if ($value > 0) {
+                                        // Count for this record
+                                        if (!in_array($productName, $seenProducts)) {
+                                            $seenProducts[] = $productName;
+                                            $ulc++;
+                                        }
+
+                                        // Count for total unique across all records
+                                        if (!in_array($productName, $totalUniqueProducts)) {
+                                            $totalUniqueProducts[] = $productName;
+                                        }
                                     }
                                 }
-                            }
 
-                            $perRecordUlc[] = $ulc;
-                        }
-                    }
-
-                    // Final totals
-                    $totalUlc = count($totalUniqueProducts); // unique products across all records
-                    $ulcAvg   = $recordCount > 0 ? ($totalUlc / $recordCount) : 0;
-
-                    $arrcallTime = getRowColumn($this->dbConn, "tblsurvey_response_details", "SUM(call_time)", "dstatus = 0 AND ques_3 = $shopId AND team_id = '$team' AND capture_date LIKE '$currentMonth'");
-                    $avegCft = $entryCount > 0 ? ($arrcallTime / $entryCount) : 0;
-                    $lastOrder = getRowColumn($this->dbConn, "tblsurvey_response_details", "MAX(capture_date)", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = '$team' AND capture_date LIKE '$currentMonth' HAVING $sumColumns > 0");
-
-                    $maxQty = -1;
-                    $minQty = PHP_FLOAT_MAX;
-                    $maxProductName = '';
-                    $minProductName = '';
-                    $hasValidProductQty = false;
-
-                    foreach ($productCols as $index => $productCol) {
-                        $totalQty = getRowColumn(
-                            $this->dbConn,
-                            "tblsurvey_response_details",
-                            "SUM($productCol)",
-                            "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = '$team' AND capture_date LIKE '$currentMonth'"
-                        );
-                        $totalQty = floatval($totalQty);
-
-                        if ($totalQty > 0) {
-                            $hasValidProductQty = true;
-
-                            if ($totalQty > $maxQty) {
-                                $maxQty = $totalQty;
-                                $maxProductName = $productNames[$index];
-                            }
-
-                            if ($totalQty < $minQty) {
-                                $minQty = $totalQty;
-                                $minProductName = $productNames[$index];
+                                $perRecordUlc[] = $ulc;
                             }
                         }
-                    }
 
-                    if (!$hasValidProductQty) {
+                        // Final totals
+                        $totalUlc = count($totalUniqueProducts); // unique products across all records
+                        $ulcAvg   = $recordCount > 0 ? ($totalUlc / $recordCount) : 0;
+
+                        $callTime = getRowColumn($this->dbConn, "tblsurvey_response_details", "SUM(call_time)", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = 0 AND ques_3 = $shopId AND team_id = $team AND capture_date LIKE '%$currentMonth%'");
+                        $time = $callTime / 1000;
+                        $cft = $entryCount > 0 ? ($time / $entryCount) : 0;
+                        list($min, $sec) = explode(':', gmdate("i:s", (int) round($cft)));
+                        $avegCft = $min . '.' . $sec;
+                        $lastOrder = getRowColumn($this->dbConn, "tblsurvey_response_details", "MAX(capture_date)", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' HAVING $sumColumns > 0");
+
+                        $maxQty = -1;
+                        $minQty = PHP_FLOAT_MAX;
                         $maxProductName = '';
                         $minProductName = '';
-                    }
+                        $hasValidProductQty = false;
 
-                    $arrFocusProduct = getRowsColumn($this->dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = '1' AND branch_id = $branchId");
-                    $focusProd1 = $arrFocusProduct[0] ?? null;
-                    $focusProd2 = $arrFocusProduct[1] ?? null;
+                        foreach ($productCols as $index => $productCol) {
+                            $totalQty = getRowColumn(
+                                $this->dbConn,
+                                "tblsurvey_response_details",
+                                "SUM($productCol)",
+                                "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%'"
+                            );
+                            $totalQty = floatval($totalQty);
 
-                    $lastFocus1DateUnits = '';
-                    $lastFocus2DateUnits = '';
+                            if ($totalQty > 0) {
+                                $hasValidProductQty = true;
 
-                    if ($focusProd1) {
-                        $lastPurchaseFocus1 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd1", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = '$team' AND capture_date LIKE '$currentMonth' AND $focusProd1 > 0");
-                        $lastFocus1DateUnits = $lastPurchaseFocus1[0] && $lastPurchaseFocus1[1] ? $lastPurchaseFocus1[0] . ", " . $lastPurchaseFocus1[1] . "Units" : 0;
-                    }
+                                if ($totalQty > $maxQty) {
+                                    $maxQty = $totalQty;
+                                    $maxProductName = $productNames[$index];
+                                }
 
-                    if ($focusProd2) {
-                        $lastPurchaseFocus2 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd2", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = '$team' AND capture_date LIKE '$currentMonth' AND $focusProd2 > 0");
-                        $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] . "Units" : 0;
+                                if ($totalQty < $minQty) {
+                                    $minQty = $totalQty;
+                                    $minProductName = $productNames[$index];
+                                }
+                            }
+                        }
+
+                        if (!$hasValidProductQty) {
+                            $maxProductName = '';
+                            $minProductName = '';
+                        }
+
+                        $arrFocusProduct = getRowsColumn($this->dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = '1' AND branch_id = $branchId");
+                        $focusProd1 = $arrFocusProduct[0] ?? null;
+                        $focusProd2 = $arrFocusProduct[1] ?? null;
+
+                        $lastFocus1DateUnits = '';
+                        $lastFocus2DateUnits = '';
+
+                        if ($focusProd1) {
+                            $lastPurchaseFocus1 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd1", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' AND $focusProd1 > 0");
+                            $lastFocus1DateUnits = $lastPurchaseFocus1[0] && $lastPurchaseFocus1[1] ? $lastPurchaseFocus1[0] . ", " . $lastPurchaseFocus1[1] . "Units" : 0;
+                        }
+
+                        if ($focusProd2) {
+                            $lastPurchaseFocus2 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd2", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' AND $focusProd2 > 0");
+                            $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] . "Units" : 0;
+                        }
                     }
 
                     $iStatus = isRecordExist($this->dbConn, "tblmdo_offline_data", "id", "team_id = ? AND ds_id = ? AND outlet_id = ?", array($mdoId, $team, $shopId));
 
                     if ($iStatus === 1) {
-                        $cols = "total_survey_qty = ?, avg_survey_qty = ?, avg_cft = ?, ulc = ?, avg_ulc = ?, total_visits = ?, last_ds_visit = ?, last_order = ?, highest_survey_product = ?, lowest_survey_product = ?, focus1_last_purchase = ?, focus2_last_purchase = ?";
-                        $arrParams = array($totalSale, $averageSale, $avegCft, $totalUlc, $ulcAvg, $entryCount, $lastVisit, $lastOrder, $maxProductName, $minProductName, $lastFocus1DateUnits, $lastFocus2DateUnits, $mdoId, $team, $shopId);
+                        $cols = "total_survey_qty = ?, avg_survey_qty = ?, avg_cft = ?, ulc = ?, avg_ulc = ?, total_visits = ?, last_ds_visit = ?, last_order = ?, highest_survey_product = ?, lowest_survey_product = ?, focus1_last_purchase = ?, focus2_last_purchase = ?, sort_order =?";
+                        $arrParams = array($totalSale, $averageSale, $avegCft, $totalUlc, $ulcAvg, $entryCount, $lastVisit, $lastOrder, $maxProductName, $minProductName, $lastFocus1DateUnits, $lastFocus2DateUnits, $mdoId, $team, $shopId, $shortOrder);
 
                         updateRecord($this->dbConn, "tblmdo_offline_data", $cols, "team_id = ? AND ds_id = ? AND outlet_id = ?", $arrParams);
                     } else {
                         $addCols = "team_id, team_name, wd_code, ds_id, ds_name, type, type_name, route_name, outlet_name, outlet_id, address, outlet_number, total_survey_qty, avg_survey_qty, avg_cft, ulc, avg_ulc" .
-                            ", total_visits, last_ds_visit, last_order, highest_survey_product, lowest_survey_product, focus1_last_purchase, focus2_last_purchase, lt, lg";
-                        $addVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+                            ", total_visits, last_ds_visit, last_order, highest_survey_product, lowest_survey_product, focus1_last_purchase, focus2_last_purchase, lt, lg, sort_order";
+                        $addVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrAddParams = array(
                             $mdoId,
                             $mdoName,
@@ -231,7 +235,8 @@ class ProcessMdoData
                             $lastFocus1DateUnits,
                             $lastFocus2DateUnits,
                             $lt,
-                            $lg
+                            $lg,
+                            $shortOrder
                         );
                         addRecord($this->dbConn, "tblmdo_offline_data", $addCols, $addVals, $arrAddParams);
                     }

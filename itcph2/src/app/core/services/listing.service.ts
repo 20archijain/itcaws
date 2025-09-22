@@ -63,7 +63,7 @@ export class ListingService {
               allowMulti: false, allowSingle: false, icon: 'trash', id: USER_ACTION.DEL_IMG,
               name: 'Delete Image', title: 'icon.deleteImage'
             } as ListingActions;
-            case USER_ACTION[USER_ACTION.RESTORE]:
+          case USER_ACTION[USER_ACTION.RESTORE]:
             return {
               allowMulti: true, allowSingle: true, icon: 'icon-repeat link', id: USER_ACTION.RESTORE,
               name: 'Restore', title: 'icon.restore', multiActionBtnColorClass: 'btn-success',
