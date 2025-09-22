@@ -104,6 +104,7 @@ $DATA_NOT_UPLOADED = "Data not uploaded";
 $DATA_TYPE_NOT_MATCH = "Data types do not match for excel column ";
 $SPECIAL_CHAR_PRESENT = "Speacial charater is present in excel column ";
 $INCORRECT_OUTLET_TYPES = "Incorrect outlet type ";
+$INCORRECT_BEAT_DAY = "Incorrect beat type ";
 
 
 $UPDATE_SUCCESS = "Updated Successfully";
