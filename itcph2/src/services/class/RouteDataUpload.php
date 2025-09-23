@@ -250,10 +250,14 @@ class RouteDataUpload
         }
 
         $exHead = "";
-
+        $exHeadBeat = "";
         foreach ($columns as $key => $colVal) {
             if ($colVal == 'outlet_type') {
                 $exHead = $key;
+                break;
+            }
+            if ($colVal == 'beat_day') {
+                $exHeadBeat = $key;
                 break;
             }
         }
@@ -286,6 +290,54 @@ class RouteDataUpload
                 }
             }
         }
+
+        if ($exHeadBeat) {
+            $exheader = explode('-', $exHeadBeat);
+            $exhead = implode("-", array_splice($exheader, 2));
+
+            // Allowed prefixes for beat_day (case-sensitive as in your code)
+            $allowedPrefixes = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+            foreach ($arrExcelData[$exhead] as $key => $exData) {
+                if ($key > 0 && $key < count($arrExcelData[$exhead]) - 1) {
+                    $errorColumns = $arrExcelData[$exhead][$key + 1];
+                    $errorRow = $key + 1;
+
+                    foreach ($arrExcelDataColumnHeader as $excelColumnHeader) {
+
+                        // ADDED: reject empty cells
+                        if ($exData === null || trim($exData) === '') {
+                            $errorMessage = $GLOBALS["INCORRECT_BEAT_DAY"] . " → Empty " . strtolower(" at row " . $errorRow . " so data can not be inserted.");
+                            $arrMessage = responseMessage([$errorMessage]);
+                            echo json_encode($arrMessage);
+                            exit();
+                        }
+
+                        if (!empty($arrExcelData[$excelColumnHeader][$key])) {
+                            if ($exData) {
+                                // Take first 3 letters of value
+                                // $prefix = substr(trim($exData), 0, 3);
+
+                                if (!in_array($exData, $allowedPrefixes)) {
+                                    $errorMessage = $GLOBALS["INCORRECT_BEAT_DAY"]. " → invalid value '" . $exData . "' in ". strtolower(" at row " . $errorRow . " so data can not be inserted.");
+                                    $arrMessage = responseMessage([$errorMessage]);
+                                    echo json_encode($arrMessage);
+                                    exit();
+                                }
+                            } else {
+                                $errorMessage = $GLOBALS["INCORRECT_BEAT_DAY"]
+                                    . " → Empty " . strtolower(" at row " . $errorRow . " so data can not be inserted.");
+                                $arrMessage = responseMessage([$errorMessage]);
+                                echo json_encode($arrMessage);
+                                exit();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
 
         $mismatchedColumns = array_diff_assoc($arrDataType, $columnDataTypes);
 
