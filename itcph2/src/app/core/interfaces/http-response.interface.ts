@@ -301,6 +301,7 @@ export interface VanDsListingData<T = any> extends ListingDataResponse<T> {
   showSummaryDownloadBtn?: boolean;
   branchFilter?: boolean;
   userBranch?: string;
+  binderReportDownloadDays?: number;
 }
 
 export interface MdoListingData<T = any> extends ListingDataResponse<T> {

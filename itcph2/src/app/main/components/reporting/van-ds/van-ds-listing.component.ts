@@ -41,6 +41,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   totalRecords = 0;
   isMapAllowed = false;
   branchFilter = false;
+  binderReportDownloadDays: number = null;
   skeletonArray = Array(5);
   cgConfig: CustomGalleryConfig = {
     showThumbnailText: false,
@@ -110,6 +111,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
             this.showTransactionDownloadBtn = resp.data.showTransactionDownloadBtn;
             this.showSummaryDownloadBtn = resp.data.showSummaryDownloadBtn;
             this.branchFilter = resp.data.branchFilter;
+            this.binderReportDownloadDays = resp.data.binderReportDownloadDays;
             if (resp.data.userBranch) {
               this.group.get('searchbar').get('branch').setValue(resp.data.userBranch);
             }
@@ -199,13 +201,36 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   }
 
   downloadBinderReport() {
+    const { dateFrom, dateTo } = this.group.getRawValue().searchbar || {};
+
+    if (dateFrom && dateTo) {
+      const fromDate = new Date(dateFrom.year, dateFrom.month - 1, dateFrom.day);
+      const toDate = new Date(dateTo.year, dateTo.month - 1, dateTo.day);
+      // Calculate difference in days
+      const diffTime = toDate.getTime() - fromDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays + 1 > this.binderReportDownloadDays) {
+        this.toastr.toastr({
+          type: 'error',
+          msg: `You can only download this report for maximum ${this.binderReportDownloadDays} days range`
+        });
+        return; //  stop execution
+      }
+    }
+
+    //  if date validation passes
     if (this.branchValue && this.branchValue.length) {
       this.isDownloading = true;
       this.loaderService.startLoader();
 
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadBinderReport,
-          this.group.getRawValue(), null, environment.getListingExcelUrl)
+        this.formService.customActionCall<GetDownloadFileDetails>(
+          STATIC_MODULES.custom.getDownloadBinderReport,
+          this.group.getRawValue(),
+          null,
+          environment.getListingExcelUrl
+        )
           .pipe(
             finalize(() => {
               this.isDownloading = false;
@@ -222,6 +247,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
       this.displayBranchError();
     }
   }
+
 
   showLocationOnMap(lt: number, lg: number) {
     this.locationOnMapModalService.show({

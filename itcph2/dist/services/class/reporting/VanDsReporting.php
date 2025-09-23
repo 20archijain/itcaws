@@ -526,6 +526,7 @@ class VanDsReporting
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
+            "binderReportDownloadDays" => 5
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -1806,6 +1807,7 @@ class VanDsReporting
             $this->_dbConn
         );
 
+        $district = getFormData($this->_data['searchbar'], "district");
         $branch = getFormData($this->_data['searchbar'], "branch");
         $circle = getFormData($this->_data['searchbar'], "circle");
         $section = getFormData($this->_data['searchbar'], "section");
@@ -1833,78 +1835,67 @@ class VanDsReporting
                 }
             }
         }
-
+        // print_r($district);
+        // die;
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
                 if (isNonEmptyArray($branch)) {
                     $branchs = "'" . implode("','", $branch) . "'";
-                    $branchCond = " AND branch_id IN ($branchs)";
                     $Cond .= " AND b.branch_id IN ($branchs)";
                 } else {
-                    $branchCond = " AND branch_id = $branch";
                     $Cond .= " AND b.branch_id = $branch";
                 }
-            } else {
-                $branch = $this->getBranches();
+            } elseif ($district) {
+                $districts = "'" . implode("','", $district) . "'";
+                $distCond = " AND district IN ($districts)";
+                $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 $distCond");
             }
         }
 
-        $circleCond = "";
         if ($circle) {
             $matchAll = checkIfAllSelected($circle);
             if (!$matchAll) {
                 if (isNonEmptyArray($circle)) {
                     $circles = "'" . implode("','", $circle) . "'";
-                    $circleCond = " AND circle IN ($circles)";
                     $Cond .= " AND b.circle IN ($circles)";
                 } else {
-                    $circleCond = " AND circle = $circle";
                     $Cond .= " AND b.circle = $circle";
                 }
             }
         }
 
-        $sectionCond = "";
         if ($section) {
             $matchAll = checkIfAllSelected($section);
             if (!$matchAll) {
                 if (isNonEmptyArray($section)) {
                     $sections = "'" . implode("','", $section) . "'";
-                    $sectionCond = " AND section IN ($sections)";
                     $Cond .= " AND b.section IN ($sections)";
                 } else {
-                    $sectionCond = " AND section = $section";
                     $Cond .= " AND b.section = $section";
                 }
             }
         }
 
-        $wdCodeCond = "";
         if ($wdCode) {
             $matchAll = checkIfAllSelected($wdCode);
             if (!$matchAll) {
                 if (isNonEmptyArray($wdCode)) {
                     $wdCodes = "'" . implode("','", $wdCode) . "'";
-                    $wdCodeCond = " AND wd_code IN ($wdCodes)";
                     $Cond .= " AND b.wd_code IN ($wdCodes)";
                 } else {
-                    $wdCodeCond = " AND wd_code = $wdCode";
                     $Cond .= " AND b.wd_code = $wdCode";
                 }
             }
         }
 
-        $dsNameCond = "";
         if ($dsName) {
             $matchAll = checkIfAllSelected($dsName);
             if (!$matchAll) {
                 if (isNonEmptyArray($dsName)) {
                     $dsNames = "'" . implode("','", $dsName) . "'";
-                    $dsNameCond = " AND team_id IN ($dsNames)";
                     $Cond .= " AND b.team_id IN ($dsNames)";
                 } else {
-                    $dsNameCond = " AND team_id = $dsName";
                     $Cond .= " AND b.team_id = $dsName";
                 }
             }
@@ -1963,10 +1954,9 @@ class VanDsReporting
                         $route = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
                         $outletData = getRowColumns(
                             $this->_dbConn,
-                            "$routeTable",
+                            $routeTable,
                             "outlet_name, shop_uniq_code, outlet_type, outlet_mobile",
-                            "dstatus = 0 AND rec_id = '$outletId'
-                         AND team_id = $teamId "
+                            "rec_id = '$outletId' AND team_id = $teamId "
                         );
 
                         $outletName  = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
