@@ -23,7 +23,7 @@
     },
     "systemOffline": {
       "heading": "Offline",
-      "delete" : "Delete Team"
+      "delete": "Delete Team"
     },
     "readystockPickup": {
       "heading": "Readystock Pickup",
