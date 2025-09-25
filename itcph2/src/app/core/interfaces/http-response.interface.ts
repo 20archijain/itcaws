@@ -65,6 +65,7 @@ export interface GroupDataResponse {
 }
 
 export interface GetUserDataResponse extends GetViewHeaderBody {
+  teamList: DropdownList[];
   sectionList: DropdownList[];
   circleList: DropdownList[];
   loginTypeList: DropdownList[];

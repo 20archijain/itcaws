@@ -29,6 +29,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
   wdCodeOptions: DropdownList[] = [];
   circleOptions: DropdownList[] = [];
   sectionOptions: DropdownList[] = [];
+  teamOptions: DropdownList[] = [];
   landingPageOptions: DropdownList[] = [];
   groupOptions: DropdownList[] = [];
   loginOptions: DropdownList[] = [];
@@ -48,6 +49,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     wdCode: COMMON_VALIDATORS.messages.requiredOnly('WD Code'),
     circle: COMMON_VALIDATORS.messages.requiredOnly('Circle'),
     section: COMMON_VALIDATORS.messages.requiredOnly('Section'),
+    team: COMMON_VALIDATORS.messages.requiredOnly('Team'),
   };
   controlVisibility = {
     hideBranch: true,
@@ -56,6 +58,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     hideWdCode: true,
     hideCircle: true,
     hideSection: true,
+    hideTeam: true,
   };
   validators = {
     branch: COMMON_VALIDATORS.validators.dropdown,
@@ -64,6 +67,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     wdCode: COMMON_VALIDATORS.validators.requiredOnly,
     circle: COMMON_VALIDATORS.validators.requiredOnly,
     section: COMMON_VALIDATORS.validators.requiredOnly,
+    team: COMMON_VALIDATORS.validators.requiredOnly,
   };
   showSpinner = false;
 
@@ -95,6 +99,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
       wdCode: ['', COMMON_VALIDATORS.validators.requiredOnly],
       circle: ['', COMMON_VALIDATORS.validators.requiredOnly],
       section: ['', COMMON_VALIDATORS.validators.requiredOnly],
+      team: ['', COMMON_VALIDATORS.validators.requiredOnly],
     }, {
       validator: [CONFIRM_PASSWORD_VALIDATOR({ newPass: 'password', confPass: 'confirmPassword' })]
     });
@@ -112,6 +117,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
+            this.teamOptions = resp.data.teamList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.landingPageOptions = resp.data.landingPageList;
             this.groupOptions = resp.data.groupList;
@@ -145,6 +151,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: true,
           hideSection: true,
+          hideTeam: true,
         };
         break;
       // Client
@@ -156,6 +163,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: true,
           hideSection: true,
+          hideTeam: true,
         };
         break;
       // Project
@@ -167,6 +175,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: true,
           hideSection: true,
+          hideTeam: true,
         };
         break;
       // Branch
@@ -178,6 +187,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: true,
           hideSection: true,
+          hideTeam: true,
         };
         break;
       // WD Code
@@ -189,6 +199,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: false,
           hideCircle: true,
           hideSection: true,
+          hideTeam: true,
         };
         break;
       // Circle
@@ -200,9 +211,10 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: false,
           hideSection: true,
+          hideTeam: true,
         };
         break;
-      // Circle
+      // Section
       case '7':
         this.controlVisibility = {
           hideBranch: true,
@@ -211,6 +223,19 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideWdCode: true,
           hideCircle: true,
           hideSection: false,
+          hideTeam: true,
+        };
+        break;
+      // Section
+      case '8':
+        this.controlVisibility = {
+          hideBranch: true,
+          hideClient: true,
+          hideProject: true,
+          hideWdCode: true,
+          hideCircle: true,
+          hideSection: true,
+          hideTeam: false,
         };
         break;
     }

@@ -20,6 +20,7 @@ class SuperUserManagement
         array("label" => "WD Code Level", "value" => "5"),
         array("label" => "Circle Level", "value" => "6"),
         array("label" => "Section Level", "value" => "7"),
+        array("label" => "Team Level", "value" => "8"),
     );
 
 
@@ -99,6 +100,7 @@ class SuperUserManagement
         $wdCode = getFormData($this->_data, 'wdCode');
         $circle = getFormData($this->_data, 'circle');
         $section = getFormData($this->_data, 'section');
+        $team = getFormData($this->_data, 'team');
 
         $isValidated = $this->checkUserValidation(false, $fullName, $email, $userName, $password, $confirmPassword, $group, $landing, $accessType, $client, $project, $branch);
 
@@ -138,7 +140,7 @@ class SuperUserManagement
                         $user_id = null;
                         $this->_dbConn->GetLastInsertId($user_id);
 
-                        $this->createAccess($user_id, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section);
+                        $this->createAccess($user_id, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section, $team);
 
                         $arrMessage = responseMessage(array($GLOBALS['USER_ADDED']), 1);
                     } else {
@@ -155,54 +157,59 @@ class SuperUserManagement
         echo json_encode($arrMessage);
     }
 
-    private function createAccess($user_id, $cD, $cDT, $accessType, $arrClient, $arrProject, $arrBranch, $arrWdCode, $arrCircle, $arrSection)
+    private function createAccess($user_id, $cD, $cDT, $accessType, $arrClient, $arrProject, $arrBranch, $arrWdCode, $arrCircle, $arrSection, $arrTeam)
     {
         $accessType = (int) $accessType;
         $arrStatus = array();
 
         // Admin Login
         if ($accessType === 1) {
-            $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, null, null);
+            $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, null, null, 0);
         } elseif ($accessType === 2) {
             // Client Login
             foreach ($arrClient as $iClient) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, $iClient, 0, 0, null, null, null);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, $iClient, 0, 0, null, null, null, 0);
             }
         } elseif ($accessType === 3) {
             // Project Login
             foreach ($arrProject as $iProject) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, $iProject, 0, null, null, null);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, $iProject, 0, null, null, null, 0);
             }
         } elseif ($accessType === 4) {
             // Branch Login
             foreach ($arrBranch as $iBranch) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, $iBranch, null, null, null);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, $iBranch, null, null, null, 0);
             }
         } elseif ($accessType === 5) {
             // WD Code Login
             foreach ($arrWdCode as $sWdCode) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, $sWdCode, null, null);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, $sWdCode, null, null, 0);
             }
         } elseif ($accessType === 6) {
             // Circle Login
             foreach ($arrCircle as $sCircle) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, $sCircle, null);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, $sCircle, null, 0);
             }
         } elseif ($accessType === 7) {
             // Section Login
             foreach ($arrSection as $sSection) {
-                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, null, $sSection);
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, null, $sSection, 0);
+            }
+        } elseif ($accessType === 8) {
+            // Section Login
+            foreach ($arrTeam as $sTeam) {
+                $arrStatus[] = $this->modifyAccess($user_id, $cD, $cDT, 0, 0, 0, null, null, null, $sTeam);
             }
         }
 
         return $arrStatus;
     }
 
-    private function modifyAccess($user_id, $cD, $cDT, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection)
+    private function modifyAccess($user_id, $cD, $cDT, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection, $sTeam)
     {
-        $cols = "user_id, client_id, project_id, branch_id, wd_code, circle, section, creator_id, rcd, rdt";
-        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-        $arrParams = array($user_id, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection, $this->_iUserId, $cD, $cDT);
+        $cols = "user_id, client_id, project_id, branch_id, wd_code, circle, section, team_id, creator_id, rcd, rdt";
+        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+        $arrParams = array($user_id, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection, $sTeam, $this->_iUserId, $cD, $cDT);
 
         $iStatus = addRecord($this->_dbConn, $this->_tables["USER_ACCESS_TABLE"], $cols, $vals, $arrParams, false);
 
@@ -219,6 +226,7 @@ class SuperUserManagement
             "wdCodeList" => getOptions($this->_dbConn, $this->_tables["PROJECT_TEAM_TABLE"], "wd_code", "", "dstatus = 0"),
             "circleList" => getOptions($this->_dbConn, $this->_tables["PROJECT_TEAM_TABLE"], "circle", "", "dstatus = 0 AND circle is not null AND circle != ''"),
             "sectionList" => getOptions($this->_dbConn, $this->_tables["PROJECT_TEAM_TABLE"], "section", "", "dstatus = 0 AND section is not null AND section != ''"),
+            "teamList" => getOptions($this->_dbConn, $this->_tables["PROJECT_TEAM_TABLE"], "team_name", "team_id", "dstatus = 0 AND team_name is not null AND team_name != ''"),
             "groupList" => getOptions($this->_dbConn, $this->_tables["GROUPS_TABLE"], "group_name", "group_id", $fromListing ? "" : "dstatus = 0"),
             "landingPageList" => getLandingPageList($this->_dbConn, $fromListing),
             "sortOptions" => array(
@@ -281,6 +289,7 @@ class SuperUserManagement
                         "wdCode" => array(),
                         "circle" => array(),
                         "section" => array(),
+                        "team" => array(),
                     );
                 } else {
                     // specific clients
@@ -292,6 +301,7 @@ class SuperUserManagement
                             "wdCode" => array(),
                             "circle" => array(),
                             "section" => array(),
+                            "team" => array(),
                         );
                     } elseif (matchValue($arrData['access_type'], 2)) {
                         // specific projects
@@ -302,6 +312,7 @@ class SuperUserManagement
                             "wdCode" => array(),
                             "circle" => array(),
                             "section" => array(),
+                            "team" => array(),
                         );
                     } elseif (matchValue($arrData['access_type'], 3)) {
                         // specific branches
@@ -312,6 +323,7 @@ class SuperUserManagement
                             "wdCode" => array(),
                             "circle" => array(),
                             "section" => array(),
+                            "team" => array(),
                         );
                     } elseif (matchValue($arrData['access_type'], 4)) {
                         // specific wd codes
@@ -322,6 +334,7 @@ class SuperUserManagement
                             "wdCode" => getRowsColumn($this->_dbConn, $userAccessTable, "wd_code", "dstatus = 0 AND user_id = $userId AND wd_code IS NOT NULL"),
                             "circle" => array(),
                             "section" => array(),
+                            "team" => array(),
                         );
                     } elseif (matchValue($arrData['access_type'], 5)) {
                         // specific circles
@@ -332,6 +345,18 @@ class SuperUserManagement
                             "wdCode" => array(),
                             "circle" => getRowsColumn($this->_dbConn, $userAccessTable, "circle", "dstatus = 0 AND user_id = $userId AND circle IS NOT NULL"),
                             "section" => array(),
+                            "team" => array(),
+                        );
+                    } elseif (matchValue($arrData['access_type'], 6)) {
+                        // specific circles
+                        $arrAccess = array(
+                            "client" => array(),
+                            "project" => array(),
+                            "branch" => array(),
+                            "wdCode" => array(),
+                            "circle" => array(),
+                            "section" => getRowsColumn($this->_dbConn, $userAccessTable, "section", "dstatus = 0 AND user_id = $userId AND section IS NOT NULL"),
+                            "team" => array(),
                         );
                     } else {
                         // specific section
@@ -341,7 +366,8 @@ class SuperUserManagement
                             "branch" => array(),
                             "wdCode" => array(),
                             "circle" => array(),
-                            "section" => getRowsColumn($this->_dbConn, $userAccessTable, "section", "dstatus = 0 AND user_id = $userId AND section IS NOT NULL"),
+                            "section" => array(),
+                            "team" => getRowsColumn($this->_dbConn, $userAccessTable, "team_id", "dstatus = 0 AND user_id = $userId AND team_id > 0"),
                         );
                     }
                 }
@@ -365,6 +391,7 @@ class SuperUserManagement
                     "wdCode" => isset($arrAccess['wdCode']) ? $arrAccess['wdCode'] : "",
                     "circle" => isset($arrAccess['circle']) ? $arrAccess['circle'] : "",
                     "section" => isset($arrAccess['section']) ? $arrAccess['section'] : "",
+                    "team" => isset($arrAccess['team']) ? $arrAccess['team'] : "",
                     "isAccountLocked" => $arrData['login_attempts'] >= constant('MAX_LOGIN_ATTEMPTS') ? true : false,
                 );
             }
@@ -391,6 +418,7 @@ class SuperUserManagement
         $wdCode = getFormData($this->_data, "wdCode");
         $circle = getFormData($this->_data, "circle");
         $section = getFormData($this->_data, "section");
+        $team = getFormData($this->_data, "team");
 
         $isValidated = $this->checkUserValidation(true, $fullname, "", $username, $password, $confirmPassword, $groupId, $landingPageId, $accessType, $client, $project, $branch);
 
@@ -451,7 +479,7 @@ class SuperUserManagement
                             // Delete old records
                             deleteRecord($this->_dbConn, $userAccessTable, "user_id", $this->_iUserId, "", array($userId));
                             // create new access
-                            $arrStatus = $this->createAccess($userId, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section);
+                            $arrStatus = $this->createAccess($userId, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section, $team);
 
                             $iStatus = updateRecord($this->_dbConn, $userAuthdetailsTable, $cols, "dstatus = 0 AND user_id = ?", $arrParams);
 
