@@ -105,6 +105,14 @@
           [validators]="validators.section" [multiple]="true">
         </app-select>
 
+        <!-- Team -->
+        <app-select label="app.team.view.team" placeholder="{{ 'app.team.view.team' | translate }}" [group]="form"
+          controlName="team" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="teamOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.team" [hide]="controlVisibility.hideTeam"
+          [validators]="validators.team" [multiple]="true">
+        </app-select>
+
         <!-- WD Code -->
         <app-select label="app.team.view.wdCode" placeholder="{{ 'app.team.view.wdCode' | translate }}" [group]="form"
           controlName="wdCode" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
