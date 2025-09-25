@@ -635,6 +635,9 @@ function getUserAccessList($dbConn, $iUserId, $access_type)
     } elseif ($access_type == 6) {
         //WD Code Level
         $cond = "AND b.section = c.section";
+    } elseif ($access_type == 7) {
+        //Team Level
+        $cond = "AND b.team_id = c.team_id";
     }
 
     // Don't use a.dstatus = 0 AND b.dstatus = 0
