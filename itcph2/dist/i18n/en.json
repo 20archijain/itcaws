@@ -196,7 +196,8 @@
         "teamId": "Team ID",
         "wdCode": "WD Code",
         "circle": "Circle",
-        "section": "Section"
+        "section": "Section",
+        "team": "Team Name"
       }
     },
     "user": {
