@@ -160,6 +160,7 @@
         "billed": "Billed (M)",
         "dsName": "Surveyor Name",
         "mdoName": "MDO Name",
+        "mdoType": "MDO Type",
         "type": "Surveyor Type",
         "branch": "Branch",
         "district": "District",
