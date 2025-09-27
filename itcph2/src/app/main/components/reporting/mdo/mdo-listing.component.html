@@ -135,14 +135,14 @@
         </div>
         <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
-            placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}" (onChange)="getTeamsName()">
+            placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
           </app-select>
         </div>
-        <!-- <div class="col-sm-4 col-lg-2">
+        <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
-            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
+            placeholder="{{ 'app.team.add.mdoType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
           </app-select>
-        </div> -->
+        </div>
         <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
             placeholder="{{ 'app.team.add.mdoName' | translate }}">

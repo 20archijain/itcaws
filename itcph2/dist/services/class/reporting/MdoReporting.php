@@ -123,6 +123,19 @@ class MdoReporting
             }
         }
 
+        $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
+        if (isset($teamType) && $teamType != "" && $teamType >= 0) {
+            $matchAll = checkIfAllSelected($teamType);
+            if (!$matchAll) {
+                if (isNonEmptyArray($teamType)) {
+                    $teamTypes = "'" . implode("','", $teamType) . "'";
+                    $condition .= " AND a.is_type IN ($teamTypes)";
+                } else {
+                    $condition .= " AND a.is_type = $teamType";
+                }
+            }
+        }
+
         $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
         if ($dsName) {
             $matchAll = checkIfAllSelected($dsName);
@@ -415,7 +428,8 @@ class MdoReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.is_type IN (7, 10) AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -431,6 +445,10 @@ class MdoReporting
                     $teamType = "Hybrid";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
+                } elseif ($row['is_type'] == 7) {
+                    $teamType = "MDO";
+                } elseif ($row['is_type'] == 10) {
+                    $teamType = "FOS";
                 }
                 $arrData[] = array(
                     "label" => $teamType,
@@ -850,6 +868,7 @@ class MdoReporting
     {
         global  $UPLOAD_URL;
         $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrInfraType = array(7 => "MDO", 10 => "FOS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -880,6 +899,7 @@ class MdoReporting
             "Region",
             "Circle",
             "Section",
+            "Infra Type",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -942,6 +962,7 @@ class MdoReporting
                     $route = $row["route_name"];
                     $shopId = $row["ques_4"];
                     $dsType = $row["type"];
+                    $infraType = $row["is_type"];
                     if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
                         $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "dstatus = 0 AND rec_id = $shopId") : "";
                     } else {
@@ -991,6 +1012,7 @@ class MdoReporting
                         $row["branch_name"],
                         $row["circle"],
                         $row["section"],
+                        isset($infraType) ? $arrInfraType[$infraType] : "",
                         $row["team_id"],
                         $mdoName,
                         $captureDate,
@@ -1002,7 +1024,7 @@ class MdoReporting
                         isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
                         isset($arrRoute[0]) ? $arrRoute[0] : "",
                         $dsNameOnly,
-                        $arrTeamType[$dsType],
+                        isset($dsType) ? $arrTeamType[$dsType] : "",
                         $route,
                         $shopId,
                         isset($arrRoute[1]) ? $arrRoute[1] : "",
@@ -1043,6 +1065,7 @@ class MdoReporting
     final public function getDownloadSummary()
     {
         $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrInfraType = array(7 => "MDO", 10 => "FOS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -1080,6 +1103,7 @@ class MdoReporting
             "Region",
             "Circle",
             "Section",
+            "Infra Type",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1144,6 +1168,7 @@ class MdoReporting
                     $branchId = $row["branch_id"];
                     $routeName = $row["route_name"];
                     $date = $row["capture_date"];
+                    $infraType = $row["is_type"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
@@ -1152,10 +1177,10 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $shopId = $row["ques_4"];
-                    $dsType = $arrTeamType[$row["type"]];
+                    $dsType = $row["type"] ? $arrTeamType[$row["type"]] : "";
                     if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
-                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "dstatus = 0 AND rec_id = $shopId") : "";
-                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "dstatus = 0 AND team_id = '$dsId'") : "";
+                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "rec_id = $shopId") : "";
+                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "team_id = '$dsId'") : "";
                         $orderShop = "";
                         $addShop = "";
                         $totalShops = "";
@@ -1166,8 +1191,8 @@ class MdoReporting
                         $mdoSurveyedOutlets = "";
                         $sellbByDsMdoSurveyed = "";
                     } else {
-                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "dstatus = 0 AND rec_id = $shopId") : "";
-                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$routeName' AND team_id = $dsId") : "";
+                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
+                        $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details", "COUNT(rec_id)", "route_name = '$routeName' AND team_id = $dsId") : "";
                         $orderShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                         $addShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                         $totalShops = $orderShop + $addShop;
@@ -1252,6 +1277,15 @@ class MdoReporting
                         $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
                         $salesVol = $arrDayEndOtherDetails['SalesVolume'];
                         $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                        // $dayEndOutlet = "";
+                        // $salesVol = "";
+                        // $salesValue = "";
+                    } else {
+                        $endTime = "";
+                        $arrDayEndOtherDetails = "";
+                        $dayEndOutlet = "";
+                        $salesVol = "";
+                        $salesValue = "";
                     }
                     $marketStartTime = isset($row["startMarket"]) ? $row["startMarket"] : "";
                     $marketEndTime = isset($row["lastMarket"]) ? $row["lastMarket"] : "";
@@ -1280,6 +1314,7 @@ class MdoReporting
                         $row["branch_name"],
                         $row["circle"],
                         $row["section"],
+                        isset($infraType) ? $arrInfraType[$infraType] : "",
                         $teamId,
                         $mdoName,
                         currentDate($date, "d-m-Y"),
@@ -1380,6 +1415,7 @@ class MdoReporting
                                 $rowTeam["branch_name"],
                                 $rowTeam["circle"],
                                 $rowTeam["section"],
+                                isset($infraType) ? $arrInfraType[$infraType] : "",
                                 $teamId,
                                 $mdoName,
                                 currentDate($date, "d-m-Y"),
@@ -1466,6 +1502,7 @@ class MdoReporting
 
     final public function attendanceDayEndReport()
     {
+        $arrInfraType = array(7 => "MDO", 10 => "FOS");
         // $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
@@ -1503,6 +1540,7 @@ class MdoReporting
             "Region",
             "Circle",
             "Section",
+            "Infra Type",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1511,7 +1549,7 @@ class MdoReporting
             "WD Name",
             "WD Market",
             "WD Pop Group",
-            "tYpe of Work",
+            "Type of Work",
             "DS ID",
             "DS Type",
             "DS Name",
@@ -1622,6 +1660,7 @@ class MdoReporting
                         $row["branch_name"],
                         $row["circle"],
                         $row["section"],
+                        isset($infraType) ? $arrInfraType[$infraType] : "",
                         $teamId,
                         $mdoName,
                         $date,
