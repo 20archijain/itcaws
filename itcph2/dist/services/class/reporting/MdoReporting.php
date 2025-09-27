@@ -448,7 +448,7 @@ class MdoReporting
                 } elseif ($row['is_type'] == 7) {
                     $teamType = "MDO";
                 } elseif ($row['is_type'] == 10) {
-                    $teamType = "FOS";
+                    $teamType = "FSO";
                 }
                 $arrData[] = array(
                     "label" => $teamType,
@@ -868,7 +868,7 @@ class MdoReporting
     {
         global  $UPLOAD_URL;
         $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FOS");
+        $arrInfraType = array(7 => "MDO", 10 => "FSO");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -1065,7 +1065,7 @@ class MdoReporting
     final public function getDownloadSummary()
     {
         $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FOS");
+        $arrInfraType = array(7 => "MDO", 10 => "FSO");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -1177,7 +1177,6 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $shopId = $row["ques_4"];
-                    $dsType = $row["type"] ? $arrTeamType[$row["type"]] : "";
                     if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
                         $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "rec_id = $shopId") : "";
                         $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "team_id = '$dsId'") : "";
@@ -1269,6 +1268,7 @@ class MdoReporting
                     $dsName = $row["ds_name"];
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
+                    $dsType = $parts[1];
                     $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
                     $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
                     if ($arrDayEndDetails) {
@@ -1373,9 +1373,9 @@ class MdoReporting
                     // Query to get teams who have not work with DS
                     $iTeamRows = 0;
                     $rsTeamAction = 0;
-                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name" .
+                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name" .
                         ", c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10" .
-                        " AND a.capture_date = '$date' AND a.work_with != '0' $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
+                        " AND a.capture_date = '$date' AND a.team_id NOT IN (SELECT team_id FROM tblsurvey_response_details_mdo WHERE dstatus = 0 AND capture_date = '$date') AND a.call_type = '0' $where $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
                     $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
 
                     if ($iTeamRows) {
@@ -1388,25 +1388,48 @@ class MdoReporting
                             $startTime = $rowTeam["capture_datetime"];
                             $endDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), distance, other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
                             $endTime = isset($endDetails[0]) ? $endDetails[0] : "";
-                            $timeSpent = $endDetails[0] ? getTimeDifferenceInString($startTime, $endDetails[0], false, false, true) : 0;
+                            $timeSpent = $endDetails[0] ? getTimeDifferenceInString($startTime, $endTime, false, false, true) : 0;
                             $distanceInKm = $endDetails[1] ? $endDetails[1] : 0;
                             $arrDayEndOtherDetails = json_decode($endDetails[2], true);
                             $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
                             $salesVol = $arrDayEndOtherDetails['SalesVolume'];
                             $salesValue = $arrDayEndOtherDetails['SalesValue'];
-                            if ($workWith == 1) {
+                            $arrAttenOtherDetails = json_decode($rowTeam["other_details"], true);
+                            $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
+                            if ($workWith == 0) {
+                                $typeOfWork = "Market work with DS";
+                                $wdCode = $dsDetails[0];
+                                $attDsName = $dsDetails[1];
+                                $parts = explode(" - ", $attDsName, 2);
+                                $attDsNameOnly = $parts[0];
+                                $attDsType = $parts[1];
+                                $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
+                            } elseif ($workWith == 1) {
                                 $typeOfWork = "Market work with AE";
+                                $wdCode = $dsDetails[1];
+                                $attDsNameOnly = "";
+                                $attDsType = "";
+                                $dsId = "";
                             } elseif ($workWith == 2) {
                                 $typeOfWork = "Market work with GT TL";
+                                $wdCode = $dsDetails[1];
+                                $attDsNameOnly = "";
+                                $attDsType = "";
+                                $dsId = "";
                             } elseif ($workWith == 3) {
                                 $typeOfWork = "Independent market work";
+                                $wdCode = "";
+                                $attDsNameOnly = "";
+                                $attDsType = "";
+                                $dsId = "";
                             }
-                            // Convert 6 hours into seconds
-                            $requiredSeconds = 360;
-                            if ($timeSpent >= $requiredSeconds && $distanceInKm >= 10) {
-                                $qualified = "1";
+                            $arrWdDetails = $wdCode ? getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'") : "";
+                            // Convert 6 hours into minutes
+                            $requiredMin = 360;
+                            if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                                $attenqualified = '1';
                             } else {
-                                $qualified = "0";
+                                $attenqualified = '0';
                             }
 
                             $arrExcelData[] = [
@@ -1420,15 +1443,15 @@ class MdoReporting
                                 $mdoName,
                                 currentDate($date, "d-m-Y"),
                                 $week,
-                                $qualified,
+                                $attenqualified,
                                 $typeOfWork,
-                                "",
-                                "",
-                                "",
-                                "",
-                                "",
-                                "",
-                                "",
+                                $wdCode,
+                                isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
+                                isset($arrWdDetails[1]) ? $arrWdDetails[1] : "",
+                                isset($arrWdDetails[2]) ? $arrWdDetails[2] : "",
+                                $dsId,
+                                $attDsType,
+                                $attDsNameOnly,
                                 "",
                                 $startTime ? currentDateTime($startTime, "H:i:s") : "",
                                 $endTime ? currentDateTime($endTime, "H:i:s") : "",
@@ -1502,7 +1525,7 @@ class MdoReporting
 
     final public function attendanceDayEndReport()
     {
-        $arrInfraType = array(7 => "MDO", 10 => "FOS");
+        $arrInfraType = array(7 => "MDO", 10 => "FSO");
         // $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
@@ -1604,6 +1627,7 @@ class MdoReporting
                     $startLt = $row["lt"];
                     $startLg = $row["lg"];
                     $date = $row["capture_date"];
+                    $infraType = $row["is_type"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
                     $mdoName = $row["team_name"];
@@ -1636,7 +1660,7 @@ class MdoReporting
                     $city = $row['city'];
                     $pinCode = $row['pincode'];
                     $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "capture_datetime, google_address, state, district, city, pincode, distance, lt, lg", "call_type = '1' AND team_id = $teamId AND capture_date = '$date'");
-                    $endTime = $arrDayEndDetails[0] ?? "";
+                    $endTime = $arrDayEndDetails[0] ?? null;
                     $endGoogleAddress = $arrDayEndDetails[1] ?? "";
                     $endState = $arrDayEndDetails[2] ?? "";
                     $endDistrict = $arrDayEndDetails[3] ?? "";
@@ -1644,12 +1668,12 @@ class MdoReporting
                     $endPinCode = $arrDayEndDetails[5] ?? "";
                     $timeSpent = $endTime ? getTimeDifferenceInString($startTime, $endTime, false, false, true) : 0;
                     $distanceInKm = $arrDayEndDetails[6] ?? 0;
-                    // Convert 6 hours into seconds
-                    $requiredSeconds = 6 * 3600;
-                    if ($timeSpent >= $requiredSeconds && $distanceInKm >= 10) {
-                        $qualified = "1";
+                    // Convert 6 hours into Minutes
+                    $requiredMin = 360;
+                    if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                        $qualified = '1';
                     } else {
-                        $qualified = "0";
+                        $qualified = '0';
                     }
                     $endLt = $arrDayEndDetails[7] ?? "";
                     $endLg = $arrDayEndDetails[8] ?? "";
@@ -1686,7 +1710,7 @@ class MdoReporting
                         $pinCode,
                         $endLt,
                         $endLg,
-                        currentDateTime($endTime, "H:i:s"),
+                        $endTime ? currentDateTime($endTime, "H:i:s") : "",
                         $endGoogleAddress,
                         $endState,
                         $endDistrict,
