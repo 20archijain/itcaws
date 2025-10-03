@@ -22,6 +22,7 @@ class ProcessResponse
     private $_projectSpecificSettings = [];
     private $_jsonWiseAndbranchWiseProductsColumns = [];
     private $_maxDistanceBwCoordinates = 80 * 1000; // 80km
+    private $_maxAppDistanceKm = 300; // Threshold for trusting app-provided distance (in km)
 
     public function __construct($dbConn)
     {
@@ -225,6 +226,14 @@ class ProcessResponse
                     } elseif ($processDayend && is_string($dayendValue) && $dayendValue && strtolower(substr($dayendValue, 0, 7)) === "day end") {
                         // Dayend
                         $isDayendRecord = true;
+                        // invalid records
+                        if ($jsonId == 99) {
+                            $attendanceCount = getRowColumn($this->_dbConn, $attendanceTable, "COUNT(*)", "team_id = $teamId AND capture_date = '$captureDate' AND call_type = '0'");
+                            if ($attendanceCount == 0) {
+                                $this->updateProcessStatus($processTable, $respId, $jsonId, 1);
+                                continue;
+                            }
+                        }
                         $cols = "resp_id, client_id, project_id, team_id, s_id, uni_id, mob_img_id, distance, call_type, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array(
@@ -261,6 +270,14 @@ class ProcessResponse
                         // Other
 
                         $isOtherRecord = true;
+                        //invalid
+                         if ($jsonId == 99) {
+                            $attendanceCount = getRowColumn($this->_dbConn, $attendanceTable, "COUNT(*)", "team_id = $teamId AND capture_date = '$captureDate' AND call_type = '0'");
+                            if ($attendanceCount == 0) {
+                                $this->updateProcessStatus($processTable, $respId, $jsonId, 1);
+                                continue;
+                            }
+                        }
                         $cols = "resp_id, uni_id, client_id, project_id, team_id, s_id, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
@@ -366,7 +383,7 @@ class ProcessResponse
                                                 $this->_dbConn,
                                                 $routeDetailsTable,
                                                 "wd_code, section_code, state, district, sub_district_goi, beat_day, market_name, goi_market_id, wd_town, goi_pop_group, sort_order",
-                                                "dstatus = 0 AND route_name = ? AND team_id = ?",
+                                                "route_name = ? AND team_id = ?",
                                                 array($route, $teamId)
                                             );
                                             $wdcode = $arrRouteInfo[0] ? $arrRouteInfo[0] : "";
@@ -575,9 +592,15 @@ class ProcessResponse
                                         if ($arrParams[13] == 'Outlet Survey') {
                                             $arrType = array("VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
                                             $arrDetails = json_decode($arrParams[15], true);
-                                            $wdCode = $arrDetails[0];
-                                            $dsName = $arrDetails[1];
-                                            $route = $arrDetails[2];
+                                            if ($arrDetails[0] == 'Market work with DS') {
+                                                $wdCode = $arrDetails[1];
+                                                $dsName = $arrDetails[2];
+                                                $route = "NA";
+                                            } else {
+                                                $wdCode = $arrDetails[0];
+                                                $dsName = $arrDetails[1];
+                                                $route = $arrDetails[2];
+                                            }
                                             // Split by " - "
                                             $parts = explode(" - ", $dsName);
                                             // Take last part (after "-")
@@ -623,7 +646,7 @@ class ProcessResponse
                         }
                     }
 
-                    if ($jsonId != 100 || $jsonId != 10) {
+                    if ($jsonId != 100 && $jsonId != 10) {
                         $this->updateSummary($lastRecId, $jsonId, $teamId, $captureDate, $captureDatetime, $lt, $lg, $activityType, $arrParams, $isOtherRecord, $branchId, $isAttendanceRecord, $isDayendRecord, $distanceTravelledInKm, $isUnAdherence, $reasonForNoBeatAdherence, $route, $userType);
                     }
                 }
@@ -636,9 +659,9 @@ class ProcessResponse
         return $a["pageId"] - $b["pageId"];
     }
 
-    private function updateProcessStatus($processTable, $respId, $jsonId)
+     private function updateProcessStatus($processTable, $respId, $jsonId, $isInvalid = 0)
     {
-        updateRecord($this->_dbConn, $processTable, "processed = '1', s_id = '$jsonId'", "dstatus = 0 AND resp_id = $respId");
+        updateRecord($this->_dbConn, $processTable, "processed = '1', s_id = ?, is_invalid = ?", "dstatus = 0 AND resp_id = ?", array($jsonId, $isInvalid, $respId));
     }
 
     private function updateSummary($lastRecId, $jsonId, $teamId, $captureDate, $captureDatetime, $lt, $lg, $activityType, $arrData, $isOtherRecord, $branchId, $isAttendanceRecord, $isDayendRecord, $distanceTravelledInKm, $isUnAdherence, $reasonForNoBeatAdherence, $route, $userType)
@@ -728,7 +751,8 @@ class ProcessResponse
                 if (!$isOtherRecord || ($isOtherRecord && !$dayendDatetime)) {
                     // get distance travelled from last record to this record
                     if ($distanceTravelledInKm > 0 || $lt) {
-                        $useKmValueFromTable = $distanceTravelledInKm > 0 ? true : false;
+                        // Only trust app distance if > 0 AND <= 300 km)
+                        $useKmValueFromTable = ($distanceTravelledInKm > 0 && $distanceTravelledInKm <= $this->_maxAppDistanceKm) ? true : false;
                         $distanceInM = $useKmValueFromTable ?
                             0 : ($lastRecLt ? calculateDistanceBwCoordinates($lastRecLt, $lastRecLg, $lt, $lg) : 0);
 
@@ -770,7 +794,8 @@ class ProcessResponse
             }
         } else {
             // Summary not exist, create
-            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "dstatus = 0 AND team_id = $teamId  AND route_name = ?", array($route));
+            // for planned outlets count don't use dstatus condition
+            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "team_id = $teamId  AND route_name = ?", array($route));
             $columns = "team_id, activity_date, start_datetime, end_datetime, planned_outlets, rcd, rdt";
             $values = "?, ?, ?, ?, ?, ?, ?";
             $arrParams = array($teamId, $captureDate, $captureDatetime, $captureDatetime, $plannedOutlets, $currentDate, $currentDatetime);

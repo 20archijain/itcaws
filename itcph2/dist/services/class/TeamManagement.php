@@ -483,6 +483,10 @@ class TeamManagement
                 array("label" => "Town SWD", "value" => "2"),
                 array("label" => "NSPR", "value" => "5"),
             ),
+            "statusList" => array(
+                array("label" => "Active", "value" => '0'),
+                array("label" => "Deleted", "value" => '1'),
+            ),
             "viewHeader" => array(
                 "app.team.view.teamId",
                 "app.team.add.name",
@@ -536,6 +540,7 @@ class TeamManagement
                 "dsName" => array("a.team_name", 1),
                 "dsType" => array("a.is_type", 1),
                 "wdCode" => array("a.wd_code", 1),
+                "teamStatus" => array("a.dstatus", 1),
                 "phone" => array("c.mobile", 1),
             )
         );
@@ -553,7 +558,7 @@ class TeamManagement
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.project_id, a.team_id, a.team_name, a.is_type, a.dstatus, a.wd_code, b.branch_name,a.ds_number, c.rec_id, c.username, c.password, c.mobile, c.c_init_xml FROM $projectTeamTable AS a, $branchTable AS b" .
-            ", $cloudDBName.$cloudAuthPinTable AS c WHERE  a.branch_id = b.branch_id AND a.team_id = c.team_id AND c.db_name = '{$GLOBALS['DB_DBNAME']}' $where $sOrderCond";
+            ", $cloudDBName.$cloudAuthPinTable AS c WHERE  a.branch_id = b.branch_id AND a.s_id IN (99,10) AND a.team_id = c.team_id AND c.db_name = '{$GLOBALS['DB_DBNAME']}' $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 

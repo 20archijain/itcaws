@@ -130,8 +130,6 @@ class MdoReporting
                 if (isNonEmptyArray($teamType)) {
                     $teamTypes = "'" . implode("','", $teamType) . "'";
                     $condition .= " AND a.is_type IN ($teamTypes)";
-                } else {
-                    $condition .= " AND a.is_type = $teamType";
                 }
             }
         }
@@ -1109,6 +1107,7 @@ class MdoReporting
             "Date",
             "Week",
             "Qualified Attendance",
+            "Present",
             "Type Of Market Work",
             "WD Code",
             "WD Name",
@@ -1320,6 +1319,7 @@ class MdoReporting
                         currentDate($date, "d-m-Y"),
                         $week,
                         $qualified,
+                        "1",
                         $typeOfWork,
                         $workWdCode,
                         isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
@@ -1385,6 +1385,7 @@ class MdoReporting
                             $teamId = $rowTeam["team_id"];
                             $mdoName = $rowTeam["team_name"];
                             $workWith = $rowTeam["work_with"];
+                            $infraType = $rowTeam["is_type"];
                             $startTime = $rowTeam["capture_datetime"];
                             $endDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), distance, other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
                             $endTime = isset($endDetails[0]) ? $endDetails[0] : "";
@@ -1444,6 +1445,7 @@ class MdoReporting
                                 currentDate($date, "d-m-Y"),
                                 $week,
                                 $attenqualified,
+                                "1",
                                 $typeOfWork,
                                 $wdCode,
                                 isset($arrWdDetails[0]) ? $arrWdDetails[0] : "",
@@ -1468,6 +1470,33 @@ class MdoReporting
                                 $dayEndOutlet,
                                 $salesVol,
                                 $salesValue
+                            ];
+                        }
+                    }
+
+                    // Query to get teams who have not uploaded any record on that date
+
+                    $iAbsentRows = 0;
+                    $rsAbsentAction = 0;
+                    $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
+                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') ORDER BY a.team_name";
+                    $this->_dbConn->ExecuteSelectQuery($sAbsentQuery, $rsAbsentAction, $iAbsentRows);
+
+                    if ($iAbsentRows) {
+                        while ($rowAbsent = $this->_dbConn->GetData($rsAbsentAction)) {
+                            $arrExcelData[] = [
+                                $rowAbsent["district"],
+                                $rowAbsent["main_branch"],
+                                $rowAbsent["branch_name"],
+                                $rowAbsent["circle"],
+                                $rowAbsent["section"],
+                                isset($rowAbsent['is_type']) ? $arrInfraType[$rowAbsent['is_type']] : "",
+                                $rowAbsent["team_id"],
+                                $rowAbsent["team_name"],
+                                currentDate($date, "d-m-Y"),
+                                "",
+                                "",
+                                "0"
                             ];
                         }
                     }
@@ -1541,13 +1570,6 @@ class MdoReporting
             array(
                 "dateFrom" => array("a.capture_date", 2, "dateTo"),
             ),
-            $this->_dbConn
-        );
-
-        // prepare missing team condition
-        $sTeamCond = getFilterResult(
-            $this->_data['searchbar'],
-            array("dsName" => array("team_id", 0, true, true)),
             $this->_dbConn
         );
         // $branch = array();
