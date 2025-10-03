@@ -123,7 +123,7 @@ class VanDsReporting
             }
         }
         $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
-        if (isset($teamType) && $teamType != "" && $teamType >= 0) {
+        if (isset($teamType) && $teamType != "" && isNonEmptyArray($teamType) && $teamType >= 0) {
             $matchAll = checkIfAllSelected($teamType);
             if (!$matchAll) {
                 if (isNonEmptyArray($teamType)) {
@@ -1286,8 +1286,10 @@ class VanDsReporting
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
         // $respTable = getRespTable(1, $this->_projectId);
         $where = "";
+        $where2 = "";
         // filter query
         $where .= $this->getCondition(true);
+        $where2 .= $this->getCondition(true);
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
             array(
@@ -1340,6 +1342,7 @@ class VanDsReporting
         $arrSummary["sale"][0][] = "Present";
         $arrSummary["sale"][0][] = "Start Time";
         $arrSummary["sale"][0][] = "End Time";
+        $arrSummary["sale"][0][] = "Day End Time";
         $arrSummary["sale"][0][] = "First Outlet Visit Time";
         $arrSummary["sale"][0][] = "Last Outlet Visit Time";
         $arrSummary["sale"][0][] = "Total Time Spent (Mins)";
@@ -1364,7 +1367,7 @@ class VanDsReporting
         $iStartofProductsColumn = count($arrSummary["sale"][0]);
 
         // get branchwise products and competition of all branches
-        $this->getBranchWiseProducts(null, $teamType);
+        $this->getBranchWiseProducts(null, isNonEmptyArray($teamType) ? $teamType : null);
 
         // // get branch wise pickup stock products
         // $this->getBranchWiseStockPickupProducts(null, $teamType);
@@ -1389,7 +1392,7 @@ class VanDsReporting
             }
 
             // create header with product list sold
-            $arrProductBought = $this->getBranchWiseProducts($branchId, $teamType);
+            $arrProductBought = $this->getBranchWiseProducts($branchId, isNonEmptyArray($teamType) ? $teamType : null);
             $sProductSaleColumns = "";
             if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                 foreach ($arrProductBought as $arrProduct) {
@@ -1406,7 +1409,7 @@ class VanDsReporting
             }
 
             // create header with product list carried
-            $arrStockProducts = $this->getBranchWiseProducts($branchId, $teamType);
+            $arrStockProducts = $this->getBranchWiseProducts($branchId, isNonEmptyArray($teamType) ? $teamType : null);
             $sStockColumns = "";
             if ($arrStockProducts && isNonEmptyArray($arrStockProducts)) {
                 foreach ($arrStockProducts as $stockProduct) {
@@ -1452,7 +1455,7 @@ class VanDsReporting
 
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.route, a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, SUM(a.total_sales_deliveries) AS total_sales_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops" .
+            $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops" .
                 ", SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
                 " AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
@@ -1486,11 +1489,18 @@ class VanDsReporting
                             $totalSale += $iSale;
                         }
                     }
+                    $arrPlannedOutlet = $row["planned_outlets"];
                     $branchId = $row["branch_id"];
+                    if ($row["is_beat_adherence"] == "Yes") {
+                        $isBeatAdher = "1";
+                    } elseif ($row["is_beat_adherence"] == "No") {
+                        $isBeatAdher = "0";
+                    }
+                        $reason = $row["beat_adherence_reason"];
                     if ($branchId == 40) {
                         $idealRoute = $dayOfWeek;
-                        $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
-                        $arrPlannedOutletBeatDay = array(0 => $arrPlannedOutlet, 1 => $dayOfWeek);
+                        // $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                        $arrPlannedOutletBeatDay = array(1 => $dayOfWeek);
                         if ($totalSale > 0) {
                             $sellInShop = getRowColumn(
                                 $this->_dbConn,
@@ -1502,12 +1512,6 @@ class VanDsReporting
                             $sellInShop = 0;
                         }
                         $routeDays = explode('-', strtolower($row["route"]));
-                        $isBeatAdher = in_array($dayOfWeek, $routeDays) ? 1 : '0';
-                        if ($isBeatAdher == '0') {
-                            $reason = "Any Other";
-                        } else {
-                            $reason = "";
-                        }
                         $arrLtLg = getRowsColumns(
                             $this->_dbConn,
                             $respTable,
@@ -1537,14 +1541,9 @@ class VanDsReporting
                         $distanceInKm = round($totalDistance, 2);
                     } else {
                         $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
-                        $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                        // for planned outlets count don't use dstatus condition
+                        $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "route_name = '$routeName' AND team_id = $teamId");
                         $sellInShop = $row['total_sellin_shops'];
-                        if ($row["is_beat_adherence"] == "Yes") {
-                            $isBeatAdher = "1";
-                        } elseif ($row["is_beat_adherence"] == "No") {
-                            $isBeatAdher = "0";
-                        }
-                        $reason = $row["beat_adherence_reason"];
                         $distanceInKm = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
                     }
 
@@ -1587,6 +1586,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = "1";
                     $arrSummary["sale"][$index][] = currentDateTime($row["start_datetime"], "H:i:s");
                     $arrSummary["sale"][$index][] = currentDateTime($row["end_datetime"], "H:i:s");
+                    $arrSummary["sale"][$index][] = $row["dayend_datetime"] ? currentDateTime($row["dayend_datetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = isset($row["resp_startdatetime"]) ? currentDateTime($row["resp_startdatetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = isset($row["resp_enddatetime"]) ? currentDateTime($row["resp_enddatetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
@@ -1600,7 +1600,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[1]) ? $arrPlannedOutletBeatDay[1] : "";
                     $arrSummary["sale"][$index][] = $isBeatAdher;
                     $arrSummary["sale"][$index][] = $reason;
-                    $arrSummary["sale"][$index][] = isset($arrPlannedOutletBeatDay[0]) ? $arrPlannedOutletBeatDay[0] : "";
+                    $arrSummary["sale"][$index][] = isset($arrPlannedOutlet) ? $arrPlannedOutlet : "";
                     $arrSummary["sale"][$index][] = $totalShops;
                     $arrSummary["sale"][$index][] = $sellInShop;
                     $arrSummary["sale"][$index][] = $addShop;
@@ -1679,7 +1679,7 @@ class VanDsReporting
                     $iTeamRows = 0;
                     $rsTeamAction = 0;
                     $sTeamQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '99' AND a.branch_id = b.branch_id $branchCond" .
-                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM $summaryTable WHERE dstatus = 0 AND activity_date = '$date') $sTeamCond $teamTypeCon ORDER BY a.team_name";
+                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM $summaryTable WHERE dstatus = 0 AND activity_date = '$date') $where2 $sTeamCond $teamTypeCon ORDER BY a.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
 
                     if ($iTeamRows) {

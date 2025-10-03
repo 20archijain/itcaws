@@ -2056,13 +2056,24 @@ class AppSummary extends Utilities
                 );
             }
         } elseif ($jsonId == 10) {
+            $teamType = $this->tableUtil->getRowColumn(
+                    "$dbName.tblproject_team",
+                    "is_type",
+                    "dstatus = 0 AND team_id = $teamId"
+                );
             // Get DS route and outlet id for getting the team id with MDO work's today
-            $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
+            $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4, type", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             $arrRouteDetails = json_decode($route_outletId[0], true);
             $route = isset($arrRouteDetails[2]) ? $arrRouteDetails[2] : "";
             $outletId = isset($route_outletId[1]) ? $route_outletId[1] : "";
-            $dsId = $route && $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "team_id", "dstatus = 0 AND route_name = '$route' AND rec_id = $outletId") : "";
-            $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : "";
+            $type = $route_outletId[2];
+            if ($type == 6 || $type == 8 || $type == 9) {
+                $dsId = $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details_breeze", "team_id", "dstatus = 0 AND rec_id = $outletId") : "";
+                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details_breeze", "COUNT(rec_id)", "dstatus = 0 AND team_id = '$dsId'") : "";  
+            } else {
+                $dsId = $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "team_id", "dstatus = 0 AND route_name = '$route' AND rec_id = $outletId") : "";
+                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : ""; 
+            }
             $coverdOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
             $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
             $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
@@ -2128,82 +2139,73 @@ class AppSummary extends Utilities
                     "value" => (string)$this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND wd_code = '$wdCodeName' AND team_id = $teamId AND capture_date LIKE '%$month%'"),
                 ];
             }
-            // Output summary
-            $arrOtherSummary[] = [
-                "mdoSurveyData" => array(
-                    array(
-                        "typeofview" => "Progress",
-                        "label" => "Outlet Covered VS Outlets Planned",
-                        "value1" => $coverdOutlets ? (string)$coverdOutlets : "0",
-                        "value2" => $pannedOutlets ? (string)$pannedOutlets : "0"
-                    ),
-                    // array(
-                    //     "label" => "Productive Outlets",
-                    //     "value" => $productiveOutlets ? (string)$productiveOutlets : "0",
-                    //     "icon"  => "store"
-                    // ),
-                    // array(
-                    //     "label" => "Survey Qty (M)",
-                    //     "value" => $surveyQty ? (string)$surveyQty : "0",
-                    //     "icon"  => "sale"
-                    // ),
-                    array(
-                        "label" => "Time Spent",
-                        "value" => isset($timeSpent) ? (string)$timeSpent : "0s",
-                        "icon"  => "time"
-                    ),
-                    array(
-                        "label" => "Distance",
-                        "value" => (string)$distanceInKm,
-                        "icon"  => "distance"
-                    ),
-                ),
-                "dsTypeDistributionData" => [
-                    array(
+            // Build dsTypeDistributionData conditionally
+            if ($teamType == 10) {
+                $dsTypeDistributionData = [
+                    [
+                        "pieDataTittle" => "Market Work Information (MTD)",
+                        "pieInternalTittle" => "Total Count",
+                        "label" => "Common FMCG Lite DS",
+                        "value" => isset($fmcgMtdCount) ? (string)$fmcgMtdCount : "0",
+                        "color" => "#9400D3"
+                    ],
+                ];
+            } else {
+                $dsTypeDistributionData = [
+                    [
                         "pieDataTittle" => "Market Work Information (MTD)",
                         "pieInternalTittle" => "Total Count",
                         "label" => "VAN DS",
                         "value" => isset($vanDsMtdCount) ? (string)$vanDsMtdCount : "0",
                         "color" => "#9400D3"
-                    ),
-                    // array(
-                    //     "label" => "SWD",
-                    //     "value" => isset($swdMtdCount) ? (string)$swdMtdCount : "0",
-                    //     "color" => "#21AD35"
-                    // ),
-                    // array(
-                    //     "label" => "NPSR",
-                    //     "value" => isset($npsrMtdCount) ? (string)$npsrMtdCount : "0",
-                    //     "color" => "#FF6B35"
-                    // ),
-                    array(
+                    ],
+                    [
                         "label" => "RMD",
                         "value" => isset($rmdDsMtdCount) ? (string)$rmdDsMtdCount : "0",
                         "color" => "#073763"
-                    ),
-                    array(
+                    ],
+                    [
                         "label" => "SCP DS",
                         "value" => isset($stokiestMtdCount) ? (string)$stokiestMtdCount : "0",
                         "color" => "#660000"
-                    ),
-                    // array(
-                    //     "label" => "GT TL",
-                    //     "value" => isset($gtTlCount) ? (string)$gtTlCount : "0",
-                    //     "color" => "#CE7E00"
-                    // ),
-                    array(
+                    ],
+                    [
                         "label" => "AE",
                         "value" => isset($aeCount) ? (string)$aeCount : "0",
                         "color" => "#741B47"
-                    ),
-                    array(
+                    ],
+                    [
                         "label" => "Independent Work",
                         "value" => isset($independentCount) ? (string)$independentCount : "0",
                         "color" => "#6AA84F"
-                    ),
+                    ],
+                ];
+            }
+            
+            // Final output summary
+            $arrOtherSummary[] = [
+                "mdoSurveyData" => [
+                    [
+                        "typeofview" => "Progress",
+                        "label" => "Outlet Covered VS Outlets Planned",
+                        "value1" => $coverdOutlets ? (string)$coverdOutlets : "0",
+                        "value2" => $pannedOutlets ? (string)$pannedOutlets : "0"
+                    ],
+                    [
+                        "label" => "Time Spent",
+                        "value" => isset($timeSpent) ? (string)$timeSpent : "0s",
+                        "icon"  => "time"
+                    ],
+                    [
+                        "label" => "Distance",
+                        "value" => (string)$distanceInKm,
+                        "icon"  => "distance"
+                    ],
                 ],
+                "dsTypeDistributionData" => $dsTypeDistributionData,
                 "wdCodeData" => $arrWdcodeData
             ];
+
         } else {
             $arrTodaySummary = $this->tableUtil->getRowColumns(
                 "$dbName.tblmobile_summary",

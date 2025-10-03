@@ -218,6 +218,7 @@ export interface GetAddTeamDataResponse extends GetViewHeaderBody {
   circleList: DropdownList[];
   sectionList: DropdownList[];
   dsTypeList: DropdownList[];
+  statusList: DropdownList[];
   teamList: DropdownList[];
   aeNameList: DropdownList[];
   jsonIdList: DropdownList[];

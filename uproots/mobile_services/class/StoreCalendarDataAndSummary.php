@@ -201,32 +201,20 @@ class StoreCalendarDataAndSummary
                 "is_type",
                 "team_id = $teamId"
             );
-            $teamTypeCondition = ($teamType == 5) ? "AND team_type = 5" : "AND team_type = 0";
-            if ($teamType == 7) {
-                $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                $arrOtherDetails = json_decode($attendanceDetails, true);
-                $workingWith = $arrOtherDetails['workingWith'];
-                if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
-                    $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                    $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                    $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
-                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                    // Convert time spent into seconds
-                    $timeSpentInSec = strtotime($startTime) - strtotime($endTime);
-                } else {
-                    $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                    $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
-                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
-                    // Convert time spent into seconds
-                    $timeSpentInSec = strtotime($min_max_time[1]) - strtotime($min_max_time[0]);
-                }
-
+            if ($teamType == 7 || $teamType == 10) {
+                $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                $arrDayEnd = $this->tableUtil->getRowColumns("$dbName.tblattendance", "distance, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                $responseEndTime = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                $endTime = !empty($arrDayEnd[1]) ? $arrDayEnd[1] : (!empty($responseEndTime) ? $responseEndTime : 0);
+                $timeSpentInSec = $this->commonFunctions->getTimeDifference($attendanceDetails[1], $endTime, true);
+                $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
 
                 // Convert 6 hours into seconds
-                $requiredSeconds = 6 * 3600;
+                $requiredSeconds = 360 * 60;
 
                 // Check Present
-                if ($timeSpent && $distanceInKm) {
+                if ($timeSpentInSec && $distanceInKm) {
                     if ($timeSpentInSec >= $requiredSeconds && $distanceInKm >= 10) {
                         $isQualifiedAttendance = $this->arrStatus["QUALIFIED"];
                     } else {
@@ -238,53 +226,18 @@ class StoreCalendarDataAndSummary
                     return $this->arrStatus["ABSENT"];
                 }
             } else {
-                if (!$this->minTotalShops) {
-                    $this->minTotalShops = $this->tableUtil->getRowColumn(
-                        "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
-                        "con_value",
-                        "dstatus = 0 AND con_name = 'minTotalShops' $teamTypeCondition"
-                    );
-                    $minQualifiedAttendanceTimeInMin = $this->tableUtil->getRowColumn(
-                        "$dbName.{$GLOBALS["TBL_CONSTANTS"]}",
-                        "con_value",
-                        "dstatus = 0 AND con_name = 'minWorkingTimeInMin' $teamTypeCondition"
-                    );
-                    $this->minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
-                }
 
-                if ($dbName === $GLOBALS["DELHI_DB"]) {
-                    $rocDeliveryColumn = "total_sellin_shops";
-                    $otherDeliveryColumn = "total_other_shops";
-                } elseif ($dbName === $GLOBALS["ITC_DB"]) {
-                    $rocDeliveryColumn = "total_roc_deliveries";
-                    $otherDeliveryColumn = "total_other_shops";
-                } elseif ($dbName === $GLOBALS["SOUTH_DB"]) {
-                    $rocDeliveryColumn = "total_deliveries";
-                    $otherDeliveryColumn = "";
-                } elseif ($dbName === $GLOBALS["ITCPH2_DB"]) {
-                    $rocDeliveryColumn = "total_sales_deliveries";
-                    $otherDeliveryColumn = "total_other_shops";
-                }
-
-                $arrSummaryData = $this->tableUtil->getRowColumns(
+                $arrSummaryData = $this->tableUtil->getRowColumn(
                     "$dbName.$summaryTable",
-                    "start_datetime, end_datetime, SUM($rocDeliveryColumn) AS deliveries_1" .
-                        ($otherDeliveryColumn ? ", SUM($otherDeliveryColumn) AS deliveries_2" : ""),
+                    "is_qualified",
                     "dstatus = 0 AND team_id = ? AND activity_date = ?",
                     array($teamId, $date)
                 );
 
                 // Present
-                if ($arrSummaryData && isset($arrSummaryData, $arrSummaryData[0]) && $arrSummaryData[0]) {
-                    $startDatetime = $arrSummaryData[0];
-                    $endDatetime = $arrSummaryData[1];
-                    $totalROCShops = $arrSummaryData[2];
-                    $totalOtherShops = isset($arrSummaryData[3]) ? $arrSummaryData[3] : 0;
-                    $totalShops = $totalROCShops + $totalOtherShops;
-
-                    $timeSpentInSec = $this->commonFunctions->getTimeDifference($startDatetime, $endDatetime, true);
-                    $isQualifiedAttendance = $totalShops >= $this->minTotalShops &&
-                        $timeSpentInSec >= $this->minQualifiedAttendanceTimeInSec ?
+                if ($arrSummaryData) {
+                    $isQualified = $arrSummaryData;
+                    $isQualifiedAttendance = $isQualified == 1 ?
                         $this->arrStatus["QUALIFIED"] : $this->arrStatus["UNQUALIFIED"];
 
                     return $isQualifiedAttendance;
@@ -421,24 +374,40 @@ class StoreCalendarDataAndSummary
                     "is_type",
                     "team_id = $teamId"
                 );
-                if ($teamType == 7) {
-                    $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                    $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
-                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
-                    // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
+                if ($teamType == 7 || $teamType == 10) {
+                    $arrWork = $this->tableUtil->getRowColumns("$dbName.tblattendance", "other_details, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                    $arrDetails = json_decode($arrWork[0], true);
+                    $workingWith = $arrDetails['workingWith'];
+                    $wdDsName = $arrDetails['selectRouteYouAreGoingOn'];
+                    $workType = $arrDetails[1];
+                    $wdCode = $workType == 0 ? $wdDsName[0] : $wdDsName[1];
+                    $dsName = $workType == 0 ? $wdDsName[1] : "";
+                    $workWith = $workingWith . " - " . $wdCode . " - " . $dsName;
+                    $arrDayEnd = $this->tableUtil->getRowColumns("$dbName.tblattendance", "distance, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                    $responseEndTime = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    $endTime = !empty($arrDayEnd[1]) ? $arrDayEnd[1] : (!empty($responseEndTime) ? $responseEndTime : 0);
+                    $timeSpent = $this->commonFunctions->getTimeDifference($arrWork[1], $endTime, false, false, true);
+                    $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
 
                     $arrExtraSummary = array(
                         array(
                             "label" => "Time Spent",
                             "value" => (!empty($timeSpent)) ? "$timeSpent" : "0",
                             "viewType" => "label",
-                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                            "icon" => "https://radardashboard.com/uproots/mobi_sum_icon/ic_clock.png"
                         ),
                         array(
                             "label" => "Distance",
                             "value" => (!empty($distanceInKm)) ? "$distanceInKm" : "0",
                             "viewType" => "label",
-                            "icon" => "https://upimg.btlmonitor.com/mobi_sum_icon/ic_shop.png"
+                            "icon" => "https://radardashboard.com/uproots/mobi_sum_icon/ic_km.png"
+                        ),
+                        array(
+                            "label" => "Work With",
+                            "value" => (!empty($workWith)) ? "$workWith" : "",
+                            "viewType" => "label",
+                            "icon" => "https://radardashboard.com/uproots/mobi_sum_icon/ic_shop.png"
                         ),
                     );
                 } else {

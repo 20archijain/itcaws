@@ -24,6 +24,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
   sortOptions: DropdownList[] = [];
   dsTypeOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
+  statusOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
@@ -39,6 +40,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
       dsName: [''],
       phone: [''],
       wdCode: [''],
+      teamStatus: [''],
     });
 
     this.getInitialData();
@@ -60,6 +62,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
             this.sortOptions = resp.data.sortOptions;
             this.branchOptions = resp.data.branchList;
             this.dsTypeOptions = resp.data.dsTypeList;
+            this.statusOptions = resp.data.statusList;
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
 
