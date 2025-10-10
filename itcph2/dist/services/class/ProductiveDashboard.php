@@ -917,6 +917,7 @@ class ProductiveDashboard
         $yearAndMonthCond2 = $this->getConditionForYearAndMonth("a.capture_date");
         $getDate = $this->getDate();
 
+        $totalSumDistrictLevelSale = array();
         if ($where) {
             $where = str_replace(" team_id", " b.team_id", $where);
         }
@@ -1233,6 +1234,7 @@ class ProductiveDashboard
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['Total Time'])) {
+                    // $arrDistrictData['districtLevelSale']['ACT Total Time'] = $arrDistrictData['districtLevelSale']['Total Time'];
                     $time = ($arrDistrictData['districtLevelSale']['Total Time'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate;
                     $hours = round((int)$time / 60);
                     $minutes = ((int)$time) % 60;
@@ -1528,6 +1530,29 @@ class ProductiveDashboard
                                 }
                             }
                         }
+                    }
+                }
+            }
+
+            // Calculate Total Sales at district Level
+            foreach ($monthWiseSales as $district) {
+                foreach ($district["districtLevelSale"] as $monthYear => $value) {
+                    if (!isset($totalSumDistrictLevelSale[$monthYear])) {
+                        $totalSumDistrictLevelSale[$monthYear] = 0;
+                    }
+
+                    // $noOfUsers = 0;
+                    if ($monthYear == "Total Time" || $monthYear == "Time in market" || $monthYear == "CFT per outlet" || $monthYear == "CFT per days") {
+                        // $noOfUsers += $totalSumDistrictLevelSale['No of Users'];
+                        // $totalTimeWithout = 0;
+                        // if($monthYear == "Total Time")
+                        // {
+                        //     $totalTimeWithout += $totalSumDistrictLevelSale['ACT Total Time'];
+                        //     $totalSumDistrictLevelSale["Total Time"] = $totalTimeWithout;
+                        // }
+
+                    } else {
+                        $totalSumDistrictLevelSale[$monthYear] = round($totalSumDistrictLevelSale[$monthYear] + $value, 2);
                     }
                 }
             }
