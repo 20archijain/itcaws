@@ -708,3 +708,79 @@ function getStringFromEncodedArray($string, $separator = ", ", $otherLabel = "Ot
 
     return "";
 }
+
+function getDistricts($dbConn,  $condition = "", $all = false)
+{
+    $arrData = array();
+    $arrAllOption = array();
+    if ($all) {
+        $arrAllOption[] = array(
+            "label" => "All",
+            "value" => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
+        );
+    }
+
+    $teamList = $GLOBALS["arrAccessInfo"]["user_teams"];
+    $where = "";
+    if ($teamList) {
+        $where .= " AND b.team_id IN $teamList";
+    }
+    if ($condition) {
+        $where .= $condition;
+    }
+    $rsAction = null;
+    $iActionRows = 0;
+    $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where order by a.district";
+    $dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+    if ($iActionRows > 0) {
+        while ($row = $dbConn->GetData($rsAction)) {
+            $arrData[] = array(
+                "label" => $row['district'],
+                "value" => $row['district']
+            );
+        }
+    }
+
+    return array_merge($arrAllOption, $arrData);
+}
+
+
+function getBranches($dbConn, $condition = "", $all = false)
+{
+    $arrData = array();
+    $arrAllOption = array();
+    if ($all) {
+        $arrAllOption[] = array(
+            "label" => "All",
+            "value" => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
+        );
+    }
+
+    $teamList = $GLOBALS["arrAccessInfo"]["user_teams"];
+    $where = "";
+    if ($teamList) {
+        $where .= " AND b.team_id IN $teamList";
+    }
+
+    if ($condition) {
+        $where .= $condition;
+    }
+
+    $rsAction = null;
+    $iActionRows = 0;
+    $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0  $where order by a.branch_name";
+    $dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+    if ($iActionRows > 0) {
+        while ($row = $dbConn->GetData($rsAction)) {
+            $arrData[] = array(
+                "label" => $row['branch_name'],
+                "value" => $row['branch_id'],
+                "mainBranch" => $row['main_branch']
+            );
+        }
+    }
+
+    return array_merge($arrAllOption, $arrData);
+}
