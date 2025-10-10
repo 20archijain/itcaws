@@ -917,7 +917,6 @@ class ProductiveDashboard
         $yearAndMonthCond2 = $this->getConditionForYearAndMonth("a.capture_date");
         $getDate = $this->getDate();
 
-        $totalSumDistrictLevelSale = array();
         if ($where) {
             $where = str_replace(" team_id", " b.team_id", $where);
         }
