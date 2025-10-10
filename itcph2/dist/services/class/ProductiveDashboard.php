@@ -1650,18 +1650,19 @@ class ProductiveDashboard
             if ($sumActCftPerOutlet > 0 && $sumActTotalTransaction > 0) {
                 $sumCftOutlet =
                     round((int)($sumActCftPerOutlet / $sumActTotalTransaction), 0);
-
-                $cftOutletmhours = round((int)$sumCftOutlet / 60);
-                $cftOutletminutes = ((int)$sumCftOutlet) % 60;
+                    $cftOutletseconds = round((int)$sumCftOutlet / 1000);
+                    $cftOutletminutes = round((int)$cftOutletseconds / 60);
+                    $cftOutletmhours = round((int)$cftOutletminutes / 60);
                 $totalSumDistrictLevelSale['CFT per outlet'] = "{$cftOutletmhours} h {$cftOutletminutes} m";
             }
             if ($sumActCftPerDay > 0 && $sumActDaysPresent > 0) {
-                $sumCftOutlet =
+                $sumCftPerDay =
                     round((int)($sumActCftPerDay / $sumActDaysPresent), 0);
 
-                $cftDaymhours = round((int)$sumCftOutlet / 60);
-                $cftDayminutes = ((int)$sumCftOutlet) % 60;
-                $totalSumDistrictLevelSale['CFT per days'] = "{$cftDaymhours} h {$cftDayminutes} m";
+                    $cftperDayseconds = round((int)$sumCftPerDay / 1000);
+                    $cftperDayminutes = round((int)$cftperDayseconds / 60);
+                    $cftperDaymhours = round((int)$cftperDayminutes / 60);
+                $totalSumDistrictLevelSale['CFT per days'] = "{$cftperDaymhours} h {$cftperDayminutes} m";
             }
         }
 
