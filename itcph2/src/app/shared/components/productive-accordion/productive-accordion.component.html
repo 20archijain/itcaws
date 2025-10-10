@@ -162,6 +162,15 @@
                 </ng-container>
               </ng-container>
             </ng-container>
+            <!-- Total Sales Row -->
+            <tr class="table-header  ">
+              <td class="size-13">Total</td>
+              <ng-container *ngFor="let monthYear of monthlySalesData.MonthsAndYears; let i = index">
+                <td class="size-13 text-center" [@columnAnimation]="getColumnState(i)">
+                  {{ monthlySalesData?.TotalSum[monthYear] || 0 }}
+                </td>
+              </ng-container>
+            </tr>
           </tbody>
         </table>
       </div>
