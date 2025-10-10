@@ -735,7 +735,6 @@ class AppNotification
 
         $notificationTitle = getFormData($this->_data, "notificationTitle");
         $notificationText = getFormData($this->_data, "notificationText");
-        // $sendType = getFormData($this->_data, "sendType");
         $notificationType =  1;
 
         $cDT = currentDateTime();
