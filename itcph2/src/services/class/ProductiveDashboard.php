@@ -924,7 +924,24 @@ class ProductiveDashboard
         $arrSalesColumns = array(); // Reset the sales columns array here
         $arrMonthYear = array();
         $monthWiseSales = array();
-        $totalSumDistrictLevelSale = array();
+        $totalSumDistrictLevelSale = [
+            "No of Users" => 0,
+            "No of Active Users" => 0,
+            "No of days present" => 0,
+            "No of days qualified" => 0,
+            "No of days route adhered" => 0,
+            "Planned Outlets" => 0,
+            "Visited Outlets" => 0,
+            "Productive Outlets" => 0,
+            "Survey (M) (MTD)" => 0,
+            "Survey (M) (Daily Average)" => 0,
+            "Survey (M) (Daily Average Per User)" => 0,
+            "KMs Travelled per Day" => 0,
+            "Total Time" => 0,
+            "Time in market" => 0,
+            "CFT per outlet" => 0,
+            "CFT per days" => 0,
+        ];
         $finalArrayWithAvgDistrictLevelSale = array();
 
 
@@ -1185,6 +1202,7 @@ class ProductiveDashboard
 
             foreach ($monthWiseSales as &$arrDistrictData) {
                 if (isset($arrDistrictData['districtLevelSale']['CFT per days']) && isset($arrDistrictData['districtLevelSale']['No of days present'])) {
+                    $arrDistrictData['districtLevelSale']['ACT CFT per days'] = $arrDistrictData['districtLevelSale']['CFT per days'];
                     $time = $arrDistrictData['districtLevelSale']['CFT per days'] / $arrDistrictData['districtLevelSale']['No of days present'];
                     $seconds = round((int)$time / 1000);
                     $minutes = round((int)$seconds / 60);
@@ -1194,21 +1212,26 @@ class ProductiveDashboard
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['No of days present'])) {
+                    $arrDistrictData['districtLevelSale']['ACT No of days present'] = $arrDistrictData['districtLevelSale']['No of days present'];
                     $arrDistrictData['districtLevelSale']['No of days present'] = round($arrDistrictData['districtLevelSale']['No of days present'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
                 }
                 if (isset($arrDistrictData['districtLevelSale']['No of days qualified'])) {
+                    $arrDistrictData['districtLevelSale']['ACT No of days qualified'] = $arrDistrictData['districtLevelSale']['No of days qualified'];
                     $arrDistrictData['districtLevelSale']['No of days qualified'] = round($arrDistrictData['districtLevelSale']['No of days qualified'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
                 }
                 if (isset($arrDistrictData['districtLevelSale']['No of days route adhered'])) {
+                    $arrDistrictData['districtLevelSale']['ACT No of days route adhered'] = $arrDistrictData['districtLevelSale']['No of days route adhered'];
                     $arrDistrictData['districtLevelSale']['No of days route adhered'] = round($arrDistrictData['districtLevelSale']['No of days route adhered'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
                 }
                 if (isset($arrDistrictData['districtLevelSale']['KMs Travelled per Day'])) {
+                    $arrDistrictData['districtLevelSale']['ACT KMs Travelled per Day'] = $arrDistrictData['districtLevelSale']['KMs Travelled per Day'];
                     $arrDistrictData['districtLevelSale']['KMs Travelled per Day'] = round(($arrDistrictData['districtLevelSale']['KMs Travelled per Day'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate, 0);
                 }
                 if (isset($arrDistrictData['districtLevelSale']['CFT per day'])) {
                     $arrDistrictData['districtLevelSale']['CFT per day'] = round($arrDistrictData['districtLevelSale']['CFT per day'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
                 }
                 if (isset($arrDistrictData['districtLevelSale']['Time in market'])) {
+                    $arrDistrictData['districtLevelSale']['ACT Time in market'] = $arrDistrictData['districtLevelSale']['Time in market'];
                     $time = ($arrDistrictData['districtLevelSale']['Time in market'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate;
                     $hours = round((int)$time / 60);
                     $minutes = ((int)$time) % 60;
@@ -1220,6 +1243,7 @@ class ProductiveDashboard
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['CFT per outlet']) && isset($arrDistrictData['districtLevelSale']['Total Transaction'])) {
+                    $arrDistrictData['districtLevelSale']['ACT CFT per outlet'] = $arrDistrictData['districtLevelSale']['CFT per outlet'];
                     $time = $arrDistrictData['districtLevelSale']['CFT per outlet'] / $arrDistrictData['districtLevelSale']['Total Transaction'];
                     $seconds = round((int)$time / 1000);
                     $minutes = round((int)$seconds / 60);
@@ -1233,6 +1257,7 @@ class ProductiveDashboard
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['Total Time'])) {
+                    $arrDistrictData['districtLevelSale']['ACT Total Time'] = $arrDistrictData['districtLevelSale']['Total Time'];
                     $time = ($arrDistrictData['districtLevelSale']['Total Time'] / $arrDistrictData['districtLevelSale']['No of Users']) / $getDate;
                     $hours = round((int)$time / 60);
                     $minutes = ((int)$time) % 60;
@@ -1530,6 +1555,113 @@ class ProductiveDashboard
                         }
                     }
                 }
+            }
+
+            $sumOfNoOfUsers = 0;
+            $sumActiveOfNoOfUsers = 0;
+            $sumActDaysPresent = 0;
+            $sumActDaysQualified = 0;
+            $sumActDaysRouteAdhered = 0;
+            $sumActPlannedOutlets = 0;
+            $sumActVisitedOutlets = 0;
+            $sumActProductiveOutlets = 0;
+            $sumActSurveyMTD = 0;
+            $sumActKmTravelPerDay = 0;
+            $sumActTotalTIme = 0;
+            $sumActTotalTImeInMarket = 0;
+            $sumActTotalTransaction = 0;
+            $sumActCftPerOutlet = 0;
+            $sumActCftPerDay = 0;
+            // Calculate Total Sales at district Level
+            foreach ($monthWiseSales as $district) {
+                $sumOfNoOfUsers += isset($district["districtLevelSale"]["No of Users"]) && $district["districtLevelSale"]["No of Users"] ? $district["districtLevelSale"]["No of Users"] : 0;
+                $sumActiveOfNoOfUsers += isset($district["districtLevelSale"]["No of Active Users"]) && $district["districtLevelSale"]["No of Active Users"] ? $district["districtLevelSale"]["No of Active Users"] : 0;
+                $sumActDaysPresent += isset($district["districtLevelSale"]["ACT No of days present"]) && $district["districtLevelSale"]["ACT No of days present"] ? $district["districtLevelSale"]["ACT No of days present"] : 0;
+                $sumActDaysQualified += isset($district["districtLevelSale"]["ACT No of days qualified"]) && $district["districtLevelSale"]["ACT No of days qualified"] ? $district["districtLevelSale"]["ACT No of days qualified"] : 0;
+                $sumActDaysRouteAdhered += isset($district["districtLevelSale"]["ACT No of days route adhered"]) && $district["districtLevelSale"]["ACT No of days route adhered"] ? $district["districtLevelSale"]["ACT No of days route adhered"] : 0;
+                $sumActPlannedOutlets += isset($district["districtLevelSale"]["Planned Outlets"]) && $district["districtLevelSale"]["Planned Outlets"] ? $district["districtLevelSale"]["Planned Outlets"] : 0;
+                $sumActVisitedOutlets += isset($district["districtLevelSale"]["Visited Outlets"]) && $district["districtLevelSale"]["Visited Outlets"] ? $district["districtLevelSale"]["Visited Outlets"] : 0;
+                $sumActProductiveOutlets += isset($district["districtLevelSale"]["Productive Outlets"]) && $district["districtLevelSale"]["Productive Outlets"] ? $district["districtLevelSale"]["Productive Outlets"] : 0;
+                $sumActSurveyMTD += isset($district["districtLevelSale"]["Survey (M) (MTD)"]) && $district["districtLevelSale"]["Survey (M) (MTD)"] ? $district["districtLevelSale"]["Survey (M) (MTD)"] : 0;
+                $sumActKmTravelPerDay += isset($district["districtLevelSale"]["ACT KMs Travelled per Day"]) && $district["districtLevelSale"]["ACT KMs Travelled per Day"] ? $district["districtLevelSale"]["ACT KMs Travelled per Day"] : 0;
+                $sumActTotalTIme += isset($district["districtLevelSale"]["ACT Total Time"]) && $district["districtLevelSale"]["ACT Total Time"] ? $district["districtLevelSale"]["ACT Total Time"] : 0;
+                $sumActTotalTImeInMarket += isset($district["districtLevelSale"]["ACT Time in market"]) && $district["districtLevelSale"]["ACT Time in market"] ? $district["districtLevelSale"]["ACT Time in market"] : 0;
+                $sumActTotalTransaction += isset($district["districtLevelSale"]["Total Transaction"]) && $district["districtLevelSale"]["Total Transaction"] ? $district["districtLevelSale"]["Total Transaction"] : 0;
+                $sumActCftPerOutlet += isset($district["districtLevelSale"]["ACT CFT per outlet"]) && $district["districtLevelSale"]["ACT CFT per outlet"] ? $district["districtLevelSale"]["ACT CFT per outlet"] : 0;
+                $sumActCftPerDay += isset($district["districtLevelSale"]["ACT CFT per days"]) && $district["districtLevelSale"]["ACT CFT per days"] ? $district["districtLevelSale"]["ACT CFT per days"] : 0;
+            }
+
+            if ($sumOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['No of Users'] = $sumOfNoOfUsers;
+            }
+            if ($sumActiveOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['No of Active Users'] = $sumActiveOfNoOfUsers;
+            }
+            if ($sumActDaysPresent > 0 && $sumOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['No of days present'] =
+                    round((int)$sumActDaysPresent / $sumOfNoOfUsers, 0);
+            }
+            if ($sumActDaysQualified > 0 && $sumOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['No of days qualified'] =
+                    round((int)$sumActDaysQualified / $sumOfNoOfUsers, 0);
+            }
+            if ($sumActDaysRouteAdhered > 0 && $sumOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['No of days route adhered'] =
+                    round((int)$sumActDaysRouteAdhered / $sumOfNoOfUsers, 0);
+            }
+            if ($sumActPlannedOutlets > 0) {
+                $totalSumDistrictLevelSale['Planned Outlets'] = $sumActPlannedOutlets;
+            }
+            if ($sumActVisitedOutlets > 0) {
+                $totalSumDistrictLevelSale['Visited Outlets'] = $sumActVisitedOutlets;
+            }
+            if ($sumActProductiveOutlets > 0) {
+                $totalSumDistrictLevelSale['Productive Outlets'] = $sumActProductiveOutlets;
+            }
+            if ($sumActSurveyMTD > 0) {
+                $totalSumDistrictLevelSale['Survey (M) (MTD)'] = $sumActSurveyMTD;
+            }
+            if ($sumActSurveyMTD > 0) {
+                $totalSumDistrictLevelSale['Survey (M) (Daily Average)'] = round((int)$sumActSurveyMTD / $getDate, 0);
+            }
+            if ($sumActSurveyMTD > 0) {
+                $totalSumDistrictLevelSale['Survey (M) (Daily Average Per User)'] = round((int)($sumActSurveyMTD / $getDate) / $sumOfNoOfUsers, 0);
+            }
+            if ($sumActKmTravelPerDay > 0 && $sumOfNoOfUsers > 0) {
+                $totalSumDistrictLevelSale['KMs Travelled per Day'] =
+                    round((int)($sumActKmTravelPerDay / $sumOfNoOfUsers) / $getDate, 0);
+            }
+            if ($sumActTotalTIme > 0 && $sumOfNoOfUsers > 0) {
+                $sumTotalTime =
+                    round((int)($sumActTotalTIme / $sumOfNoOfUsers) / $getDate, 0);
+
+                $tthours = round((int)$sumTotalTime / 60);
+                $ttminutes = ((int)$sumTotalTime) % 60;
+                $totalSumDistrictLevelSale['Total Time'] = "{$tthours} h {$ttminutes} m";
+            }
+            if ($sumActTotalTImeInMarket > 0 && $sumOfNoOfUsers > 0) {
+                $sumTotalTimeinMarket =
+                    round((int)($sumActTotalTImeInMarket / $sumOfNoOfUsers) / $getDate, 0);
+
+                $ttimhours = round((int)$sumTotalTimeinMarket / 60);
+                $ttimminutes = ((int)$sumTotalTimeinMarket) % 60;
+                $totalSumDistrictLevelSale['Time in market'] = "{$ttimhours} h {$ttimminutes} m";
+            }
+            if ($sumActCftPerOutlet > 0 && $sumActTotalTransaction > 0) {
+                $sumCftOutlet =
+                    round((int)($sumActCftPerOutlet / $sumActTotalTransaction), 0);
+
+                $cftOutletmhours = round((int)$sumCftOutlet / 60);
+                $cftOutletminutes = ((int)$sumCftOutlet) % 60;
+                $totalSumDistrictLevelSale['CFT per outlet'] = "{$cftOutletmhours} h {$cftOutletminutes} m";
+            }
+            if ($sumActCftPerDay > 0 && $sumActDaysPresent > 0) {
+                $sumCftOutlet =
+                    round((int)($sumActCftPerDay / $sumActDaysPresent), 0);
+
+                $cftDaymhours = round((int)$sumCftOutlet / 60);
+                $cftDayminutes = ((int)$sumCftOutlet) % 60;
+                $totalSumDistrictLevelSale['CFT per days'] = "{$cftDaymhours} h {$cftDayminutes} m";
             }
         }
 
