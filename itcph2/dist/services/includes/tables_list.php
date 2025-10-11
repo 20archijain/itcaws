@@ -26,4 +26,5 @@ $TABLES = array(
     "MOBILE_SUMMARY_TABLE" => "tblmobile_summary",
     "LEADERBOARD_TABLE" => "tbl_leaderboard",
     "WD_MAPPING_TABLE" => "tblmapping_wd",
+    "APP_NOTIFICATION_TABLE" => "tblapp_notification",
 );
