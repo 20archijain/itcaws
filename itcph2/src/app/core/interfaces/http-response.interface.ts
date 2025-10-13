@@ -110,6 +110,9 @@ export interface GetAttendanceDataResponse {
 }
 
 export interface GetDownloadBillCutResponse {
+  districtList: DropdownList[];
+  wdMarketList: DropdownList[];
+  wdPopGroupList: DropdownList[];
   branchList: DropdownList[];
   branchFilter?: boolean
   teamType: DropdownList[];
