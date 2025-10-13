@@ -5,29 +5,66 @@
       <form (ngSubmit)="download()" [formGroup]="group" novalidate>
         <div class="row">
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-select [group]="group" controlName="branch" placeholder="{{ 'app.team.add.branch' | translate }}"
-              label="app.team.add.branch" [options]="branchOptions" [errorMessages]="errorMessages.branch"
-              groupBy="mainBranch" [isRequired]="true" (onChange)="getTeamsType()" [multiple]="true">
+            <app-select [group]="group" controlName="district" groupClassName="row" sizeClass="col-sm-12"
+              [options]="districtOptions" [isHorizontalForm]="true"
+              placeholder="{{ 'app.team.add.district' | translate }}" [multiple]="true" (onChange)="getBranch()">
             </app-select>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-select [group]="group" controlName="teamType" [options]="teamTypeOptions" label="app.team.add.type"
-              placeholder="{{ 'app.reporting.teamType' | translate }}" (onChange)="getProducts()">
+            <app-select [group]="group" controlName="branch" groupClassName="row" sizeClass="col-sm-12"
+              [options]="branchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+              [isRequired]="true" [errorMessages]="errorMessages.branch" (onChange)="getCircle()" [multiple]="true"
+              groupBy="mainBranch">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdMarket" [options]="wdMarketOptions" [multiple]="true"
+              placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
+              placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+              placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.dsName' | translate }}">
             </app-select>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
             <app-select [group]="group" controlName="product" placeholder="{{ 'app.download.products' | translate }}"
-              label="app.download.products" [options]="productOptions" [multiple]="true">
+             [options]="productOptions" [multiple]="true">
             </app-select>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-date label="placeholder.from" placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
+            <app-date placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
               controlName="dateFrom" [isRequired]="true" [errorMessages]="errorMessages.dateFrom"
               [maxDate]="group.get('dateTo').value">
             </app-date>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-date label="placeholder.to" placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
+            <app-date placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
               controlName="dateTo" [isRequired]="true" [errorMessages]="errorMessages.dateTo"
               [minDate]="group.get('dateFrom').value">
             </app-date>
