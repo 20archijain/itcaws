@@ -133,6 +133,19 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
     );
   }
 
+
+  getButtonCondition(): boolean {
+    if (this.currentDate['day'] > 21) {
+      if (this.group.get('monthCheck').value === 2) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return true;
+    }
+  }
+
   onTypeChange(monthCheck: number) {
     if (monthCheck === 2) {
       this.group.get('monthCheck').setValue(monthCheck);

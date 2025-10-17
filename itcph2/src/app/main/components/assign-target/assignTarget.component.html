@@ -131,9 +131,11 @@
         <div class="row mt-2 mb-1" *ngIf="stockProductsList?.length">
           <div class="col-md-12 d-flex justify-content-center">
 
-            <app-button text="button.confirm" [showSpinner]="isDisabled" spinnerText="spinnerText.confirming"
-              [isDisabled]="group.invalid || isDisabled" (onClick)="confirmStock()">
-            </app-button>
+            <ng-container *ngIf="getButtonCondition()">
+              <app-button text="button.confirm" [showSpinner]="isDisabled" spinnerText="spinnerText.confirming"
+                [isDisabled]="group.invalid || isDisabled" (onClick)="confirmStock()">
+              </app-button>
+            </ng-container>
           </div>
         </div>
       </form>
