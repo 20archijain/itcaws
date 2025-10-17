@@ -770,7 +770,6 @@ class VanDsReporting
         } else {
             if (is_array($teamType) && !empty($teamType)) {
                 $teamTypeIn = implode(",", array_map('intval', $teamType));
-
                 $arrProductSummaryColumns = getRowsColumns(
                     $this->_dbConn,
                     $branchProductsTable,
@@ -1004,6 +1003,9 @@ class VanDsReporting
         $arrDownload["sale"][0][] = "DS ID";
         $arrDownload["sale"][0][] = "DS Type";
         $arrDownload["sale"][0][] = "DS Name";
+        $arrDownload["sale"][0][] = "Accompanied by MDO";
+        $arrDownload["sale"][0][] = "MDO ID";
+        $arrDownload["sale"][0][] = "MDO Name";
         $arrDownload["sale"][0][] = "Reporting Type";
         $arrDownload["sale"][0][] = "Route";
         // $arrDownload["sale"][0][] = "Market Name";
@@ -1094,7 +1096,17 @@ class VanDsReporting
                     $timeSpent = sprintf("%d:%02d", $minutes, $seconds);
                     $meters = $row["distance_in_meter"] / 1000;
                     $roundedMeters = round($meters, 2);
-
+                    $teamId = $row["team_id"];
+                    $isMdoWorks = getRowColumns($this->_dbConn, "tblmdo_summary", "mdo_id, mdo_name", "ds_id = $teamId AND capture_date = '$captureDate'");
+                    if (isNonEmptyArray($isMdoWorks)) {
+                        $isMdo = "1";
+                        $mdoId = isset($isMdoWorks[0]) ? $isMdoWorks[0] : "";
+                        $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
+                    } else {
+                        $isMdo = "0";
+                        $mdoId = "";
+                        $mdoName = "";
+                    }
                     // Convert seconds to HH:MM:SS format
 
                     $shopId = $row["ques_3"];
@@ -1144,6 +1156,9 @@ class VanDsReporting
                     $arrDownload["sale"][$index][] = $row["team_id"];
                     $arrDownload["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
                     $arrDownload["sale"][$index][] = $row["team_name"];
+                    $arrDownload["sale"][$index][] = $isMdo;
+                    $arrDownload["sale"][$index][] = $mdoId;
+                    $arrDownload["sale"][$index][] = $mdoName;
                     $arrDownload["sale"][$index][] = $row["ques_0"];
                     $arrDownload["sale"][$index][] = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
                     // $arrDownload["sale"][$index][] = htmlspecialchars_decode($feederMarketName);
@@ -1337,6 +1352,9 @@ class VanDsReporting
         $arrSummary["sale"][0][] = "DS ID";
         $arrSummary["sale"][0][] = "DS Name";
         $arrSummary["sale"][0][] = "DS Type";
+        $arrSummary["sale"][0][] = "Accompanied by MDO";
+        $arrSummary["sale"][0][] = "MDO ID";
+        $arrSummary["sale"][0][] = "MDO Name";
         $arrSummary["sale"][0][] = "Date";
         $arrSummary["sale"][0][] = "Week";
         $arrSummary["sale"][0][] = "Present";
@@ -1489,6 +1507,16 @@ class VanDsReporting
                             $totalSale += $iSale;
                         }
                     }
+                    $isMdoWorks = getRowColumns($this->_dbConn, "tblmdo_summary", "mdo_id, mdo_name", "ds_id = $teamId AND capture_date = '$date'");
+                    if (isNonEmptyArray($isMdoWorks)) {
+                        $isMdo = "1";
+                        $mdoId = isset($isMdoWorks[0]) ? $isMdoWorks[0] : "";
+                        $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
+                    } else {
+                        $isMdo = "0";
+                        $mdoId = "";
+                        $mdoName = "";
+                    }
                     $arrPlannedOutlet = $row["planned_outlets"];
                     $branchId = $row["branch_id"];
                     if ($row["is_beat_adherence"] == "Yes") {
@@ -1496,7 +1524,7 @@ class VanDsReporting
                     } elseif ($row["is_beat_adherence"] == "No") {
                         $isBeatAdher = "0";
                     }
-                        $reason = $row["beat_adherence_reason"];
+                    $reason = $row["beat_adherence_reason"];
                     if ($branchId == 40) {
                         $idealRoute = $dayOfWeek;
                         // $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
@@ -1581,6 +1609,9 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = $teamId;
                     $arrSummary["sale"][$index][] = $row["team_name"];
                     $arrSummary["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
+                    $arrSummary["sale"][$index][] = $isMdo;
+                    $arrSummary["sale"][$index][] = $mdoId;
+                    $arrSummary["sale"][$index][] = $mdoName;
                     $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
                     $arrSummary["sale"][$index][] = $week;
                     $arrSummary["sale"][$index][] = "1";
@@ -1694,6 +1725,9 @@ class VanDsReporting
                             $arrSummary["sale"][$index][] = $rowTeam["team_id"];
                             $arrSummary["sale"][$index][] = $rowTeam["team_name"];
                             $arrSummary["sale"][$index][] = $rowTeam["is_type"] != "" ? $arrTeamType[$rowTeam["is_type"]] : "";
+                            $arrSummary["sale"][$index][] = "0";
+                            $arrSummary["sale"][$index][] = "";
+                            $arrSummary["sale"][$index][] = "";
                             $arrSummary["sale"][$index][] = currentDate($date, "d-m-Y");
                             $arrSummary["sale"][$index][] = $week;
                             $arrSummary["sale"][$index][] = "0";
@@ -1835,8 +1869,7 @@ class VanDsReporting
                 }
             }
         }
-        // print_r($district);
-        // die;
+
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
@@ -1847,9 +1880,16 @@ class VanDsReporting
                     $Cond .= " AND b.branch_id = $branch";
                 }
             } elseif ($district) {
-                $districts = "'" . implode("','", $district) . "'";
-                $distCond = " AND district IN ($districts)";
-                $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 $distCond");
+                $matchAlldistrict = checkIfAllSelected($district);
+                if (!$matchAlldistrict) {
+                    $districts = "'" . implode("','", $district) . "'";
+                    $distCond = " AND district IN ($districts)";
+                    $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 $distCond");
+                } else {
+                    $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 ");
+                }
+            } else {
+                $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 ");
             }
         }
 
@@ -1907,7 +1947,7 @@ class VanDsReporting
         }
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Branch", "Region", "Circle", "Section", "WD Code", "DS Type", "DS ID", "DS Name", "Date", "Week", "Route", "Outlet Name", "Owner Moblie Number", "Outlet ID", "Outlet Type", "Category", "Variant", "Sales Qty (M)"];
+        $arrExcelData[] = ["Branch", "Region", "Circle", "Section", "WD Code", "DS Type", "DS ID", "DS Name", "Accompanied by MDO", "MDO ID", "MDO Name", "Date", "Week", "Route", "Outlet Name", "Owner Moblie Number", "Outlet ID", "Outlet Type", "Category", "Variant", "Sales Qty (M)"];
 
         foreach ($branch as $branchId) {
             $sProductQuery = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $teamTypeCond ORDER BY product_name";
@@ -1958,6 +1998,16 @@ class VanDsReporting
                             "outlet_name, shop_uniq_code, outlet_type, outlet_mobile",
                             "rec_id = '$outletId' AND team_id = $teamId "
                         );
+                        $isMdoWorks = getRowColumns($this->_dbConn, "tblmdo_summary", "mdo_id, mdo_name", "ds_id = $teamId AND capture_date = '$date'");
+                        if (isNonEmptyArray($isMdoWorks)) {
+                            $isMdo = "1";
+                            $mdoId = isset($isMdoWorks[0]) ? $isMdoWorks[0] : "";
+                            $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
+                        } else {
+                            $isMdo = "0";
+                            $mdoId = "";
+                            $mdoName = "";
+                        }
 
                         $outletName  = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
                         $shopUniqueCode = $outletData[1] ?? "";
@@ -1978,6 +2028,9 @@ class VanDsReporting
                                     'DS Type' => $dsType,
                                     'DS ID' => $teamId,
                                     'DS Name' => $teamName,
+                                    'Accompanied by MDO' => $isMdo,
+                                    'MDO ID' => $mdoId,
+                                    'MDO Name' => $mdoName,
                                     'Date' => $date,
                                     'Week' => $week,
                                     'Route' => $route,
