@@ -295,7 +295,7 @@ class AppNotification
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "SELECT DISTINCT b.is_type FROM tblbranch AS a, tblproject_team AS b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where ORDER BY b.is_type";
+        $query = "SELECT DISTINCT b.is_type FROM tblbranch AS a, tblproject_team AS b WHERE a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.is_type IN (0, 2, 5) AND b.s_id = 99 $where ORDER BY b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
@@ -333,7 +333,7 @@ class AppNotification
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0  $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.is_type IN (0, 2, 5) AND b.s_id = 99  $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -360,6 +360,7 @@ class AppNotification
             "teamList" => $this->getTeamsList(),
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
+            "branchFilter" => true,
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -369,6 +370,9 @@ class AppNotification
     final public function getCondition()
     {
         $condition = "";
+        $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $branchTable = $GLOBALS['TABLES']['BRANCH_TABLE'];
+        $mappingTable = $GLOBALS['TABLES']['WD_MAPPING_TABLE'];
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
@@ -483,7 +487,11 @@ class AppNotification
         if ($teamList) {
             $condition .= " AND b.team_id IN $teamList";
         }
-        return $condition;
+        $where = "";
+        if (isset($condition) && $condition != "") {
+            $where .= " AND a.team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
+        }
+        return $where;
     }
 
 
@@ -527,9 +535,6 @@ class AppNotification
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
-
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -713,8 +718,8 @@ class AppNotification
         $where = $this->getCondition();
         $teamIds = [];
         if (isset($where) && $where != "") {
-            $query = "SELECT b.team_id FROM tblbranch as a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
-                " WHERE a.branch_id = b.branch_id AND b.branch_id = d.branch_id AND a.dstatus = 0  AND b.wd_code = e.wd_code $where";
+            $query = "SELECT a.team_id FROM tblproject_team as a " .
+                "WHERE  a.dstatus = 0 AND a.is_type IN (0, 2, 5) AND a.s_id = 99  $where";
             $rsAction = null;
             $iActionRows = 0;
             $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
