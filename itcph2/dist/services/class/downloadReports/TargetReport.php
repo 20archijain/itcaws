@@ -25,27 +25,6 @@ class TargetReport
         $this->_arrAccessInfo = $arrAccessInfo;
     }
 
-    private function getCondition()
-    {
-        // $arrSearchParams = array(
-        //     "dateFrom" => array("capture_date", 4, "dateTo", true),
-        // );
-
-        // // filter query
-        // $where = getFilterResult(
-        //     $this->_data,
-        //     $arrSearchParams,
-        //     $this->_dbConn
-        // );
-
-        // // $teamList = $this->_arrAccessInfo["user_teams"];
-        // // if ($teamList) {
-        // //     $where .= " AND a.team_id IN $teamList";
-        // // }
-
-        return "";
-    }
-
     final public function getConditionFilter($summary = false, $andCondition = true)
     {
         $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
@@ -277,7 +256,6 @@ class TargetReport
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
         // Filter query
-        $where = $this->getCondition();
         $whereFilter = $this->getConditionFilter();
         $branch = getFormData($this->_data, "branch");
         $product = getFormData($this->_data, "product");
@@ -291,24 +269,24 @@ class TargetReport
         $Cond = "";
         $teamTypeCond = "";
         if ($teamType) {
-            $teamTypeCond .= " AND team_type = $teamType";
-            $Cond .= " AND b.is_type = $teamType";
+            $teamTypeCond .= " AND b.team_type = $teamType";
+            // $Cond .= " AND b.is_type = $teamType";
         }
 
-        $productCond = "";
-        if ($product) {
-            if (isNonEmptyArray($product)) {
-                $products = "'" .  implode("','", $product)  . "'";
-                $productCond = " AND product_name IN ($products)";
-            } else {
-                $productCond = " AND product_name = '$product'";
-            }
-        }
+        // $productCond = "";
+        // if ($product) {
+        //     if (isNonEmptyArray($product)) {
+        //         $products = "'" .  implode("','", $product)  . "'";
+        //         $productCond = " AND product_name IN ($products)";
+        //     } else {
+        //         $productCond = " AND product_name = '$product'";
+        //     }
+        // }
 
         $arrExcelData = [];
         $arrExcelData[] = ["Month", "District", "Branch", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
 
-        $branchCond = "";
+        // $branchCond = "";
         // if ($branch) {
         //     $matchAll = checkIfAllSelected($branch);
         //     if (!$matchAll) {
@@ -329,8 +307,8 @@ class TargetReport
             $sAction = null;
             $iRows = 0;
             $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $productCond $teamTypeCond ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
-
+                " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
+                // echo $sQuery;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             $arrProductColumns = array();
@@ -356,7 +334,7 @@ class TargetReport
             $sAction3 = null;
             $iRows3 = 0;
             $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 AND a.branch_id = $branchId $productCond $teamTypeCond ORDER BY a.category_name, a.product_name";
+                " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
                 // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
@@ -378,8 +356,8 @@ class TargetReport
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT a.team_name, a.team_id, c.main_branch, b.wd_code, b.wd_firm_name, b.wd_market, b.wd_pop_group,  b.district, b.branch, b.circle_name, b.circle, b.section_name, b.section FROM tblproject_team AS a, tblmapping_wd as b, tblbranch as c WHERE a.wd_code = b.wd_code AND a.branch_id = c.branch_id AND a.dstatus = 0" .
-                " AND a.is_type = 5 AND a.branch_id != 40 AND a.branch_id = $branchId limit 1";
+            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND b.dstatus = 0" .
+                " AND b.is_type = 5 AND b.branch_id != 40 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
 
