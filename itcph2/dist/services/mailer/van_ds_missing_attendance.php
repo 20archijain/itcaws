@@ -63,7 +63,7 @@ class VanDsMailer
 
                     if (isNonEmptyArray($arrData)) {
                         $subject = "$branchName - Van DS Missing Attendance report for " . currentDate($currentDate, "d-m-Y");
-                        sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, $arrTo, $arrCc);
+                        sendMail(array("pns29397@gmail.com"), $subject, "I am testing right now", array());
                     }
                 }
             }

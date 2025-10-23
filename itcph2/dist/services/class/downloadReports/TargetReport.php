@@ -302,13 +302,12 @@ class TargetReport
         // }
 
         foreach ($branch as $branchId) {
-
             //Focus Brand Query
             $sAction = null;
             $iRows = 0;
             $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
                 " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
-                // echo $sQuery;die;
+            // echo $sQuery;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             $arrProductColumns = array();
@@ -335,7 +334,7 @@ class TargetReport
             $iRows3 = 0;
             $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
                 " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
-                // echo $sQuery3;die;
+            // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
             $arrProductColumnsAllProduct = array();
@@ -356,7 +355,8 @@ class TargetReport
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND b.dstatus = 0" .
+            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+                " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND b.dstatus = 0" .
                 " AND b.is_type = 5 AND b.branch_id != 40 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
@@ -385,7 +385,6 @@ class TargetReport
 
                     $arrMonth = $this->_data['month'];
                     foreach ($arrMonth as $month) {
-
                         $firstDate = date('Y-m-01', strtotime($month));
                         $lastDate  = date('Y-m-t', strtotime($month));
 
@@ -400,8 +399,7 @@ class TargetReport
                         $totalQualifiedLimit = 20;
 
                         $gateCheck = 'N';
-                        if($qualifiedAttendance >= $totalQualifiedLimit)
-                        {
+                        if ($qualifiedAttendance >= $totalQualifiedLimit) {
                             $gateCheck = 'Y';
                         }
 
@@ -433,68 +431,59 @@ class TargetReport
                         $overAllEarned = 0;
                         $totalEarned = 0;
 
-                        if($gateCheck == 'Y')
-                        {
-                            if($perF1 >= 100)
-                            {
+                        if ($gateCheck == 'Y') {
+                            if ($perF1 >= 100) {
                                 $focus1Earned = $focus1Max;
-                            }elseif($perF1 < 100 && $perF1 >= 90)
-                            {
+                            } elseif ($perF1 < 100 && $perF1 >= 90) {
                                 $focus1Earned = $focus1Max * 0.90;
-                            }elseif($perF1 < 90 && $perF1 >= 80)
-                            {
+                            } elseif ($perF1 < 90 && $perF1 >= 80) {
                                 $focus1Earned = $focus1Max * 0.80;
-                            }elseif($perF1 < 80 && $perF1 >= 70)
-                            {
+                            } elseif ($perF1 < 80 && $perF1 >= 70) {
                                 $focus1Earned = $focus1Max * 0.70;
-                            }else{
+                            } else {
                                 $focus1Earned = 0;
                             }
 
-                            if($perF2 >= 100)
-                            {
+                            if ($perF2 >= 100) {
                                 $focus2Earned = $focus2Max;
-                            }elseif($perF2 < 100 && $perF2 >= 90)
-                            {
+                            } elseif ($perF2 < 100 && $perF2 >= 90) {
                                 $focus2Earned = $focus2Max * 0.90;
-                            }elseif($perF2 < 90 && $perF2 >= 80)
-                            {
+                            } elseif ($perF2 < 90 && $perF2 >= 80) {
                                 $focus2Earned = $focus2Max * 0.80;
-                            }elseif($perF2 < 80 && $perF2 >= 70)
-                            {
+                            } elseif ($perF2 < 80 && $perF2 >= 70) {
                                 $focus2Earned = $focus2Max * 0.70;
-                            }else{
+                            } else {
                                 $focus2Earned = 0;
                             }
 
-                            if($perOverall >= 100)
-                            {
+                            if ($perOverall >= 100) {
                                 $overAllEarned = $overAllMax;
-                            }elseif($perOverall < 100 && $perOverall >= 90)
-                            {
+                            } elseif ($perOverall < 100 && $perOverall >= 90) {
                                 $overAllEarned = $overAllMax * 0.90;
-                            }elseif($perOverall < 90 && $perOverall >= 80)
-                            {
+                            } elseif ($perOverall < 90 && $perOverall >= 80) {
                                 $overAllEarned = $overAllMax * 0.80;
-                            }elseif($perOverall < 80 && $perOverall >= 70)
-                            {
+                            } elseif ($perOverall < 80 && $perOverall >= 70) {
                                 $overAllEarned = $overAllMax * 0.70;
-                            }else{
+                            } else {
                                 $overAllEarned = 0;
                             }
 
                             $totalEarned = $focus1Earned + $focus2Earned + $overAllEarned;
-
-
                         }
 
                         //First Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Focus Variant 1 Survey", $arrProducts[0], $assignFocus1, $achieveFocus1, $perF1, $focus1Max, $focus1Earned, ""];
+                        $arrExcelData[] = [
+                            $month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
+                            "Business Parameter", "Focus Variant 1 Survey", $arrProducts[0], $assignFocus1, $achieveFocus1, $perF1, $focus1Max, $focus1Earned, ""
+                        ];
 
                         //Second Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Focus Variant 2 Survey", $arrProducts[1], $assignFocus2, $achieveFocus2, $perF2, $focus2Max, $focus2Earned, ""];
+                        $arrExcelData[] = [
+                            $month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
+                            "Business Parameter", "Focus Variant 2 Survey", $arrProducts[1], $assignFocus2, $achieveFocus2, $perF2, $focus2Max, $focus2Earned, ""
+                        ];
 
-                         //Third Column
+                        //Third Column
                         $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $perOverall, $overAllMax, $overAllEarned, ""];
 
                         //Forth Column
@@ -505,7 +494,6 @@ class TargetReport
                     }
                 }
             }
-
         }
 
         $fileName = "Bill_Cut_Report_$currentDateTime.xlsx";

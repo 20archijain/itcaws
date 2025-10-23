@@ -160,6 +160,7 @@ class VanDsReporting
             $where .= " AND a.team_id IN $teamList";
         }
 
+        // print_r($where);die;
         return $where;
     }
 
@@ -770,6 +771,7 @@ class VanDsReporting
         } else {
             if (is_array($teamType) && !empty($teamType)) {
                 $teamTypeIn = implode(",", array_map('intval', $teamType));
+
                 $arrProductSummaryColumns = getRowsColumns(
                     $this->_dbConn,
                     $branchProductsTable,
@@ -1188,12 +1190,7 @@ class VanDsReporting
                             foreach ($arrProductBought as $productIndex => $arrProduct) {
                                 $productName = strtoupper($arrProduct[0]);
                                 $productColumnName = $arrProduct[1];
-
-                                if ($branchId == 40) {
-                                    $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] / 100 : 0;
-                                } else {
-                                    $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
-                                }
+                                $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
                                 // Ensure the product value exists and is strictly greater than 0
                                 if (isset($iSale) && floatval($iSale) > 0) {
                                     $productCount++; // Count only if the value is greater than 0
@@ -1473,9 +1470,9 @@ class VanDsReporting
 
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops" .
-                ", SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0" .
-                " AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
+            $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries" .
+                ", SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns FROM $summaryTable AS a" .
+                ", $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1641,11 +1638,7 @@ class VanDsReporting
                     if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                         foreach ($arrProductBought as $productIndex => $arrProduct) {
                             $productName = strtoupper($arrProduct[0]);
-                            if ($branchId == 40) {
-                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] / 100 : 0;
-                            } else {
-                                $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
-                            }
+                            $iSale = isset($row[$arrProduct[1]]) ? $row[$arrProduct[1]] : 0;
                             // $iSale = $row[$arrProduct[1]];
                             // Accumulate the product sale
                             $totalProductSale += $iSale;
@@ -1869,7 +1862,8 @@ class VanDsReporting
                 }
             }
         }
-
+        // print_r($district);
+        // die;
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
@@ -1880,16 +1874,9 @@ class VanDsReporting
                     $Cond .= " AND b.branch_id = $branch";
                 }
             } elseif ($district) {
-                $matchAlldistrict = checkIfAllSelected($district);
-                if (!$matchAlldistrict) {
-                    $districts = "'" . implode("','", $district) . "'";
-                    $distCond = " AND district IN ($districts)";
-                    $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 $distCond");
-                } else {
-                    $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 ");
-                }
-            } else {
-                $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 ");
+                $districts = "'" . implode("','", $district) . "'";
+                $distCond = " AND district IN ($districts)";
+                $branch = getRowsColumn($this->_dbConn, "tblbranch", 'branch_id', "dstatus = 0 $distCond");
             }
         }
 

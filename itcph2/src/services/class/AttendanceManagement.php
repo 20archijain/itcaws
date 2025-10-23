@@ -135,7 +135,7 @@ class AttendanceManagement
             }
         }
         // get Team list of selected Client, and project
-        $sTeam = getTeamsOptions($this->_dbConn, "", "", 0, true, "$branchCond AND s_id = '99'", true);
+        $sTeam = getTeamsOptions($this->_dbConn, "", "", 0, true, "$branchCond AND s_id IN ('99', 7, 10)", true);
         if (isset($sTeam) && !isEmptyString($sTeam)) {
             $this->_totalTeams = count(explode(",", $sTeam));
             $where .= " AND a.team_id IN ($sTeam)";
@@ -707,7 +707,7 @@ class AttendanceManagement
                     $smallImage = true;
                 } else {
                     $imgPath = $no_img_path . "/";
-                    $imgName = "no-image.jpg";
+                    $imgName = "dummy_pic.jpg";
                     $thumbImg = $imgPath . $imgName;
                     $smallImage = false;
                 }

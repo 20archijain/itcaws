@@ -2057,10 +2057,10 @@ class AppSummary extends Utilities
             }
         } elseif ($jsonId == 10) {
             $teamType = $this->tableUtil->getRowColumn(
-                    "$dbName.tblproject_team",
-                    "is_type",
-                    "dstatus = 0 AND team_id = $teamId"
-                );
+                "$dbName.tblproject_team",
+                "is_type",
+                "dstatus = 0 AND team_id = $teamId"
+            );
             // Get DS route and outlet id for getting the team id with MDO work's today
             $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4, type", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             $arrRouteDetails = json_decode($route_outletId[0], true);
@@ -2069,10 +2069,10 @@ class AppSummary extends Utilities
             $type = $route_outletId[2];
             if ($type == 6 || $type == 8 || $type == 9) {
                 $dsId = $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details_breeze", "team_id", "dstatus = 0 AND rec_id = $outletId") : "";
-                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details_breeze", "COUNT(rec_id)", "dstatus = 0 AND team_id = '$dsId'") : "";  
+                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details_breeze", "COUNT(rec_id)", "dstatus = 0 AND team_id = '$dsId'") : "";
             } else {
                 $dsId = $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "team_id", "dstatus = 0 AND route_name = '$route' AND rec_id = $outletId") : "";
-                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : ""; 
+                $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : "";
             }
             $coverdOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
             $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
@@ -2181,7 +2181,7 @@ class AppSummary extends Utilities
                     ],
                 ];
             }
-            
+
             // Final output summary
             $arrOtherSummary[] = [
                 "mdoSurveyData" => [
@@ -2205,7 +2205,6 @@ class AppSummary extends Utilities
                 "dsTypeDistributionData" => $dsTypeDistributionData,
                 "wdCodeData" => $arrWdcodeData
             ];
-
         } else {
             $arrTodaySummary = $this->tableUtil->getRowColumns(
                 "$dbName.tblmobile_summary",
@@ -2381,11 +2380,13 @@ class AppSummary extends Utilities
                         date('Y-m'),
                     );
                     //productlist
+                    $products = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "summary_column_name", "dstatus = 0 AND team_type = 5 AND branch_id = $branchId");
                     $arrFocusProduct = $this->tableUtil->getRowsColumns("$dbName.tblbranch_pickupstock_products", "summary_column_name, product_name", "dstatus = 0 AND is_focusbrand = 1 AND team_type = 5 AND branch_id = $branchId");
                     $focusBrand1Column = $arrFocusProduct[0][0]; // total_sale_product14
                     $focusBrand2Column = $arrFocusProduct[1][0]; // total_sale_product15
                     $focusBrand1Name = $arrFocusProduct[0][1];
                     $focusBrand2Name = $arrFocusProduct[1][1];
+                    $overAllProduct = $this->tableUtil->getRowColumn("$dbName.tblbranch_pickupstock_products_assign_target", "summary_column_name", "dstatus = 0 AND product_name = 'Overall' AND team_type = 5 AND branch_id = $branchId");
                     $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops' AND team_type = $teamType");
                     $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin' AND team_type = $teamType");
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
@@ -2394,10 +2395,13 @@ class AppSummary extends Utilities
                         list($year, $newMonth) = explode('-', $month);
                         $focusBrand1TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$focusBrand1Column", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$focusBrand2Column", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        $overAllArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
 
-                        $focusBrand1Target = isset($focusBrand1TargetArr) && $focusBrand1TargetArr ? $focusBrand1TargetArr : 1;
+                        $focusBrand1Target = isset($focusBrand1TargetArr) && $focusBrand1TargetArr ? $focusBrand1TargetArr : 0;
 
-                        $focusBrand2Target = isset($focusBrand2TargetArr) && $focusBrand2TargetArr ? $focusBrand2TargetArr : 1;
+                        $focusBrand2Target = isset($focusBrand2TargetArr) && $focusBrand2TargetArr ? $focusBrand2TargetArr : 0;
+
+                        $overAllTarget = isset($overAllArr) && $overAllArr ? $overAllArr : 0;
 
                         $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($focusBrand1Column)", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($focusBrand2Column)", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
@@ -2441,12 +2445,14 @@ class AppSummary extends Utilities
                             $target = 0;
                             $earnedMoney = 0;
                             $rewardMoney = 0;
+                            $capTarget = 0;
                             if ($i == 1) {
-                                $title = "Qualified Attendance";
+                                $title = "Gate/Qualified Attendance";
                                 $color = "#F05000";
                                 $achieved = $qualifiedAttendanceCount;
                                 $target = 20;
-                                $rewardMoney = 500;
+                                $rewardMoney = 30;
+                                $capTarget = 20;
                                 $earnedMoney = ($achieved / $target) * $rewardMoney;
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG";
                             }
@@ -2454,9 +2460,9 @@ class AppSummary extends Utilities
                                 $title = "Overall Volume";
                                 $color = "#FF0000";
                                 $achieved = $overAllValue;
-                                $target = 1000;
+                                $target = $overAllTarget;
                                 $rewardMoney = 1000;
-                                $earnedMoney = ($achieved / $target) * $rewardMoney;
+                                $earnedMoney = $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_money_100.PNG";
                             }
                             if ($i == 3) {
@@ -2465,7 +2471,7 @@ class AppSummary extends Utilities
                                 $achieved = isset($focusBrand1[0]) ? (float) $focusBrand1[0] : 0;
                                 $target = $focusBrand1Target;
                                 $rewardMoney = 500;
-                                $earnedMoney = ($achieved / $target) * $rewardMoney;
+                                $earnedMoney =  $target ? ($achieved / $target) * $rewardMoney : 0;
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_rupees.PNG";
                             }
                             if ($i == 4) {
@@ -2474,7 +2480,7 @@ class AppSummary extends Utilities
                                 $achieved = isset($focusBrand2[0]) ? (float) $focusBrand2[0] : 0;
                                 $target = $focusBrand2Target;
                                 $rewardMoney = 500;
-                                $earnedMoney = ($achieved / $target) * $rewardMoney;
+                                $earnedMoney = $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
                             }
                             // Explicitly index the arrays
                             $cardItems[] = [
@@ -2486,16 +2492,30 @@ class AppSummary extends Utilities
                                 ],
                             ];
 
-                            $progressItems[] = [
-                                "LeaderBoardProgressItem" => [
-                                    "earnedMoney" => $earnedMoney,
-                                    "rewardMoney" => $rewardMoney,
-                                    "title" => $title,
-                                    "color" => $color,
-                                    "icon" => $icon,
-                                    "iconReward" => "",
-                                ],
-                            ];
+                            if ($i == 1) {
+                                $progressItems[] = [
+                                    "LeaderBoardProgressItem" => [
+                                        "earnedMoney" => $earnedMoney,
+                                        "rewardMoney" => $rewardMoney,
+                                        "capTarget" => $capTarget,
+                                        "title" => $title,
+                                        "color" => $color,
+                                        "icon" => $icon,
+                                        "iconReward" => "",
+                                    ],
+                                ];
+                            } else {
+                                $progressItems[] = [
+                                    "LeaderBoardProgressItem" => [
+                                        "earnedMoney" => $earnedMoney,
+                                        "rewardMoney" => $rewardMoney,
+                                        "title" => $title,
+                                        "color" => $color,
+                                        "icon" => $icon,
+                                        "iconReward" => "",
+                                    ],
+                                ];
+                            }
 
                             $earnedPoints += $achieved;
                         }
@@ -2503,7 +2523,7 @@ class AppSummary extends Utilities
                         $leaderboardData[] = array(
                             "LeaderBoardData" => array(
                                 "earnedPoints" => $earnedPoints,
-                                "maxPoints" => 1500,
+                                "maxPoints" => 2000,
                                 "monthName" => date('M', strtotime($month)),
                                 "cardItems" => $cardItems,
                                 "progressItems" => $progressItems

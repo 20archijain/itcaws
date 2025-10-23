@@ -6,10 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 
 import { FormService } from 'src/app/core/services/form.service';
 import { environment } from 'src/environments/environment';
-import { LISTING, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
-import { Functions } from 'src/app/core/utils/functions.list';
+import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { DashboardData, DropdownList, GetDownloadFileDetails, SalesDashboardData, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
+import { DashboardData, DropdownList, SalesDashboardData } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
@@ -19,7 +18,7 @@ import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
   templateUrl: './app.notification.component.html',
   styleUrls: ["./app.notification.component.scss"],
 })
-export class AppNotification implements OnDestroy, OnInit {
+export class AppNotificationComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   url = environment.viewSalesDashboardDataUrl;
   group: UntypedFormGroup;

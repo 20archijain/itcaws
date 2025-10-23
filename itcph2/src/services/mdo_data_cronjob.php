@@ -32,6 +32,7 @@ class ProcessMdoData
         $rsAction = null;
         $iRows = 0;
         $sQuery = "SELECT mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5)";
+
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -44,11 +45,11 @@ class ProcessMdoData
                 if ($teamType == 6 || $teamType == 8 || $teamType == 9) {
                     $branchId = getRowColumn($this->dbConn, "tblbreeze_team", "branch_id", "dstatus = 0 AND team_id = '$team'");
                     $dsName = getRowColumn($this->dbConn, "tblbreeze_team", "team_name", "dstatus = 0 AND team_id = '$team'");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details_breeze", "rec_id, route_name, outlet_name, outlet_mobile, outlet_address, wd_code, lt, lg, sort_order", "dstatus = 0 AND team_id = '$team'");
+                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details_breeze", "rec_id, route_name, outlet_name, outlet_mobile, outlet_address, wd_code, lt, lg, sort_order, dstatus", "team_id = '$team'");
                 } else {
                     $branchId = getRowColumn($this->dbConn, "tblproject_team", "branch_id", "dstatus = 0 AND team_id = $team");
                     $dsName = getRowColumn($this->dbConn, "tblproject_team", "team_name", "dstatus = 0 AND team_id = $team");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details", "rec_id, route_name, outlet_name, outlet_mobile, market_name, wd_code, lt, lg, sort_order", "dstatus = 0 AND team_id = $team");
+                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details", "rec_id, route_name, outlet_name, outlet_mobile, market_name, wd_code, lt, lg, sort_order, dstatus", "team_id = $team");
                 }
 
                 foreach ($getRouteDetails as $row) {
@@ -61,6 +62,7 @@ class ProcessMdoData
                     $lt = $row[6];
                     $lg = $row[7];
                     $shortOrder = $row[8];
+                    $dstatus = $row[9];
 
                     if ($teamType != 6 && $teamType != 8 && $teamType != 9) {
                         $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
@@ -196,19 +198,37 @@ class ProcessMdoData
                             $lastPurchaseFocus2 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd2", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' AND $focusProd2 > 0");
                             $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] . "Units" : 0;
                         }
+                    } else {
+                        // reset variables for team types 6,8,9
+                        $totalSale = 0;
+                        $averageSale = 0;
+                        $avegCft = 0;
+                        $totalUlc = 0;
+                        $ulcAvg = 0;
+                        $entryCount = 0;
+                        $lastVisit = null;
+                        $lastOrder = null;
+                        $maxProductName = '';
+                        $minProductName = '';
+                        $lastFocus1DateUnits = '';
+                        $lastFocus2DateUnits = '';
                     }
 
                     $iStatus = isRecordExist($this->dbConn, "tblmdo_offline_data", "id", "team_id = ? AND ds_id = ? AND outlet_id = ?", array($mdoId, $team, $shopId));
 
                     if ($iStatus === 1) {
-                        $cols = "total_survey_qty = ?, avg_survey_qty = ?, avg_cft = ?, ulc = ?, avg_ulc = ?, total_visits = ?, last_ds_visit = ?, last_order = ?, highest_survey_product = ?, lowest_survey_product = ?, focus1_last_purchase = ?, focus2_last_purchase = ?, sort_order =?";
-                        $arrParams = array($totalSale, $averageSale, $avegCft, $totalUlc, $ulcAvg, $entryCount, $lastVisit, $lastOrder, $maxProductName, $minProductName, $lastFocus1DateUnits, $lastFocus2DateUnits, $mdoId, $team, $shopId, $shortOrder);
+                        $cols = "team_id = ?, team_name = ?, wd_code = ?, ds_id = ?, ds_name = ?, type = ?, type_name = ?, route_name = ?, outlet_name = ?, outlet_id = ?, address = ?, outlet_number = ?, total_survey_qty = ?, avg_survey_qty = ?, avg_cft = ?, ulc = ?, avg_ulc = ?" .
+                            ", total_visits = ?, last_ds_visit = ?, last_order = ?, highest_survey_product = ?, lowest_survey_product = ?, focus1_last_purchase = ?, focus2_last_purchase = ?, sort_order =?, dstatus = ?";
+                        $arrParams = array(
+                            $mdoId, $mdoName, $wdCode, $team, $dsName, $teamType, $type[$teamType], $route, $outletName, $shopId, $market, $outletMobile, $totalSale, $averageSale, $avegCft,
+                            $totalUlc, $ulcAvg, $entryCount, $lastVisit, $lastOrder, $maxProductName, $minProductName, $lastFocus1DateUnits, $lastFocus2DateUnits, $shortOrder, $dstatus, $mdoId, $team, $shopId
+                        );
 
                         updateRecord($this->dbConn, "tblmdo_offline_data", $cols, "team_id = ? AND ds_id = ? AND outlet_id = ?", $arrParams);
                     } else {
                         $addCols = "team_id, team_name, wd_code, ds_id, ds_name, type, type_name, route_name, outlet_name, outlet_id, address, outlet_number, total_survey_qty, avg_survey_qty, avg_cft, ulc, avg_ulc" .
-                            ", total_visits, last_ds_visit, last_order, highest_survey_product, lowest_survey_product, focus1_last_purchase, focus2_last_purchase, lt, lg, sort_order";
-                        $addVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+                            ", total_visits, last_ds_visit, last_order, highest_survey_product, lowest_survey_product, focus1_last_purchase, focus2_last_purchase, lt, lg, sort_order, dstatus";
+                        $addVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrAddParams = array(
                             $mdoId,
                             $mdoName,
@@ -236,7 +256,8 @@ class ProcessMdoData
                             $lastFocus2DateUnits,
                             $lt,
                             $lg,
-                            $shortOrder
+                            $shortOrder,
+                            $dstatus
                         );
                         addRecord($this->dbConn, "tblmdo_offline_data", $addCols, $addVals, $arrAddParams);
                     }

@@ -17,6 +17,7 @@ files:
     - "src/app/main/components/sales-dashboard/sales-dashboard.component.scss"
     - "src/app/shared/components/npsr-accordion/npsr-accordion.component.scss"
     - "src/app/shared/components/productive-accordion/productive-accordion.component.scss"
+    - "src/app/main/components/notification/app.notification.component.scss"
 
 rules:
   # Extends

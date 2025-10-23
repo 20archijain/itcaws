@@ -29,7 +29,7 @@ class ProcessShopCode
     final public function processShopUniqueCode()
     {
         $routeTable = $this->tables["ROUTE_DETAILS_TABLE"];
-        $query = "SELECT rec_id, route_name, outlet_name, outlet_mobile FROM $routeTable WHERE dstatus = 0 AND shop_uniq_code_alpha IS NULL LIMIT 300";
+        $query = "SELECT rec_id, route_name, outlet_name, outlet_mobile FROM $routeTable WHERE shop_uniq_code_alpha IS NULL LIMIT 300";
         $iRows = 0;
         $sAction = null;
         $this->dbConn->ExecuteSelectQuery($query, $sAction, $iRows);
@@ -44,7 +44,7 @@ class ProcessShopCode
                 $shopUniqCodeAlpha = $this->generateShopUniqCodeAlpha($routeName, $outletName, $outletMobile);
 
                 // Check if shop_uniq_code_alpha already exists
-                $checkQuery = "SELECT shop_uniq_code FROM $routeTable WHERE dstatus = 0 AND shop_uniq_code_alpha = ?";
+                $checkQuery = "SELECT shop_uniq_code FROM $routeTable WHERE shop_uniq_code_alpha = ?";
                 $checkRows = 0;
                 $checkAction = null;
                 $this->dbConn->ExecuteSelectQuery($checkQuery, $checkAction, $checkRows, [$shopUniqCodeAlpha]);

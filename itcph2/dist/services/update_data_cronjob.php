@@ -64,7 +64,7 @@ class UpdateDataCronjob
                     } else {
                         $arrTeamDetails = getRowColumns($this->_dbConn, $projectTeamTable, "branch_id, is_type", "team_id = $teamId");
                         $branchId = $arrTeamDetails[0] ? $arrTeamDetails[0] : 1;
-                        $teamType = $arrTeamDetails[1] ? $arrTeamDetails[1] : "";
+                        $teamType = $arrTeamDetails[1] ? $arrTeamDetails[1] : 0;
                         $arrTeamBranch[$teamId] = $branchId;
                         $arrTeamBranch[$teamType] = $arrTeamDetails[1];
                     }
@@ -432,8 +432,7 @@ class UpdateDataCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT pro_id, ques_3, lt, lg FROM $respTable WHERE dstatus = 0 AND update_distance = 0" .
-            " $sDateCond ORDER BY capture_datetime DESC LIMIT 500";
+        $sQuery = "SELECT pro_id, ques_3, lt, lg FROM $respTable WHERE dstatus = 0 AND update_distance = 0 ORDER BY capture_datetime DESC LIMIT 500";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {

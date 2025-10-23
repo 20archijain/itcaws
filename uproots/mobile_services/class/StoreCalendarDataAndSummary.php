@@ -207,18 +207,22 @@ class StoreCalendarDataAndSummary
                 $responseEndTime = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
                 $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
                 $endTime = !empty($arrDayEnd[1]) ? $arrDayEnd[1] : (!empty($responseEndTime) ? $responseEndTime : 0);
-                $timeSpentInSec = $this->commonFunctions->getTimeDifference($attendanceDetails[1], $endTime, true);
+                $timeSpentInSec = $this->commonFunctions->getTimeDifference($attendanceDetails, $endTime, true);
                 $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
 
                 // Convert 6 hours into seconds
                 $requiredSeconds = 360 * 60;
 
                 // Check Present
-                if ($timeSpentInSec && $distanceInKm) {
-                    if ($timeSpentInSec >= $requiredSeconds && $distanceInKm >= 10) {
+                if ($attendanceDetails) {
+                    if ($teamType == 10) {
                         $isQualifiedAttendance = $this->arrStatus["QUALIFIED"];
-                    } else {
-                        $isQualifiedAttendance = $this->arrStatus["UNQUALIFIED"];
+                    } elseif ($teamType == 7) {
+                        if ($timeSpentInSec >= $requiredSeconds && $distanceInKm >= 10) {
+                            $isQualifiedAttendance = $this->arrStatus["QUALIFIED"];
+                        } else {
+                            $isQualifiedAttendance = $this->arrStatus["UNQUALIFIED"];
+                        }
                     }
                     return $isQualifiedAttendance;
                 } else {
@@ -226,7 +230,6 @@ class StoreCalendarDataAndSummary
                     return $this->arrStatus["ABSENT"];
                 }
             } else {
-
                 $arrSummaryData = $this->tableUtil->getRowColumn(
                     "$dbName.$summaryTable",
                     "is_qualified",
@@ -235,14 +238,14 @@ class StoreCalendarDataAndSummary
                 );
 
                 // Present
-                if ($arrSummaryData) {
-                    $isQualified = $arrSummaryData;
-                    $isQualifiedAttendance = $isQualified == 1 ?
-                        $this->arrStatus["QUALIFIED"] : $this->arrStatus["UNQUALIFIED"];
+                if ($arrSummaryData !== null) {
+                    $isQualified = (int)$arrSummaryData;
+                    $isQualifiedAttendance = $isQualified == 1
+                        ? $this->arrStatus["QUALIFIED"]
+                        : $this->arrStatus["UNQUALIFIED"];
 
                     return $isQualifiedAttendance;
                 } else {
-                    // Absent
                     return $this->arrStatus["ABSENT"];
                 }
             }

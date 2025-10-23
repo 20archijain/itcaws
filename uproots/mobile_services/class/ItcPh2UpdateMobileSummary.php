@@ -256,7 +256,7 @@ class ItcPh2UpdateMobileSummary
         $sQuery = "SELECT team_id, other_details FROM {$this->dbName}.{$this->attendanceTable} WHERE" .
             " dstatus = 0 AND capture_date = '$sDate'" .
             " AND team_id IN (SELECT team_id FROM {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0" .
-            " AND branch_id IN ($sBranch)) {$this->otherSummaryCond}";
+            " AND branch_id IN ($sBranch) AND s_id = 99) {$this->otherSummaryCond}";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -276,7 +276,7 @@ class ItcPh2UpdateMobileSummary
         $sQueryMtd = "SELECT team_id, COUNT(rec_id) AS total FROM {$this->dbName}.{$this->routeDetailsTable} WHERE" .
             " dstatus = 0 AND team_id IN (SELECT team_id FROM" .
             " {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0" .
-            " AND branch_id IN ($sBranch)) {$this->otherSummaryCond} GROUP BY team_id";
+            " AND branch_id IN ($sBranch) AND s_id = 99) {$this->otherSummaryCond} GROUP BY team_id";
 
         $this->dbConn->ExecuteSelectQuery($sQueryMtd, $rsActionMtd, $iActionRowsMtd);
         if ($iActionRowsMtd > 0) {
@@ -304,7 +304,7 @@ class ItcPh2UpdateMobileSummary
         $sQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total, $sumColumns AS total_sales FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE" .
             " a.dstatus = 0 AND a.capture_date = '$sDate' AND a.ques_0 = 'Outlet Order' AND a.ques_4 = 'Yes'" .
             " AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -320,7 +320,7 @@ class ItcPh2UpdateMobileSummary
         $sQueryMtd = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total, $sumColumns AS total_sales FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE" .
             " a.dstatus = 0 AND a.capture_date LIKE '$sMonth' AND a.ques_0 = 'Outlet Order' AND a.ques_4 = 'Yes'" .
             " AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
         $this->dbConn->ExecuteSelectQuery($sQueryMtd, $rsActionMtd, $iActionRowsMtd);
 
         if ($iActionRowsMtd > 0) {
@@ -342,7 +342,7 @@ class ItcPh2UpdateMobileSummary
         $iActionRows = 0;
         $sQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b" .
             " WHERE a.dstatus = 0 AND a.capture_date = '$sDate' AND a.ques_0 = 'Outlet Order' AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -357,7 +357,7 @@ class ItcPh2UpdateMobileSummary
         $iMtdActionRows = 0;
         $sMtdQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b" .
             " WHERE a.dstatus = 0 AND a.capture_date LIKE '$sMonth' AND a.ques_0 = 'Outlet Order' AND a.team_id= b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sMtdQuery, $rsMtdAction, $iMtdActionRows);
 
         if ($iMtdActionRows > 0) {
@@ -382,7 +382,7 @@ class ItcPh2UpdateMobileSummary
         $sQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total, $sumColumns AS total_sales FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE" .
             " a.dstatus = 0 AND a.capture_date = '$sDate' AND a.ques_0 = 'Add Outlet' AND a.ques_4 = 'Yes'" .
             " AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -398,7 +398,7 @@ class ItcPh2UpdateMobileSummary
         $sQueryMtd = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total, $sumColumns AS total_sales FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE" .
             " a.dstatus = 0 AND a.capture_date LIKE '$sMonth' AND a.ques_0 = 'Add Outlet' AND a.ques_4 = 'Yes'" .
             " AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id HAVING total_sales > 0";
         $this->dbConn->ExecuteSelectQuery($sQueryMtd, $rsActionMtd, $iActionRowsMtd);
 
         if ($iActionRowsMtd > 0) {
@@ -420,7 +420,7 @@ class ItcPh2UpdateMobileSummary
         $iActionRows = 0;
         $sQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b" .
             " WHERE a.dstatus = 0 AND a.capture_date = '$sDate' AND a.ques_0 = 'Add Outlet' AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -436,7 +436,7 @@ class ItcPh2UpdateMobileSummary
         $sMtdQuery = "SELECT a.team_id, COUNT(DISTINCT a.ques_3) AS total FROM {$this->dbName}.{$this->respTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b" .
             " WHERE a.dstatus = 0 AND a.capture_date LIKE '$sMonth' AND a.ques_0 = 'Add Outlet'" .
             " AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sMtdQuery, $rsMtdAction, $iMtdActionRows);
 
         if ($iMtdActionRows > 0) {
@@ -459,7 +459,7 @@ class ItcPh2UpdateMobileSummary
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.team_id, $sumColumns AS totalSum FROM {$this->dbName}.{$this->vanDsSummaryTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} AND a.activity_date = '$sDate' GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} AND a.activity_date = '$sDate' GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -474,7 +474,7 @@ class ItcPh2UpdateMobileSummary
         $sMtdAction = null;
         $iMtdRows = 0;
         $sMtdQuery = "SELECT a.team_id, $sumColumns AS totalSum FROM {$this->dbName}.{$this->vanDsSummaryTable} AS a, {$this->dbName}.{$this->projectTeamTable} AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
-            " AND b.branch_id IN ($sBranch) {$this->otherSummaryCond} AND a.activity_date LIKE '$sMonth' GROUP BY a.team_id";
+            " AND b.branch_id IN ($sBranch) AND b.s_id = 99 {$this->otherSummaryCond} AND a.activity_date LIKE '$sMonth' GROUP BY a.team_id";
         $this->dbConn->ExecuteSelectQuery($sMtdQuery, $sMtdAction, $iMtdRows);
 
         if ($iMtdRows > 0) {
@@ -528,7 +528,7 @@ class ItcPh2UpdateMobileSummary
             // Query to get total sales for the current day
             $sQuery = "SELECT team_id, $sumColumns AS totalSum FROM {$this->dbName}.{$this->vanDsSummaryTable} WHERE dstatus = 0 AND team_id IN" .
                 " (SELECT team_id FROM {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0" .
-                " AND branch_id IN ($sBranch)) {$this->otherSummaryCond} AND activity_date = '$date' GROUP BY team_id, activity_date";
+                " AND branch_id IN ($sBranch) AND s_id = 99) {$this->otherSummaryCond} AND activity_date = '$date' GROUP BY team_id, activity_date";
             $this->dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             if ($iRows > 0) {
@@ -605,7 +605,7 @@ class ItcPh2UpdateMobileSummary
             // Query to get total sales for the current day
             $sQuery = "SELECT team_id, $sumColumns AS totalSum FROM {$this->dbName}.{$this->vanDsSummaryTable} WHERE dstatus = 0 AND team_id IN" .
                 " (SELECT team_id FROM {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0" .
-                " AND branch_id IN ($sBranch)) {$this->otherSummaryCond} AND activity_date = '$date' GROUP BY team_id";
+                " AND branch_id IN ($sBranch) AND s_id = 99) {$this->otherSummaryCond} AND activity_date = '$date' GROUP BY team_id";
             $this->dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             if ($iRows > 0) {
@@ -644,7 +644,7 @@ class ItcPh2UpdateMobileSummary
 
     private function getAllTeams($sBranch)
     {
-        $sQuery = "SELECT team_id FROM {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0 AND branch_id IN ($sBranch)";
+        $sQuery = "SELECT team_id FROM {$this->dbName}.{$this->projectTeamTable} WHERE dstatus = 0 AND branch_id IN ($sBranch) AND s_id = 99";
         $sAction = null;
         $iRows = 0;
         $teamIds = [];
