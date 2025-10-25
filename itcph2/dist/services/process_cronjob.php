@@ -271,7 +271,7 @@ class ProcessResponse
 
                         $isOtherRecord = true;
                         //invalid
-                         if ($jsonId == 99) {
+                        if ($jsonId == 99) {
                             $attendanceCount = getRowColumn($this->_dbConn, $attendanceTable, "COUNT(*)", "team_id = $teamId AND capture_date = '$captureDate' AND call_type = '0'");
                             if ($attendanceCount == 0) {
                                 $this->updateProcessStatus($processTable, $respId, $jsonId, 1);
@@ -659,7 +659,7 @@ class ProcessResponse
         return $a["pageId"] - $b["pageId"];
     }
 
-     private function updateProcessStatus($processTable, $respId, $jsonId, $isInvalid = 0)
+    private function updateProcessStatus($processTable, $respId, $jsonId, $isInvalid = 0)
     {
         updateRecord($this->_dbConn, $processTable, "processed = '1', s_id = ?, is_invalid = ?", "dstatus = 0 AND resp_id = ?", array($jsonId, $isInvalid, $respId));
     }
@@ -795,7 +795,7 @@ class ProcessResponse
         } else {
             // Summary not exist, create
             // for planned outlets count don't use dstatus condition
-            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "team_id = $teamId  AND route_name = ?", array($route));
+            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "dstatus = 0 AND team_id = $teamId  AND route_name = ?", array($route));
             $columns = "team_id, activity_date, start_datetime, end_datetime, planned_outlets, rcd, rdt";
             $values = "?, ?, ?, ?, ?, ?, ?";
             $arrParams = array($teamId, $captureDate, $captureDatetime, $captureDatetime, $plannedOutlets, $currentDate, $currentDatetime);

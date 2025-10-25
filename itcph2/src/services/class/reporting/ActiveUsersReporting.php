@@ -585,7 +585,7 @@ class ActiveUsersReporting
             $this->_dbConn
         );
 
-        $teamType = getFormData($this->_data['searchbar'] ?? $this->_data['dsType'] ?? "");
+        $teamType = getFormData($this->_data['searchbar']['dsType'] ?? $this->_data['dsType'] ?? "");
         if (isset($teamType) && $teamType != "" && $teamType >= 0) {
             $matchAll = checkIfAllSelected($teamType);
             if (!$matchAll) {

@@ -225,6 +225,7 @@ class StoreOfflineDropdownOptions
                                     "addSubLevelOptions" => false,
                                     "otherDetails" => array(
                                         "contactNoColumn" => "outlet_mobile",
+                                        "kyc_done" => "kyc_done",
                                         "showMapIcon" => true,
                                     ),
                                 ),
@@ -330,6 +331,7 @@ class StoreOfflineDropdownOptions
             // Add today's date in 'Y-m-d' format
             if (isset($arrOptions[0])) {
                 $arrOptions[0]["today_date"] = date("Y-m-d");
+                $arrOptions[0]["today_day"] = date("D");
             }
 
             // Set backGroundColour for outlets

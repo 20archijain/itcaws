@@ -29,7 +29,7 @@ define("SUCCESS", 200); //Success response code
 define("WARNING", 300); //Warning response code
 define("FAILED", 400); //Failed response code
 
-define('MAIL_FROM', "support@appilary.com");
+define('MAIL_FROM', "appilary@btlmonitor.com");
 define('MAIL_REGARDS', "Appilary Support Team");
 
 define("DEFAULT_TIMEZONE", "Asia/Calcutta");

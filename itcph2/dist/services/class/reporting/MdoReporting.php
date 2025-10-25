@@ -962,9 +962,9 @@ class MdoReporting
                     $dsType = $row["type"];
                     $infraType = $row["is_type"];
                     if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
-                        $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "dstatus = 0 AND rec_id = $shopId") : "";
+                        $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "rec_id = $shopId") : "";
                     } else {
-                        $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "dstatus = 0 AND route_name = '$route' AND rec_id = $shopId") : "";
+                        $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "rec_id = $shopId") : "";
                     }
                     $dsName = $row["ds_name"];
                     $parts = explode(" - ", $dsName, 2);
@@ -1269,13 +1269,14 @@ class MdoReporting
                     $dsNameOnly = $parts[0];
                     $dsType = $parts[1];
                     $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
-                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
+                    $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details, distance", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
                     if ($arrDayEndDetails) {
                         $endTime = isset($arrDayEndDetails[0]) ? $arrDayEndDetails[0] : "";
                         $arrDayEndOtherDetails = json_decode($arrDayEndDetails[1], true);
                         $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
                         $salesVol = $arrDayEndOtherDetails['SalesVolume'];
                         $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                        $distanceInKm = isset($arrDayEndDetails[2]) ? $arrDayEndDetails[2] : "";
                         // $dayEndOutlet = "";
                         // $salesVol = "";
                         // $salesValue = "";
@@ -1285,6 +1286,7 @@ class MdoReporting
                         $dayEndOutlet = "";
                         $salesVol = "";
                         $salesValue = "";
+                        $distanceInKm = "";
                     }
                     $marketStartTime = isset($row["startMarket"]) ? $row["startMarket"] : "";
                     $marketEndTime = isset($row["lastMarket"]) ? $row["lastMarket"] : "";
@@ -1297,13 +1299,19 @@ class MdoReporting
                     $surveyVol = $row["surveyVol"];
                     $surveyVal = $row["surveyVal"];
                     $lineCut = $row["lineCut"];
-                    $distanceInKm = getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    if (empty($distanceInKm)) {
+                        $distanceInKm =  getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    }
                     // Convert 6 hours into minutes
                     $requiredmin = 360;
-                    if ($timeSpent >= $requiredmin && $distanceInKm >= 10) {
+                    if ($infraType == 7) {
+                        if ($timeSpent >= $requiredmin && $distanceInKm >= 10) {
+                            $qualified = '1';
+                        } else {
+                            $qualified = '0';
+                        }
+                    } elseif ($infraType == 10) {
                         $qualified = '1';
-                    } else {
-                        $qualified = '0';
                     }
                     // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
 
@@ -1405,33 +1413,42 @@ class MdoReporting
                                 $attDsNameOnly = $parts[0];
                                 $attDsType = $parts[1];
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
+                                $routeName = $dsDetails[2];
                             } elseif ($workWith == 1) {
                                 $typeOfWork = "Market work with AE";
                                 $wdCode = $dsDetails[1];
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";
+                                $routeName = "";
                             } elseif ($workWith == 2) {
                                 $typeOfWork = "Market work with GT TL";
                                 $wdCode = $dsDetails[1];
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";
+                                $routeName = "";
                             } elseif ($workWith == 3) {
                                 $typeOfWork = "Independent market work";
-                                $wdCode = "";
+                                $wdCode = $dsDetails[1];
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";
+                                $routeName = "";
                             }
                             $arrWdDetails = $wdCode ? getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'") : "";
                             // Convert 6 hours into minutes
                             $requiredMin = 360;
-                            if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                            if ($infraType == 7) {
+                                if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                                    $attenqualified = '1';
+                                } else {
+                                    $attenqualified = '0';
+                                }
+                            } elseif ($infraType == 10) {
                                 $attenqualified = '1';
-                            } else {
-                                $attenqualified = '0';
                             }
+
 
                             $arrExcelData[] = [
                                 $rowTeam["district"],
@@ -1454,7 +1471,7 @@ class MdoReporting
                                 $dsId,
                                 $attDsType,
                                 $attDsNameOnly,
-                                "",
+                                $routeName,
                                 $startTime ? currentDateTime($startTime, "H:i:s") : "",
                                 $endTime ? currentDateTime($endTime, "H:i:s") : "",
                                 "",
@@ -1692,11 +1709,16 @@ class MdoReporting
                     $distanceInKm = $arrDayEndDetails[6] ?? 0;
                     // Convert 6 hours into Minutes
                     $requiredMin = 360;
-                    if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                    if ($infraType == 7) {
+                        if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                            $qualified = '1';
+                        } else {
+                            $qualified = '0';
+                        }
+                    } elseif ($infraType == 10) {
                         $qualified = '1';
-                    } else {
-                        $qualified = '0';
                     }
+
                     $endLt = $arrDayEndDetails[7] ?? "";
                     $endLg = $arrDayEndDetails[8] ?? "";
 

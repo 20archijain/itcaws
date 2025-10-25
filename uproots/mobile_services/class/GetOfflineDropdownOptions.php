@@ -114,6 +114,8 @@ class GetOfflineDropdownOptions
                     $otherDetails["landmarkColumn"] ? $otherDetails["landmarkColumn"] : null;
                 $contactNoColumn = isset($otherDetails["contactNoColumn"]) &&
                     $otherDetails["contactNoColumn"] ? $otherDetails["contactNoColumn"] : null;
+                $kycDone = isset($otherDetails["kyc_done"]) &&
+                    $otherDetails["kyc_done"] ? $otherDetails["kyc_done"] : null;
                 $arrListKpiFirst = isset($otherDetails["listKpiFirst"]) &&
                     $otherDetails["listKpiFirst"] ? $otherDetails["listKpiFirst"] : array();
                 $arrListKpiSecond = isset($otherDetails["listKpiSecond"]) &&
@@ -168,6 +170,11 @@ class GetOfflineDropdownOptions
                 // add contact no column
                 if ($contactNoColumn) {
                     $columns .= ", $contactNoColumn";
+                }
+
+                // add kycDone column
+                if ($kycDone) {
+                    $columns .= ", $kycDone";
                 }
 
                 // add Outlet Id column
@@ -343,6 +350,8 @@ class GetOfflineDropdownOptions
                                 $row[$landmarkColumn] ? $row[$landmarkColumn] : "",
                             "contactNo" => $contactNoColumn && isset($row[$contactNoColumn]) &&
                                 $row[$contactNoColumn] ? $row[$contactNoColumn] : "",
+                            "kyc_done" => $kycDone && isset($row[$kycDone]) &&
+                                $row[$kycDone] ? $row[$kycDone] : 0,
                             "datetimeInMilisec" => $contactNoColumn && isset($row[$contactNoColumn]) &&
                                 $row[$contactNoColumn] ? $row[$contactNoColumn] : "",
                             "listKpiFirst" => $listFirstKpiValues,

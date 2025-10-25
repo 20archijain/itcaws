@@ -43,8 +43,9 @@ import { MdoListingComponent } from './reporting/mdo/mdo-listing.component';
 import { SystemOfflineComponent } from './system-offline/system-offline.component';
 import { MdoRouteTrackerComponent } from './sites-on-map/mdo-route-tracker.component';
 import { MdoUniverseDataComponent } from './sites-on-map/mdo-universe-data.component';
-import { AppNotification } from './notification/app.notification.component';
 import { ActiveMDOUsersListingComponent } from './reporting/active-mdo/active-mdo-reporting.component';
+import { AppNotificationComponent } from './notification/app.notification.component';
+import { TargetReportComponent } from './assign-target/target-report.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -90,8 +91,9 @@ export const MAIN_COMPONENTS = [
   SystemOfflineComponent,
   MdoRouteTrackerComponent,
   MdoUniverseDataComponent,
-  AppNotification,
   ActiveMDOUsersListingComponent,
+  AppNotificationComponent,
+  TargetReportComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -138,6 +140,7 @@ export const MAP_MAIN_COMPONENTS = {
   SystemOfflineComponent,
   MdoRouteTrackerComponent,
   MdoUniverseDataComponent,
-  AppNotification,
   ActiveMDOUsersListingComponent,
+  AppNotificationComponent,
+  TargetReportComponent,
 };

@@ -302,6 +302,7 @@
       "dateRange": "Date Range"
     },
     "download": {
+      "downloadTargetReport": "Target Report",
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
       "downloadEvaluationReport": "Evaluation Report",
