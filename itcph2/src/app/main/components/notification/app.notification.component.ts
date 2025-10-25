@@ -23,7 +23,6 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
   url = environment.viewSalesDashboardDataUrl;
   group: UntypedFormGroup;
   form: UntypedFormGroup;
-  chartData;
   columnSize = 12;
   noOfMaps: string[] = [];
   categoryOptions: DropdownList[] = [];
@@ -39,26 +38,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
   teamTypeOptions: DropdownList[] = [];
   wdMarketOptions: DropdownList[] = [];
   wdPopGroupOptions: DropdownList[] = [];
-  todaySaleDone: number;
-  todaySaleAmount: number;
-  tillDateSaleDone: number;
-  tillDateSaleAmount: number;
-  todayFocusSaleDone: number;
-  todayFocusSaleAmount: number;
-  tillDateFocusSaleDone: number;
-  tillDateFocusSaleAmount: number;
-  currentAndLastMonthData: any;
-  currentMonthVsLastYearMonthSales: any;
-  currentYearLastYearMonthlySales: any;
-  monthlySalesData: any;
-  chartsData: any;
-  outletVisitedTableData: any;
-  monthSaleLineChartData: any[] = [];
-  monthAndYearLineChartData: any[] = [];
-  currentAndLastYearLineChartData: any[] = [];
-  monthFocusSaleLineChartData: any[] = [];
-  monthAndYearFocusLineChartData: any[] = [];
-  currentAndLastYearFocusLineChartData: any[] = [];
+
   isSidebarOpen = false;
   branchFilter = false
   showMapStyleDropdown = false;
