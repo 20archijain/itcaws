@@ -329,6 +329,11 @@ class TargetReport
 
             $skuColumnTarget = implode(", ", $arrColumns);
 
+            $foucsSkuForSummary = implode(", ", array_map(function ($v) {
+                return "SUM($v) AS $v";
+            }, $arrColumns));
+
+
             //All Brand Query
             $sAction3 = null;
             $iRows3 = 0;
@@ -346,11 +351,13 @@ class TargetReport
                 }
             }
 
-            // $skuColumn = implode(", ", array_map(function ($c) {
-            //     return "sum($c) as $c";
-            // }, $arrColumns));
+            $skuColumnAllProduct = implode(" + ", array_map(function ($c) {
+                return "sum($c)";
+            }, $arrColumnsAllProduct));
 
-            $skuColumnAllProduct = implode(" + ", $arrColumnsAllProduct);
+            // echo "<pre>";
+            // print_r($skuColumn);die;
+            // $skuColumnAllProduct = implode(" + ", $skuColumn);
             // $dateCond = ""
             //Team Query
             $sAction4 = null;
@@ -408,11 +415,11 @@ class TargetReport
                         $assignFocus2 = $assignTarget[1] ?? 0;
                         $assignOverall = $assignTarget[2] ?? 0;
 
-                        $achieveTarget = $this->getResult("tblvands_summary", $skuColumnTarget, " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
+                        $achieveTarget = $this->getResult("tblvands_summary", $foucsSkuForSummary, " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
                         $achieveFocus1 = $achieveTarget[0] ?? 0;
                         $achieveFocus2 = $achieveTarget[1] ?? 0;
 
-                        $achieveTargetOverall = $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
+                        $achieveTargetOverall = $this->getResult("tblvands_summary", "$skuColumnAllProduct as total", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
 
                         $achieveOverall = $achieveTargetOverall[0];
 
@@ -473,14 +480,50 @@ class TargetReport
 
                         //First Column
                         $arrExcelData[] = [
-                            $month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
-                            "Business Parameter", "Focus Variant 1 Survey", $arrProducts[0], $assignFocus1, $achieveFocus1, $perF1, $focus1Max, $focus1Earned, ""
+                            $month,
+                            $district,
+                            $branch,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            "Business Parameter",
+                            "Focus Variant 1 Survey",
+                            $arrProducts[0],
+                            $assignFocus1,
+                            $achieveFocus1,
+                            $perF1,
+                            $focus1Max,
+                            $focus1Earned,
+                            ""
                         ];
 
                         //Second Column
                         $arrExcelData[] = [
-                            $month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
-                            "Business Parameter", "Focus Variant 2 Survey", $arrProducts[1], $assignFocus2, $achieveFocus2, $perF2, $focus2Max, $focus2Earned, ""
+                            $month,
+                            $district,
+                            $branch,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            "Business Parameter",
+                            "Focus Variant 2 Survey",
+                            $arrProducts[1],
+                            $assignFocus2,
+                            $achieveFocus2,
+                            $perF2,
+                            $focus2Max,
+                            $focus2Earned,
+                            ""
                         ];
 
                         //Third Column
@@ -496,7 +539,7 @@ class TargetReport
             }
         }
 
-        $fileName = "Bill_Cut_Report_$currentDateTime.xlsx";
+        $fileName = "Target_Report_$currentDateTime.xlsx";
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->fromArray($arrExcelData);
