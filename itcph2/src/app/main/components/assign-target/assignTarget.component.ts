@@ -53,7 +53,9 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   colors = ['bg-light-gray', 'bg-white'];
   product1: string;
   product2: string;
-  tableColumnCondition = true;
+  tableColumnCondition = false;
+  showMonth = "";
+  enableTargetFiled = false;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private toastrService: ToastrService, private confirmationModalService: ConfirmationModalService) { }
@@ -77,10 +79,8 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
         })
     );
 
-    if (this.currentDate['day'] > 21) {
-      this.tabCondition = true;
-    }
     this.initialData();
+    this.getMonthCondition();
   }
 
   ngOnDestroy() {
@@ -115,7 +115,6 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
             this.teamsList = resp.data.teamsList;
             this.product1 = resp.data.product1;
             this.product2 = resp.data.product2;
-            this.tableColumnCondition = resp.data.tableColumnCondition;
 
             if (this.stockProductsList.length > 0) {
               // create dynamic control
@@ -147,6 +146,25 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
       } else {
         return false;
       }
+    }
+  }
+
+  getMonthCondition() {
+    if (this.currentDate['day'] > 21) {
+      this.tableColumnCondition = true;
+      this.showMonth = this.nextMonth;
+      this.group.get('monthCheck').setValue(2);
+      this.enableTargetFiled = true;
+    } else if (this.currentDate['day'] < 11) {
+      this.tableColumnCondition = false;
+      this.showMonth = this.currentMonth;
+      this.group.get('monthCheck').setValue(null);
+      this.enableTargetFiled = true;
+    } else {
+      this.tableColumnCondition = false;
+      this.showMonth = this.currentMonth;
+      this.group.get('monthCheck').setValue(null);
+      this.enableTargetFiled = false;
     }
   }
 
