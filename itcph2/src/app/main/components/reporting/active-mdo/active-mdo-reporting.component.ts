@@ -1,111 +1,88 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { TranslateService } from '@ngx-translate/core';
 
-import { FormService } from 'src/app/core/services/form.service';
 import { environment } from 'src/environments/environment';
-import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
-import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { DashboardData, DropdownList, SalesDashboardData } from 'src/app/core/interfaces/http-response.interface';
+import { FormService } from 'src/app/core/services/form.service';
+import { DashboardData, DropdownList, GetAddTeamDataResponse } from 'src/app/core/interfaces/http-response.interface';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { ToastrService } from 'src/app/core/services/toastr.service';
-import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
-import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
+import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
+import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './app.notification.component.html',
-  styleUrls: ["./app.notification.component.scss"],
+  templateUrl: './active-mdo-reporting.component.html',
+  styleUrls: ["./active-mdo-reporting.component.scss"],
 })
-export class AppNotificationComponent implements OnDestroy, OnInit {
+export class ActiveMDOUsersListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
-  url = environment.viewSalesDashboardDataUrl;
-  group: UntypedFormGroup;
-  form: UntypedFormGroup;
-  columnSize = 12;
-  noOfMaps: string[] = [];
-  categoryOptions: DropdownList[] = [];
-  productOptions: DropdownList[] = [];
-  districtOptions: DropdownList[] = [];
+  header: string[] = [];
+  body: string[] = [];
+  isSelectable: boolean;
+  sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
-  monthOptions: DropdownList[] = [];
-  yearOptions: DropdownList[] = [];
+  wdCodeOptions: DropdownList[] = [];
+  teamTypeOptions: DropdownList[] = [];
   circleOptions: DropdownList[] = [];
   sectionOptions: DropdownList[] = [];
-  wdCodeOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
-  teamTypeOptions: DropdownList[] = [];
+  districtOptions: DropdownList[] = [];
   wdMarketOptions: DropdownList[] = [];
   wdPopGroupOptions: DropdownList[] = [];
+  form: UntypedFormGroup;
+  isExportBtnDisabled = false;
+  showDownloadDataBtn = false;
+  downloadDataBtnTitle = false;
+  branchFilter = false;
+  url = environment.getActiveUsersUrl;
 
-  isSidebarOpen = false;
-  branchFilter = false
-  showMapStyleDropdown = false;
-  isDisabled = false;
-
-  errorMessages = {
-    notificationTitle: COMMON_VALIDATORS.messages.requiredOnly('Title'),
-    notificationText: COMMON_VALIDATORS.messages.requiredOnly('Message'),
-    branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
-    district: COMMON_VALIDATORS.messages.requiredOnly('District'),
-  };
-
-  constructor(private fb: UntypedFormBuilder, private formService: FormService, private loaderService: LoaderService,
-    private toastr: ToastrService, private translate: TranslateService, private canGoBackGuard: CanGoBackGuard,
-    private confirmationModalService: ConfirmationModalService) { }
+  constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
   ngOnInit() {
-    this.group = this.fb.group({
-      district: [null, COMMON_VALIDATORS.validators.requiredOnly],
-      branch: [null, COMMON_VALIDATORS.validators.requiredOnly],
+    this.form = this.fb.group({
+      branch: [''],
       circle: [''],
       section: [''],
       wdCode: [''],
       dsType: [''],
       dsName: [''],
-      wdMarket: [],
-      wdPopGroup: [],
-      notificationTitle: [null, COMMON_VALIDATORS.validators.requiredOnly],
-      notificationText: [null, COMMON_VALIDATORS.validators.requiredOnly],
+      dateFrom: [],
+      dateTo: [],
+      district: [''],
+      wdMarket: [''],
+      wdPopGroup: [''],
     });
 
-    this.initialData();
-    // subscribe to confirmation modal
-    this.subscription.push(
-      this.confirmationModalService.modal()
-        .subscribe(resp => {
-          if (!resp.goBackGuard && !resp.show) {
-            // user confirms
-            if (resp.data) {
-              this.confirmSendNotification();
-            }
-          }
-        })
-    );
+    this.getInitialData();
   }
 
   ngOnDestroy() {
     this.subscription.forEach(sub => sub.unsubscribe());
   }
 
-  initialData() {
+
+  getInitialData() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.getData<SalesDashboardData>(this.url, this.group.getRawValue())
+      this.formService.getData<GetAddTeamDataResponse>(this.url, this.form.getRawValue())
         .pipe(
-          finalize(() => this.loaderService.stopLoader()),
+          finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.districtOptions = resp.data.districtList;
+            this.sortOptions = resp.data.sortOptions;
             this.branchOptions = resp.data.branchList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamTypeOptions = resp.data.teamType;
+            this.teamOptions = resp.data.teamList;
+            this.header = resp.data.viewHeader;
+            this.body = resp.data.viewBody;
+            this.isSelectable = resp.data.isSelectable;
+            this.branchFilter = resp.data.branchFilter
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
-            this.wdCodeOptions = resp.data.wdCodeList;
-            this.teamOptions = resp.data.teamList;
-            this.branchFilter = resp.data.branchFilter;
-            this.teamTypeOptions = resp.data.teamType;
+            this.districtOptions = resp.data.districtList;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
           }
@@ -113,37 +90,27 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     );
   }
 
-  sendNotification() {
-    if (this.group.valid && !this.isDisabled) {
-      this.confirmationModalService.show('modal.confirmation.add');
-    }
-  }
-
-  confirmSendNotification() {
-    if (this.group.valid && !this.isDisabled) {
+  exportTeams() {
+    if (!this.isExportBtnDisabled) {
+      this.isExportBtnDisabled = true;
       this.loaderService.startLoader();
-      this.isDisabled = true;
+
       this.subscription.push(
-        this.formService.addData<string>(this.group, null, environment.addTeamUrl)
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData,
+          this.form.getRawValue(), null, this.url)
           .pipe(
             finalize(() => {
               this.loaderService.stopLoader();
-              this.isDisabled = false;
+              this.isExportBtnDisabled = false;
             })
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              // this.clearForm();
-              this.reset();
-              this.canGoBackGuard.markAsPristine();
+              Functions.createCSV(resp.data);
             }
           })
       );
     }
-  }
-
-  reset() {
-    this.form.reset();
   }
 
   getBranch() {
@@ -157,7 +124,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.form.get('district').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -167,23 +134,8 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
-            this.categoryOptions = resp.data.categoryList;
-            this.productOptions = resp.data.productList;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
-          }
-        })
-    );
-  }
-
-  getProduct() {
-    this.loaderService.startLoader();
-    this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getproduct, { category: this.group.get('category').value }, null, this.url)
-        .pipe(finalize(() => this.loaderService.stopLoader()))
-        .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.productOptions = resp.data.productList;
           }
         })
     );
@@ -199,7 +151,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -208,8 +160,6 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
-            this.categoryOptions = resp.data.categoryList;
-            this.productOptions = resp.data.productList;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
           }
@@ -226,7 +176,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.form.get('branch').value, circle: this.form.get('circle').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -249,7 +199,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -268,7 +218,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value, wdCode: this.form.get('wdCode').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -283,7 +233,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value, wdCode: this.form.get('wdCode').value, dsType: this.form.get('dsType').value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -295,44 +245,40 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
 
   set branchValue(value: string) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.form.get('branch').setValue(value);
   }
+
   set circleValue(value: string) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.form.get('circle').setValue(value);
   }
   set sectionValue(value: string) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.form.get('section').setValue(value);
   }
   set wdCodeValue(value: string) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.form.get('wdCode').setValue(value);
   }
   set dsTypeValue(value: string) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.form.get('dsType').setValue(value);
   }
   set dsNameValue(value: string) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.form.get('dsName').setValue(value);
   }
   set wdMarketValue(value: string) {
     this.wdMarketOptions = [];
-    this.group.get('wdMarket').setValue(value);
+    this.form.get('wdMarket').setValue(value);
   }
-
   set wdPopGroupValue(value: string) {
     this.wdPopGroupOptions = [];
-    this.group.get('wdPopGroup').setValue(value);
+    this.form.get('wdPopGroup').setValue(value);
   }
   clearForm() {
-    this.group.reset(
-      { month: '' }
-    );
-    this.initialData();
-
+    this.form.reset();
+    this.getInitialData();
   }
 
 }
-

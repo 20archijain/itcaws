@@ -262,6 +262,7 @@
       "teamType": "Team Type",
       "activeUSers": {
         "heading": "Active DS Reporting",
+        "activeMdo": "Reporting",
         "activeSKU": "Active SKU Reporting",
         "dsId": "DS ID",
         "dsName": "Surveyor Name",
