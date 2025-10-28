@@ -124,6 +124,59 @@ export const ATLEAST_ONE_MATERIAL_REQUIRED_VALIDATOR = (index?: number, includeZ
   };
 };
 
+// export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
+//   groupSize: number,
+//   index?: number,
+//   includeZeroAsQty = false
+// ): ValidatorFn => {
+//   return (form: UntypedFormArray): { [key: string]: any } | null => {
+//     if (!form || !form.value || form.value.length === 0 || groupSize <= 1) {
+//       return null;
+//     }
+
+//     const values: any[] = [];
+
+//     // Extract values
+//     if (index !== undefined && index !== null) {
+//       for (const control in form.value) {
+//         if (control) {
+//           values.push(form.value[control]);
+//         }
+//       }
+//     } else {
+//       form.value.forEach(qtyControl => {
+//         if (qtyControl) {
+//           for (const control in qtyControl) {
+//             if (control) {
+//               values.push(qtyControl[control]);
+//             }
+//           }
+//         }
+//       });
+//     }
+
+//     // Utility to determine if a value is "filled"
+//     const isFilled = (val: any) =>
+//       val !== null &&
+//       val !== undefined &&
+//       val !== '' &&
+//       !isNaN(+val) &&
+//       (includeZeroAsQty ? +val >= 0 : +val > 0);
+
+//     // Check each group
+//     for (let i = 0; i < values.length; i += groupSize) {
+//       const group = values.slice(i, i + groupSize);
+//       const filledCount = group.filter(val => isFilled(val)).length;
+
+//       if (filledCount > 0 && filledCount < group.length) {
+//         return { [CUSTOM_VALIDATOR_KEYS.ALL_VALUES_IN_GROUP_REQUIRED]: true };
+//       }
+//     }
+
+//     return null;
+//   };
+// };
+
 
 export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
   groupSize: number,
@@ -164,13 +217,23 @@ export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
       !isNaN(+val) &&
       (includeZeroAsQty ? +val >= 0 : +val > 0);
 
-    // Check each group
+    // ---- Rule 1: All-or-none validation ----
     for (let i = 0; i < values.length; i += groupSize) {
       const group = values.slice(i, i + groupSize);
       const filledCount = group.filter(val => isFilled(val)).length;
 
       if (filledCount > 0 && filledCount < group.length) {
-        return { [CUSTOM_VALIDATOR_KEYS.ALL_VALUES_IN_GROUP_REQUIRED]: true };
+        return { allValuesInGroupRequired: true };
+      }
+    }
+    // Only if there are at least 3 values in the form
+    if (values.length >= 3) {
+      const val0 = +values[0] || 0;
+      const val1 = +values[1] || 0;
+      const val2 = +values[2] || 0;
+
+      if (val2 < val0 + val1) {
+        return { enterMoreThanFocusBands: true };
       }
     }
 
