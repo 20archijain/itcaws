@@ -7,20 +7,20 @@
             <thead>
               <tr class="fixed-header">
                 <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} :
-                  Achieved</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target
+                  Achieved (in Ms)</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target (in Ms)
                 </th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3"
-                  *ngIf="tableColumnCondition">{{nextMonth}} : Target
+                  *ngIf="tableColumnCondition">{{nextMonth}} : Target (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3" *ngIf="enableTargetFiled">
                   Enter {{showMonth}}
-                  Target</th>
+                  Target (in Ms)</th>
 
               </tr>
               <tr class="fixed-header">
