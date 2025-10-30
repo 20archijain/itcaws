@@ -196,12 +196,22 @@ class TargetReport
         ];
 
         $arrData = [];
-        $currentMonth  = date('n'); // 1 to 12
+        $currentMonth  = date('n'); // 1–12
         $currentYear = date('Y');
 
+        // Start from next month
+        $nextMonth = $currentMonth + 1;
+        $nextYear = $currentYear;
+
+        // Adjust if next month exceeds December
+        if ($nextMonth > 12) {
+            $nextMonth = 1;
+            $nextYear++;
+        }
+
         for ($i = 0; $i < $count; $i++) {
-            $targetMonth = $currentMonth - $i;
-            $targetYear = $currentYear;
+            $targetMonth = $nextMonth - $i;
+            $targetYear = $nextYear;
 
             // Adjust if month goes below 1
             while ($targetMonth <= 0) {
@@ -302,43 +312,11 @@ class TargetReport
         // }
 
         foreach ($branch as $branchId) {
-            //Focus Brand Query
-            $sAction = null;
-            $iRows = 0;
-            $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
-            // echo $sQuery;die;
-            $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
-
-            $arrProductColumns = array();
-            $arrColumns = array();
-            $arrProducts = array();
-            if ($iRows > 0) {
-                while ($row = $this->_dbConn->GetData($sAction)) {
-                    $arrProductColumns[] = "SUM({$row["summary_column_name"]}) AS {$row["summary_column_name"]}";
-                    $arrColumns[] = "{$row["summary_column_name"]}";
-                    $arrProducts[] = $row["product_name"];
-
-                    $arrStockProductsList[] = array(
-                        "label" => $row["product_name"],
-                        "value" => $row["summary_column_name"],
-                        "brand" => $row["category_name"],
-                    );
-                }
-            }
-
-            $skuColumnTarget = implode(", ", $arrColumns);
-
-            $foucsSkuForSummary = implode(", ", array_map(function ($v) {
-                return "SUM($v) AS $v";
-            }, $arrColumns));
-
-
             //All Brand Query
             $sAction3 = null;
             $iRows3 = 0;
-            $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
+            $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+                " AND a.team_type = 5 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
             // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
@@ -385,10 +363,9 @@ class TargetReport
                     $showSection = $section . ' - ' . $section_name;
                     $showCircle = $circle . ' - ' . $circle_name;
 
-                    // $firstDate = "";
-                    // $lastDate = "";
-                    // $numericMonth = "";
-                    // $numericYear = "";
+                    $assignFocus1 = 0;
+                    $assignFocus2 = 0;
+                    $assignOverall = 0;
 
                     $arrMonth = $this->_data['month'];
                     foreach ($arrMonth as $month) {
@@ -400,6 +377,39 @@ class TargetReport
                         $numericMonth = $date->format('m');
                         $numericYear  = $date->format('Y');
 
+                        //Focus Brand Query
+                        $sAction = null;
+                        $iRows = 0;
+                        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+                            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter AND a.month = '$numericMonth' AND a.year = '$numericYear' ORDER BY a.is_focusbrand limit 3";
+                        // echo $sQuery;die;
+                        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+
+                        $arrProductColumns = array();
+                        $arrColumns = array();
+                        $arrProducts = array();
+                        if ($iRows > 0) {
+                            while ($row = $this->_dbConn->GetData($sAction)) {
+                                $arrProductColumns[] = "SUM({$row["summary_column_name"]}) AS {$row["summary_column_name"]}";
+                                $arrColumns[] = "{$row["summary_column_name"]}";
+                                $arrProducts[] = $row["product_name"];
+
+                                $arrStockProductsList[] = array(
+                                    "label" => $row["product_name"],
+                                    "value" => $row["summary_column_name"],
+                                    "brand" => $row["category_name"],
+                                );
+                            }
+                        }
+
+                        $skuColumnTarget = implode(", ", $arrColumns);
+
+                        $foucsSkuForSummary = implode(", ", array_map(function ($v) {
+                            return "SUM($v) AS $v";
+                        }, $arrColumns));
+
+
+
                         $qualifiedAttendanceArr = $this->getResult("tblvands_summary", "count(is_qualified)", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
 
                         $qualifiedAttendance = $qualifiedAttendanceArr[0] ?  $qualifiedAttendanceArr[0] : 0;
@@ -410,12 +420,17 @@ class TargetReport
                             $gateCheck = 'Y';
                         }
 
-                        $assignTarget = $this->getResult("tblassign_target", $skuColumnTarget, " AND team_id = '$team_id' AND month = '$numericMonth' AND year = '$numericYear'");
+                        if (isset($skuColumnTarget) && $skuColumnTarget) {
+                            $assignTarget = $this->getResult("tblassign_target", $skuColumnTarget, " AND team_id = '$team_id' AND month = '$numericMonth' AND year = '$numericYear'");
+                        }
+
                         $assignFocus1 = $assignTarget[0] ?? 0;
                         $assignFocus2 = $assignTarget[1] ?? 0;
                         $assignOverall = $assignTarget[2] ?? 0;
 
-                        $achieveTarget = $this->getResult("tblvands_summary", $foucsSkuForSummary, " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
+                        if (isset($foucsSkuForSummary) && $foucsSkuForSummary) {
+                            $achieveTarget = $this->getResult("tblvands_summary", $foucsSkuForSummary, " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
+                        }
                         $achieveFocus1 = $achieveTarget[0] ?? 0;
                         $achieveFocus2 = $achieveTarget[1] ?? 0;
 
@@ -423,11 +438,11 @@ class TargetReport
 
                         $achieveOverall = $achieveTargetOverall[0];
 
-                        $perF1 = ($assignFocus1 > 0) ? round((float) $achieveFocus1 / $assignFocus1) : 0;
+                        $perF1 = ($assignFocus1 > 0) ? round((float) ($achieveFocus1 / $assignFocus1) * 100) : 0;
                         $showPerF1 = $perF1 . "%";
-                        $perF2 = ($assignFocus2 > 0) ? round((float) $achieveFocus2 / $assignFocus2) : 0;
+                        $perF2 = ($assignFocus2 > 0) ? round((float) ($achieveFocus2 / $assignFocus2) * 100) : 0;
                         $showPerF2 = $perF2 . "%";
-                        $perOverall = ($assignOverall > 0) ? round((float) $achieveOverall / $assignOverall) : 0;
+                        $perOverall = ($assignOverall > 0) ? round((float) ($achieveOverall / $assignOverall) * 100) : 0;
                         $showPerOverall = $perOverall . "%";
 
                         $focus1Max = 500;
@@ -496,7 +511,7 @@ class TargetReport
                             $team_name,
                             "Business Parameter",
                             "Focus Variant 1 Survey",
-                            $arrProducts[0],
+                            $arrProducts[0] ?? "",
                             $assignFocus1,
                             $achieveFocus1,
                             $showPerF1,
@@ -520,7 +535,7 @@ class TargetReport
                             $team_name,
                             "Business Parameter",
                             "Focus Variant 2 Survey",
-                            $arrProducts[1],
+                            $arrProducts[1] ?? "",
                             $assignFocus2,
                             $achieveFocus2,
                             $showPerF2,
@@ -537,6 +552,9 @@ class TargetReport
 
                         //Fifth Column
                         $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
+
+                        $assignTarget = array();
+                        $achieveTarget = array();
                     }
                 }
             }

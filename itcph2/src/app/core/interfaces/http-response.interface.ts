@@ -263,6 +263,10 @@ export interface StockProduct extends DropdownList {
 }
 
 export interface ReadyStockPickupResponse {
+  previousMonthProduct1: string;
+  previousMonthProduct2: string;
+  nextMonthProduct1: string;
+  nextMonthProduct2: string;
   tableColumnCondition: boolean;
   product1: string;
   product2: string;

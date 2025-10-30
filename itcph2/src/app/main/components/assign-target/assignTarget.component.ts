@@ -51,11 +51,16 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   rowClasses: { [key: string]: string } = {};
   currentColorIndex = 0;
   colors = ['bg-light-gray', 'bg-white'];
+  previousMonthProduct1: string;
+  previousMonthProduct2: string;
+  nextMonthProduct1: string;
+  nextMonthProduct2: string;
   product1: string;
   product2: string;
   tableColumnCondition = false;
   showMonth = "";
   enableTargetFiled = false;
+  loopWithoutTeam: number;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private toastrService: ToastrService, private confirmationModalService: ConfirmationModalService) { }
@@ -113,24 +118,42 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.stockProductsList = resp.data.stockProductsList;
             this.teamsList = resp.data.teamsList;
+            this.previousMonthProduct1 = resp.data.previousMonthProduct1;
+            this.previousMonthProduct2 = resp.data.previousMonthProduct2;
+            this.nextMonthProduct1 = resp.data.nextMonthProduct1;
+            this.nextMonthProduct2 = resp.data.nextMonthProduct2;
             this.product1 = resp.data.product1;
             this.product2 = resp.data.product2;
 
-            if (this.stockProductsList.length > 0) {
-              // create dynamic control
-              this.createDynamicGroup();
-            } else {
+            if (this.teamsList.length > 0) {
+              if (this.stockProductsList.length > 0) {
+                // create dynamic control
+                this.createDynamicGroup();
+              } else {
 
+                this.toastrService.toastr({
+                  type: 'error',
+                  msg: 'Team Not Found'
+                });
+              }
+              this.loopWithoutTeam = 0;
+            } else {
+              this.enableTargetFiled = false;
               this.toastrService.toastr({
                 type: 'error',
-                msg: 'Team Not Found'
+                msg: 'Focus Brands are not assigned'
               });
+              this.loopWithoutTeam = this.stockProductsList.length;
             }
 
           }
         })
     );
   }
+
+  get numbers() {
+  return Array.from({ length: this.stockProductsList.length }, (_, i) => i + 1);
+}
 
 
   getButtonCondition(): boolean {
