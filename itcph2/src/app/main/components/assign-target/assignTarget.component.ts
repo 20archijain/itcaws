@@ -184,7 +184,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
       this.stockProductsList.forEach(product => {
         const controls = [];
         this.teamsList.forEach(team => {
-          controls[`qty-${team.value}-${product.value}`] = ["", COMMON_VALIDATORS.validators.zeroAndFloatQtyStock];
+          controls[`qty-${team.value}-${product.value}`] = ["", COMMON_VALIDATORS.validators.zeroAndFloatQtyMax3Stock];
         });
         (this.group.get('qty') as UntypedFormArray).push(this.fb.group(controls));
       });

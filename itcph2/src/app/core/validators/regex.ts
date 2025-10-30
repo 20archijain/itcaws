@@ -26,6 +26,8 @@ export const ALNUM_S_REGEX = /^[a-zA-Z0-9]+([ ][a-zA-Z0-9]+)*$/;
 
 export const STOCK_NUMBER_REGEX = /^(?:[0-9]{1,7}|\.\d{1,2}|[0-9]{1,7}\.\d{1,2})$/;
 
+export const STOCK_NUMBER_MAX_3_REGEX = /^(?:[0-9]{1,3}|\.\d{1,2}|[0-9]{1,3}\.\d{1,2})$/;
+
 export const NON_ZERO_NUMBER_REGEX = /^[1-9]\d*$/;
 
 export const NON_ZERO_NUMBER_AND_ALL_REGEX = new RegExp(`^${CONSTANTS.ALL_VALUE}|[1-9]\\d*$`);

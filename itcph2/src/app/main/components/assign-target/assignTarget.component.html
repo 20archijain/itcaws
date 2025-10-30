@@ -7,20 +7,20 @@
             <thead>
               <tr class="fixed-header">
                 <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} :
-                  Achieved</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target
+                  Achieved (in Ms)</th>
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target (in Ms)
                 </th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3"
-                  *ngIf="tableColumnCondition">{{nextMonth}} : Target
+                  *ngIf="tableColumnCondition">{{nextMonth}} : Target (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3" *ngIf="enableTargetFiled">
                   Enter {{showMonth}}
-                  Target</th>
+                  Target (in Ms)</th>
 
               </tr>
               <tr class="fixed-header">
@@ -93,7 +93,7 @@
         <!-- Confirm Button -->
 
         <h6 *ngIf="group.invalid || isDisabled" class="text-center text-danger">For each Team, all SKU Targets are
-          Requrired</h6>
+          Requrired Or <span style="color: blue;">Check Overall target is greater than Focus Brands</span></h6>
         <div class="row mt-2 mb-1" *ngIf="stockProductsList?.length">
           <div class="col-md-12 d-flex justify-content-center">
 

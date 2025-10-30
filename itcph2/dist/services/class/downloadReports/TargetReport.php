@@ -424,8 +424,11 @@ class TargetReport
                         $achieveOverall = $achieveTargetOverall[0];
 
                         $perF1 = ($assignFocus1 > 0) ? round((float) $achieveFocus1 / $assignFocus1) : 0;
+                        $showPerF1 = $perF1 . "%";
                         $perF2 = ($assignFocus2 > 0) ? round((float) $achieveFocus2 / $assignFocus2) : 0;
+                        $showPerF2 = $perF2 . "%";
                         $perOverall = ($assignOverall > 0) ? round((float) $achieveOverall / $assignOverall) : 0;
+                        $showPerOverall = $perOverall . "%";
 
                         $focus1Max = 500;
                         $focus2Max = 500;
@@ -496,7 +499,7 @@ class TargetReport
                             $arrProducts[0],
                             $assignFocus1,
                             $achieveFocus1,
-                            $perF1,
+                            $showPerF1,
                             $focus1Max,
                             $focus1Earned,
                             ""
@@ -520,14 +523,14 @@ class TargetReport
                             $arrProducts[1],
                             $assignFocus2,
                             $achieveFocus2,
-                            $perF2,
+                            $showPerF2,
                             $focus2Max,
                             $focus2Earned,
                             ""
                         ];
 
                         //Third Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $perOverall, $overAllMax, $overAllEarned, ""];
+                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""];
 
                         //Forth Column
                         $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
