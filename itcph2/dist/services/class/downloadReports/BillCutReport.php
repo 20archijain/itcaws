@@ -147,6 +147,9 @@ class BillCutReport
                     $condition .= " AND b.is_type = $teamType";
                 }
             }
+        } else {
+            // No team type filter → include all team types
+            $condition = " AND b.is_type IN (0,5)"; // or remove condition entirely
         }
 
         $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
@@ -232,29 +235,36 @@ class BillCutReport
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
-        // Filter query
         $where = $this->getCondition();
         $whereFilter = $this->getConditionFilter();
         $branch = getFormData($this->_data, "branch");
         $product = getFormData($this->_data, "product");
-        $teamType = getFormData($this->_data, "dsType");
+        $teamTypeFilter = getFormData($this->_data, "dsType");
 
         $respTable = getRespTable(1, $this->_projectId);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+
         $Cond = "";
         $teamTypeCond = "";
-        if ($teamType) {
-            $teamTypeCond .= " AND team_type = $teamType";
-            $Cond .= " AND b.is_type = $teamType";
+
+        // ✅ FIX: Handle single or both team types properly
+        if (isset($teamTypeFilter) && $teamTypeFilter !== "" && $teamTypeFilter >= 0) {
+            $teamTypeCond = " AND team_type = $teamTypeFilter";
+            $Cond .= " AND b.is_type = $teamTypeFilter";
+            $teamTypes = [$teamTypeFilter];
+        } else {
+            // ✅ No filter selected → include both 0 and 5 team types
+            $teamTypeCond = " AND team_type IN (0,5)";
+            $teamTypes = [0, 5];
         }
 
         $productCond = "";
         if ($product) {
             if (isNonEmptyArray($product)) {
-                $products = "'" .  implode("','", $product)  . "'";
+                $products = "'" . implode("','", $product) . "'";
                 $productCond = " AND product_name IN ($products)";
             } else {
                 $productCond = " AND product_name = '$product'";
@@ -264,135 +274,133 @@ class BillCutReport
         $arrExcelData = [];
         $arrExcelData[] = ["District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "DS Type", "DS Id", "DS Name", "Brand Family", "Variant", "Focus Variant", "Total Outlets Mapped", "Variant UOB", "Variant UOB%", 'Overall UOB'];
 
-        $branchCond = "";
-        // if ($branch) {
-        //     $matchAll = checkIfAllSelected($branch);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($branch)) {
-        //             $branchs = implode(",", $branch);
-        //             $branchCond = " AND branch_id IN ($branchs)";
-        //             $Cond .= " AND b.branch_id IN ($branchs)";
-        //         } else {
-        //             $branchCond = " AND branch_id = $branch";
-        //             $Cond .= " AND b.branch_id = $branch";
-        //         }
-        //     }
-        // }
-
         foreach ($branch as $branchId) {
-            $sProductQuery = "SELECT DISTINCT rec_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $productCond $teamTypeCond ORDER BY product_name";
+            // ✅ Fetch all products for both team types for this branch
+            $sProductQuery = "SELECT DISTINCT rec_id, product_name, summary_column_name, team_type FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $productCond $teamTypeCond ORDER BY team_type, product_name";
+
             $sProductAction = null;
             $iProductRows = 0;
             $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
 
+            // Group products by team_type
+            $branchProductsByTeamType = [];
+            $productNamesByTeamType = [];
+            $productFamiliesByTeamType = [];
+            $productFocusByTeamType = [];
+
             if ($iProductRows > 0) {
-                $summaryColName = [];
-                $productNames = [];
-                $productFamilies = []; // key = summary_column_name
-                $productFocuses = [];  // key = summary_column_name
                 while ($rowProduct = $this->_dbConn->GetData($sProductAction)) {
                     $recId = $rowProduct["rec_id"];
                     $summaryCol = $rowProduct["summary_column_name"];
-                    $summaryColName[] = $rowProduct["summary_column_name"];
-                    $productNames[] = $rowProduct["product_name"];
-                    $arrProductDetails = getRowColumns($this->_dbConn, "$branchProductsTable", "category_name, is_focusbrand", "dstatus = 0 AND rec_id = $recId");
-                    $productFamilies[$summaryCol] = $arrProductDetails[0];
-                    $productFocuses[$summaryCol] = $arrProductDetails[1];
-                }
+                    $teamType = (int)$rowProduct["team_type"];
 
-                $sProductSaleColumns = implode(",", $summaryColName);
-
-                $isType = array(0 => "Van DS", 1 => "Niches", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD");
-                $rsAction = null;
-                $iRows = 0;
-                $sQuery = "SELECT a.capture_datetime, a.ques_0, b.team_id, b.team_name, b.is_type, b.wd_code, c.district, c.branch_name, c.main_branch, $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id" .
-                    " AND b.branch_id = c.branch_id AND a.ques_0 IN ('Outlet Order','Add Outlet') $where $whereFilter AND b.branch_id = $branchId GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
-                $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-
-                if ($iRows > 0) {
-                    $shopCount = [];
-                    $totalShopCount = [];
-                    $OverallShopCount = [];
-                    while ($row = $this->_dbConn->GetData($rsAction)) {
-                        $mainBranchName = $row['main_branch'];
-                        $district = $row['district'];
-                        $branchName = $row['branch_name'];
-                        $teamId = $row['team_id'];
-                        $teamName = $row['team_name'];
-                        $teamType = $isType[$row['is_type']];
-                        $wdCode = $row['wd_code'];
-                        $arrDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "circle,section,wd_firm_name,wd_pop_group", "dstatus = 0 AND wd_code = '$wdCode'");
-                        $circle     = isset($arrDetails[0]) ? $arrDetails[0] : "";
-                        $section    = isset($arrDetails[1]) ? $arrDetails[1] : "";
-                        $wdFirmName = isset($arrDetails[2]) ? $arrDetails[2] : "";
-                        $wdpopGroup = isset($arrDetails[3]) ? $arrDetails[3] : "";
-                        foreach ($summaryColName as $index => $colName) {
-                            $allShops = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $where");
-                            if (!isset($shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName])) {
-                                $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = 0;
-                            }
-                            $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
-                        }
-
-                        $totalShopCount[$teamId] = getRowColumn($this->_dbConn, $routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", array(), true);
-
-                        // Array of column names for total sales
-                        $totalSaleColumns = [];
-                        for ($i = 1; $i <= 78; $i++) {
-                            $totalSaleColumns[] = "`total_sale_product$i`";
-                        }
-
-                        // Join the columns with '+' for summation
-                        $totalSaleSum = implode(" + ", $totalSaleColumns);
-
-                        $overallshop = getRowColumn(
-                            $this->_dbConn,
-                            "$respTable AS a",
-                            "COUNT(DISTINCT a.ques_3) AS total",
-                            "a.dstatus = 0 AND a.team_id = $teamId $where AND ($totalSaleSum) > 0"
-                        );
-
-                        $OverallShopCount[$teamId] = $overallshop;
+                    if (!isset($branchProductsByTeamType[$teamType])) {
+                        $branchProductsByTeamType[$teamType] = [];
+                        $productNamesByTeamType[$teamType] = [];
+                        $productFamiliesByTeamType[$teamType] = [];
+                        $productFocusByTeamType[$teamType] = [];
                     }
 
-                    foreach ($shopCount as $district => $arrDsitrict) {
-                        foreach ($arrDsitrict as $mainBranchName => $arrbranchData) {
-                            foreach ($arrbranchData as $branchName => $arrbranch) {
-                                foreach ($arrbranch as $circle => $arrcircle) {
-                                    foreach ($arrcircle as $section => $arrSection) {
-                                        foreach ($arrSection as $wdFirmName => $arrWdFirmName) {
-                                            foreach ($arrWdFirmName as $wdpopGroup => $arrWdpopGroup) {
-                                                foreach ($arrWdpopGroup as $teamId => $arrteams) {
-                                                    foreach ($arrteams as $teamName => $arrwdCode) {
-                                                        foreach ($arrwdCode as $wdCode => $arrTeamType) {
-                                                            foreach ($arrTeamType as $teamType => $arrProduct) {
-                                                                foreach ($arrProduct as $colName => $shops) {
-                                                                    $distinctShops = $shops;
-                                                                    $totalShops = $totalShopCount[$teamId];
-                                                                    $overallUob = $OverallShopCount[$teamId];
-                                                                    // Calculate UOB%
-                                                                    $uobPercentage = $totalShops > 0 ? $distinctShops / $totalShops : 0;
-                                                                    $arrExcelData[] = [
-                                                                        'District' => $district,
-                                                                        'Branch' => $mainBranchName,
-                                                                        'Region' => $branchName,
-                                                                        'Circle' => $circle,
-                                                                        'Section' => $section,
-                                                                        'WD Code' => $wdCode,
-                                                                        'WD Name' => $wdFirmName,
-                                                                        'WD Pop Group' => $wdpopGroup,
-                                                                        'DS Type' => $teamType,
-                                                                        'DS Id' => $teamId,
-                                                                        'DS Name' => $teamName,
-                                                                        'Brand Family' => $productFamilies[$colName] ?? '',
-                                                                        'Variant' => $productNames[array_search($colName, $summaryColName)],
-                                                                        'Focus Variant' => (string) ($productFocuses[$colName] ?? ''),
-                                                                        'Total Outlets Mapped' => $totalShops,
-                                                                        'Variant UOB' => $distinctShops,
-                                                                        'Variant UOB%' => number_format($uobPercentage, 2),
-                                                                        'Overall UOB' => $overallUob,
-                                                                    ];
-                                                                }
+                    $branchProductsByTeamType[$teamType][] = $summaryCol;
+                    $productNamesByTeamType[$teamType][] = $rowProduct["product_name"];
+
+                    $arrProductDetails = getRowColumns($this->_dbConn, $branchProductsTable, "category_name, is_focusbrand", "dstatus = 0 AND rec_id = $recId");
+
+                    $productFamiliesByTeamType[$teamType][$summaryCol] = $arrProductDetails[0];
+                    $productFocusByTeamType[$teamType][$summaryCol] = $arrProductDetails[1];
+                }
+            }
+
+            // ✅ Get DS details
+            $isType = [0 => "Van DS", 1 => "Niches", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD"];
+            $rsAction = null;
+            $iRows = 0;
+
+            $sQuery = "SELECT a.capture_datetime, a.ques_0, b.team_id, b.team_name, b.is_type, b.wd_code, c.district, c.branch_name, c.main_branch FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id  AND a.ques_0 IN ('Outlet Order','Add Outlet') $where $whereFilter AND b.branch_id = $branchId $Cond GROUP BY a.team_id ORDER BY a.capture_datetime DESC ";
+
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows > 0) {
+                $shopCount = [];
+                $totalShopCount = [];
+                $OverallShopCount = [];
+
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $mainBranchName = $row['main_branch'];
+                    $district = $row['district'];
+                    $branchName = $row['branch_name'];
+                    $teamId = $row['team_id'];
+                    $teamName = $row['team_name'];
+                    $teamType = (int)$row['is_type'];
+                    $teamTypeName = $isType[$teamType] ?? '';
+                    $wdCode = $row['wd_code'];
+
+                    $arrDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "circle,section,wd_firm_name,wd_pop_group", "dstatus = 0 AND wd_code = '$wdCode'");
+                    $circle = $arrDetails[0] ?? "";
+                    $section = $arrDetails[1] ?? "";
+                    $wdFirmName = $arrDetails[2] ?? "";
+                    $wdpopGroup = $arrDetails[3] ?? "";
+
+                    // ✅ Use only products belonging to the team’s type
+                    $teamProducts = $branchProductsByTeamType[$teamType] ?? [];
+
+                    foreach ($teamProducts as $colName) {
+                        $allShops = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $where");
+                        $shopCount[$district][$mainBranchName][$branchName][$circle][$section][$wdFirmName][$wdpopGroup][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
+                    }
+
+                    $totalShopCount[$teamId] = getRowColumn($this->_dbConn, $routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", [], true);
+
+                    $totalSaleColumns = [];
+                    for ($i = 1; $i <= 78; $i++) {
+                        $totalSaleColumns[] = "`total_sale_product$i`";
+                    }
+
+                    $totalSaleSum = implode(" + ", $totalSaleColumns);
+
+                    $overallshop = getRowColumn($this->_dbConn, "$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.dstatus = 0 AND a.team_id = $teamId $where AND ($totalSaleSum) > 0");
+
+                    $OverallShopCount[$teamId] = $overallshop;
+                }
+
+                // ✅ Generate Excel rows
+                foreach ($shopCount as $district => $arrDistrict) {
+                    foreach ($arrDistrict as $mainBranchName => $arrBranchData) {
+                        foreach ($arrBranchData as $branchName => $arrBranch) {
+                            foreach ($arrBranch as $circle => $arrCircle) {
+                                foreach ($arrCircle as $section => $arrSection) {
+                                    foreach ($arrSection as $wdFirmName => $arrWdFirmName) {
+                                        foreach ($arrWdFirmName as $wdpopGroup => $arrWdPopGroup) {
+                                            foreach ($arrWdPopGroup as $teamId => $arrTeams) {
+                                                foreach ($arrTeams as $teamName => $arrWdCode) {
+                                                    foreach ($arrWdCode as $wdCode => $arrTeamType) {
+                                                        foreach ($arrTeamType as $teamType => $arrProduct) {
+                                                            foreach ($arrProduct as $colName => $shops) {
+                                                                $distinctShops = $shops;
+                                                                $totalShops = $totalShopCount[$teamId];
+                                                                $overallUob = $OverallShopCount[$teamId];
+                                                                $uobPercentage = $totalShops > 0 ? $distinctShops / $totalShops : 0;
+
+                                                                $arrExcelData[] = [
+                                                                    'District' => $district,
+                                                                    'Branch' => $mainBranchName,
+                                                                    'Region' => $branchName,
+                                                                    'Circle' => $circle,
+                                                                    'Section' => $section,
+                                                                    'WD Code' => $wdCode,
+                                                                    'WD Name' => $wdFirmName,
+                                                                    'WD Pop Group' => $wdpopGroup,
+                                                                    'DS Type' => $isType[$teamType] ?? '',
+                                                                    'DS Id' => $teamId,
+                                                                    'DS Name' => $teamName,
+                                                                    'Brand Family' => $productFamiliesByTeamType[$teamType][$colName] ?? '',
+                                                                    'Variant' => $productNamesByTeamType[$teamType][array_search($colName, $branchProductsByTeamType[$teamType])],
+                                                                    'Focus Variant' => (string)($productFocusByTeamType[$teamType][$colName] ?? ''),
+                                                                    'Total Outlets Mapped' => $totalShops,
+                                                                    'Variant UOB' => $distinctShops,
+                                                                    'Variant UOB%' => number_format($uobPercentage, 2),
+                                                                    'Overall UOB' => $overallUob,
+                                                                ];
                                                             }
                                                         }
                                                     }
@@ -408,6 +416,7 @@ class BillCutReport
             }
         }
 
+        // ✅ Excel output
         $fileName = "Bill_Cut_Report_$currentDateTime.xlsx";
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -419,6 +428,7 @@ class BillCutReport
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
         ];
+
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
         $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
