@@ -25,22 +25,27 @@ class AssignTarget
 
     final public function getData()
     {
+        if ($this->_iUserId == 1) {
+            $tempBranchCond = " AND a.branch_id = 2";
+            $tempTeamTableBranchCond = " AND b.branch_id = 2";
+        } else {
+            $tempBranchCond = "";
+            $tempTeamTableBranchCond = "";
+        }
         $firstDay = date('Y-m-01', strtotime('first day of previous month'));
         $lastDay = date('Y-m-t', strtotime('last day of previous month'));
+        $previousMonthCond = " AND activity_date BETWEEN '$firstDay' AND '$lastDay'";
 
         $prevMonth = date("m", strtotime("first day of previous month"));
         $prevYear  = date("Y", strtotime("first day of previous month"));
 
-        $previousMonthCond = " AND activity_date BETWEEN '$firstDay' AND '$lastDay'";
-
-
         $currentFirstDay = date('Y-m-01');
         $currentLastDay = date('Y-m-t');
+        $currentMonthCond = " AND activity_date BETWEEN '$currentFirstDay' AND '$currentLastDay'";
 
         $currentMonth = date("m");
         $currentYear  = date("Y");
-
-        $currentMonthCond = " AND activity_date BETWEEN '$currentFirstDay' AND '$currentLastDay'";
+        $currentDate  = date("d");
 
         $nextMonth = date("m", strtotime("first day of next month"));
         $nextYear  = date("Y", strtotime("first day of next month"));
@@ -52,11 +57,21 @@ class AssignTarget
             $where .= " AND b.team_id IN $teamList";
             $where1 .= " AND team_id IN $teamList";
         }
+
+        if ($currentDate > 21) {
+            $filledYear = $nextYear;
+            $filledMonth = $nextMonth;
+        } else {
+            $filledYear = $currentYear;
+            $filledMonth = $currentMonth;
+        }
+
+
         $arrStockProductsList = array();
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name, a.is_focusbrand limit 3";
+        $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.month = '$filledMonth' AND a.year = '$filledYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         $arrProductColumns = array();
@@ -76,10 +91,84 @@ class AssignTarget
             }
         }
 
+        // $skuColumn = implode(", ", array_map(function ($c) {
+        //     return "sum($c) as $c";
+        // }, $arrColumns));
+
+        $sActionPrevious = null;
+        $iRowsPrevious = 0;
+        $sQueryPrevious = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$prevMonth' AND year = '$prevYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+        // echo $sQueryPrevious;die;
+        $this->_dbConn->ExecuteSelectQuery($sQueryPrevious, $sActionPrevious, $iRowsPrevious);
+
+        $arrProductColumnsPrevious = array();
+        $arrColumnsPrevious = array();
+        $arrProductsPrevious = array();
+        if ($iRowsPrevious > 0) {
+            while ($rowPrevious = $this->_dbConn->GetData($sActionPrevious)) {
+                $arrProductColumnsPrevious[] = "SUM({$rowPrevious["summary_column_name"]}) AS {$rowPrevious["summary_column_name"]}";
+                $arrColumnsPrevious[] = "{$rowPrevious["summary_column_name"]}";
+                $arrProductsPrevious[] = $rowPrevious["product_name"];
+            }
+        }
+
+        $skuColumnPrevious = implode(", ", array_map(function ($c) {
+            return "sum($c) as $c";
+        }, $arrColumnsPrevious));
+
+        // echo $skuColumnPrevious;die;
+
+
+        $sActionCurrent = null;
+        $iRowsCurrent = 0;
+        $sQueryCurrent = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$currentMonth' AND year = '$currentYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+        // echo $sQueryCurrent;die;
+        $this->_dbConn->ExecuteSelectQuery($sQueryCurrent, $sActionCurrent, $iRowsCurrent);
+
+        $arrProductColumnsCurrent = array();
+        $arrColumnsCurrent = array();
+        $arrProductsCurrent = array();
+        if ($iRowsCurrent > 0) {
+            while ($rowCurrent = $this->_dbConn->GetData($sActionCurrent)) {
+                $arrProductColumnsCurrent[] = "SUM({$rowCurrent["summary_column_name"]}) AS {$rowCurrent["summary_column_name"]}";
+                $arrColumnsCurrent[] = "{$rowCurrent["summary_column_name"]}";
+                $arrProductsCurrent[] = $rowCurrent["product_name"];
+            }
+        }
+
+        $skuColumnCurrent = implode(", ", array_map(function ($c) {
+            return "sum($c) as $c";
+        }, $arrColumnsCurrent));
+
+
+        $sActionNext = null;
+        $iRowsNext = 0;
+        $sQueryNext = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$nextMonth' AND year = '$nextYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+        // echo $sQueryNext;die;
+        $this->_dbConn->ExecuteSelectQuery($sQueryNext, $sActionNext, $iRowsNext);
+
+        $arrProductColumnsNext = array();
+        $arrColumnsNext = array();
+        $arrProductsNext = array();
+        if ($iRowsNext > 0) {
+            while ($rowNext = $this->_dbConn->GetData($sActionNext)) {
+                $arrProductColumnsNext[] = "SUM({$rowNext["summary_column_name"]}) AS {$rowNext["summary_column_name"]}";
+                $arrColumnsNext[] = "{$rowNext["summary_column_name"]}";
+                $arrProductsNext[] = $rowNext["product_name"];
+            }
+        }
+
+        $skuColumnNext = implode(", ", array_map(function ($c) {
+            return "sum($c) as $c";
+        }, $arrColumnsNext));
+
         $sAction3 = null;
         $iRows3 = 0;
-        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_assign_target as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.is_focusbrand != 2 AND a.branch_id != 40 $where ORDER BY a.category_name, a.product_name";
+        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+            " AND a.team_type = 5 AND a.branch_id != 40 $tempBranchCond $where ORDER BY a.category_name, a.product_name";
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
         $arrProductColumnsAllProduct = array();
@@ -91,33 +180,35 @@ class AssignTarget
             }
         }
 
-        $skuColumn = implode(", ", array_map(function ($c) {
-            return "sum($c) as $c";
-        }, $arrColumns));
-
         $skuColumnAllProduct = implode(" + ", $arrColumnsAllProduct);
         $arrTeamList = array();
 
         $sAction2 = null;
         $iRows2 = 0;
-        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id != 40 $where";
+        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id != 40 $tempTeamTableBranchCond $where";
         // echo $sQuery2;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
         if ($iRows2 > 0) {
             while ($row2 = $this->_dbConn->GetData($sAction2)) {
                 $team_id = $row2["team_id"];
 
-                $preMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$prevYear' AND month = '$prevMonth'");
+                if (isset($skuColumnPrevious) && $skuColumnPrevious) {
+                    $preMonthTarget =  $this->getResult("tblassign_target", "$skuColumnPrevious", " AND team_id = $team_id AND year = '$prevYear' AND month = '$prevMonth'");
+                    $previousMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumnPrevious", " AND team_id = $team_id $previousMonthCond");
+                }
 
-                $currentMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
+                if (isset($skuColumnCurrent) && $skuColumnCurrent) {
 
-                $previousMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $previousMonthCond");
+                    $currentMonthTarget =  $this->getResult("tblassign_target", "$skuColumnCurrent", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
 
-                $currentMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumn", " AND team_id = $team_id $currentMonthCond");
+                    $currentMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumnCurrent", " AND team_id = $team_id $currentMonthCond");
+                }
 
-                $overallPreviousMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $previousMonthCond");
+                if (isset($skuColumnAllProduct) && $skuColumnAllProduct) {
+                    $overallPreviousMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $previousMonthCond");
 
-                $overallCurrentMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $currentMonthCond");
+                    $overallCurrentMonthArrAchieve =  $this->getResult("tblvands_summary", "sum($skuColumnAllProduct)", " AND team_id = $team_id $currentMonthCond");
+                }
 
                 if (isset($preMonthTarget[0]) && $preMonthTarget[0]) {
                     $productOnePreMonthTarget = $preMonthTarget[0];
@@ -204,8 +295,9 @@ class AssignTarget
                 //     $existTeamTableCond = 1;
                 // }
 
-                $NextMonthTarget =  $this->getResult("tblassign_target", "$skuColumn", " AND team_id = $team_id AND year = '$nextYear' AND month = '$nextMonth'");
-
+                if ($currentDate > 21 && isset($skuColumnNext) && $skuColumnNext) {
+                    $NextMonthTarget =  $this->getResult("tblassign_target", "$skuColumnNext", " AND team_id = $team_id AND year = '$nextYear' AND month = '$nextMonth'");
+                }
 
                 if (isset($NextMonthTarget[0]) && $NextMonthTarget[0]) {
                     $productOneNextMonthTarget = $NextMonthTarget[0];
@@ -252,8 +344,12 @@ class AssignTarget
         $arrResult = array(
             "stockProductsList" => $arrTeamList,
             "teamsList" => $arrStockProductsList,
-            "product1" => $arrProducts[0],
-            "product2" => $arrProducts[1],
+            "previousMonthProduct1" => $arrProductsPrevious[0] ?? "Not Confirmed",
+            "previousMonthProduct2" => $arrProductsPrevious[1] ?? "Not Confirmed",
+            "product1" => $arrProductsCurrent[0] ?? "Not Confirmed",
+            "product2" => $arrProductsCurrent[1] ?? "Not Confirmed",
+            "nextMonthProduct1" => $arrProductsNext[0] ?? "Not Confirmed",
+            "nextMonthProduct2" => $arrProductsNext[1] ?? "Not Confirmed",
         );
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
 
@@ -355,7 +451,7 @@ class AssignTarget
                     $cols = "rcd = ?, rdt = ?, ";
                     $arrParams = array($currentDate, $currentDateTime);
 
-                    $cols .= implode(", ", array_map(function($v){
+                    $cols .= implode(", ", array_map(function ($v) {
                         return "$v = ?";
                     }, $arrKeys));
                     // $cols .= implode(' = ?, ', $arrKeys);
