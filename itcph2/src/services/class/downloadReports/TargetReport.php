@@ -297,21 +297,16 @@ class TargetReport
         $arrExcelData[] = ["Month", "District", "Branch", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
 
         // $branchCond = "";
-        // if ($branch) {
-        //     $matchAll = checkIfAllSelected($branch);
-        //     if (!$matchAll) {
-        //         if (isNonEmptyArray($branch)) {
-        //             $branchs = implode(",", $branch);
-        //             $branchCond = " AND branch_id IN ($branchs)";
-        //             $Cond .= " AND b.branch_id IN ($branchs)";
-        //         } else {
-        //             $branchCond = " AND branch_id = $branch";
-        //             $Cond .= " AND b.branch_id = $branch";
-        //         }
-        //     }
-        // }
+        if ($branch) {
+            $matchAll = checkIfAllSelected($branch);
+            if (!$matchAll) {
+                $branchIds = $branch;
+            }else{
+                $branchIds = $this->getBranchListWithoutAll();
+            }
+        }
 
-        foreach ($branch as $branchId) {
+        foreach ($branchIds as $branchId) {
             //All Brand Query
             $sAction3 = null;
             $iRows3 = 0;
@@ -578,6 +573,35 @@ class TargetReport
         echo json_encode($arrMessage);
     }
 
+
+    final public function getBranchListWithoutAll($cond = "")
+    {
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        // echo $where;die;
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' AND b.is_type = 5 $where order by a.branch_name";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = $row['branch_id'];
+            }
+        }
+
+        return $arrData;
+    }
+
+
     final public function getResult($table, $products, $where)
     {
         $sAction3 = null;
@@ -813,10 +837,10 @@ class TargetReport
     final public function getDistrictList()
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -844,10 +868,10 @@ class TargetReport
     final public function getBranchList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all",
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all",
+        );
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -881,10 +905,10 @@ class TargetReport
     final public function getCircleList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -916,10 +940,10 @@ class TargetReport
     final public function getSectionList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -952,10 +976,10 @@ class TargetReport
     final public function getWdCodeList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -988,10 +1012,10 @@ class TargetReport
     final public function getWdMarketList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1023,10 +1047,10 @@ class TargetReport
     final public function getWdPopGroupList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1059,10 +1083,10 @@ class TargetReport
     final public function getDsTypeList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all"
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
