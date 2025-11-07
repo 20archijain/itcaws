@@ -7,8 +7,9 @@ import { environment } from 'src/environments/environment';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { FormService } from 'src/app/core/services/form.service';
 import { DropdownList, ViewWdMappingResponse } from 'src/app/core/interfaces/http-response.interface';
-import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
+import { CsvDataFormat, EditConfig } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
   templateUrl: './view.wdmapping.component.html'
@@ -27,6 +28,7 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
   wdPopGroupOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   editConfig: EditConfig[] = [];
+  isExportBtnDisabled = false;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -150,6 +152,29 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
           }
         })
     );
+  }
+
+  exportTeams() {
+    if (!this.isExportBtnDisabled) {
+      this.isExportBtnDisabled = true;
+      this.loaderService.startLoader();
+
+      this.subscription.push(
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData,
+          this.form.getRawValue(), null, this.url)
+          .pipe(
+            finalize(() => {
+              this.loaderService.stopLoader();
+              this.isExportBtnDisabled = false;
+            })
+          )
+          .subscribe(resp => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              Functions.createCSV(resp.data);
+            }
+          })
+      );
+    }
   }
 
   set branchValue(value: string) {

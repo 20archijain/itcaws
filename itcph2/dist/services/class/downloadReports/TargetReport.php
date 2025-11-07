@@ -301,7 +301,7 @@ class TargetReport
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
                 $branchIds = $branch;
-            }else{
+            } else {
                 $branchIds = $this->getBranchListWithoutAll();
             }
         }
@@ -311,7 +311,7 @@ class TargetReport
             $sAction3 = null;
             $iRows3 = 0;
             $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                " AND a.team_type = 5 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
+                " AND a.team_type = 5 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
             // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
@@ -337,7 +337,7 @@ class TargetReport
             $iRows4 = 0;
             $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND b.dstatus = 0" .
-                " AND b.is_type = 5 AND b.branch_id != 40 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
+                " AND b.is_type = 5 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
 
@@ -376,7 +376,7 @@ class TargetReport
                         $sAction = null;
                         $iRows = 0;
                         $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.branch_id = $branchId $teamTypeCond $whereFilter AND a.month = '$numericMonth' AND a.year = '$numericYear' ORDER BY a.is_focusbrand limit 3";
+                            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id = $branchId $teamTypeCond $whereFilter AND a.month = '$numericMonth' AND a.year = '$numericYear' ORDER BY a.is_focusbrand limit 3";
                         // echo $sQuery;die;
                         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
