@@ -26,8 +26,8 @@ class AssignTarget
     final public function getData()
     {
         if ($this->_iUserId == 1) {
-            $tempBranchCond = " AND a.branch_id = 2";
-            $tempTeamTableBranchCond = " AND b.branch_id = 2";
+            $tempBranchCond = " AND a.branch_id = 40";
+            $tempTeamTableBranchCond = " AND b.branch_id = 40";
         } else {
             $tempBranchCond = "";
             $tempTeamTableBranchCond = "";
@@ -71,7 +71,7 @@ class AssignTarget
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id != 40 AND a.month = '$filledMonth' AND a.year = '$filledYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+            " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.month = '$filledMonth' AND a.year = '$filledYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         $arrProductColumns = array();
@@ -98,7 +98,7 @@ class AssignTarget
         $sActionPrevious = null;
         $iRowsPrevious = 0;
         $sQueryPrevious = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$prevMonth' AND year = '$prevYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+            " AND a.team_type = 5 AND month = '$prevMonth' AND year = '$prevYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         // echo $sQueryPrevious;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryPrevious, $sActionPrevious, $iRowsPrevious);
 
@@ -123,7 +123,7 @@ class AssignTarget
         $sActionCurrent = null;
         $iRowsCurrent = 0;
         $sQueryCurrent = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$currentMonth' AND year = '$currentYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+            " AND a.team_type = 5 AND month = '$currentMonth' AND year = '$currentYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         // echo $sQueryCurrent;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryCurrent, $sActionCurrent, $iRowsCurrent);
 
@@ -146,7 +146,7 @@ class AssignTarget
         $sActionNext = null;
         $iRowsNext = 0;
         $sQueryNext = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.branch_id != 40 AND month = '$nextMonth' AND year = '$nextYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
+            " AND a.team_type = 5 AND month = '$nextMonth' AND year = '$nextYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         // echo $sQueryNext;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryNext, $sActionNext, $iRowsNext);
 
@@ -168,7 +168,7 @@ class AssignTarget
         $sAction3 = null;
         $iRows3 = 0;
         $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-            " AND a.team_type = 5 AND a.branch_id != 40 $tempBranchCond $where ORDER BY a.category_name, a.product_name";
+            " AND a.team_type = 5 $tempBranchCond $where ORDER BY a.category_name, a.product_name";
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
         $arrProductColumnsAllProduct = array();
@@ -185,7 +185,7 @@ class AssignTarget
 
         $sAction2 = null;
         $iRows2 = 0;
-        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 AND b.branch_id != 40 $tempTeamTableBranchCond $where";
+        $sQuery2 = "SELECT DISTINCT b.team_id, b.team_name, b.wd_code FROM tblproject_team as b WHERE b.dstatus = 0 AND b.is_type = 5 $tempTeamTableBranchCond $where";
         // echo $sQuery2;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2);
         if ($iRows2 > 0) {

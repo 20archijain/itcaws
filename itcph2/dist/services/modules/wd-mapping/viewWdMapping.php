@@ -7,10 +7,10 @@ if (!isEmptyString($requestAction)) {
     $wdMapping = new WdMappingManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_LIST']:
-            $wdMapping->viewProjects();
+            $wdMapping->viewWdMapping();
             break;
         case $ACTION_LIST['GET_DATA']:
-            $wdMapping->getViewProjectData();
+            $wdMapping->getViewWDMappingData();
             break;
         case $ACTION_LIST['GET_BRANCH']:
             $wdMapping->getBranch();
@@ -23,6 +23,9 @@ if (!isEmptyString($requestAction)) {
             break;
         case $ACTION_LIST['GET_WD_CODE']:
             $wdMapping->getWDCode();
+            break;
+        case $ACTION_LIST['GET_DOWNLOAD_DATA']:
+            $wdMapping->exportWdMapping();
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
