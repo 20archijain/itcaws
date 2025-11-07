@@ -26,7 +26,7 @@ class WdMappingManagement
     final public function getCondition()
     {
         $condition = "";
-        $district = getFormData($this->_data['searchbar'], "district");
+        $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
                 $district = array($district);
@@ -35,10 +35,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $district = "'" . implode("','", $district) . "'";
-                $condition .= " AND b.district IN ($district)";
+                $condition .= " AND d.district IN ($district)";
             }
         }
-        $branch = getFormData($this->_data['searchbar'], "branch");
+        $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
                 $branch = array($branch);
@@ -47,10 +47,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $branch = "'" . implode("','", $branch) . "'";
-                $condition .= " AND b.branch IN ($branch)";
+                $condition .= " AND d.branch_id IN ($branch)";
             }
         }
-        $circle = getFormData($this->_data['searchbar'], "circle");
+        $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
                 $circle = array($circle);
@@ -59,10 +59,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $circle = "'" . implode("','", $circle) . "'";
-                $condition .= " AND b.circle IN ($circle)";
+                $condition .= " AND e.circle IN ($circle)";
             }
         }
-        $section = getFormData($this->_data['searchbar'], "section");
+        $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
                 $section = array($section);
@@ -71,10 +71,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $section = "'" . implode("','", $section) . "'";
-                $condition .= " AND b.section IN ($section)";
+                $condition .= " AND e.section IN ($section)";
             }
         }
-        $wdCode = getFormData($this->_data['searchbar'], "wdCode");
+        $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
                 $wdCode = array($wdCode);
@@ -83,10 +83,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $wdCode = "'" . implode("','", $wdCode) . "'";
-                $condition .= " AND b.wd_code IN ($wdCode)";
+                $condition .= " AND e.wd_code IN ($wdCode)";
             }
         }
-        $wdMarket = getFormData($this->_data['searchbar'], "wdMarket");
+        $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
                 $wdMarket = array($wdMarket);
@@ -95,10 +95,10 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $wdMarket = "'" . implode("','", $wdMarket) . "'";
-                $condition .= " AND b.wd_market IN ($wdMarket)";
+                $condition .= " AND e.wd_market IN ($wdMarket)";
             }
         }
-        $wdPopGroup = getFormData($this->_data['searchbar'], "wdPopGroup");
+        $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
                 $wdPopGroup = array($wdPopGroup);
@@ -107,15 +107,20 @@ class WdMappingManagement
                 $condition .= " ";
             } else {
                 $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
-                $condition .= " AND b.wd_pop_group IN ($wdPopGroup)";
+                $condition .= " AND e.wd_pop_group IN ($wdPopGroup)";
             }
+        }
+
+        $teamList = $this->_arrAccessInfo["user_teams"];
+        if ($teamList) {
+            $condition .= " AND b.team_id IN $teamList";
         }
 
         return $condition;
     }
 
 
-    final public function getViewProjectData()
+    final public function getViewWDMappingData()
     {
         $arrResult = array(
             // Don't use dstatus = 0
@@ -158,7 +163,7 @@ class WdMappingManagement
         echo json_encode($arrMessage);
     }
 
-    final public function viewProjects()
+    final public function viewWdMapping()
     {
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
@@ -169,7 +174,7 @@ class WdMappingManagement
         // $where $sOrderCond
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT b.rec_id, b.district, b.branch, b.circle, b.circle_name, b.section, b.section_name, b.wd_code, b.wd_firm_name, b.wd_market, b.wd_pop_group FROM $wdMappingTable AS b Where b.dstatus = 0 $where";
+        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d, $wdMappingTable as e Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
         // echo $sQuery;die;
@@ -199,7 +204,48 @@ class WdMappingManagement
         echo json_encode($arrMessage);
     }
 
-    final public function getDistrictList($cond = "")
+    final public function exportWdMapping()
+    {
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
+        $arrBody = array();
+
+        $where = $this->getCondition();
+
+        // $where $sOrderCond
+        $sAction = null;
+        $iRows = 0;
+        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d, $wdMappingTable as e Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
+        // echo $sQuery;die;
+
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($arrData = $this->_dbConn->GetData($sAction)) {
+                $arrBody[] = array(
+                    $arrData['rec_id'],
+                    $arrData['district'],
+                    $arrData['branch'],
+                    $arrData['circle'],
+                    $arrData['circle_name'],
+                    $arrData['section'],
+                    $arrData['section_name'],
+                    $arrData['wd_code'],
+                    $arrData['wd_firm_name'],
+                    $arrData['wd_market'],
+                    $arrData['wd_pop_group'],
+                );
+            }
+        }
+
+        $header = array("Mapping ID", "District", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Firm Name", "WD Market", "WD POP Group");
+
+        $arrResult = formatDownloadData("Mapping Details_details", array($header), $arrBody);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getDistrictList()
     {
         $arrData = array();
         $arrData[] = array(
@@ -207,14 +253,15 @@ class WdMappingManagement
             "value" => "all"
         );
 
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
-        if ($cond) {
-            $where .= $cond;
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblmapping_wd as a where a.dstatus = 0 AND a.district IS NOT NULL AND a.district != '' $where order by a.district";
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where order by a.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -234,24 +281,31 @@ class WdMappingManagement
         $arrData = array();
         $arrData[] = array(
             "label" => "All",
-            "value" => "all"
+            "value" => "all",
         );
 
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
+        // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch from tblmapping_wd as a where a.dstatus = 0 AND a.branch IS NOT NULL AND a.branch != '' $where order by a.branch";
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where order by a.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $arrData[] = array(
-                    "label" => $row['branch'],
-                    "value" => $row['branch']
+                    "label" => $row['branch_name'],
+                    "value" => $row['branch_id'],
+                    "mainBranch" => $row['main_branch']
                 );
             }
         }
@@ -267,15 +321,20 @@ class WdMappingManagement
             "label" => "All",
             "value" => "all"
         );
-
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.circle, a.circle_name from tblmapping_wd as a where a.dstatus = 0 AND a.circle IS NOT NULL AND a.circle != '' $where order by a.circle";
+        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -297,15 +356,20 @@ class WdMappingManagement
             "label" => "All",
             "value" => "all"
         );
-
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.section, a.section_name from tblmapping_wd as a where a.dstatus = 0 AND a.section IS NOT NULL AND a.section != '' $where order by a.section";
+        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -327,21 +391,26 @@ class WdMappingManagement
             "label" => "All",
             "value" => "all"
         );
-
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.wd_code, a.wd_firm_name from tblmapping_wd as a where a.dstatus = 0 AND a.wd_code IS NOT NULL AND a.wd_code != '' $where order by a.wd_code";
+        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $arrData[] = array(
-                    "label" => $row['wd_code'] . " - " . $row['wd_firm_name'],
+                    "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
                 );
             }
@@ -357,15 +426,20 @@ class WdMappingManagement
             "label" => "All",
             "value" => "all"
         );
-
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.wd_market from tblmapping_wd as a where a.dstatus = 0 AND a.wd_market IS NOT NULL AND a.wd_market != '' $where order by a.wd_market";
+        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -388,15 +462,20 @@ class WdMappingManagement
             "label" => "All",
             "value" => "all"
         );
-
+        $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
         if ($cond) {
             $where .= $cond;
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.wd_pop_group from tblmapping_wd as a where a.dstatus = 0 AND a.wd_pop_group IS NOT NULL AND a.wd_pop_group != '' $where order by a.wd_pop_group";
+        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -460,7 +539,7 @@ class WdMappingManagement
                 $branchCond = ""; // No condition for 'all'
             } else {
                 $branch = "'" . implode("','", $branch) . "'";
-                $branchCond = " AND a.branch IN ($branch)";
+                $branchCond = " AND a.branch_id IN ($branch)";
             }
 
             $arrResult = array(
@@ -495,7 +574,7 @@ class WdMappingManagement
                 $circleCond = ""; // No condition for 'all'
             } else {
                 $circle = "'" . implode("','", $circle) . "'";
-                $circleCond = " AND a.circle IN ($circle)";
+                $circleCond = " AND b.circle IN ($circle)";
             }
 
             $arrResult = array(
@@ -529,7 +608,7 @@ class WdMappingManagement
                 $sectionCond = ""; // No condition for 'all'
             } else {
                 $section = "'" . implode("','", $section) . "'";
-                $sectionCond = " AND a.section IN ($section)";
+                $sectionCond = " AND b.section IN ($section)";
             }
 
             $arrResult = array(
