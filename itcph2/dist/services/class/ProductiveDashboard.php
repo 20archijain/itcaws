@@ -1265,7 +1265,7 @@ class ProductiveDashboard
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['Survey (M) (Daily Average)']) && $arrDistrictData['districtLevelSale']['No of Users']) {
-                    $arrDistrictData['districtLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrDistrictData['districtLevelSale']['Survey (M) (Daily Average)'] / $arrDistrictData['districtLevelSale']['No of Users'], 0);
+                    $arrDistrictData['districtLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrDistrictData['districtLevelSale']['Survey (M) (Daily Average)'] / $arrDistrictData['districtLevelSale']['No of Users'], 2);
                 }
 
                 if (isset($arrDistrictData['districtLevelSale']['Total Time'])) {
@@ -1324,7 +1324,7 @@ class ProductiveDashboard
                     }
 
                     if (isset($arrBranchData['branchLevelSale']['Survey (M) (Daily Average)']) && $arrBranchData['branchLevelSale']['No of Users']) {
-                        $arrBranchData['branchLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrBranchData['branchLevelSale']['Survey (M) (Daily Average)'] / $arrBranchData['branchLevelSale']['No of Users'], 0);
+                        $arrBranchData['branchLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrBranchData['branchLevelSale']['Survey (M) (Daily Average)'] / $arrBranchData['branchLevelSale']['No of Users'], 2);
                     }
 
                     if (isset($arrBranchData['branchLevelSale']['Total Time'])) {
@@ -1381,7 +1381,7 @@ class ProductiveDashboard
                         }
 
                         if (isset($arrCircleData['circleLevelSale']['Survey (M) (Daily Average)']) && $arrCircleData['circleLevelSale']['No of Users']) {
-                            $arrCircleData['circleLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrCircleData['circleLevelSale']['Survey (M) (Daily Average)'] / $arrCircleData['circleLevelSale']['No of Users'], 0);
+                            $arrCircleData['circleLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrCircleData['circleLevelSale']['Survey (M) (Daily Average)'] / $arrCircleData['circleLevelSale']['No of Users'], 2);
                         }
 
                         if (isset($arrCircleData['circleLevelSale']['Total Time'])) {
@@ -1438,7 +1438,7 @@ class ProductiveDashboard
                             }
 
                             if (isset($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)']) && $arrSectionData['sectionLevelSale']['No of Users']) {
-                                $arrSectionData['sectionLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)'] / $arrSectionData['sectionLevelSale']['No of Users'], 0);
+                                $arrSectionData['sectionLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)'] / $arrSectionData['sectionLevelSale']['No of Users'], 2);
                             }
 
 
@@ -1496,7 +1496,7 @@ class ProductiveDashboard
                                 }
 
                                 if (isset($arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average)']) && $arrWdCodeData['wdLevelSale']['No of Users']) {
-                                    $arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average)'] / $arrWdCodeData['wdLevelSale']['No of Users'], 0);
+                                    $arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrWdCodeData['wdLevelSale']['Survey (M) (Daily Average)'] / $arrWdCodeData['wdLevelSale']['No of Users'], 2);
                                 }
 
                                 if (isset($arrWdCodeData['wdLevelSale']['Total Time'])) {
@@ -1553,7 +1553,7 @@ class ProductiveDashboard
                                     }
 
                                     if (isset($arrTeamData['teamLevelSale']['Survey (M) (Daily Average)']) && $arrTeamData['teamLevelSale']['No of Users']) {
-                                        $arrTeamData['teamLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrTeamData['teamLevelSale']['Survey (M) (Daily Average)'] / $arrTeamData['teamLevelSale']['No of Users'], 0);
+                                        $arrTeamData['teamLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrTeamData['teamLevelSale']['Survey (M) (Daily Average)'] / $arrTeamData['teamLevelSale']['No of Users'], 2);
                                     }
 
                                     if (isset($arrTeamData['teamLevelSale']['Total Time'])) {
@@ -1637,7 +1637,7 @@ class ProductiveDashboard
                 $totalSumDistrictLevelSale['Survey (M) (Daily Average)'] = round((int)$sumActSurveyMTD / $getDate, 0);
             }
             if ($sumActSurveyMTD > 0) {
-                $totalSumDistrictLevelSale['Survey (M) (Daily Average Per User)'] = round((int)($sumActSurveyMTD / $getDate) / $sumOfNoOfUsers, 0);
+                $totalSumDistrictLevelSale['Survey (M) (Daily Average Per User)'] = round((int)($sumActSurveyMTD / $getDate) / $sumOfNoOfUsers, 2);
             }
             if ($sumActKmTravelPerDay > 0 && $sumOfNoOfUsers > 0) {
                 $totalSumDistrictLevelSale['KMs Travelled per Day'] =
