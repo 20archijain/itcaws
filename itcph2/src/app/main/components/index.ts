@@ -46,6 +46,7 @@ import { MdoUniverseDataComponent } from './sites-on-map/mdo-universe-data.compo
 import { ActiveMDOUsersListingComponent } from './reporting/active-mdo/active-mdo-reporting.component';
 import { AppNotificationComponent } from './notification/app.notification.component';
 import { TargetReportComponent } from './assign-target/target-report.component';
+import { MdoPerformanceComponent } from './mdo-performance/mdo-performance.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -94,6 +95,7 @@ export const MAIN_COMPONENTS = [
   ActiveMDOUsersListingComponent,
   AppNotificationComponent,
   TargetReportComponent,
+  MdoPerformanceComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -143,4 +145,5 @@ export const MAP_MAIN_COMPONENTS = {
   ActiveMDOUsersListingComponent,
   AppNotificationComponent,
   TargetReportComponent,
+  MdoPerformanceComponent,
 };

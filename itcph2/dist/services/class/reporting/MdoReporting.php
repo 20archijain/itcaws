@@ -726,22 +726,22 @@ class MdoReporting
 
     final public function getTeamList()
     {
-        $wdCode = $this->_data['wdCode'];
-        $wdCodeCond = "";
-        if ($wdCode) {
-            if ($wdCode) {
-                if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+        $dsType = $this->_data['dsType'];
+        $typeCond = "";
+        if ($dsType) {
+            if ($dsType) {
+                if (!is_array($dsType)) {
+                    $dsType = array($dsType);
                 }
-                if (in_array('all', $wdCode)) {
-                    $wdCodeCond = ""; // No condition for 'all'
+                if (in_array('all', $dsType)) {
+                    $typeCond = ""; // No condition for 'all'
                 } else {
-                    $wdCode = "'" . implode("','", $wdCode) . "'";
-                    $wdCodeCond = " AND c.wd_code IN ($wdCode)";
+                    $dsType = "'" . implode("','", $dsType) . "'";
+                    $typeCond = " AND b.is_type IN ($dsType)";
                 }
             }
             $arrResult = array(
-                "teamList" => $this->getTeamsList($wdCodeCond),
+                "teamList" => $this->getTeamsList($typeCond),
             );
         } else {
             $arrResult = array(
@@ -1399,10 +1399,12 @@ class MdoReporting
                             $endTime = isset($endDetails[0]) ? $endDetails[0] : "";
                             $timeSpent = $endDetails[0] ? getTimeDifferenceInString($startTime, $endTime, false, false, true) : 0;
                             $distanceInKm = $endDetails[1] ? $endDetails[1] : 0;
-                            $arrDayEndOtherDetails = json_decode($endDetails[2], true);
-                            $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
-                            $salesVol = $arrDayEndOtherDetails['SalesVolume'];
-                            $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                            if (!empty($endDetails[2])) {
+                                $arrDayEndOtherDetails = json_decode($endDetails[2], true);
+                                $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
+                                $salesVol = $arrDayEndOtherDetails['SalesVolume'];
+                                $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                            }
                             $arrAttenOtherDetails = json_decode($rowTeam["other_details"], true);
                             $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
                             if ($workWith == 0) {
@@ -1484,9 +1486,9 @@ class MdoReporting
                                 "",
                                 "",
                                 "",
-                                $dayEndOutlet,
-                                $salesVol,
-                                $salesValue
+                                isset($dayEndOutlet) ? $dayEndOutlet : 0,
+                                isset($salesVol) ? $salesVol : 0,
+                                isset($salesValue) ? $salesValue : 0,
                             ];
                         }
                     }

@@ -308,7 +308,8 @@
       "downloadEvaluationReport": "Evaluation Report",
       "products": "SKU",
       "downloadProductiveReport": "Productive Report",
-      "downloadLeaderBoardReport": "Leaderboard Report"
+      "downloadLeaderBoardReport": "Leaderboard Report",
+      "mdoPerformanceReport": "MDO Performance Report"
     },
     "editProduct": {
       "productName": "Products Name",
