@@ -1,0 +1,58 @@
+<app-card cardTitle="{{ 'app.routeData.uploadHeading' | translate }}" [options]="false">
+  <form (ngSubmit)="showColumns()" [formGroup]="form" novalidate>
+    <div class="row">
+      <div class="col-sm-7 col-md-6 col-xl-4">
+        <app-file-upload [group]="form" label="app.routeData.selectRouteFile" controlName="excelFile"
+          [showDummyImageIfNoImageSelected]="false" [accept]="excel" [errorMessages]="errorMessages.excelFile"
+          (onSelect)="onSelect($event)"></app-file-upload>
+      </div>
+
+      <div class="col-sm-5 col-md-6 col-xl-2 mt-sm-btn-align mb-1 mb-sm-0">
+        <div class="row">
+          <div [ngClass]="{'col-9 col-sm-7 col-md-5 col-xl-4': isDisabled, 'col-4 col-sm-3 col-md-2': !isDisabled}">
+            <app-button type="submit" text="button.show" [isDisabled]="isDisabled"
+              [appScrollToFirstInvalidInput]="form">
+            </app-button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-12">
+        <div class="table-responsive">
+          <table *ngIf="excelHeader?.length" class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'app.routeData.excelHeader' | translate }} </th>
+                <th scope="col">{{ 'app.routeData.tableColumn' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let header of excelHeader; let i = index">
+                <td>{{ header }}</td>
+                <td>
+                  <app-select [group]="columnsForm" [controlName]="'columnSelections-' + i + '-' + header"
+                    [options]="tableColumns">
+                  </app-select>
+                </td>
+                <td>
+                  <app-button (onClick)="resetSelection('columnSelections-' + i + '-' + header)" text="button.reset">
+                  </app-button>
+                </td>
+              </tr>
+              <tr>
+                <td colspan="3">
+                  <app-button (onClick)="addData()" text="button.upload" [isDisabled]="isDisabled"
+                    [showIconInButton]="true" [appScrollToFirstInvalidInput]="form" iconName="icon-upload"
+                    [showSpinner]="isDisabled" spinnerText="spinnerText.adding">
+                  </app-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </form>
+</app-card>
