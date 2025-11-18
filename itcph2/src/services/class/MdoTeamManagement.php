@@ -537,23 +537,38 @@ class MdoTeamManagement
                 array("label" => "Username", "value" => "c.username"),
                 array("label" => "Date Created - ASC", "value" => "a.rdt"),
             ),
+            "dsTypeList" => array(
+                array("label" => "DS", "value" => "0"),
+                array("label" => "Town SWD", "value" => "2"),
+                array("label" => "NSPR", "value" => "5"),
+            ),
+            "statusList" => array(
+                array("label" => "Active", "value" => '0'),
+                array("label" => "Deleted", "value" => '1'),
+            ),
             "viewHeader" => array(
                 "app.team.view.teamId",
                 "app.team.add.name",
+                "app.team.add.dsType",
                 "app.team.add.branch",
                 "app.team.view.wdCode",
                 "auth.login.form.mobile",
-                // "auth.login.form.password",
-                "app.team.add.json"
+                "auth.login.form.username",
+                "auth.login.form.password",
+                "app.team.add.json",
+                "app.team.add.status",
             ),
             "viewBody" => array(
                 "id",
                 "teamName",
+                "dsType",
                 "branchName",
                 "wdCode",
                 "mobile",
-                // "password",
-                "json"
+                "username",
+                "password",
+                "json",
+                "deleteStatus"
             ),
         );
 
@@ -582,7 +597,9 @@ class MdoTeamManagement
                 "json" => array("c.c_init_xml", 1),
                 // "password" => array("c.password", 1),
                 "dsName" => array("a.team_name", 1),
+                "dsType" => array("a.is_type", 1),
                 "wdCode" => array("a.wd_code", 1),
+                "teamStatus" => array("a.dstatus", 1),
                 "phone" => array("c.mobile", 1),
             )
         );
@@ -595,11 +612,12 @@ class MdoTeamManagement
             $where .= " AND a.team_id IN $teamList";
         }
 
+        $dsType = array(7 => "MDO A", 10 => "MDO B");
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.project_id, a.team_id, a.team_name, a.wd_code, b.branch_name,a.ds_number, c.rec_id, c.username, c.password, c.mobile, c.c_init_xml FROM $projectTeamTable AS a, $branchTable AS b" .
-            ", $cloudDBName.$cloudAuthPinTable AS c WHERE a.dstatus = 0 AND c.dstatus = 0 AND a.branch_id = b.branch_id AND a.team_id = c.team_id AND c.db_name = '{$GLOBALS['DB_DBNAME']}' $where $sOrderCond";
+        $sQuery = "SELECT a.project_id, a.team_id, a.team_name, a.is_type, a.dstatus, a.wd_code, b.branch_name,a.ds_number, c.rec_id, c.username, c.password, c.mobile, c.c_init_xml FROM $projectTeamTable AS a, $branchTable AS b" .
+            ", $cloudDBName.$cloudAuthPinTable AS c WHERE  a.branch_id = b.branch_id AND a.s_id  = 10 AND a.team_id = c.team_id AND c.db_name = '{$GLOBALS['DB_DBNAME']}' $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 
@@ -612,13 +630,17 @@ class MdoTeamManagement
                 $arrResult[] = array(
                     "id" => $teamId,
                     "teamName" => $arrData["team_name"],
+                    "dsType" => $dsType[$arrData["is_type"]],
                     "projectId" => $arrData["project_id"],
                     "recId" => $arrData["rec_id"],
                     "mobile" => $arrData["mobile"],
+                    "username" => $arrData["username"],
                     "password" => $arrData["password"],
                     "json" => $arrData["c_init_xml"],
                     "branchName" => $arrData["branch_name"],
                     "wdCode" => $arrData["wd_code"],
+                    "deleteValue" => $arrData['dstatus'],
+                    "deleteStatus" => $GLOBALS["ARR_DELETE_STATUS"][$arrData['dstatus']],
                 );
             }
         }

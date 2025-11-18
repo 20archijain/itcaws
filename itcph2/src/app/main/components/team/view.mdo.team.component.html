@@ -1,0 +1,57 @@
+<app-card cardTitle="{{ 'app.team.view.heading' | translate }}" [options]="false">
+  <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
+    [searchTemplate]="searchTemplate" [searchGroup]="form" editLabel="app.team.view.editHeading"
+    [editConfig]="editConfig" editModalSize="modal-lg">
+  </app-table-listing>
+</app-card>
+
+<ng-template #searchTemplate>
+  <div class="row">
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form" controlName="branch"
+        [options]="branchOptions">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'app.team.view.wdCode' | translate }}" [group]="form" controlName="wdCode"
+        [autocompleteOff]="true">
+      </app-input>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.team.add.dsType' | translate }}" [group]="form" controlName="msoType"
+        [options]="mdoTypeOptions">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'app.team.add.name' | translate }}" [group]="form" controlName="mdoName"
+        [autocompleteOff]="true">
+      </app-input>
+    </div>
+    <!-- <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'auth.login.form.username' | translate }}" [group]="form" controlName="username"
+        [autocompleteOff]="true">
+      </app-input>
+    </div> -->
+    <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'app.team.add.dsNumber' | translate }}" [group]="form" controlName="phone"
+        [autocompleteOff]="true">
+      </app-input>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-input placeholder="{{ 'app.team.add.json' | translate }}" [group]="form" controlName="json"
+        [autocompleteOff]="true">
+      </app-input>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.team.add.status' | translate }}" [group]="form" controlName="teamStatus"
+        [options]="statusOptions">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-button type="submit" text="button.search"></app-button>
+      <app-button type="submit" [showIconInButton]="true" colorClass="btn-info" btnClass="m-l-5"
+        iconName="icon-download" btnTitle="button.export" (onClick)="exportTeams()" [isDisabled]="isExportBtnDisabled">
+      </app-button>
+    </div>
+  </div>
+</ng-template>

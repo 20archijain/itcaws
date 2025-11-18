@@ -823,9 +823,9 @@ class MdoPerformanceReport
                 if (!$matchAll) {
                     if (isNonEmptyArray($branchId)) {
                         $branchIds = implode(",", $branchId);
-                        $branchCond = " AND a.branch_id IN ($branchIds)";
+                        $branchCond = " AND branch_id IN ($branchIds)";
                     } else {
-                        $branchCond = " AND a.branch_id = $branchId";
+                        $branchCond = " AND branch_id = $branchId";
                     }
                 }
             }
@@ -833,18 +833,18 @@ class MdoPerformanceReport
             // Don't use b.dstatus = 0 AND c.dstatus = 0
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.team_id, a.team_name FROM $projectTeamTable as a WHERE a.dstatus = 0 $where $branchCond";
+            $sQuery = "SELECT a.team_id, a.team_name FROM $projectTeamTable as a WHERE a.dstatus = 0 $where";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
                 while ($row = $this->_dbConn->GetData($rsAction)) {
                     $mdoId = $row["team_id"];
                     $mdoName = $row["team_name"];
-                    $arrTeams = getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "mdo_id = $mdoId AND dstatus = 0 AND is_type = 0");
+                    $arrTeams = getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "mdo_id = $mdoId AND dstatus = 0 AND is_type = '0'");
                     if (!empty($arrTeams)) {
                         $teamIds = implode(",", $arrTeams);
                         $arrTeamDeatils = getRowsColumns($this->_dbConn, $projectTeamTable, "team_name, is_type, team_id", "team_id IN ($teamIds) AND dstatus = 0 AND is_type = 0");
-                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 $branchCond", array(), true);
                         $productCols = [];
                         $productNames = [];
 
@@ -883,10 +883,13 @@ class MdoPerformanceReport
                             }
 
                             $unaccompaniedDatesStr = "'" . implode("','", $arrUnaccompaniedDates) . "'";
+                            $unaccompaniedDays = count($arrUnaccompaniedDates);
+                            $acompaniedDays = $acompaniedDate ? 1 : 0; // only one record per DS
 
                             // 3️⃣ Get unaccompanied sale from response table
                             $unacompaniedSale = 0;
                             if (!empty($arrUnaccompaniedDates)) {
+                                $uncompaniedDates = [];
                                 $sQueryUnacc = "SELECT $sumColumns AS totalSum FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
                                 $rsUnacc = null;
                                 $iRowsUnacc = 0;
@@ -898,24 +901,19 @@ class MdoPerformanceReport
                                 }
                             }
 
+                            // 4️⃣ Calculate per-day averages
+                            $acompaniedSalePerDay = $acompaniedDays > 0 ? ($acompaniedSale / $acompaniedDays) : 0;
+                            $unacompaniedSalePerDay = $unaccompaniedDays > 0 ? ($unacompaniedSale / $unaccompaniedDays) : 0;
+
                             // 4️⃣ Add into Excel array
                             $arrExcelData[] = [
                                 $mdoName,
                                 isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : "",
                                 $dsName,
-                                round($unacompaniedSale, 2),
-                                round($acompaniedSale, 2),
+                                round($unacompaniedSalePerDay, 2),
+                                round($acompaniedSalePerDay, 2),
                             ];
                         }
-                    } else {
-                        // MDO has no assigned DS teams
-                        $arrExcelData[] = [
-                            $mdoName,
-                            "",
-                            "",
-                            0,
-                            0,
-                        ];
                     }
                 }
             }

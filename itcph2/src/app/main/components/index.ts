@@ -47,6 +47,8 @@ import { ActiveMDOUsersListingComponent } from './reporting/active-mdo/active-md
 import { AppNotificationComponent } from './notification/app.notification.component';
 import { TargetReportComponent } from './assign-target/target-report.component';
 import { MdoPerformanceComponent } from './mdo-performance/mdo-performance.component';
+import { ViewMdoTeamComponent } from './team/view.mdo.team.component';
+import { MDORouteDataUploadComponent } from './route-data/mdo-route-upload.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -96,6 +98,8 @@ export const MAIN_COMPONENTS = [
   AppNotificationComponent,
   TargetReportComponent,
   MdoPerformanceComponent,
+  ViewMdoTeamComponent,
+  MDORouteDataUploadComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -146,4 +150,6 @@ export const MAP_MAIN_COMPONENTS = {
   AppNotificationComponent,
   TargetReportComponent,
   MdoPerformanceComponent,
+  ViewMdoTeamComponent,
+  MDORouteDataUploadComponent,
 };
