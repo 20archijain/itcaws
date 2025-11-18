@@ -163,38 +163,58 @@ class RouteManagement
         $assign_id = $iUserId;
         $where = "";
         $whereMob = "";
-        $istatus = array();
-        $rec_id = implode(',', $requestData['id']);
+        $istatus = [];
+
+        // Normalize id(s)
+        $ids = $requestData['id'];
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        $ids = array_filter($ids, function ($v) {
+            return !empty($v);
+        });
+        $rec_id = implode(',', $ids);
+
         if ($rec_id) {
             $where .= "rec_id IN ($rec_id) AND dstatus = 0";
-        };
+        }
+
+        // Fetch outlet mobile numbers linked to these rec_ids
         $mobNo = getRowsColumn($this->_dbConn, "tblroute_details", "outlet_mobile", $where);
         if (isset($mobNo) && isNonEmptyArray($mobNo)) {
-            // remove empty values
             $mobNo = array_filter($mobNo, function ($v) {
                 return !empty($v);
             });
 
             if (!empty($mobNo)) {
-                // wrap values in quotes if rec_who is varchar
-                $mobImplode = implode(',', array_map('intval', $mobNo)); // for numeric
-                // $mobImplode = "'" . implode("','", $mobNo) . "'";    // for string
-
+                // Assuming outlet_mobile and rec_who are numeric
+                $mobImplode = implode(',', array_map('intval', $mobNo));
                 $whereMob = "rec_who IN ($mobImplode)";
-                $istatus[] = updateRecord(
+
+                $statusCloud = updateRecord(
                     $this->_dbConn,
                     "tblcloudring_live",
                     "dstatus = 1, modif_id = $assign_id",
                     $whereMob
                 );
+                $istatus[] = $statusCloud;
             }
         }
-        $istatus[] = updateRecord($this->_dbConn, "tblroute_details", "dstatus = 1 ,modif_id = $assign_id ", "$where");
-        if (in_array(0, $istatus)) {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']), 1);
+
+        $statusRoute = updateRecord(
+            $this->_dbConn,
+            "tblroute_details",
+            "dstatus = 1 ,modif_id = $assign_id",
+            $where
+        );
+        $istatus[] = $statusRoute;
+
+        if (in_array(1, $istatus, true)) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']], 2);
         }
+
         echo json_encode($arrMessage);
     }
 }
