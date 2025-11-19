@@ -14,9 +14,9 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './view.mdo.team.component.html'
+  templateUrl: './mdoview.team.component.html'
 })
-export class ViewMdoTeamComponent implements OnInit, OnDestroy {
+export class MDOViewTeamComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
@@ -25,6 +25,7 @@ export class ViewMdoTeamComponent implements OnInit, OnDestroy {
   mdoTypeOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   statusOptions: DropdownList[] = [];
+  accessOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
@@ -63,6 +64,7 @@ export class ViewMdoTeamComponent implements OnInit, OnDestroy {
             this.branchOptions = resp.data.branchList;
             this.mdoTypeOptions = resp.data.mdoTypeList;
             this.statusOptions = resp.data.statusList;
+            this.accessOptions = resp.data.accessList;
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
 
@@ -83,9 +85,23 @@ export class ViewMdoTeamComponent implements OnInit, OnDestroy {
                 validators: TEAM_VALIDATORS.validators.name,
               },
               {
-                controlName: 'phone', errorMessages: COMMON_VALIDATORS.messages.mobile('DS Phone'),
+                controlName: 'mobile', errorMessages: COMMON_VALIDATORS.messages.mobile('DS Phone'),
                 label: 'app.team.add.dsNumber', type: CONTROL_CONFIG.INPUT_BOX, required: true,
                 validators: COMMON_VALIDATORS.validators.mobile(true),
+              },
+              {
+                controlName: 'type', label: 'Access Type', onChange: this.onUserTypeChange.bind(this),
+                options: this.accessOptions, type: CONTROL_CONFIG.RADIO_BOX,
+              },
+              {
+                controlName: 'wdCodes', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('WD Code'), hide: true,
+                label: 'app.team.view.wdCode', multiple: true, options: resp.data.wdCodeList,
+                required: true, type: CONTROL_CONFIG.SELECT_BOX, validators: COMMON_VALIDATORS.validators.requiredOnly,
+              },
+              {
+                controlName: 'team', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Team'), hide: true,
+                label: 'app.team.view.team', multiple: true, options: resp.data.teamList,
+                required: true, type: CONTROL_CONFIG.SELECT_BOX, validators: COMMON_VALIDATORS.validators.requiredOnly,
               },
               // {
               //   controlName: 'password', errorMessages: LOGIN_VALIDATORS.messages.password,
@@ -123,6 +139,23 @@ export class ViewMdoTeamComponent implements OnInit, OnDestroy {
             }
           })
       );
+    }
+  }
+
+  onUserTypeChange(form: UntypedFormGroup) {
+    const type = form.get('type').value;
+
+    switch (+type) {
+      case 1:
+        // WD CODE
+        this.editConfig[6].hide = false;
+        this.editConfig[7].hide = true;
+        break;
+      case 2:
+        // Teams
+        this.editConfig[6].hide = true;
+        this.editConfig[7].hide = false;
+        break;
     }
   }
 }
