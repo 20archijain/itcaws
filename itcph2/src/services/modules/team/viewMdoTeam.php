@@ -1,10 +1,10 @@
 <?php
 
 require_once $include_path . "defined_index.php";
-require_once $include_path . "class/MdoTeamManagement.php";
+require_once $include_path . "class/MDOTeamManagement.php";
 
 if (!isEmptyString($requestAction)) {
-    $team = new MdoTeamManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
+    $team = new MDOTeamManagement($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
             $team->getViewTeamData();

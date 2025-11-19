@@ -13,9 +13,9 @@
       "pmodc": "DWN01"
     },
     "client": {
-      "logo": "https:\/\/upimg2.radardashboard.com\/logo\/dummy_pic.jpg"
+      "logo": "http:\/\/localhost:80\/work\/itcawsportal\/uproots\/logo\/dummy_pic.jpg"
     },
-    "token": "cb3464973bb6889f0a4ee905c516d6f088e757b3df9de8ed8776adffcc7078e2",
+    "token": "e67e64e82254bbdc67c13864a2a3ce941d1f9f071bb1c2927f77baa3fb52584b",
     "modules": {
       "MP01": {
         "breadcrumbs": false,
@@ -112,7 +112,7 @@
       "ATN01": {
         "breadcrumbs": false,
         "id": 83,
-        "name": "Attendance",
+        "name": "Locator",
         "hidden": false,
         "icon": "icon-clock",
         "modc": "ATN01",
@@ -182,6 +182,32 @@
             "pmodc": "ATN01",
             "fold": "sites-on-map\/universe-data.php",
             "componentName": "UniverseDataComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "SOM06": {
+            "breadcrumbs": false,
+            "id": 100,
+            "name": "MDO Route Traker",
+            "hidden": false,
+            "icon": "icon-map-pin",
+            "modc": "SOM06",
+            "pmodc": "ATN01",
+            "fold": "sites-on-map\/mdoTracker.php",
+            "componentName": "MdoRouteTrackerComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "SOM07": {
+            "breadcrumbs": false,
+            "id": 101,
+            "name": "MDO Outlet Universe",
+            "hidden": false,
+            "icon": "icon-map-pin",
+            "modc": "SOM07",
+            "pmodc": "ATN01",
+            "fold": "sites-on-map\/mdo-universe-data.php\u200e",
+            "componentName": "MdoUniverseDataComponent",
             "submodules": [],
             "actions": []
           }
@@ -283,7 +309,8 @@
             "submodules": [],
             "actions": [
               "EDIT",
-              "DEL"
+              "DEL",
+              "RESTORE"
             ]
           },
           "ADDMDO": {
@@ -298,6 +325,21 @@
             "componentName": "AddMdoTeamComponent",
             "submodules": [],
             "actions": []
+          },
+          "PM15": {
+            "breadcrumbs": false,
+            "id": 103,
+            "name": "View MDO Team",
+            "hidden": false,
+            "icon": "",
+            "modc": "PM15",
+            "pmodc": "PM01",
+            "fold": "team\/viewMdoTeam.php",
+            "componentName": "MDOViewTeamComponent",
+            "submodules": [],
+            "actions": [
+              "DEL"
+            ]
           },
           "EDPT": {
             "breadcrumbs": false,
@@ -440,6 +482,34 @@
             "componentName": "RouteDataUploadComponent",
             "submodules": [],
             "actions": []
+          },
+          "RD04": {
+            "breadcrumbs": false,
+            "id": 95,
+            "name": "View Route Data",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD04",
+            "pmodc": "RD01",
+            "fold": "viewRoute\/viewRoute.php",
+            "componentName": "ViewRouteComponent",
+            "submodules": [],
+            "actions": [
+              "DEL"
+            ]
+          },
+          "RD06": {
+            "breadcrumbs": false,
+            "id": 106,
+            "name": "Upload MDO Route",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD06",
+            "pmodc": "RD01",
+            "fold": "route-data-upload\/mdoRouteUpload.php",
+            "componentName": "MDORouteDataUploadComponent",
+            "submodules": [],
+            "actions": []
           }
         },
         "actions": []
@@ -571,6 +641,47 @@
             "pmodc": "DWN01",
             "fold": "download_misscall\/downloadMisscall.php",
             "componentName": "DownloadMisscallComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN14": {
+            "breadcrumbs": false,
+            "id": 94,
+            "name": "Assign Target",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN14",
+            "pmodc": "DWN01",
+            "fold": "assign-target\/assignTarget.php",
+            "componentName": "AssignTargetComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN15": {
+            "breadcrumbs": false,
+            "id": 98,
+            "name": "MDO Reporting",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN15",
+            "pmodc": "DWN01",
+            "fold": "reporting\/mdoReporting.php",
+            "componentName": "MdoListingComponent",
+            "submodules": [],
+            "actions": [
+              "MAP"
+            ]
+          },
+          "DWN16": {
+            "breadcrumbs": false,
+            "id": 102,
+            "name": "MDO Performance Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN16",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/mdoPerformanceReport.php",
+            "componentName": "MdoPerformanceComponent",
             "submodules": [],
             "actions": []
           }
