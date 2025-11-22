@@ -800,6 +800,7 @@ class MasterDataDownload
             "Outlet Type",
             "Outlet Type",
             "Outlet ID",
+            "KYC Done",
             "Lt",
             "Lg",
             "Outlet Last Visited"
@@ -820,7 +821,7 @@ class MasterDataDownload
         $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
         $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code" .
-            ", a.lt, a.lg, a.team_id, b.team_name, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
+            ", a.lt, a.lg, a.team_id, b.team_name, a.kyc_done , c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -829,6 +830,8 @@ class MasterDataDownload
                 $shopId = $row["rec_id"];
                 $arrParts = explode('_', $route_name);
                 $dayName = isset($arrParts[0]) ? $arrParts[0] : "";
+                $kyc = (!empty($row["kyc_done"]) && $row["kyc_done"] == 1) ? "Yes" : "No";
+
 
                 //$outletType = $row["outlet_type"];
                 // $cond = $outletType == 'ROC' ? "AND JSON_CONTAINS(ques_2, '\"$shopId\"')" : "AND ques_3 = '$shopId'";
@@ -879,6 +882,7 @@ class MasterDataDownload
                     $row["outlet_type"],
                     $row["shop_type"],
                     $row["shop_uniq_code"],
+                    $kyc,
                     $row["lt"],
                     $row["lg"],
                     isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : "",
