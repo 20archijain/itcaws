@@ -106,19 +106,30 @@ class RouteManagement
     {
         $RouteTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $teamId = '';
+        $where = '';
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rlm", $this->_data["sort"]);
 
         // filter by search query
+        $branch = isset($this->_data['searchbar']['branch']) ? $this->_data['searchbar']['branch'] : [];
+        if (!empty($branch) && is_array($branch)) {
+            $branchId = implode(',', $branch);
+            $where .= "AND b.branch_id IN ($branchId)";
+        }
+
+        $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : [];
+        if (!empty($recIds)) {
+            $where .= "AND a.rec_id IN ($recIds)";
+        }
+
         $team = isset($this->_data['searchbar']['team']) ? $this->_data['searchbar']['team'] : [];
         // print_r($team);die;
-        $teamId = '';
-        $where = '';
 
         if (!empty($team) && is_array($team)) {
             $teamId = implode(',', $team);
-            $where = "AND a.team_id IN($teamId)";
+            $where .= "AND a.team_id IN ($teamId)";
         }
 
         $sAction = null;

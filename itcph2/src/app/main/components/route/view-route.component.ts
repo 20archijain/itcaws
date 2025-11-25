@@ -32,6 +32,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
     this.form = this.fb.group({
       branch: [],
       team: [],
+      recIds: [],
     });
     this.getInitialData();
   }

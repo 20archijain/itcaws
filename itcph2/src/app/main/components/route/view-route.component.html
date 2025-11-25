@@ -15,6 +15,14 @@
       <app-select placeholder="Team" [multiple]="true" [group]="form" controlName="team" [options]="teamOptions">
       </app-select>
     </div>
+       <div class="col-xxl-4 col-md-12">
+        <div class="mb-2">
+          <app-textarea  rows="4" [group]="form" controlName="recIds"
+             label="SHOP IDS"
+            placeholder="SHOP IDS">
+          </app-textarea>
+        </div>
+      </div>
     <div class="col-sm-4 col-md-3 d-flex gap-2">
       <app-button type="submit" text="button.search"></app-button>
       <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
