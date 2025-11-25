@@ -121,11 +121,12 @@ class RouteManagement
 
         $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : [];
         if (!empty($recIds)) {
+            $recIdsArray = array_map('trim', explode(',', $recIds));
+            $recIds = "'" . implode("','", $recIdsArray) . "'";
             $where .= "AND a.rec_id IN ($recIds)";
         }
 
         $team = isset($this->_data['searchbar']['team']) ? $this->_data['searchbar']['team'] : [];
-        // print_r($team);die;
 
         if (!empty($team) && is_array($team)) {
             $teamId = implode(',', $team);
