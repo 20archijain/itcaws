@@ -803,7 +803,8 @@ class MasterDataDownload
             "KYC Done",
             "Lt",
             "Lg",
-            "Outlet Last Visited"
+            "Outlet Last Visited",
+            "Billing Status"
         );
 
         $captureDateCondition = "";
@@ -812,16 +813,18 @@ class MasterDataDownload
             $lastDate = date("Y-m-t", strtotime($firstDate)); // Gets the last date of the month
             $captureDateCondition = "capture_date BETWEEN '$firstDate' AND '$lastDate'";
             $arrHeader[] = "No of Times Visited";
+            $arrHeader[] = "Billing Status";
         }
 
         $arrData = array();
         $iRows = 0;
         $rsAction = null;
 
-        $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
+        $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99  AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
-        $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code" .
-            ", a.lt, a.lg, a.team_id, b.team_name, a.kyc_done , c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
+        $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, a.kyc_done, 
+                   c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
+                   
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -832,9 +835,7 @@ class MasterDataDownload
                 $dayName = isset($arrParts[0]) ? $arrParts[0] : "";
                 $kyc = (!empty($row["kyc_done"]) && $row["kyc_done"] == 1) ? "Yes" : "No";
 
-
-                //$outletType = $row["outlet_type"];
-                // $cond = $outletType == 'ROC' ? "AND JSON_CONTAINS(ques_2, '\"$shopId\"')" : "AND ques_3 = '$shopId'";
+                // shopId condition
                 $cond = "AND ques_3 = '$shopId'";
 
                 if ($captureDateCondition) {
@@ -844,8 +845,7 @@ class MasterDataDownload
                         "MAX(capture_date), COUNT(pro_id)",
                         "dstatus = 0 $cond AND $captureDateCondition"
                     );
-                    $noOfTimesVisited = isset($arrDataLastVisitedAndCountofVisited[1]) ?
-                        $arrDataLastVisitedAndCountofVisited[1] : 0;
+                    $noOfTimesVisited = isset($arrDataLastVisitedAndCountofVisited[1]) ? $arrDataLastVisitedAndCountofVisited[1] : 0;
                 } else {
                     $arrDataLastVisitedAndCountofVisited = getRowColumns(
                         $this->_dbConn,
@@ -853,7 +853,43 @@ class MasterDataDownload
                         "MAX(capture_date)",
                         "dstatus = 0 $cond"
                     );
-                    $noOfTimesVisited = ""; // No value when month is not selected
+                    $noOfTimesVisited = "";
+                }
+
+                // If no month selected → use current month
+                if (!$month || !$year) {
+                    $year = date("Y");
+                    $month = date("m");
+                }
+
+                $firstDate = "$year-$month-01";
+                $lastDate  = date("Y-m-t", strtotime($firstDate));
+
+                // Count inside selected/current month
+                $billingCountArr = getRowColumns(
+                    $this->_dbConn,
+                    $respTable,
+                    "COUNT(pro_id)",
+                    "dstatus = 0 $cond AND capture_date BETWEEN '$firstDate' AND '$lastDate'"
+                );
+                $billingCount = isset($billingCountArr[0]) ? $billingCountArr[0] : 0;
+
+                // Default blank
+                $billingStatus = "";
+
+                if ($billingCount > 0) {
+                    $billingStatus = "Billed";
+                } else {
+                    // Check ANY visit Exist?
+                    $anyVisit = getRowColumns($this->_dbConn,$respTable,"COUNT(pro_id)","dstatus = 0 $cond");
+
+                    if ($anyVisit[0] > 0) {
+                        // Shop exists but no visit in selected month
+                        $billingStatus = "Unbilled";
+                    } else {
+                        // Shop never visited → blank
+                        $billingStatus = "";
+                    }
                 }
 
                 $rowData = array(
@@ -886,10 +922,12 @@ class MasterDataDownload
                     $row["lt"],
                     $row["lg"],
                     isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : "",
+                    $billingStatus
                 );
 
                 if ($captureDateCondition) {
                     $rowData[] = $noOfTimesVisited;
+                    $rowData[] = $billingStatus;
                 }
 
                 $arrData[] = $rowData;
@@ -902,7 +940,6 @@ class MasterDataDownload
             array_unshift($arrData, $arrHeader);
             $sheet->fromArray($arrData);
 
-            // Adjust column width
             $endColumnName = $sheet->getHighestDataColumn();
             foreach (range('A', $endColumnName) as $columnID) {
                 $sheet->getColumnDimension($columnID)->setAutoSize(true);
