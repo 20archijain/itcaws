@@ -198,6 +198,32 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     }
   }
 
+  //For download PDF
+  downloadPDF() {
+    if (this.branchValue && this.branchValue.length) {
+      this.isDownloading = true;
+      this.loaderService.startLoader();
+
+      this.subscription.push(
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadPdfReport,
+          this.group.getRawValue(), null, environment.getListingExcelUrl)
+          .pipe(
+            finalize(() => {
+              this.isDownloading = false;
+              this.loaderService.stopLoader();
+            }),
+          )
+          .subscribe(response => {
+            if (response && response.status === REQUEST_STATUS.SUCCESS) {
+              Functions.downloadFile(response.data.filePath, response.data.fileName);
+            }
+          })
+      );
+    } else {
+      this.displayBranchError();
+    }
+  }
+
   downloadAttendanceReport() {
     if (this.branchValue && this.branchValue.length) {
       this.isDownloading = true;

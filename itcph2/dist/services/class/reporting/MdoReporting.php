@@ -1810,4 +1810,270 @@ class MdoReporting
 
         echo json_encode($arrMessage);
     }
+
+    final public function getDownloadPDFReport()
+    {
+        global  $CUST_FOLDER_PATH;
+        global  $UPLOAD_URL;
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        // $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // filter query
+        $where = $this->getCondition();
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        // $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+
+        // Initialize PDF
+        $pdf = new Pdf();
+
+        // Create title page
+        $pdf->createPage();
+        $pdf->addTitle("MDO REPORT", 28, array(138, 51, 255));
+
+        // First pass: collect all uni_ids and their image IDs
+        $imageMap = array(); // [uniId => [image_ids]]
+        $allRecords = array(); // Store all records for second pass
+        $totalRecords = 0;
+
+        // Loop through each branch data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+            // Don't use b.dstatus = 0 AND c.dstatus = 0
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows) {
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $totalRecords++;
+                    $uniId = $row["uni_id"];
+
+                    // Get visibilityPic and outletPic like in getDownloadData()
+                    $itcVisibility = $row["ques_8"];
+                    if ($itcVisibility == 'Yes') {
+                        $visibilityPic = $row["ques_9"];
+                    } else {
+                        $visibilityPic = "";
+                    }
+                    $implementVisibility = $row["ques_10"];
+                    if ($implementVisibility == 'Yes') {
+                        $outletPic = $row["ques_11"];
+                    } else {
+                        $outletPic = "";
+                    }
+
+                    // Only process records where itcVisibility == 'Yes' OR implementVisibility == 'Yes'
+                    if ($itcVisibility == 'Yes' || $implementVisibility == 'Yes') {
+                        $imageIds = array();
+                        if (!empty($visibilityPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $visibilityPic);
+                        if (!empty($outletPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $outletPic);
+
+                        if (!empty($imageIds)) {
+                            if (!isset($imageMap[$uniId])) {
+                                $imageMap[$uniId] = array();
+                            }
+                            foreach ($imageIds as $imgData) {
+                                $imageMap[$uniId][] = $imgData['mob_img_id'];
+                            }
+                        }
+
+                        // Store record for second pass
+                        $allRecords[] = array(
+                            'row' => $row,
+                            'uniId' => $uniId,
+                            'visibilityPic' => $visibilityPic,
+                            'outletPic' => $outletPic,
+                            'itcVisibility' => $itcVisibility,
+                            'implementVisibility' => $implementVisibility
+                        );
+                    }
+                }
+            }
+        }
+
+        $allImages = array(); // [uniId][mob_img_id] => image data
+        $imagesByMobId = array();
+
+        foreach ($imageMap as $uniId => $mobImgIds) {
+            if (!empty($mobImgIds)) {
+                $mobImgIds = array_unique($mobImgIds);
+                $mobImgIdStr = "'" . implode("','", $mobImgIds) . "'";
+
+                $rsAllImages = null;
+                $iAllRows = 0;
+                $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id IN ($mobImgIdStr) ORDER BY b.mob_img_id";
+                $this->_dbConn->ExecuteSelectQuery($sImageQuery, $rsAllImages, $iAllRows);
+
+                if ($iAllRows > 0) {
+                    if (!isset($allImages[$uniId])) {
+                        $allImages[$uniId] = array();
+                    }
+                    while ($imgRow = $this->_dbConn->GetData($rsAllImages)) {
+                        $allImages[$uniId][$imgRow['mob_img_id']] = $imgRow;
+                    }
+                }
+            }
+        }
+
+        // Helper function to get correct image (similar to getCorrectImage from Ppt class)
+        $getCorrectImage = function ($arrImages, $mobImgId) {
+            if (isset($arrImages[$mobImgId])) {
+                return $arrImages[$mobImgId];
+            }
+            return null;
+        };
+
+        // Reset and process records for PDF generation
+        $hasData = false;
+        foreach ($allRecords as $recordData) {
+            $row = $recordData['row'];
+            $uniId = $recordData['uniId'];
+            $visibilityPic = $recordData['visibilityPic'];
+            $outletPic = $recordData['outletPic'];
+
+            $proId = $row["pro_id"];
+            $branchId = $row["branch_id"];
+            $captureDate = $row["capture_date"];
+            $week = $this->getWeekNumber($captureDate);
+            $typeOfWork = $row["ques_1"];
+            $workWdCode = $row["wd_code"];
+            $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
+            $mdoName = $row["team_name"];
+            $route = $row["route_name"];
+            $shopId = $row["ques_4"];
+            $dsType = $row["type"];
+            $infraType = $row["is_type"];
+            if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
+                $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "rec_id = $shopId") : "";
+            } else {
+                $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "rec_id = $shopId") : "";
+            }
+            $dsName = $row["ds_name"];
+            $parts = explode(" - ", $dsName, 2);
+            $dsNameOnly = $parts[0];
+            $surveyVol = $row["ques_5"];
+            $surveyVal = $row["ques_6"];
+            $lineCut = $row["ques_7"];
+            $district = $row["district"];
+            $branchName = $row["branch_name"];
+            $mainBranch = $row["main_branch"];
+            $circle = $row["circle"];
+            $section = $row["section"];
+            $lt = $row["lt"];
+            $lg = $row["lg"];
+
+            // Get images from pre-fetched array
+            $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
+
+            // Prepare images for PDF
+            $images = array();
+
+            if (isset($visibilityPic) && $visibilityPic) {
+                $storePhoto = $getCorrectImage($arrImages2, $visibilityPic);
+                if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
+                    $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                    if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                        $images[] = array(
+                            'path' => $destImage,
+                            'label' => "Outlet Visibility Picture"
+                        );
+                    }
+                }
+            }
+
+            if (isset($outletPic) && $outletPic) {
+                $brandingPhoto = $getCorrectImage($arrImages2, $outletPic);
+                if ($brandingPhoto && !empty($brandingPhoto['filepath']) && !empty($brandingPhoto['name'])) {
+                    $destImage = $CUST_FOLDER_PATH . $brandingPhoto['filepath'] . $brandingPhoto['name'];
+                    if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                        $images[] = array(
+                            'path' => $destImage,
+                            'label' => "Outlet Photo"
+                        );
+                    }
+                }
+            }
+
+            // Only create page if images actually exist
+            if (!empty($images)) {
+                $hasData = true;
+                $pdf->createPage();
+
+                // Add table with data
+                $tableData = array(
+                    array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WD CODE", "DS NAME", "DS TYPE", "OUTLET NAME"),
+                    array($district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $workWdCode, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", isset($arrRoute[1]) ? $arrRoute[1] : "")
+                );
+
+                $pdf->addTable($tableData, 2, 12, 5, 10, 287, 9, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+
+                // Add images
+                $imgWidth = 130;
+                $imgSpacing = 10;
+                $numImages = count($images);
+                $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
+                $centeredX = ((277 - $totalImagesWidth) / 2) + 10; // Add left margin
+
+                // Get Y position after table
+                $imageY = $pdf->GetY() + 5;
+
+                $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
+            }
+
+            static $recordCount = 0;
+            $recordCount++;
+            if ($recordCount % 50 == 0) {
+                gc_collect_cycles();
+            }
+        }
+
+        unset($allImages, $imageMap, $allRecords);
+
+        // Check if we have data to generate PDF
+        if (!$hasData) {
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Save PDF
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "MDO_$currentDateTime.pdf";
+
+        $fileDetails = $pdf->savePdf($fileName, false);
+        $arrResponse = array(
+            "filePath" => $fileDetails["downloadUrl"],
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
+        echo json_encode($arrMessage);
+    }
 }
