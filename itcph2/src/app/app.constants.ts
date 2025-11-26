@@ -125,6 +125,7 @@ export const STATIC_MODULES = {
     getJson: 'get_json',
     getDownloadBinderReport: 'get_download_binder_report',
     getDownloadAttendanceReport: 'get_download_attendance_report',
+    getDownloadPdfReport: 'get_download_pdf_report',
     getMapdata: 'get_mapdata',
     getMonth: 'get_month',
   },

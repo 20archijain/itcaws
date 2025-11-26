@@ -109,6 +109,7 @@ $MOBILE_SERVICES_PATH = $UPROOTS_PATH . '/mobile_services';
 $WATERMARK_FONTS_PATH = $MOBILE_SERVICES_PATH . '/fonts';
 $CUST_FOLDER_PATH = $UPROOTS_PATH . constant("PRODS_ANY_FOLDER");
 $SAVE_SPREADSHEET_PATH = $UPROOTS_PATH . '/upload_xls';
+$SAVE_PDF_PATH = $UPROOTS_PATH . '/pdf';
 
 $CAPTCHA_IMG_URL = $SITE_URL . '/captcha';
 $UPLOAD_URL = $SITE_URL . constant("PRODS_ANY_FOLDER");
@@ -127,6 +128,7 @@ $PHP_SPREADSHEET_PATH = $LIB_PATH . "/PhpSpreadsheet/vendor/autoload.php";
 // Used to generate PPT files
 $PHP_PRESENTATION_PATH = $LIB_PATH . "/PHPPresentation/src/PhpPresentation/Autoloader.php";
 $PHP_OFFICE_PATH = $LIB_PATH . "/PhpOffice/Common/src/Common/Autoloader.php";
+$PHP_FPDF_PATH = $LIB_PATH . "/fpdf186/fpdf.php";
 
 // Cloud DB
 $DB_DBNAME_CLOUD = 'itcawsportal_mobiappilaryauth';
