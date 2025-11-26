@@ -898,6 +898,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -942,7 +943,7 @@ class MdoReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id,b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -957,6 +958,7 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $mdoName = $row["team_name"];
+                    $ceil_id = $row["ceil_id"];
                     $route = $row["route_name"];
                     $shopId = $row["ques_4"];
                     $dsType = $row["type"];
@@ -1011,6 +1013,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $row["team_id"],
                         $mdoName,
                         $captureDate,
@@ -1102,6 +1105,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1158,7 +1162,7 @@ class MdoReporting
             $iRows = 0;
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
                 ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
-                ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
+                ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
                 ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -1172,6 +1176,7 @@ class MdoReporting
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
                     $mdoName = $row["team_name"];
+                    $ceil_id = $row["ceil_id"];
                     $typeOfWork = $row["ques_1"];
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
@@ -1322,6 +1327,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $teamId,
                         $mdoName,
                         currentDate($date, "d-m-Y"),
@@ -1381,7 +1387,7 @@ class MdoReporting
                     // Query to get teams who have not work with DS
                     $iTeamRows = 0;
                     $rsTeamAction = 0;
-                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name" .
+                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name" .
                         ", c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10" .
                         " AND a.capture_date = '$date' AND a.team_id NOT IN (SELECT team_id FROM tblsurvey_response_details_mdo WHERE dstatus = 0 AND capture_date = '$date') AND a.call_type = '0' $where $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
                     $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
@@ -1392,6 +1398,7 @@ class MdoReporting
                             $week = $this->getWeekNumber($date);
                             $teamId = $rowTeam["team_id"];
                             $mdoName = $rowTeam["team_name"];
+                            $ceil_id = $rowTeam["ceil_id"];
                             $workWith = $rowTeam["work_with"];
                             $infraType = $rowTeam["is_type"];
                             $startTime = $rowTeam["capture_datetime"];
@@ -1459,6 +1466,7 @@ class MdoReporting
                                 $rowTeam["circle"],
                                 $rowTeam["section"],
                                 isset($infraType) ? $arrInfraType[$infraType] : "",
+                                $ceil_id,
                                 $teamId,
                                 $mdoName,
                                 currentDate($date, "d-m-Y"),
@@ -1497,7 +1505,7 @@ class MdoReporting
 
                     $iAbsentRows = 0;
                     $rsAbsentAction = 0;
-                    $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
+                    $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch, a.ceil_id FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
                         " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') ORDER BY a.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sAbsentQuery, $rsAbsentAction, $iAbsentRows);
 
@@ -1511,6 +1519,7 @@ class MdoReporting
                                 $rowAbsent["section"],
                                 isset($rowAbsent['is_type']) ? $arrInfraType[$rowAbsent['is_type']] : "",
                                 $rowAbsent["team_id"],
+                                $rowAbsent["ceil_id"],
                                 $rowAbsent["team_name"],
                                 currentDate($date, "d-m-Y"),
                                 "",
@@ -1605,6 +1614,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1657,7 +1667,7 @@ class MdoReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.capture_date, a.capture_datetime, a.lt, a.lg, a.other_details, a.google_address, a.state, a.district AS googleDistrict, a.city, a.pincode" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, b.ceil_id, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -1671,6 +1681,7 @@ class MdoReporting
                     $infraType = $row["is_type"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
+                    $ceil_id = $row["ceil_id"];
                     $mdoName = $row["team_name"];
                     $arrOtherDetails = json_decode($row["other_details"], true);
                     $workingWith = $arrOtherDetails['workingWith'];
@@ -1731,6 +1742,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $teamId,
                         $mdoName,
                         $date,
@@ -1808,6 +1820,272 @@ class MdoReporting
 
         $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
 
+        echo json_encode($arrMessage);
+    }
+
+    final public function getDownloadPDFReport()
+    {
+        global  $CUST_FOLDER_PATH;
+        global  $UPLOAD_URL;
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        // $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // filter query
+        $where = $this->getCondition();
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        // $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+
+        // Initialize PDF
+        $pdf = new Pdf();
+
+        // Create title page
+        $pdf->createPage();
+        $pdf->addTitle("MDO REPORT", 28, array(138, 51, 255));
+
+        // First pass: collect all uni_ids and their image IDs
+        $imageMap = array(); // [uniId => [image_ids]]
+        $allRecords = array(); // Store all records for second pass
+        $totalRecords = 0;
+
+        // Loop through each branch data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+            // Don't use b.dstatus = 0 AND c.dstatus = 0
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows) {
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $totalRecords++;
+                    $uniId = $row["uni_id"];
+
+                    // Get visibilityPic and outletPic like in getDownloadData()
+                    $itcVisibility = $row["ques_8"];
+                    if ($itcVisibility == 'Yes') {
+                        $visibilityPic = $row["ques_9"];
+                    } else {
+                        $visibilityPic = "";
+                    }
+                    $implementVisibility = $row["ques_10"];
+                    if ($implementVisibility == 'Yes') {
+                        $outletPic = $row["ques_11"];
+                    } else {
+                        $outletPic = "";
+                    }
+
+                    // Only process records where itcVisibility == 'Yes' OR implementVisibility == 'Yes'
+                    if ($itcVisibility == 'Yes' || $implementVisibility == 'Yes') {
+                        $imageIds = array();
+                        if (!empty($visibilityPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $visibilityPic);
+                        if (!empty($outletPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $outletPic);
+
+                        if (!empty($imageIds)) {
+                            if (!isset($imageMap[$uniId])) {
+                                $imageMap[$uniId] = array();
+                            }
+                            foreach ($imageIds as $imgData) {
+                                $imageMap[$uniId][] = $imgData['mob_img_id'];
+                            }
+                        }
+
+                        // Store record for second pass
+                        $allRecords[] = array(
+                            'row' => $row,
+                            'uniId' => $uniId,
+                            'visibilityPic' => $visibilityPic,
+                            'outletPic' => $outletPic,
+                            'itcVisibility' => $itcVisibility,
+                            'implementVisibility' => $implementVisibility
+                        );
+                    }
+                }
+            }
+        }
+
+        $allImages = array(); // [uniId][mob_img_id] => image data
+        $imagesByMobId = array();
+
+        foreach ($imageMap as $uniId => $mobImgIds) {
+            if (!empty($mobImgIds)) {
+                $mobImgIds = array_unique($mobImgIds);
+                $mobImgIdStr = "'" . implode("','", $mobImgIds) . "'";
+
+                $rsAllImages = null;
+                $iAllRows = 0;
+                $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id IN ($mobImgIdStr) ORDER BY b.mob_img_id";
+                $this->_dbConn->ExecuteSelectQuery($sImageQuery, $rsAllImages, $iAllRows);
+
+                if ($iAllRows > 0) {
+                    if (!isset($allImages[$uniId])) {
+                        $allImages[$uniId] = array();
+                    }
+                    while ($imgRow = $this->_dbConn->GetData($rsAllImages)) {
+                        $allImages[$uniId][$imgRow['mob_img_id']] = $imgRow;
+                    }
+                }
+            }
+        }
+
+        // Helper function to get correct image (similar to getCorrectImage from Ppt class)
+        $getCorrectImage = function ($arrImages, $mobImgId) {
+            if (isset($arrImages[$mobImgId])) {
+                return $arrImages[$mobImgId];
+            }
+            return null;
+        };
+
+        // Reset and process records for PDF generation
+        $hasData = false;
+        foreach ($allRecords as $recordData) {
+            $row = $recordData['row'];
+            $uniId = $recordData['uniId'];
+            $visibilityPic = $recordData['visibilityPic'];
+            $outletPic = $recordData['outletPic'];
+
+            $proId = $row["pro_id"];
+            $branchId = $row["branch_id"];
+            $captureDate = $row["capture_date"];
+            $week = $this->getWeekNumber($captureDate);
+            $typeOfWork = $row["ques_1"];
+            $workWdCode = $row["wd_code"];
+            $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
+            $mdoName = $row["team_name"];
+            $route = $row["route_name"];
+            $shopId = $row["ques_4"];
+            $dsType = $row["type"];
+            $infraType = $row["is_type"];
+            if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
+                $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "rec_id = $shopId") : "";
+            } else {
+                $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "rec_id = $shopId") : "";
+            }
+            $dsName = $row["ds_name"];
+            $parts = explode(" - ", $dsName, 2);
+            $dsNameOnly = $parts[0];
+            $surveyVol = $row["ques_5"];
+            $surveyVal = $row["ques_6"];
+            $lineCut = $row["ques_7"];
+            $district = $row["district"];
+            $branchName = $row["branch_name"];
+            $mainBranch = $row["main_branch"];
+            $circle = $row["circle"];
+            $section = $row["section"];
+            $lt = $row["lt"];
+            $lg = $row["lg"];
+
+            // Get images from pre-fetched array
+            $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
+
+            // Prepare images for PDF
+            $images = array();
+
+            if (isset($visibilityPic) && $visibilityPic) {
+                $storePhoto = $getCorrectImage($arrImages2, $visibilityPic);
+                if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
+                    $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                    if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                        $images[] = array(
+                            'path' => $destImage,
+                            'label' => "Outlet Visibility Picture"
+                        );
+                    }
+                }
+            }
+
+            if (isset($outletPic) && $outletPic) {
+                $brandingPhoto = $getCorrectImage($arrImages2, $outletPic);
+                if ($brandingPhoto && !empty($brandingPhoto['filepath']) && !empty($brandingPhoto['name'])) {
+                    $destImage = $CUST_FOLDER_PATH . $brandingPhoto['filepath'] . $brandingPhoto['name'];
+                    if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                        $images[] = array(
+                            'path' => $destImage,
+                            'label' => "Outlet Photo"
+                        );
+                    }
+                }
+            }
+
+            // Only create page if images actually exist
+            if (!empty($images)) {
+                $hasData = true;
+                $pdf->createPage();
+
+                // Add table with data
+                $tableData = array(
+                    array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WD CODE", "DS NAME", "DS TYPE", "OUTLET NAME"),
+                    array($district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $workWdCode, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", isset($arrRoute[1]) ? $arrRoute[1] : "")
+                );
+
+                $pdf->addTable($tableData, 2, 12, 5, 10, 287, 9, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+
+                // Add images
+                $imgWidth = 130;
+                $imgSpacing = 10;
+                $numImages = count($images);
+                $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
+                $centeredX = ((277 - $totalImagesWidth) / 2) + 10; // Add left margin
+
+                // Get Y position after table
+                $imageY = $pdf->GetY() + 5;
+
+                $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
+            }
+
+            static $recordCount = 0;
+            $recordCount++;
+            if ($recordCount % 50 == 0) {
+                gc_collect_cycles();
+            }
+        }
+
+        unset($allImages, $imageMap, $allRecords);
+
+        // Check if we have data to generate PDF
+        if (!$hasData) {
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Save PDF
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "MDO_$currentDateTime.pdf";
+
+        $fileDetails = $pdf->savePdf($fileName, false);
+        $arrResponse = array(
+            "filePath" => $fileDetails["downloadUrl"],
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
         echo json_encode($arrMessage);
     }
 }

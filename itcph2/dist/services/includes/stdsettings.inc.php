@@ -153,4 +153,5 @@ $ARR_TEAM_TYPES = array(
     5 => "NPSR",
     6 => "RMD",
     7 => "MDO",
+    10 => "FSO",
 );
