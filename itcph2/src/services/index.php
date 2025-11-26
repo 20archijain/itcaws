@@ -19,6 +19,7 @@ require_once $include_path . 'class/Validation.php';
 require_once $include_path . "class/UploadAndThumbnail.php";
 require_once $include_path . "class/SessionManagement.php";
 require_once $include_path . "class/Ppt.php";
+require_once $include_path . "class/Pdf.php";
 
 // generate session
 $sessionMgmt = new SessionManagement();

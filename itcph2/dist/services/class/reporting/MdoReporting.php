@@ -898,6 +898,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -942,7 +943,7 @@ class MdoReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id,b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -957,6 +958,7 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $mdoName = $row["team_name"];
+                    $ceil_id = $row["ceil_id"];
                     $route = $row["route_name"];
                     $shopId = $row["ques_4"];
                     $dsType = $row["type"];
@@ -1011,6 +1013,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $row["team_id"],
                         $mdoName,
                         $captureDate,
@@ -1102,6 +1105,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1158,7 +1162,7 @@ class MdoReporting
             $iRows = 0;
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
                 ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
-                ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
+                ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
                 ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -1172,6 +1176,7 @@ class MdoReporting
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
                     $mdoName = $row["team_name"];
+                    $ceil_id = $row["ceil_id"];
                     $typeOfWork = $row["ques_1"];
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
@@ -1322,6 +1327,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $teamId,
                         $mdoName,
                         currentDate($date, "d-m-Y"),
@@ -1381,7 +1387,7 @@ class MdoReporting
                     // Query to get teams who have not work with DS
                     $iTeamRows = 0;
                     $rsTeamAction = 0;
-                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name" .
+                    $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name" .
                         ", c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10" .
                         " AND a.capture_date = '$date' AND a.team_id NOT IN (SELECT team_id FROM tblsurvey_response_details_mdo WHERE dstatus = 0 AND capture_date = '$date') AND a.call_type = '0' $where $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
                     $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
@@ -1392,6 +1398,7 @@ class MdoReporting
                             $week = $this->getWeekNumber($date);
                             $teamId = $rowTeam["team_id"];
                             $mdoName = $rowTeam["team_name"];
+                            $ceil_id = $rowTeam["ceil_id"];
                             $workWith = $rowTeam["work_with"];
                             $infraType = $rowTeam["is_type"];
                             $startTime = $rowTeam["capture_datetime"];
@@ -1459,6 +1466,7 @@ class MdoReporting
                                 $rowTeam["circle"],
                                 $rowTeam["section"],
                                 isset($infraType) ? $arrInfraType[$infraType] : "",
+                                $ceil_id,
                                 $teamId,
                                 $mdoName,
                                 currentDate($date, "d-m-Y"),
@@ -1497,7 +1505,7 @@ class MdoReporting
 
                     $iAbsentRows = 0;
                     $rsAbsentAction = 0;
-                    $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
+                    $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch, a.ceil_id FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
                         " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') ORDER BY a.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sAbsentQuery, $rsAbsentAction, $iAbsentRows);
 
@@ -1511,6 +1519,7 @@ class MdoReporting
                                 $rowAbsent["section"],
                                 isset($rowAbsent['is_type']) ? $arrInfraType[$rowAbsent['is_type']] : "",
                                 $rowAbsent["team_id"],
+                                $rowAbsent["ceil_id"],
                                 $rowAbsent["team_name"],
                                 currentDate($date, "d-m-Y"),
                                 "",
@@ -1605,6 +1614,7 @@ class MdoReporting
             "Circle",
             "Section",
             "Infra Type",
+            "CIEL ID",
             "MDO ID",
             "MDO Name",
             "Date",
@@ -1657,7 +1667,7 @@ class MdoReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.capture_date, a.capture_datetime, a.lt, a.lg, a.other_details, a.google_address, a.state, a.district AS googleDistrict, a.city, a.pincode" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, c.district, c.branch_name, b.ceil_id, c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.call_type = '0'" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -1671,6 +1681,7 @@ class MdoReporting
                     $infraType = $row["is_type"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
+                    $ceil_id = $row["ceil_id"];
                     $mdoName = $row["team_name"];
                     $arrOtherDetails = json_decode($row["other_details"], true);
                     $workingWith = $arrOtherDetails['workingWith'];
@@ -1731,6 +1742,7 @@ class MdoReporting
                         $row["circle"],
                         $row["section"],
                         isset($infraType) ? $arrInfraType[$infraType] : "",
+                        $ceil_id,
                         $teamId,
                         $mdoName,
                         $date,
