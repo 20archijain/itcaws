@@ -143,7 +143,7 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
   }
 
   reset() {
-    this.form.reset();
+    this.group.reset();
   }
 
   getBranch() {
