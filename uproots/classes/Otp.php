@@ -169,6 +169,30 @@ class Otp extends Utilities
             $iTimeOverToSendOtp = $currentTimestamp > $endTimestamp;
         }
 
+        // ---------- BRANCH OVERRIDE: use tblcloudring_live_branch_42_43 for branch 42 & 43 ----------
+        if ($formId != 9999 && !$this->isLoggingViaOtp) {
+            $branchTableMap = array(
+                42 => 'tblcloudring_live_branch_42_43',
+                43 => 'tblcloudring_live_branch_42_43'
+            );
+            try {
+                $branchId = null;
+                $rsB = null;
+                $iBRows = 0;
+                $sQueryBranch = "SELECT branch_id FROM $dbName.$TBL_PROJECT_TEAM WHERE team_id = ? LIMIT 1";
+                $this->dbConn->ExecuteSelectQuery($sQueryBranch, $rsB, $iBRows, array($teamId));
+                if ($iBRows === 1) {
+                    $rowB = $this->dbConn->GetData($rsB);
+                    $branchId = isset($rowB['branch_id']) ? intval($rowB['branch_id']) : null;
+                }
+                if ($branchId && isset($branchTableMap[$branchId])) {
+                    $missCallTable = $branchTableMap[$branchId];
+                }
+            } catch (\Exception $e) {
+                // ignore errors and continue with default missCallTable
+            }
+        }
+
         // Agreement/Declaration upload config
         if ($formId == 9999) {
             $arrProjectConfig = isset($this->arrDBDeclarationDetails[$dbName][$clientId][$projectId]) ?
@@ -316,6 +340,7 @@ class Otp extends Utilities
 
     private function readSettingsAndValidateOtp($row, $sMobile, $sCode)
     {
+        global $TBL_PROJECT_TEAM;
         $clientId = $row['client_id'];
         $projectId = $row['project_id'];
         $teamId = $row['team_id'];
@@ -343,6 +368,31 @@ class Otp extends Utilities
         $arrOtpValidateConfig = isset($arrProjectConfig["otpValidateConfig"]) ?
             $arrProjectConfig["otpValidateConfig"] : array();
 
+        // ---------- BRANCH OVERRIDE: use tblcloudring_live_branch_42_43 for branch 42 & 43 ----------
+        if ($formId != 9999 && !$this->isLoggingViaOtp) {
+            $branchTableMap = array(
+                42 => 'tblcloudring_live_branch_42_43',
+                43 => 'tblcloudring_live_branch_42_43'
+            );
+            try {
+                $branchId = null;
+                $rsB = null;
+                $iBRows = 0;
+                $sQueryBranch = "SELECT branch_id FROM $dbName.$TBL_PROJECT_TEAM WHERE team_id = ? LIMIT 1";
+                $this->dbConn->ExecuteSelectQuery($sQueryBranch, $rsB, $iBRows, array($teamId));
+                if ($iBRows === 1) {
+                    $rowB = $this->dbConn->GetData($rsB);
+                    $branchId = isset($rowB['branch_id']) ? intval($rowB['branch_id']) : null;
+                }
+                if ($branchId && isset($branchTableMap[$branchId])) {
+                    // ensure arrProjectConfig uses the branch-specific missCallTable as well
+                    $arrProjectConfig['missCallTable'] = $missCallTable = $branchTableMap[$branchId];
+                }
+            } catch (\Exception $e) {
+                // ignore and continue
+            }
+        }
+
         // Login via OTP
         if ($this->isLoggingViaOtp) {
             $arrProjectConfig = isset($this->arrDBLoginViaOtpDetails[$dbName][$clientId][$projectId]) ?
@@ -355,7 +405,29 @@ class Otp extends Utilities
                 $arrProjectConfig["arrDummyNumberList"] : $GLOBALS["arrDefaultDummyNumberList"];
         }
 
+        // Branch 42 & 43: validate ONLY with fixed OTP "1111" (no DB lookup)
+        // This applies only for normal OTP flow (not login via OTP and not formId = 9999).
+        if (!$this->isLoggingViaOtp && isset($branchId) && in_array($branchId, array(42, 43))) {
+            $sExtraLogData = "DB: $dbName Client ID: $clientId Project ID: $projectId Team ID: $teamId Branch ID: $branchId (Fixed OTP 1111)";
+
+            if ($sCode === '1111') {
+                // Success
+                $status = 1;
+                $statusMsg = $this->arrOTPMessages["OTP16"]; // "OTP validated"
+            } else {
+                // Wrong OTP
+                $status = 0;
+                $statusMsg = $this->arrOTPMessages["OTP04"]; // "Invalid code"
+            }
+
+            $response = $this->response->sendResponse(array("message" => $statusMsg), $status);
+            $this->logOutput($response, $sExtraLogData);
+            return; // Do NOT go to validateOTP() for branch 42/43
+        }
+
+        // For all other branches, normal behavior
         $sExtraLogData = "DB: $dbName Client ID: $clientId Project ID: $projectId Team ID: $teamId";
+
 
         // Return success for dummy number if not using for login via OTP
         if ($preventDummyNumberToSendOTP && $sMobile && in_array($sMobile, $arrDummyNumberList) && !$this->isLoggingViaOtp) {
@@ -550,14 +622,30 @@ class Otp extends Utilities
         // numeric OTP
         if ($otpType === 1) {
             $ARRSubstitution = array(
-                '0' => '8', '1' => '4', '2' => '1', '3' => '0', '4' => '7',
-                '5' => '2', '6' => '5', '7' => '9', '8' => '6', '9' => '3'
+                '0' => '8',
+                '1' => '4',
+                '2' => '1',
+                '3' => '0',
+                '4' => '7',
+                '5' => '2',
+                '6' => '5',
+                '7' => '9',
+                '8' => '6',
+                '9' => '3'
             );    //8410725963
         } else {
             // Alphanumeric OTP
             $ARRSubstitution = array(
-                '0' => 'k', '1' => 'y', '2' => 'x', '3' => 't', '4' => 'p',
-                '5' => 'm', '6' => 'n', '7' => 'b', '8' => 'd', '9' => 'h'
+                '0' => 'k',
+                '1' => 'y',
+                '2' => 'x',
+                '3' => 't',
+                '4' => 'p',
+                '5' => 'm',
+                '6' => 'n',
+                '7' => 'b',
+                '8' => 'd',
+                '9' => 'h'
             );
         }
 
@@ -756,8 +844,13 @@ class Otp extends Utilities
 
             $numbers = implode(',', $numbers);
             $data = array(
-                "user" => $username, "password" => $hash, 'msisdn' => $numbers,
-                "sid" => $sender, "msg" => $message, "fl" => $fl, "gwid" => $gwid
+                "user" => $username,
+                "password" => $hash,
+                'msisdn' => $numbers,
+                "sid" => $sender,
+                "msg" => $message,
+                "fl" => $fl,
+                "gwid" => $gwid
             );
 
             // Send the GET request with cURL
@@ -787,8 +880,14 @@ class Otp extends Utilities
 
             $number = implode(',', $numbers);
             $data = array(
-                "APIKey" => $APIKey, "senderid" => $senderid, "channel" => $channel,
-                "DCS" => $DCS, "flashsms" => $flashsms, 'number' => $number, "route" => $route, "text" => $text
+                "APIKey" => $APIKey,
+                "senderid" => $senderid,
+                "channel" => $channel,
+                "DCS" => $DCS,
+                "flashsms" => $flashsms,
+                'number' => $number,
+                "route" => $route,
+                "text" => $text
             );
 
             // Send the GET request with cURL
@@ -826,7 +925,9 @@ class Otp extends Utilities
             $text = $message;
 
             $data = array(
-                "key" => $APIKey, "to" => $sMobile, "from" => $senderid,
+                "key" => $APIKey,
+                "to" => $sMobile,
+                "from" => $senderid,
                 "body" => $text
             );
 
@@ -920,7 +1021,7 @@ class Otp extends Utilities
         $formId = null,
         &$sExtraLogData = ""
     ) {
-        global $TBL_CLOUDRING_LIVE;
+        global $TBL_CLOUDRING_LIVE, $TBL_PROJECT_TEAM;
 
         // Read project config
         $arrProjectConfig = isset($this->arrDBProjectDetails[$dbName][$clientId][$projectId]) ?
@@ -937,6 +1038,32 @@ class Otp extends Utilities
             $arrProjectConfig["otpValidateConfig"] : array();
         $doExtraTaskPostValidOtp = isset($arrProjectConfig["doExtraTaskPostValidOtp"]) ?
             $arrProjectConfig["doExtraTaskPostValidOtp"] : false;
+
+        // ---------- BRANCH OVERRIDE: use tblcloudring_live_branch_42_43 for branch 42 & 43 ----------
+        if ($formId != 9999 && !$this->isLoggingViaOtp) {
+            $branchTableMap = array(
+                42 => 'tblcloudring_live_branch_42_43',
+                43 => 'tblcloudring_live_branch_42_43'
+            );
+            try {
+                $branchId = null;
+                $rsB = null;
+                $iBRows = 0;
+                $sQueryBranch = "SELECT branch_id FROM $dbName.$TBL_PROJECT_TEAM WHERE team_id = ? LIMIT 1";
+                $this->dbConn->ExecuteSelectQuery($sQueryBranch, $rsB, $iBRows, array($teamId));
+                if ($iBRows === 1) {
+                    $rowB = $this->dbConn->GetData($rsB);
+                    $branchId = isset($rowB['branch_id']) ? intval($rowB['branch_id']) : null;
+                }
+                if ($branchId && isset($branchTableMap[$branchId])) {
+                    $missCallTable = $branchTableMap[$branchId];
+                    // reflect it back into arrProjectConfig so downstream code can see it if needed
+                    $arrProjectConfig['missCallTable'] = $missCallTable;
+                }
+            } catch (\Exception $e) {
+                // ignore and continue with default missCallTable
+            }
+        }
 
         // Agreement/Declaration upload config
         if ($formId == 9999) {

@@ -256,6 +256,7 @@ class AppSummary extends Utilities
                         $date,
                         "AND call_type = '0' $attendanceCond"
                     );
+                    // print_r($todayAttendance);die;
                 }
 
                 if ($showDayendSummary || $attendanceShowLogoutTime) {
@@ -2092,57 +2093,57 @@ class AppSummary extends Utilities
                     $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
                 }
             }
-                // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
-                $Query = "SELECT type, COUNT(DISTINCT CONCAT(ds_name, '_', DATE(capture_date))) AS cnt FROM $dbName.tblattendance WHERE dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND type IN (0, 2, 5, 6, 8, 9) GROUP BY type";
-                $sAction = null;
-                $sRows = 0;
-                $this->dbConn->ExecuteSelectQuery($Query, $sAction, $sRows);
-                // Default values (in case a type is missing from the result)
-                $vanDsMtdCount    = 0;
-                $swdMtdCount      = 0;
-                $npsrMtdCount     = 0;
-                $rmdDsMtdCount    = 0;
-                $stokiestMtdCount = 0;
-                $fmcgMtdCount     = 0;
-    
-                if ($sRows > 0) {
-                    while ($row = $this->dbConn->GetData($sAction)) {
-                        switch ($row['type']) {
-                            case 0:
-                                $vanDsMtdCount    = $row['cnt'];
-                                break;
-                            case 2:
-                                $swdMtdCount      = $row['cnt'];
-                                break;
-                            case 5:
-                                $npsrMtdCount     = $row['cnt'];
-                                break;
-                            case 6:
-                                $rmdDsMtdCount    = $row['cnt'];
-                                break;
-                            case 8:
-                                $stokiestMtdCount = $row['cnt'];
-                                break;
-                            case 9:
-                                $fmcgMtdCount     = $row['cnt'];
-                                break;
-                        }
+            // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
+            $Query = "SELECT type, COUNT(DISTINCT CONCAT(ds_name, '_', DATE(capture_date))) AS cnt FROM $dbName.tblattendance WHERE dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND type IN (0, 2, 5, 6, 8, 9) GROUP BY type";
+            $sAction = null;
+            $sRows = 0;
+            $this->dbConn->ExecuteSelectQuery($Query, $sAction, $sRows);
+            // Default values (in case a type is missing from the result)
+            $vanDsMtdCount    = 0;
+            $swdMtdCount      = 0;
+            $npsrMtdCount     = 0;
+            $rmdDsMtdCount    = 0;
+            $stokiestMtdCount = 0;
+            $fmcgMtdCount     = 0;
+
+            if ($sRows > 0) {
+                while ($row = $this->dbConn->GetData($sAction)) {
+                    switch ($row['type']) {
+                        case 0:
+                            $vanDsMtdCount    = $row['cnt'];
+                            break;
+                        case 2:
+                            $swdMtdCount      = $row['cnt'];
+                            break;
+                        case 5:
+                            $npsrMtdCount     = $row['cnt'];
+                            break;
+                        case 6:
+                            $rmdDsMtdCount    = $row['cnt'];
+                            break;
+                        case 8:
+                            $stokiestMtdCount = $row['cnt'];
+                            break;
+                        case 9:
+                            $fmcgMtdCount     = $row['cnt'];
+                            break;
                     }
                 }
-                // print_r($teamId);die;
-                $gtTlCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 2");
-                $aeCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 1");
-                $independentCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 3");
-                $arrWdcodes = $this->tableUtil->getRowsColumn("$dbName.tblattendance", "wd_code", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%'", array(), true);
-                $arrWdcodeData = array();
-                foreach ($arrWdcodes as $wdcode) {
-                    $wdCodeName = $wdcode;
-                    $arrWdcodeData[] = [
-                        "label" => $wdCodeName,
-                        "value" => (string)$this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND wd_code = '$wdCodeName' AND team_id = $teamId AND capture_date LIKE '%$month%'"),
-                    ];
-                }
-            
+            }
+            // print_r($teamId);die;
+            $gtTlCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 2");
+            $aeCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 1");
+            $independentCount = $this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT capture_date)", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND work_with = 3");
+            $arrWdcodes = $this->tableUtil->getRowsColumn("$dbName.tblattendance", "wd_code", "dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%'", array(), true);
+            $arrWdcodeData = array();
+            foreach ($arrWdcodes as $wdcode) {
+                $wdCodeName = $wdcode;
+                $arrWdcodeData[] = [
+                    "label" => $wdCodeName,
+                    "value" => (string)$this->tableUtil->getRowColumn("$dbName.tblattendance", "COUNT(DISTINCT ds_name)", "dstatus = 0 AND wd_code = '$wdCodeName' AND team_id = $teamId AND capture_date LIKE '%$month%'"),
+                ];
+            }
+
             // Build dsTypeDistributionData conditionally
             if ($teamType == 10) {
                 $dsTypeDistributionData = [
@@ -2373,8 +2374,8 @@ class AppSummary extends Utilities
                 $arrOtherLabelList3
             );
 
-            // Output leaderboard
             $branchId = $this->getTeamBranch($dbName, $teamId);
+            // Output leaderboard
             if ($dbName === $ITCPH2_DB) {
                 $teamType = $this->tableUtil->getRowColumn(
                     "$dbName.tblproject_team",
@@ -2394,26 +2395,39 @@ class AppSummary extends Utilities
                     $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops'");
                     $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin'");
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
-
+                    $focusProduct1 = "";
+                    $focusProduct2 = "";
                     foreach ($months as $month) {
                         list($year, $newMonth) = explode('-', $month);
-                        
+
                         $arrFocusProduct = $this->tableUtil->getRowsColumn("$dbName.tblbranch_products_month_wise", "summary_column_name", "dstatus = 0 AND is_focusbrand = '1' AND team_type = 5 AND branch_id = $branchId AND month = '$newMonth' AND year = '$year'");
                         $arrFocusProductName = $this->tableUtil->getRowsColumn("$dbName.tblbranch_products_month_wise", "product_name", "dstatus = 0 AND is_focusbrand = '1' AND team_type = 5 AND branch_id = $branchId AND month = '$newMonth' AND year = '$year'");
+
                         $overAllProduct = $this->tableUtil->getRowColumn("$dbName.tblbranch_products_month_wise", "summary_column_name", "dstatus = 0 AND is_focusbrand = '2' AND team_type = 5 AND branch_id = $branchId AND month = '$newMonth' AND year = '$year'");
 
                         $focusBrand1TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[0]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
 
+                        $focusProduct1 = $arrFocusProductName[0];
+                        $focusProduct2 = $arrFocusProductName[1];
+
                         $focusBrand1Target = isset($focusBrand1TargetArr) && $focusBrand1TargetArr ? $focusBrand1TargetArr : 0;
 
                         $focusBrand2Target = isset($focusBrand2TargetArr) && $focusBrand2TargetArr ? $focusBrand2TargetArr : 0;
 
                         $overAllProductTarget = isset($overAllProductTargetArr) && $overAllProductTargetArr ? $overAllProductTargetArr : 0;
-                        
+
+                        $productCols = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "summary_column_name", "dstatus = 0 AND team_type = 5 AND branch_id = $branchId");
+
+                        $columnExpression = implode(" + ", $productCols);
+
+                        $sumColumns = "SUM($columnExpression) AS total";
+
                         $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        // print_r($sumColumns);die;
 
                         $qualifiedAttendanceCount = 0;
 
@@ -2427,7 +2441,7 @@ class AppSummary extends Utilities
                             $totalShops = (int)$orderShop + (int)$addShop;
 
                             $startEndTime = $this->tableUtil->getRowColumns("$dbName.tblvands_summary", "start_datetime, end_datetime", "dstatus = 0 AND team_id = $teamId AND activity_date = '$activityDate'");
-                        // print_r($startEndTime);die;
+                            // print_r($startEndTime);die;
 
                             $timeSpentInSec = $this->commonFunctions->getTimeDifference($startEndTime[0], $startEndTime[1], true);
 
@@ -2437,7 +2451,7 @@ class AppSummary extends Utilities
                                 $qualifiedAttendanceCount++;
                             }
                         }
-                        $overAllValue = (isset($focusBrand1[0]) ? (float) $focusBrand1[0] : 0) + (isset($focusBrand2[0]) ? (float) $focusBrand2[0] : 0);
+                        // $overAllValue = (isset($focusBrand1[0]) ? (float) $focusBrand1[0] : 0) + (isset($focusBrand2[0]) ? (float) $focusBrand2[0] : 0);
 
                         // Generate dynamic card items based on the month
                         $cardItems = [];
@@ -2449,18 +2463,18 @@ class AppSummary extends Utilities
                             $color = "";
                             $icon = "";
                             $iconReward = "";
-                            $achieved = 0;
                             $target = 0;
                             $earnedMoney = 0;
                             $rewardMoney = 0;
+                            $achieved = 0;
                             if ($i == 1) {
                                 $title = "Gate/Qualified Attendance";
                                 $color = "#F05000";
                                 $achieved = $qualifiedAttendanceCount;
                                 $target = 20;
                                 $rewardMoney = 30;
-                                $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
-                                $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG";
+                                $earnedMoney = $achieved;
+                                $icon = "";
                             }
                             if ($i == 2) {
                                 $title = "Overall Survey";
@@ -2468,25 +2482,37 @@ class AppSummary extends Utilities
                                 $achieved = round($overAllValue, 0);
                                 $target = (float) $overAllProductTarget;
                                 $rewardMoney = 1000;
-                                $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                if ($achieved > $target) {
+                                    $earnedMoney = $rewardMoney;
+                                } else {
+                                    $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                }
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_money_100.PNG";
                             }
                             if ($i == 3) {
-                                $title = (string) $arrFocusProductName[0] . " Survey";
+                                $title = (string) $focusProduct1 . " Survey";
                                 $color = "#0000FF";
-                                $achieved = isset($focusBrand1[0]) ? round($focusBrand1[0], 0) : 0;
+                                $achieved = isset($focusBrand1[0]) ? (float) $focusBrand1[0] : 0;
                                 $target = (float) $focusBrand1Target;
                                 $rewardMoney = 500;
-                                $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                if ($achieved > $target) {
+                                    $earnedMoney = $rewardMoney;
+                                } else {
+                                    $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                }
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_rupees.PNG";
                             }
                             if ($i == 4) {
-                                $title = (string) $arrFocusProductName[1] . " Survey";
+                                $title = (string) $focusProduct2 . " Survey";
                                 $color = "#FF00FF";
-                                $achieved = isset($focusBrand2[0]) ? round($focusBrand2[0], 0) : 0;
+                                $achieved = isset($focusBrand2[0]) ? (float)$focusBrand2[0] : 0;
                                 $target = (float) $focusBrand2Target;
                                 $rewardMoney = 500;
-                                $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                if ($achieved > $target) {
+                                    $earnedMoney = $rewardMoney;
+                                } else {
+                                    $earnedMoney = isset($achieved) && $target > 0 ? ($achieved / $target) * $rewardMoney : 0;
+                                }
                                 $icon = "https://upimg.btlmonitor.com/dspm_icon/ic_rupees.PNG";
                             }
                             // Explicitly index the arrays
@@ -2519,13 +2545,15 @@ class AppSummary extends Utilities
                                 "LeaderBoardProgressItem" => $progressItem
                             ];
 
-                            $earnedPoints += $achieved;
+                            if ($i != 1) {
+                                $earnedPoints += $earnedMoney;
+                            }
                         }
 
                         $leaderboardData[] = array(
                             "LeaderBoardData" => array(
-                                "earnedPoints" => round($earnedPoints, 0),
-                                "maxPoints" => 1500,
+                                "earnedPoints" => $earnedPoints,
+                                "maxPoints" => 2000,
                                 "monthName" => date('M', strtotime($month)),
                                 "cardItems" => $cardItems,
                                 "progressItems" => $progressItems

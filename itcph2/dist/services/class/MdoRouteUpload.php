@@ -182,7 +182,6 @@ class MdoRouteUpload
                 $arrSubData = array();
                 $isAnyDataFound = false;
                 if ($index > 0) {
-
                     // -----------------------------------------
                     // TEAM EXISTENCE CHECK + INSERT IF NOT EXISTS
                     // -----------------------------------------
@@ -218,7 +217,6 @@ class MdoRouteUpload
 
                     // Validate BEFORE building row
                     foreach ($requiredColumns as $reqCol) {
-
                         // Get index of the required column in selected columns
                         $colPos = array_search($reqCol, $arrSelectedColumns);
 
@@ -261,12 +259,10 @@ class MdoRouteUpload
                         $shopCodePos = array_search('shop_uniq_code', $arrSelectedColumns);
 
                         if ($shopCodePos !== false) {
-
                             $shopCodeExcelColumn = $arrExcelDataColumnHeader[$shopCodePos];
                             $shopCodeValue = trim($arrExcelData[$shopCodeExcelColumn][$index]);
 
                             if ($shopCodeValue !== "") {
-
                                 // Check if already exists
                                 $isExistingShopCode = isRecordExist(
                                     $this->_dbConn,

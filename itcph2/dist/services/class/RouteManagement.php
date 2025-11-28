@@ -121,7 +121,6 @@ class RouteManagement
 
         $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : [];
         if (!empty($recIds)) {
-
             $recIdsArray = array_filter(array_map('trim', explode(',', $recIds)));
 
             $recIdsArray = array_map(function ($v) {

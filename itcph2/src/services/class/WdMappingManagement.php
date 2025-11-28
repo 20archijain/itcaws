@@ -174,10 +174,10 @@ class WdMappingManagement
         // $where $sOrderCond
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d, $wdMappingTable as e Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
+        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d" .
+            ", $wdMappingTable as e Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
-        // echo $sQuery;die;
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -215,7 +215,8 @@ class WdMappingManagement
         // $where $sOrderCond
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d, $wdMappingTable as e Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
+        $sQuery = "SELECT e.rec_id, e.district, e.branch, e.circle, e.circle_name, e.section, e.section_name, e.wd_code, e.wd_firm_name, e.wd_market, e.wd_pop_group FROM $projectTeamTable AS b, tblbranch as d, $wdMappingTable as e" .
+            " Where b.branch_id = d.branch_id AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.wd_code = e.wd_code $where";
         // echo $sQuery;die;
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);

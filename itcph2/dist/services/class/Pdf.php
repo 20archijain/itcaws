@@ -74,8 +74,12 @@ class Pdf extends FPDF
         $bodyTextColor = array(0, 0, 0),
         $columnWidths = array()
     ) {
-        if ($x === null) $x = $this->_margin;
-        if ($y === null) $y = $this->_currentY;
+        if ($x === null) {
+            $x = $this->_margin;
+        }
+        if ($y === null) {
+            $y = $this->_currentY;
+        }
 
         $this->SetXY($x, $y);
 
@@ -126,27 +130,27 @@ class Pdf extends FPDF
             // Pre-process: wrap text for all cells in this row and calculate max lines
             $wrappedCells = array();
             $maxLines = 1;
-            
+
             for ($colIndex = 0; $colIndex < $cols; $colIndex++) {
                 $cellText = isset($tableData[$rowIndex][$colIndex]) ? $tableData[$rowIndex][$colIndex] : '';
-                
+
                 // Set font for wrapping calculation
                 if ($rowIndex === 0) {
                     $this->SetFont('Arial', 'B', $fontSize);
                 } else {
                     $this->SetFont('Arial', '', $fontSize);
                 }
-                
+
                 // Wrap text to fit cell width (subtract 4mm for padding)
                 $cellWidth = max($cellWidths[$colIndex] - 4, 1);
                 $wrappedLines = $this->wrapText($cellText, $cellWidth, $fontSize);
                 $wrappedCells[$colIndex] = $wrappedLines;
-                
+
                 if (count($wrappedLines) > $maxLines) {
                     $maxLines = count($wrappedLines);
                 }
             }
-            
+
             // Calculate row height based on max lines
             $currentRowHeight = max($cellHeight, $maxLines * $lineHeight);
 
@@ -171,18 +175,18 @@ class Pdf extends FPDF
                 for ($i = 0; $i < $colIndex; $i++) {
                     $cellX += $cellWidths[$i];
                 }
-                
+
                 // Draw cell with wrapped text
                 $wrappedLines = $wrappedCells[$colIndex];
                 $cellWidth = $cellWidths[$colIndex];
-                
+
                 // Draw border and fill
                 $this->Rect($cellX, $startY, $cellWidth, $currentRowHeight, 'DF');
-                
+
                 // Draw text lines centered vertically
                 $numLines = count($wrappedLines);
                 $textStartY = $startY + (($currentRowHeight - ($numLines * $lineHeight)) / 2);
-                
+
                 for ($lineIndex = 0; $lineIndex < $numLines; $lineIndex++) {
                     $lineText = $wrappedLines[$lineIndex];
                     $lineY = $textStartY + ($lineIndex * $lineHeight);
@@ -190,7 +194,7 @@ class Pdf extends FPDF
                     $this->Cell($cellWidth, $lineHeight, $this->convertText($lineText), 0, 0, 'C', false);
                 }
             }
-            
+
             // Move to next row position
             $this->SetXY($x, $startY + $currentRowHeight);
         }
@@ -207,8 +211,12 @@ class Pdf extends FPDF
             return;
         }
 
-        if ($startX === null) $startX = $this->_margin;
-        if ($startY === null) $startY = $this->_currentY;
+        if ($startX === null) {
+            $startX = $this->_margin;
+        }
+        if ($startY === null) {
+            $startY = $this->_currentY;
+        }
 
         $currentX = $startX;
         $maxHeight = 0;

@@ -775,7 +775,7 @@ class VanDsReporting
                 $arrProductSummaryColumns = getRowsColumns(
                     $this->_dbConn,
                     $branchProductsTable,
-                    "branch_id, team_type, product_name, summary_column_name",
+                    "branch_id, team_type, product_name, summary_column_name, pkt_size",
                     "dstatus = 0 AND team_type IN ($teamTypeIn) ORDER BY product_name",
                     [],
                     true
@@ -786,18 +786,19 @@ class VanDsReporting
                     $type     = $arrBranchColumns[1];
                     $productName = $arrBranchColumns[2];
                     $summaryColumnName = $arrBranchColumns[3];
+                    $pktSize = $arrBranchColumns[4];
 
                     if (!isset($this->arrBranchwiseProducts[$branchId][$type])) {
                         $this->arrBranchwiseProducts[$branchId][$type] = [];
                     }
-                    $this->arrBranchwiseProducts[$branchId][$type][] = [$productName, $summaryColumnName];
+                    $this->arrBranchwiseProducts[$branchId][$type][] = [$productName, $summaryColumnName, $pktSize];
                 }
             } elseif ($teamType !== null && $teamType !== "") {
                 // handle string teamType (single value)
                 $arrProductSummaryColumns = getRowsColumns(
                     $this->_dbConn,
                     $branchProductsTable,
-                    "branch_id, product_name, summary_column_name",
+                    "branch_id, product_name, summary_column_name, pkt_size",
                     "dstatus = 0 AND team_type = '" . intval($teamType) . "' ORDER BY product_name",
                     [],
                     true
@@ -807,17 +808,18 @@ class VanDsReporting
                     $branchId = $arrBranchColumns[0];
                     $productName = $arrBranchColumns[1];
                     $summaryColumnName = $arrBranchColumns[2];
+                    $pktSize = $arrBranchColumns[4];
 
                     if (!isset($this->arrBranchwiseProducts[$branchId][$teamType])) {
                         $this->arrBranchwiseProducts[$branchId][$teamType] = [];
                     }
-                    $this->arrBranchwiseProducts[$branchId][$teamType][] = [$productName, $summaryColumnName];
+                    $this->arrBranchwiseProducts[$branchId][$teamType][] = [$productName, $summaryColumnName, $pktSize];
                 }
             } else {
                 // No teamType provided
                 $sProductAction = null;
                 $iProductRows = 0;
-                $sProductQuery = "SELECT DISTINCT branch_id, product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 ORDER BY product_name";
+                $sProductQuery = "SELECT DISTINCT branch_id, product_name, summary_column_name, pkt_size FROM $branchProductsTable WHERE dstatus = 0 ORDER BY product_name";
                 $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
 
                 if ($iProductRows > 0) {
@@ -826,7 +828,7 @@ class VanDsReporting
                         if (!isset($this->arrBranchwiseProducts[$branchId])) {
                             $this->arrBranchwiseProducts[$branchId] = [];
                         }
-                        $this->arrBranchwiseProducts[$branchId][] = [$rowProduct["product_name"], $rowProduct["summary_column_name"]];
+                        $this->arrBranchwiseProducts[$branchId][] = [$rowProduct["product_name"], $rowProduct["summary_column_name"], $rowProduct["pkt_size"]];
                     }
                 }
             }
@@ -1190,6 +1192,7 @@ class VanDsReporting
                             foreach ($arrProductBought as $productIndex => $arrProduct) {
                                 $productName = strtoupper($arrProduct[0]);
                                 $productColumnName = $arrProduct[1];
+                                $pktSize = $arrProduct[2];
                                 $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
                                 // Ensure the product value exists and is strictly greater than 0
                                 if (isset($iSale) && floatval($iSale) > 0) {
@@ -1199,7 +1202,11 @@ class VanDsReporting
                                 $arrDownload["sale"][$index][$cftIndex + 1] = isset($productCount) ? $productCount : 0;
                                 // get index of product and insert sale
                                 $iProductIndex = $arrProductIndex[$productName];
-                                $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
+                                if ($branchId == 40) {
+                                    $arrDownload["sale"][$index][$iProductIndex] = round(floatval($iSale) / $pktSize, 2);
+                                } else {
+                                    $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
+                                }
                                 // insert Stock in Products Bought
                                 // $iStock = isset($arrStock[$productColumnName]) && floatval($arrStock[$productColumnName]) ? floatval($arrStock[$productColumnName]) : 0;
                                 // $arrDownload["sale"][$index][$iProductIndex + 1] = $iStock;
@@ -1526,51 +1533,42 @@ class VanDsReporting
                         $idealRoute = $dayOfWeek;
                         // $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
                         $arrPlannedOutletBeatDay = array(1 => $dayOfWeek);
-                        if ($totalSale > 0) {
-                            $sellInShop = getRowColumn(
-                                $this->_dbConn,
-                                $respTable,
-                                "COUNT(DISTINCT ques_3)",
-                                "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId"
-                            );
-                        } else {
-                            $sellInShop = 0;
-                        }
+
                         $routeDays = explode('-', strtolower($row["route"]));
-                        $arrLtLg = getRowsColumns(
-                            $this->_dbConn,
-                            $respTable,
-                            "lt, lg",
-                            "dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId' ORDER BY pro_id ASC"
-                        );
+                        // $arrLtLg = getRowsColumns(
+                        //     $this->_dbConn,
+                        //     $respTable,
+                        //     "lt, lg",
+                        //     "dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId' ORDER BY pro_id ASC"
+                        // );
 
-                        // Calculate record-to-record distance
-                        $totalDistance = 0;
-                        for ($i = 0; $i < count($arrLtLg) - 1; $i++) {
-                            $lat1 = $arrLtLg[$i][0];
-                            $lon1 = $arrLtLg[$i][1];
-                            $lat2 = $arrLtLg[$i + 1][0];
-                            $lon2 = $arrLtLg[$i + 1][1];
+                        // // Calculate record-to-record distance
+                        // $totalDistance = 0;
+                        // for ($i = 0; $i < count($arrLtLg) - 1; $i++) {
+                        //     $lat1 = $arrLtLg[$i][0];
+                        //     $lon1 = $arrLtLg[$i][1];
+                        //     $lat2 = $arrLtLg[$i + 1][0];
+                        //     $lon2 = $arrLtLg[$i + 1][1];
 
-                            $distance = $this->haversineDistance($lat1, $lon1, $lat2, $lon2);
-                            $totalDistance += $distance;
+                        //     $distance = $this->haversineDistance($lat1, $lon1, $lat2, $lon2);
+                        //     $totalDistance += $distance;
 
-                            // If totalDistance is more than 80 km, set it to random value between 70–80
-                            if ($totalDistance > 80) {
-                                $totalDistance = rand(70, 80);
-                                break; // stop further calculation if you want max 80
-                            }
-                        }
+                        //     // If totalDistance is more than 80 km, set it to random value between 70–80
+                        //     if ($totalDistance > 80) {
+                        //         $totalDistance = rand(70, 80);
+                        //         break; // stop further calculation if you want max 80
+                        //     }
+                        // }
 
-                        // Final distance in KM (rounded 2 decimals)
-                        $distanceInKm = round($totalDistance, 2);
+                        // // Final distance in KM (rounded 2 decimals)
+                        // $distanceInKm = round($totalDistance, 2);
                     } else {
                         $idealRoute = getRowColumn($this->_dbConn, $routeTable, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                         // for planned outlets count don't use dstatus condition
                         $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "route_name = '$routeName' AND team_id = $teamId");
-                        $sellInShop = $row['total_sellin_shops'];
-                        $distanceInKm = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
                     }
+                    $sellInShop = $row['total_sellin_shops'];
+                    $distanceInKm = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
 
                     $mainBranch = $branchName = $district = "";
                     if (($branchIndex = array_search($branchId, array_column($arrBranchDetails, 0))) !== false) {
@@ -1646,7 +1644,7 @@ class VanDsReporting
 
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
-                            $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
+                            $arrSummary["sale"][$index][$iProductIndex] = round(floatval($iSale), 2);
                         }
                     }
 
@@ -1654,11 +1652,7 @@ class VanDsReporting
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
-                        if ($branchId == 40) {
-                            $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] / 100 : 0;
-                        } else {
-                            $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
-                        }
+                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? round($arrStock[0][$stockProduct[1]], 2) : 0;
 
                         // Accumulate the ready stock pickup
                         $totalReadyStockPickup += $iStockQty;
@@ -1669,7 +1663,7 @@ class VanDsReporting
                         $arrSummary["stock"][$index][$iStockIndex] = floatval($iStockQty);
                     }
                     $arrSummary["sale"][$index][$outletAddedIndex + 1] = $totalReadyStockPickup;
-                    $arrSummary["sale"][$index][$outletAddedIndex + 2] = $totalProductSale;
+                    $arrSummary["sale"][$index][$outletAddedIndex + 2] = round($totalProductSale, 2);
                     $index++;
                 }
             }

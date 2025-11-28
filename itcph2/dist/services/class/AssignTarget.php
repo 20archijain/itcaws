@@ -198,7 +198,6 @@ class AssignTarget
                 }
 
                 if (isset($skuColumnCurrent) && $skuColumnCurrent) {
-
                     $currentMonthTarget =  $this->getResult("tblassign_target", "$skuColumnCurrent", " AND team_id = $team_id AND year = '$currentYear' AND month = '$currentMonth'");
 
                     $currentMonthAchieve =  $this->getResult("tblvands_summary", "$skuColumnCurrent", " AND team_id = $team_id $currentMonthCond");

@@ -37,7 +37,7 @@ class UpdateMasterData extends Utilities
         $lg = isset($this->requestPostData["lg"]) && $this->requestPostData["lg"] !== "" ? (float) $this->requestPostData["lg"] : 0;
 
 
-        $iStatus = $this->tableUtil->isRecordExist("$dbName.tblroute_details", "rec_id", "dstatus = 0 AND outlet_mobile = $mobileNo AND rec_id != $shopId");
+        $iStatus = $this->tableUtil->isRecordExist("$dbName.tblroute_details", "rec_id", "dstatus = 0 AND swd_west = 0 AND outlet_mobile = $mobileNo AND rec_id != $shopId");
         if ($iStatus) {
             // Data is invalid
             $response = $this->response->sendResponse(array("message" => $this->arrOTPMessages["OTP22"]));
@@ -47,7 +47,7 @@ class UpdateMasterData extends Utilities
                 // Update route table with new shop name and mobile number
                 $updateResult = $this->tableUtil->updateRecord(
                     "$dbName.tblroute_details",
-                    "outlet_name = ?, outlet_mobile = ?, lt = ?, lg = ?, modifiedbyapp = 1",
+                    "outlet_name = ?, outlet_mobile = ?, lt = ?, lg = ?, modifiedbyapp = 1, kyc_done = 1",
                     "rec_id = $shopId",
                     array($shopName, $mobileNo, $lt, $lg)
                 );

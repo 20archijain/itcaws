@@ -26,31 +26,36 @@ class ProcessMdoData
     final public function processMdoData()
     {
         $currentMonth = date("Y-m");
+        $currentDate = date("Y-m-d");
         $branchPickupStockTable = $this->tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
 
         $type = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD", 8 => "SCP DS", 9 => "Common FMCG Lite DS");
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5)";
+        $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND updated_date != '$currentDate' LIMIT 30";
 
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
             while ($row = $this->dbConn->GetData($rsAction)) {
+                $id = $row['id'];
                 $mdoId = $row['mdo_id'];
                 $team = $row['teams'];
                 $teamType = $row['is_type'];
                 $mdoName = getRowColumn($this->dbConn, "tblproject_team", "team_name", "dstatus = 0 AND team_id = $mdoId");
 
                 if ($teamType == 6 || $teamType == 8 || $teamType == 9) {
-                    $branchId = getRowColumn($this->dbConn, "tblbreeze_team", "branch_id", "dstatus = 0 AND team_id = '$team'");
-                    $dsName = getRowColumn($this->dbConn, "tblbreeze_team", "team_name", "dstatus = 0 AND team_id = '$team'");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details_breeze", "rec_id, route_name, outlet_name, outlet_mobile, outlet_address, wd_code, lt, lg, sort_order, dstatus", "team_id = '$team'");
+                    $teamTable = "tblbreeze_team";
+                    $routeTable = "tblroute_details_breeze";
+                    $addressCol = "outlet_address";
                 } else {
-                    $branchId = getRowColumn($this->dbConn, "tblproject_team", "branch_id", "dstatus = 0 AND team_id = $team");
-                    $dsName = getRowColumn($this->dbConn, "tblproject_team", "team_name", "dstatus = 0 AND team_id = $team");
-                    $getRouteDetails = getRowsColumns($this->dbConn, "tblroute_details", "rec_id, route_name, outlet_name, outlet_mobile, market_name, wd_code, lt, lg, sort_order, dstatus", "team_id = $team");
+                    $teamTable = "tblproject_team";
+                    $routeTable = "tblroute_details";
+                    $addressCol = "market_name";
                 }
+                $branchId = getRowColumn($this->dbConn, $teamTable, "branch_id", "dstatus = 0 AND team_id = '$team'");
+                $dsName = getRowColumn($this->dbConn, $teamTable, "team_name", "dstatus = 0 AND team_id = '$team'");
+                $getRouteDetails = getRowsColumns($this->dbConn, $routeTable, "rec_id, route_name, outlet_name, outlet_mobile, $addressCol, wd_code, lt, lg, sort_order, dstatus", "team_id = '$team' AND dstatus = 0");
 
                 foreach ($getRouteDetails as $row) {
                     $shopId = $row[0];
@@ -191,12 +196,12 @@ class ProcessMdoData
 
                         if ($focusProd1) {
                             $lastPurchaseFocus1 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd1", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' AND $focusProd1 > 0");
-                            $lastFocus1DateUnits = $lastPurchaseFocus1[0] && $lastPurchaseFocus1[1] ? $lastPurchaseFocus1[0] . ", " . $lastPurchaseFocus1[1] . "Units" : 0;
+                            $lastFocus1DateUnits = $lastPurchaseFocus1[0] && $lastPurchaseFocus1[1] ? $lastPurchaseFocus1[0] . ", " . $lastPurchaseFocus1[1] : 0;
                         }
 
                         if ($focusProd2) {
                             $lastPurchaseFocus2 = getRowColumns($this->dbConn, "tblsurvey_response_details", "MAX(capture_date) AS lastPurchase, $focusProd2", "dstatus = 0 AND ques_3 = $shopId AND ques_4 = 'Yes' AND team_id = $team AND capture_date LIKE '%$currentMonth%' AND $focusProd2 > 0");
-                            $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] . "Units" : 0;
+                            $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] : 0;
                         }
                     } else {
                         // reset variables for team types 6,8,9
@@ -262,6 +267,8 @@ class ProcessMdoData
                         addRecord($this->dbConn, "tblmdo_offline_data", $addCols, $addVals, $arrAddParams);
                     }
                 }
+
+                updateRecord($this->dbConn, "tblmdo_access", "is_previous_day_updated = 1, updated_date = '$currentDate'", "id = $id");
             }
         }
     }

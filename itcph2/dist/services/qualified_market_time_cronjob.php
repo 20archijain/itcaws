@@ -116,17 +116,26 @@ class processUpdateQualifiedMarketTime
                 }
                 $summaryColumns = implode(") + SUM(", $productCols);
                 $sumColumns = "SUM($summaryColumns)";
-                $sellInShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId HAVING $sumColumns > 0");
+                // $sellInShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId HAVING $sumColumns > 0");
+                $sellInShop = getRowColumn($this->dbConn, "(SELECT ques_3 FROM $respTable WHERE team_id = $teamId and capture_date = '$date' GROUP BY ques_3 HAVING $sumColumns > 0 ) AS t", "COUNT(*) AS total_customers");
+                // "(SELECT ques_2 FROM tblsurvey_response_details_kunal WHERE team_id = $teamId and capture_date = '$date' GROUP BY ques_2 HAVING $sumColumns > 0 ) AS t", "COUNT(*) AS total_customers"
                 $idealRoute = getRowColumn($this->dbConn, $table, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                 $beatDay = getRowColumn($this->dbConn, $table, "beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                $routeNameLower = strtolower($routeName);
+                $beatDayLower   = strtolower($beatDay);
+                if (strpos($routeNameLower, $beatDayLower) !== false) {
+                    $showDay = $beatDay;   // Beat day exists inside the route name
+                } else {
+                    $showDay = $dayOfWeek; // Fallback to current day of week
+                }
                 if ($updated == 0) {
                     $updateValues = "ideal_route = ?, route_day = ?, uni_total_sales_deliveries = ?, uni_total_other_shops = ?, uni_total_sellin_shops = ?, uni_total_shops = ?, total_cft = ?, cft_time_sec = ?, is_route_updated = ?";
                     $condition = "summary_id = ?";
-                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$idealRoute, $beatDay ? $beatDay : $dayOfWeek, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, 1, $summaryId]);
+                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$idealRoute, $showDay, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, 1, $summaryId]);
                 } else {
                     $updateValues = "route_day = ?, uni_total_sales_deliveries = ?, uni_total_other_shops = ?, uni_total_sellin_shops = ?, uni_total_shops = ?, total_cft = ?, cft_time_sec = ?";
                     $condition = "summary_id = ?";
-                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$beatDay ? $beatDay : $dayOfWeek, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, $summaryId]);
+                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$showDay, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, $summaryId]);
                 }
             }
         }

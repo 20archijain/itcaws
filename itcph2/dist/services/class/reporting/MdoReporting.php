@@ -1903,8 +1903,12 @@ class MdoReporting
                     // Only process records where itcVisibility == 'Yes' OR implementVisibility == 'Yes'
                     if ($itcVisibility == 'Yes' || $implementVisibility == 'Yes') {
                         $imageIds = array();
-                        if (!empty($visibilityPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $visibilityPic);
-                        if (!empty($outletPic)) $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $outletPic);
+                        if (!empty($visibilityPic)) {
+                            $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $visibilityPic);
+                        }
+                        if (!empty($outletPic)) {
+                            $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $outletPic);
+                        }
 
                         if (!empty($imageIds)) {
                             if (!isset($imageMap[$uniId])) {

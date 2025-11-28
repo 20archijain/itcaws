@@ -3,12 +3,6 @@
 require_once $include_path . "defined_index.php";
 require $PHP_SPREADSHEET_PATH;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-
 // phpcs:ignore
 class ActiveMdoUsersReporting
 {
@@ -834,9 +828,9 @@ class ActiveMdoUsersReporting
         $iRows = 0;
         $types = array(7 => "MDO", 10 => "FSO");
 
-        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number, c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d" .
-            " WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0 AND a.rec_id = b.wd_id AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $searchCondition $sOrderCond";
-
+        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number" .
+            ", c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0 AND a.rec_id = b.wd_id" .
+            " AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $searchCondition $sOrderCond";
 
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
@@ -888,8 +882,9 @@ class ActiveMdoUsersReporting
         $sAction = null;
         $iRows = 0;
         $types = array(7 => "MDO", 10 => "FSO");
-        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number, c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d" .
-            " WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0 AND a.rec_id = b.wd_id AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $dwnCond  $sOrderCond";
+        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number" .
+            ", c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0" .
+            " AND a.rec_id = b.wd_id AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $dwnCond  $sOrderCond";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
