@@ -200,55 +200,60 @@ class RouteDataUpload
 
                         if (in_array($arrSelectedColumns[$colIndex], ['ds_mobile', 'outlet_mobile'])) {
 
-                            // ---- Basic Validations ----
-                            if ($columnData === '' || !is_numeric($columnData)) {
-                                $columnData = 0;
-                            } else {
+                            // ---- EMPTY CHECK ----
+                            if ($columnData === '' || $columnData === null || trim($columnData) === '') {
+                                $errorMessage = ["Mobile number is required"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
 
-                                $columnData = trim($columnData);
+                            $columnData = trim($columnData);
 
-                                // Remove country code (+91), spaces, dashes if needed
-                                $columnData = preg_replace('/[^0-9]/', '', $columnData);
+                            // Remove +91, spaces, hyphens, etc.
+                            $columnData = preg_replace('/[^0-9]/', '', $columnData);
 
-                                // ---- Length Check (must be exactly 10 digits) ----
-                                if (strlen($columnData) !== 10) {
-                                    $errorMessage = ["Mobile must be exactly 10 digits: $columnData"];
-                                    echo json_encode(responseMessage([$errorMessage]));
-                                    exit();
-                                }
+                            if ($columnData === '' || $columnData == 0) {
+                                $errorMessage = ["Mobile number is required"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
 
-                                // ---- Must start with valid digit (6/7/8/9) ----
-                                if (!preg_match('/^[6-9]/', $columnData)) {
-                                    $errorMessage = ["Mobile must start with 6, 7, 8, or 9 : $columnData"];
-                                    echo json_encode(responseMessage([$errorMessage]));
-                                    exit();
-                                }
+                            // ---- LENGTH CHECK ----
+                            if (strlen($columnData) !== 10) {
+                                $errorMessage = ["Mobile must be exactly 10 digits: $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
 
-                                // ---- Reject Patterns like 0000000000, 1111111111, etc ----
-                                if (preg_match('/^(.)\1{9}$/', $columnData)) {
-                                    $errorMessage = ["Invalid mobile number pattern : $columnData"];
-                                    echo json_encode(responseMessage([$errorMessage]));
-                                    exit();
-                                }
+                            // ---- START DIGIT CHECK ----
+                            if (!preg_match('/^[6-9]/', $columnData)) {
+                                $errorMessage = ["Mobile must start with 6, 7, 8, or 9 : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
 
-                                // Convert back to integer if needed
-                                $columnData = (int)$columnData;
+                            // ---- REPEATED DIGITS CHECK ----
+                            if (preg_match('/^(.)\1{9}$/', $columnData)) {
+                                $errorMessage = ["Invalid mobile number pattern : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
 
-                                // ---- Duplicate Check ----
-                                $isExistDSMobile = isRecordExist($this->_dbConn, $routeDetailsTable,"ds_mobile","ds_mobile = '$columnData' AND dstatus = 0");
+                            // ---- DUPLICATE CHECK ONLY IN SAME FIELD ----
+                            if ($arrSelectedColumns[$colIndex] === 'ds_mobile') {
+                                // Check ds_mobile only
+                                $isExist = isRecordExist( $this->_dbConn, $routeDetailsTable, "ds_mobile", "ds_mobile = '$columnData' AND dstatus = 0");
+                            }
 
-                                $isExistOutlet = isRecordExist( $this->_dbConn,$routeDetailsTable,"outlet_mobile", "outlet_mobile = '$columnData' AND dstatus = 0");
+                            if ($arrSelectedColumns[$colIndex] === 'outlet_mobile') {
+                                // Check outlet_mobile only
+                                $isExist = isRecordExist($this->_dbConn, $routeDetailsTable,"outlet_mobile","outlet_mobile = '$columnData' AND dstatus = 0");
+                            }
 
-                                if ($isExistDSMobile == 1) {
-                                    $errorMessage = ["Mobile Number Already Exist : $columnData"];
-                                    echo json_encode(responseMessage([$errorMessage]));
-                                    exit();
-                                }
-                                if ($isExistOutlet == 1 ) {
-                                    $errorMessage = ["Mobile Number Already Exist : $columnData"];
-                                    echo json_encode(responseMessage([$errorMessage]));
-                                    exit();
-                                }
+                            if ($isExist == 1) {
+                                $errorMessage = ["Mobile Number Already Exist : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
                             }
                         }
 
