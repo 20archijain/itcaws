@@ -189,12 +189,71 @@ class RouteDataUpload
                     foreach ($arrExcelDataColumnHeader as $colIndex => $excelColumnHeader) {
                         $columnData = trim($arrExcelData[$excelColumnHeader][$index]);
 
-                        // ✅ Clean lt/lg columns (force numeric or NULL)
+                        //  Clean lt/lg columns (force numeric or NULL)
                         if (in_array($arrSelectedColumns[$colIndex], ['lt', 'lg'])) {
                             if ($columnData === '' || !is_numeric($columnData)) {
                                 $columnData = 0; // store NULL if not valid
                             } else {
                                 $columnData = (float)$columnData; // cast to float
+                            }
+                        }
+
+                        if (in_array($arrSelectedColumns[$colIndex], ['ds_mobile', 'outlet_mobile'])) {
+
+                            // ---- EMPTY CHECK ----
+                            if ($columnData === '' || $columnData === null || trim($columnData) === '') {
+                                $errorMessage = ["Mobile number is required"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
+
+                            $columnData = trim($columnData);
+
+                            // Remove +91, spaces, hyphens, etc.
+                            $columnData = preg_replace('/[^0-9]/', '', $columnData);
+
+                            if ($columnData === '' || $columnData == 0) {
+                                $errorMessage = ["Mobile number is required"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
+
+                            // ---- LENGTH CHECK ----
+                            if (strlen($columnData) !== 10) {
+                                $errorMessage = ["Mobile must be exactly 10 digits: $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
+
+                            // ---- START DIGIT CHECK ----
+                            if (!preg_match('/^[6-9]/', $columnData)) {
+                                $errorMessage = ["Mobile must start with 6, 7, 8, or 9 : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
+
+                            // ---- REPEATED DIGITS CHECK ----
+                            if (preg_match('/^(.)\1{9}$/', $columnData)) {
+                                $errorMessage = ["Invalid mobile number pattern : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
+                            }
+
+                            // ---- DUPLICATE CHECK ONLY IN SAME FIELD ----
+                            if ($arrSelectedColumns[$colIndex] === 'ds_mobile') {
+                                // Check ds_mobile only
+                                $isExist = isRecordExist( $this->_dbConn, $routeDetailsTable, "ds_mobile", "ds_mobile = '$columnData' AND dstatus = 0");
+                            }
+
+                            if ($arrSelectedColumns[$colIndex] === 'outlet_mobile') {
+                                // Check outlet_mobile only
+                                $isExist = isRecordExist($this->_dbConn, $routeDetailsTable,"outlet_mobile","outlet_mobile = '$columnData' AND dstatus = 0");
+                            }
+
+                            if ($isExist == 1) {
+                                $errorMessage = ["Mobile Number Already Exist : $columnData"];
+                                echo json_encode(responseMessage([$errorMessage]));
+                                exit();
                             }
                         }
 
