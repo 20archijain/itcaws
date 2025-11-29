@@ -29,7 +29,26 @@ class DownloadMisscall
     final public function getData()
     {
         $arrResult = array(
-            "dataBaseList" => $this->getDatabaseName()
+            "dataBaseList" => $this->getDatabaseName(),
+            "viewHeader" => array(
+                "Id",
+                "OTP",
+                "Mobile Number",
+                "Show Verified",
+                "Processed",
+                "RCD",
+                "RDT",
+
+            ),
+            "viewBody" => array(
+                "id",
+                "token",
+                "rec_who",
+                "showVerified",
+                "processed_on",
+                "rcd",
+                "rdt"
+            ),
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -47,7 +66,6 @@ class DownloadMisscall
             return $where;
         }
     }
-
 
     final public function getDatabaseName()
     {
@@ -165,6 +183,48 @@ class DownloadMisscall
         } else {
             $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
         }
+        echo json_encode($arrMessage);
+    }
+
+    final public function viewData()
+    {
+        $where = $this->getCondition();
+        $database = getFormData($this->_data['searchbar'], 'database');
+        $project = getFormData($this->_data['searchbar'], 'project');
+        $arrData = array();
+        $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  $where $sOrderCond";
+        $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
+        $sQuery .= " " . $limit["limit"];
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $process = $row['process'];
+                if ($process == 1) {
+                    $showVerified = "Verified";
+                } else {
+                    $showVerified = "Not Verified";
+                }
+                $arrData[] = array(
+                   "id" => $row['rec_id'],
+                    "token" => $row["token"],
+                    "rec_who" => $row["rec_who"],
+                    "showVerified" => $showVerified,
+                    "processed_on" => $row["processed_on"],
+                    "rcd" => $row["rcd"],
+                    "rdt" => $row["rdt"],
+                );
+            }
+        }
+        $arrData[] = array(
+            "total" => $limit["total"]
+        );
+
+        $arrMessage = responseMessage(array(), 1, array("data0" => $arrData), true);
         echo json_encode($arrMessage);
     }
 }

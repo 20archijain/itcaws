@@ -515,6 +515,8 @@ export interface DownloadReports {
   teamList: DropdownList<string, string>[];
   typeList: DropdownList<string, string>[];
   tableList: DropdownList<string, string>[];
+  viewHeader: string[];
+  viewBody: string[];
 }
 export interface GetProductiveReportDataResponse {
   monthList?: DropdownList[];
