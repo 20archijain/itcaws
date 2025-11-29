@@ -1,47 +1,44 @@
-<div class="row">
-  <div class="col-lg-12">
-    <div class="card">
-      <form [formGroup]="form" (ngSubmit)="download()" novalidate>
-        <div class="card-header align-items-center d-flex">
-          <h4 class="card-title mb-0 flex-grow-1">
-            <i class="ri-download-cloud-2-line"></i> Download Reports
-          </h4>
+<app-card [options]="false">
+  <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [searchGroup]="form"
+    [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false">
+  </app-table-listing>
+</app-card>
+
+<ng-template #searchTemplate>
+  <div class="row">
+    <div class="col-xxl-3 col-md-3">
+      <app-select controlName="database" placeholder="Database" [options]="dataBaseListOptions"
+        label="app.missCall.selectDatabase" [group]="form" [isRequired]="true" [errorMessages]="errorMessages.database"
+        (onChange)="getProject()"></app-select>
+    </div>
+    <div class="col-xxl-3 col-md-3">
+      <app-select controlName="project" placeholder="Project" [options]="projectOptions"
+        label="app.missCall.selectProject" [group]="form" [isRequired]="true"
+        [errorMessages]="errorMessages.project"></app-select>
+    </div>
+    <div class="col-xxl-3 col-md-3">
+      <app-daterange [group]="form" controlName="dateRange" label="app.missCall.dateRange">
+      </app-daterange>
+    </div>
+    <div class="col-xxl-3 col-md-3 d-flex align-items-center">
+      <!-- <div class="row"> -->
+        <div class="me-2 ms-2 mt-4">
+          <app-button type="submit" text="Search" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
+            [showIconInButton]="true" spinnerText="spinnerText.searching" iconName="ri-search-line">
+          </app-button>
         </div>
-        <div class="card-body">
-          <div class="live-preview">
-            <div class="row gy-4">
-              <div class="col-xxl-3 col-md-3">
-                <app-select controlName="database" placeholder="Database" [options]="dataBaseListOptions"
-                  label="app.missCall.selectDatabase" [group]="form" [isRequired]="true"
-                  [errorMessages]="errorMessages.database" (onChange)="getProject()"></app-select>
-              </div>
-              <div class="col-xxl-3 col-md-3">
-                <app-select controlName="project" placeholder="Project" [options]="projectOptions"
-                  label="app.missCall.selectProject" [group]="form" [isRequired]="true"
-                  [errorMessages]="errorMessages.project"></app-select>
-              </div>
-              <div class="col-xxl-3 col-md-3">
-                <app-daterange [group]="form" controlName="dateRange" label="app.missCall.dateRange">
-                </app-daterange>
-              </div>
-              <div class="col-sm-3 col-md-3 col-xl-3 mt-5">
-                <div class="row">
-                  <div class="col-md-6">
-                    <app-button type="submit" text="Download" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
-                      [showIconInButton]="true" spinnerText="spinnerText.adding" iconName="ri-file-excel-line">
-                    </app-button>
-                  </div>
-                  <div class="col-md-6">
-                    <app-button text="button.clear" btnClass="w-100" class="w-100" colorClass="btn-light"
-                      (onClick)="clearFilters()">
-                    </app-button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div class="me-2 ms-2 mt-4">
+          <app-button type="submit" text="Download" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
+            [showIconInButton]="true" spinnerText="spinnerText.adding" iconName="ri-file-excel-line"
+            (onClick)="download()">
+          </app-button>
         </div>
-      </form>
+        <div class="me-2 ms-2 mt-4">
+          <app-button text="button.clear" btnClass="w-100" colorClass="btn-dark"
+            (onClick)="clearFilters()">
+          </app-button>
+        </div>
+      <!-- </div> -->
     </div>
   </div>
-</div>
+</ng-template>

@@ -21,12 +21,17 @@ export class DownloadMisscallComponent implements OnDestroy, OnInit {
   dataBaseListOptions: DropdownList[] = [];
   projectOptions: DropdownList[] = [];
   searchValue: any;
-  // url = environment.getDownloadMisscallDataUrl;
+  header: string[] = [];
+  body: string[] = [];
+  url = environment.viewProjectsUrl;
 
   errorMessages = {
+    dateRange: COMMON_VALIDATORS.messages.requiredOnly('Date Range'),
     database: COMMON_VALIDATORS.messages.requiredOnly('Database'),
     project: COMMON_VALIDATORS.messages.requiredOnly('Project'),
   };
+isExportBtnDisabled: boolean;
+hideSearchbar: any;
 
   constructor(
     protected formService: FormService,
@@ -56,6 +61,8 @@ export class DownloadMisscallComponent implements OnDestroy, OnInit {
         .subscribe((resp) => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.dataBaseListOptions = resp.data.dataBaseList;
+            this.header = resp.data.viewHeader;
+            this.body = resp.data.viewBody;
           }
         })
     );

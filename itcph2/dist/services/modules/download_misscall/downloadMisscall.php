@@ -15,6 +15,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_PROJECT_LIST']:
             $download->getProjectList();
             break;
+        case $ACTION_LIST['GET_LIST']:
+            $download->viewData();
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);
