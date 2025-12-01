@@ -77,6 +77,7 @@ class UpdateDataCronjob
                     $arrPickupDetails = isset($arrOtherDetails["pickupDetails"]) ? $arrOtherDetails["pickupDetails"] : array();
                     // Get branch stock pickup products
                     $arrStockProductColumns = $this->getBranchWiseStockPickupProducts($branchId, $jsonId, $teamType);
+                    // print_r($arrOtherDetails);die;
                     // Get stock
                     $arrStock = getGridDataAsArray($arrPickupDetails["ansGrid"], 2, count($arrStockProductColumns));
                     // Add stock for each product

@@ -644,7 +644,7 @@ class MdoTeamManagement
                     );
                 } elseif (matchValue($arrData['mdo_access_type'], 2)) {
                     $arrAccess = array(
-                        "team" => array_map('intval',getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "dstatus = 0 AND mdo_id = $teamId")),
+                        "team" => array_map('intval', getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "dstatus = 0 AND mdo_id = $teamId")),
                         "wdCode" => array(),
                     );
                 }
@@ -773,20 +773,27 @@ class MdoTeamManagement
 
             // Team not exist, edit
             if ($iStatus === 0 && $iStatusCloud === 0) {
+                $mdoType = getRowColumn($this->_dbConn, "tblproject_team", "is_type", "dstatus = 0 AND team_id = $teamId");
+                if ($mdoType == 10) {
+                    $typeCon = " AND is_type = 9";
+                } else {
+                    $typeCon = " AND is_type IN (0, 6, 8)";
+                }
                 if ($accessType == 1) {
                     if ($wdCode) {
                         $wdIds = "'" . implode("','", $wdCode) . "'";
                         $arrWdCodes = getRowsColumn($this->_dbConn, "tblmapping_wd", "wd_code", "dstatus = 0 AND rec_id IN ($wdIds)");
                         $wdCodes = "'" . implode("','", $arrWdCodes) . "'";
-                        $arrTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type", "dstatus = 0 AND wd_code IN ($wdCodes) AND s_id = '99'");
+                        $arrDsTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type", "dstatus = 0 AND wd_code IN ($wdCodes) $typeCon");
+                        $arrRmdTeams = getRowsColumns($this->_dbConn, "tblbreeze_team", "team_id, is_type, wd_code", "dstatus = 0 AND wd_code IN ($wdCodes) $typeCon");
+                        $arrTeams = array_merge($arrDsTeams, $arrRmdTeams);
                     }
                 } else {
                     if ($team) {
                         $teamIds = "'" . implode("','", $team) . "'";
-                        $arrTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) AND s_id = '99'");
-                        if (empty($arrTeams)) {
-                            $arrTeams = getRowsColumns($this->_dbConn, "tblbreeze_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) AND s_id = '99'");
-                        }
+                        $arrDsTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) $typeCon");
+                        $arrRmdTeams = getRowsColumns($this->_dbConn, "tblbreeze_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) $typeCon");
+                        $arrTeams = array_merge($arrDsTeams, $arrRmdTeams);
                         $arrWdCode = array();
                         foreach ($arrTeams as $accesWdCodes) {
                             $arrWdCode[] = $accesWdCodes[2];

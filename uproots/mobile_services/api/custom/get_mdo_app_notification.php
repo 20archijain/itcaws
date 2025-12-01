@@ -34,6 +34,7 @@ class GetMdoNotification extends Utilities
 
         // Fetch all teams mapped to this MDO
         $arrTeamIds = $this->tableUtil->getRowsColumn("$dbName.tblmdo_access", "teams", "mdo_id = $teamId");
+        $accessTeamList = "'" . implode("','", $arrTeamIds) . "'";
 
         $arrNotifications = [];
         $arrRoutes = [];
@@ -51,23 +52,12 @@ class GetMdoNotification extends Utilities
         foreach ($arrTeamIds as $dsId) {
             // Try fetching from tblroute_details first
             $routes = $this->tableUtil->getRowsColumn(
-                "$dbName.tblroute_details",
+                "$dbName.tblmdo_offline_data",
                 "route_name",
-                "team_id = '$dsId'",
+                "ds_id = '$dsId' AND dstatus = 0",
                 array(),
                 true
             );
-
-            // If not found, try from tblroute_details_breeze
-            if (empty($routes)) {
-                $routes = $this->tableUtil->getRowsColumn(
-                    "$dbName.tblroute_details_breeze",
-                    "route_name",
-                    "team_id = '$dsId'",
-                    array(),
-                    true
-                );
-            }
 
             // ðŸ§¹ Filter out empty or null route names
             $routes = array_filter($routes, function ($r) {
@@ -76,7 +66,7 @@ class GetMdoNotification extends Utilities
 
             // Merge the routes
             if (!empty($routes)) {
-                $getRoutes = array_merge($getRoutes, $routes);
+                $getRoutes[] = $routes;
             }
 
             // Try fetching from project team table first
@@ -99,14 +89,24 @@ class GetMdoNotification extends Utilities
                 $getTeams[] = $teamName;
             }
         }
+        // ✅ Flatten $getRoutes into one single array & clean it
+        $allRoutes = [];
+
+        foreach ($getRoutes as $routes) {
+            foreach ($routes as $r) {
+                if (!empty($r) && strtoupper($r) !== 'NA') {
+                    $allRoutes[] = $r;
+                }
+            }
+        }
 
         // After the loop, process all collected routes
-        if (!empty($getRoutes)) {
+        if (!empty($allRoutes)) {
             // Build comma-separated route list for SQL IN()
-            $routeList = "'" . implode("','", array_map('addslashes', $getRoutes)) . "'";
+            $routeList = "'" . implode("','", $allRoutes) . "'";
 
             // Fetch routes present in tblmdo_summary (last 3 months)
-            $query = "SELECT DISTINCT route_name FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND route_name IN ($routeList) AND capture_date BETWEEN '$dateFrom' AND '$dateTo'";
+            $query = "SELECT DISTINCT route_name FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND route_name IN ($routeList) AND ds_id IN ($accessTeamList) AND capture_date BETWEEN '$dateFrom' AND '$dateTo'";
             $rsAction = [];
             $iRows = 0;
             $this->dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
@@ -119,38 +119,50 @@ class GetMdoNotification extends Utilities
             }
 
             // 🔸 Find missing routes
-            $missingRoutes = array_diff($getRoutes, $arrRespRoutes);
+            $missingRoutes = array_diff($allRoutes, $arrRespRoutes);
 
             if (!empty($missingRoutes)) {
                 // For each missing route, get wd_code & ds_name
                 foreach ($missingRoutes as $route) {
                     // 1️⃣ Try finding from tblroute_details
-                    $queryRoute = "SELECT DISTINCT route_name, wd_code, (SELECT team_name FROM $dbName.tblproject_team WHERE team_id = rd.team_id) AS ds_name FROM $dbName.tblroute_details rd WHERE rd.route_name = '" . addslashes($route) . "'";
+                    $queryRoute = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
                     $rsActionRoute = [];
                     $rowsRoute = 0;
                     $this->dbConn->ExecuteSelectQuery($queryRoute, $rsActionRoute, $rowsRoute);
 
                     if ($rowsRoute > 0) {
                         while ($rowRoute = $this->dbConn->GetData($rsActionRoute)) {
+                            $vandDsId = $rowRoute['team_id'];
+                            $dsName = $this->tableUtil->getRowColumn(
+                                "$dbName.tblproject_team",
+                                "team_name",
+                                "team_id = '$vandDsId'"
+                            );
                             $arrRoutes[] = [
                                 "route_name" => $rowRoute['route_name'],
                                 "wd_code" => $rowRoute['wd_code'],
-                                "ds_name" => $rowRoute['ds_name']
+                                "ds_name" => $dsName
                             ];
                         }
                     } else {
                         // 2️⃣ If not found in tblroute_details, try tblroute_details_breeze
-                        $queryRouteBreeze = "SELECT DISTINCT route_name, wd_code, (SELECT team_name FROM $dbName.tblbreeze_team WHERE team_id = rd.team_id) AS ds_name FROM $dbName.tblroute_details_breeze rd WHERE rd.route_name = '" . addslashes($route) . "'";
+                        $queryRouteBreeze = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details_breeze rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
                         $rsActionRoute2 = [];
                         $rowsRoute2 = 0;
                         $this->dbConn->ExecuteSelectQuery($queryRouteBreeze, $rsActionRoute2, $rowsRoute2);
 
                         if ($rowsRoute2 > 0) {
                             while ($rowRoute2 = $this->dbConn->GetData($rsActionRoute2)) {
+                                $vandDsId = $rowRoute2['team_id'];
+                                $dsName = $this->tableUtil->getRowColumn(
+                                    "$dbName.tblbreeze_team",
+                                    "team_name",
+                                    "team_id = '$vandDsId'"
+                                );
                                 $arrRoutes[] = [
                                     "route_name" => $rowRoute2['route_name'],
                                     "wd_code" => $rowRoute2['wd_code'],
-                                    "ds_name" => $rowRoute2['ds_name']
+                                    "ds_name" => $dsName
                                 ];
                             }
                         }
@@ -162,17 +174,19 @@ class GetMdoNotification extends Utilities
                 foreach ($arrRoutes as $index => $details) {
                     $arrAllRouteDetails[] = array(
                         "cardHeading" => "Pending Route " . $index + 1,
-                        array(
-                            "label" => "Route",
-                            "value" => $details['route_name'],
-                        ),
-                        array(
-                            "label" => "WD Code",
-                            "value" => $details['wd_code'],
-                        ),
-                        array(
-                            "label" => "DS Name",
-                            "value" => $details['ds_name'],
+                        "kpis" => array(
+                            array(
+                                "label" => "Route",
+                                "value" => $details['route_name'],
+                            ),
+                            array(
+                                "label" => "WD Code",
+                                "value" => $details['wd_code'],
+                            ),
+                            array(
+                                "label" => "DS Name",
+                                "value" => $details['ds_name'],
+                            ),
                         ),
                     );
                 }
@@ -253,17 +267,19 @@ class GetMdoNotification extends Utilities
                 foreach ($arrTeams as $index => $details) {
                     $arrAllTeamsDetails[] = array(
                         "cardHeading" => "Pending DS " . $index + 1,
-                        array(
-                            "label" => "WD Code",
-                            "value" => $details['wd_code'],
-                        ),
-                        array(
-                            "label" => "DS Name",
-                            "value" => $details['ds_name'],
-                        ),
-                        array(
-                            "label" => "DS Type",
-                            "value" => $details['ds_type'],
+                        "kpis" => array(
+                            array(
+                                "label" => "WD Code",
+                                "value" => $details['wd_code'],
+                            ),
+                            array(
+                                "label" => "DS Name",
+                                "value" => $details['ds_name'],
+                            ),
+                            array(
+                                "label" => "DS Type",
+                                "value" => $details['ds_type'],
+                            ),
                         ),
                     );
                 }
@@ -279,7 +295,7 @@ class GetMdoNotification extends Utilities
             }
         }
 
-        $response = $this->response->sendResponse(array("message" => "", "response" => $arrNotifications), 1);
+        $response = $this->response->sendResponse(array("message" => "", "response" => $arrNotifications ? $arrNotifications : array()), 1);
         $this->logOutput($response, $this->sExtraLogData);
     }
 

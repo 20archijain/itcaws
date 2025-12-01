@@ -278,10 +278,10 @@ class TargetReport
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
-        if ($teamType) {
-            $teamTypeCond .= " AND b.team_type = $teamType";
-            // $Cond .= " AND b.is_type = $teamType";
-        }
+        // if ($teamType) {
+        //     $teamTypeCond .= " AND b.is_type = $teamType";
+        //     // $Cond .= " AND b.is_type = $teamType";
+        // }
 
         // $productCond = "";
         // if ($product) {
@@ -324,19 +324,22 @@ class TargetReport
                 }
             }
 
-            $skuColumnAllProduct = implode(" + ", array_map(function ($c) {
-                return "sum($c)";
-            }, $arrColumnsAllProduct));
+            if (!empty($arrColumnsAllProduct)) {
+                $skuColumnAllProduct = implode(" + ", array_map(function ($c) {
+                    return "SUM($c)";
+                }, $arrColumnsAllProduct));
+            }
+
 
             // echo "<pre>";
-            // print_r($skuColumn);die;
+            // print_r($skuColumnAllProduct);die;
             // $skuColumnAllProduct = implode(" + ", $skuColumn);
             // $dateCond = ""
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
             $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
-                " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND b.dstatus = 0" .
+                " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.is_type = 5 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
@@ -429,7 +432,8 @@ class TargetReport
                         $achieveFocus1 = $achieveTarget[0] ?? 0;
                         $achieveFocus2 = $achieveTarget[1] ?? 0;
 
-                        $achieveTargetOverall = $this->getResult("tblvands_summary", "$skuColumnAllProduct as total", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
+                        // print_r($skuColumnAllProduct);die;
+                        $achieveTargetOverall = $this->getResult("tblvands_summary", $skuColumnAllProduct . " AS total", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
 
                         $achieveOverall = $achieveTargetOverall[0];
 

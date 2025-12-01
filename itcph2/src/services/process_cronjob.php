@@ -207,10 +207,12 @@ class ProcessResponse
                             $this->_dbConn->GetLastInsertId($lastRecId);
                             $this->updateProcessStatus($processTable, $respId, $jsonId);
                             if ($jsonId == 10) {
+                                $arrType = array("VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
                                 $this->getAttendanceAddress($attendanceTable, $lt, $lg, $lastRecId);
                                 $attendanceDetails = getRowColumn($this->_dbConn, $attendanceTable, "other_details", "call_type = '0' AND att_id = $lastRecId");
                                 $arrOtherDetails = json_decode($attendanceDetails, true);
                                 $workingWith = $arrOtherDetails['workingWith'];
+                                $routeDetails = $arrOtherDetails['selectRouteYouAreGoingOn'];
                                 if ($workingWith == 'Market work with AE') {
                                     $workWith = 1;
                                 } elseif ($workingWith == 'Market work with GT TL') {
@@ -219,8 +221,23 @@ class ProcessResponse
                                     $workWith = 3;
                                 } else {
                                     $workWith = 0;
+                                    if ($routeDetails[0] == 'Market work with DS') {
+                                        $dsName = $routeDetails[2];
+                                        $wdCode = $routeDetails[1];
+                                    } else {
+                                        $dsName = $routeDetails[1];
+                                        $wdCode = $routeDetails[0];
+                                    }
+                                    // Split by " - "
+                                    $parts = explode(" - ", $dsName);
+                                    // Take last part (after "-")
+                                    $vanDs = trim(end($parts));
                                 }
-                                updateRecord($this->_dbConn, $attendanceTable, "work_with = ?", "att_id = $lastRecId", array($workWith));
+                                if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
+                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?", "att_id = $lastRecId", array($workWith));
+                                } else {
+                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?, type = ?, ds_name = ?, wd_code = ?", "att_id = $lastRecId", array($workWith, $arrType[$vanDs], $dsName, $wdCode));
+                                }
                             }
                         }
                     } elseif ($processDayend && is_string($dayendValue) && $dayendValue && strtolower(substr($dayendValue, 0, 7)) === "day end") {
@@ -354,8 +371,9 @@ class ProcessResponse
                             if ($jsonId == 99) {
                                 // Other Outlet
                                 if ($arrParams[13] == "Add Outlet") {
-                                    $otherCols = "resp_id, team_id, route_name, outlet_name, outlet_mobile, wd_code, section_code, state, district, sub_district_goi, beat_day, market_name, goi_market_id, wd_town, goi_pop_group, shop_type, capture_date, capture_datetime, lt, lg, sort_order";
-                                    $otherVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+                                    $otherCols = "resp_id, team_id, route_name, outlet_name, outlet_mobile, wd_code, section_code, state, district, sub_district_goi, beat_day, market_name" .
+                                        ", goi_market_id, wd_town, goi_pop_group, shop_type, capture_date, capture_datetime, lt, lg, sort_order, kyc_done, swd_west";
+                                    $otherVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                                     $route = json_decode($arrParams[14], true)[0];
                                     if ($jsonId == 99) {
                                         $shopName = $arrParams[16];
@@ -398,10 +416,11 @@ class ProcessResponse
                                             $goiPopGroup = $arrRouteInfo[9] ? $arrRouteInfo[9] : "";
                                             // $circle = $arrRouteInfo[10] ? $arrRouteInfo[10] : "";
                                             $sort_order = $arrRouteInfo[10] ? $arrRouteInfo[10] : 0;
-
+                                            $kycDone = 1;
+                                            $swdWest = in_array($branchId, [42, 43]) ? 1 : 0;
                                             $arrOtherParams = array(
                                                 $respId, $teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $sectionCode, $state, $district, $subDistrictGoi,
-                                                $beatDay, $marketName, $goiMarketId, $wdTown, $goiPopGroup, $shopType, $captureDate, $captureDatetime, $lt, $lg, $sort_order
+                                                $beatDay, $marketName, $goiMarketId, $wdTown, $goiPopGroup, $shopType, $captureDate, $captureDatetime, $lt, $lg, $sort_order, $kycDone, $swdWest
                                             );
                                             $existingShopId = getRowColumn(
                                                 $this->_dbConn,

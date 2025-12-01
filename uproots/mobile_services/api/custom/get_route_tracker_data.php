@@ -78,7 +78,7 @@ class GetRouteTracker extends Utilities
                     $shopName = $this->tableUtil->getRowColumn(
                         "$dbName.$TBL_ROUTE_DETAILS",
                         "outlet_name",
-                        "dstatus = 0  AND team_id = '$teamId' AND rec_id = '$RespData[3]'"
+                        "team_id = '$teamId' AND rec_id = '$RespData[3]'"
                     );
                     // Assign icon dynamically based on index
                     $icon = ($index === 0) ? "green_pin" : (($index === $responseCount - 1) ? "red_pin" : "orange_pin");

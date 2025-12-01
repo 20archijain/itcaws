@@ -822,9 +822,9 @@ class MasterDataDownload
 
         $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99  AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
-        $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group, a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, a.kyc_done, 
-                   c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
-                   
+        $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group" .
+            ", a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, a.kyc_done, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
+
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -881,7 +881,7 @@ class MasterDataDownload
                     $billingStatus = "Billed";
                 } else {
                     // Check ANY visit Exist?
-                    $anyVisit = getRowColumns($this->_dbConn,$respTable,"COUNT(pro_id)","dstatus = 0 $cond");
+                    $anyVisit = getRowColumns($this->_dbConn, $respTable, "COUNT(pro_id)", "dstatus = 0 $cond");
 
                     if ($anyVisit[0] > 0) {
                         // Shop exists but no visit in selected month

@@ -923,7 +923,7 @@ class ProductiveDashboard
         $arrResponse = array();
         $arrSalesColumns = array(); // Reset the sales columns array here
         $arrMonthYear = array();
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD" , 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $monthWiseSales = array();
         $totalSumDistrictLevelSale = [
             "No of Users" => 0,
@@ -1037,11 +1037,9 @@ class ProductiveDashboard
                             " WHERE a.team_id = b.team_id AND b.branch_id = d.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 AND b.s_id = 99 AND b.wd_code = e.wd_code AND a.is_beat_adherence = 'Yes' AND d.main_branch = '$main_branch' $where $yearAndMonthCond" .
                             " GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 5) {
-                        if($main_branch == 'NDEL')
-                        {
+                        if ($main_branch == 'NDEL') {
                             $route = 'tblroute_details_delhi';
-                        }else
-                        {
+                        } else {
                             $route = 'tblroute_details';
                         }
                         $queryNew = "SELECT count(a.rec_id) as totalSales, e.circle, e.section, b.wd_code, b.team_name, b.team_id, b.is_type, d.district, d.main_branch FROM $route AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
@@ -1662,18 +1660,18 @@ class ProductiveDashboard
             if ($sumActCftPerOutlet > 0 && $sumActTotalTransaction > 0) {
                 $sumCftOutlet =
                     round((int)($sumActCftPerOutlet / $sumActTotalTransaction), 0);
-                    $cftOutletseconds = round((int)$sumCftOutlet / 1000);
-                    $cftOutletminutes = round((int)$cftOutletseconds / 60);
-                    $cftOutletmhours = round((int)$cftOutletminutes / 60);
+                $cftOutletseconds = round((int)$sumCftOutlet / 1000);
+                $cftOutletminutes = round((int)$cftOutletseconds / 60);
+                $cftOutletmhours = round((int)$cftOutletminutes / 60);
                 $totalSumDistrictLevelSale['CFT per outlet'] = "{$cftOutletmhours} h {$cftOutletminutes} m";
             }
             if ($sumActCftPerDay > 0 && $sumActDaysPresent > 0) {
                 $sumCftPerDay =
                     round((int)($sumActCftPerDay / $sumActDaysPresent), 0);
 
-                    $cftperDayseconds = round((int)$sumCftPerDay / 1000);
-                    $cftperDayminutes = round((int)$cftperDayseconds / 60);
-                    $cftperDaymhours = round((int)$cftperDayminutes / 60);
+                $cftperDayseconds = round((int)$sumCftPerDay / 1000);
+                $cftperDayminutes = round((int)$cftperDayseconds / 60);
+                $cftperDaymhours = round((int)$cftperDayminutes / 60);
                 $totalSumDistrictLevelSale['CFT per days'] = "{$cftperDaymhours} h {$cftperDayminutes} m";
             }
         }
