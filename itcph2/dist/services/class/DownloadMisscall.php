@@ -31,17 +31,17 @@ class DownloadMisscall
         $arrResult = array(
             "dataBaseList" => $this->getDatabaseName(),
             "viewHeader" => array(
-                "Id",
+                // "Id",
                 "OTP",
                 "Mobile Number",
-                "Show Verified",
-                "Processed",
+                "Is Verified",
+                "Processed On",
                 "RCD",
                 "RDT",
 
             ),
             "viewBody" => array(
-                "id",
+                // "id",
                 "token",
                 "rec_who",
                 "showVerified",
@@ -57,14 +57,26 @@ class DownloadMisscall
 
     final public function getCondition()
     {
-        if (isset($this->_data['dateRange']['from']['year'], $this->_data['dateRange']['from']['month'], $this->_data['dateRange']['from']['day'], $this->_data['dateRange']['to']['year'], $this->_data['dateRange']['to']['month'], $this->_data['dateRange']['to']['day'])) {
-            $fromArr = $this->_data['dateRange']['from'];
-            $toArr   = $this->_data['dateRange']['to'];
-            $from = sprintf('%04d-%02d-%02d', $fromArr['year'], $fromArr['month'], $fromArr['day']);
-            $to   = sprintf('%04d-%02d-%02d', $toArr['year'], $toArr['month'], $toArr['day']);
-            $where = "WHERE rcd BETWEEN '$from' AND '$to'";
-            return $where;
+        $where = "";
+        $where.= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("rcd", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+        // if (isset($this->_data['searchbar']['dateRange']['from']['year'], $this->_data['searchbar']['dateRange']['from']['month'], $this->_data['searchbar']['dateRange']['from']['day'], $this->_data['searchbar']['dateRange']['to']['year'], $this->_data['searchbar']['dateRange']['to']['month'], $this->_data['searchbar']['dateRange']['to']['day'])) {
+        //     $fromArr = $this->_data['searchbar']['dateRange']['from'];
+        //     $toArr   = $this->_data['searchbar']['dateRange']['to'];
+        //     $from = sprintf('%04d-%02d-%02d', $fromArr['year'], $fromArr['month'], $fromArr['day']);
+        //     $to   = sprintf('%04d-%02d-%02d', $toArr['year'], $toArr['month'], $toArr['day']);
+        //     $where .= "AND  rcd BETWEEN '$from' AND '$to'";
+        // }
+        $phoneNumber = getFormData($this->_data['searchbar'], "phoneNumber");
+        if (isset($phoneNumber) && !empty($phoneNumber)) {
+            $where .= " AND rec_who = $phoneNumber";
         }
+        return $where;
     }
 
     final public function getDatabaseName()
@@ -189,14 +201,16 @@ class DownloadMisscall
     final public function viewData()
     {
         $where = $this->getCondition();
+        $phoneCond = "";
         $database = getFormData($this->_data['searchbar'], 'database');
         $project = getFormData($this->_data['searchbar'], 'project');
         $arrData = array();
         $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  $where $sOrderCond";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
-
+        // print_r($sQuery);
+        // die;
         $rsAction = null;
         $iActionRows = 0;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
@@ -210,7 +224,7 @@ class DownloadMisscall
                     $showVerified = "Not Verified";
                 }
                 $arrData[] = array(
-                   "id" => $row['rec_id'],
+                    //    "id" => $row['rec_id'],
                     "token" => $row["token"],
                     "rec_who" => $row["rec_who"],
                     "showVerified" => $showVerified,

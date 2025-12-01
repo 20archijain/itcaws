@@ -3,42 +3,49 @@
     [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false">
   </app-table-listing>
 </app-card>
-
 <ng-template #searchTemplate>
   <div class="row">
-    <div class="col-xxl-3 col-md-3">
+    <div class="col-xxl-2 col-md-2">
       <app-select controlName="database" placeholder="Database" [options]="dataBaseListOptions"
         label="app.missCall.selectDatabase" [group]="form" [isRequired]="true" [errorMessages]="errorMessages.database"
         (onChange)="getProject()"></app-select>
     </div>
-    <div class="col-xxl-3 col-md-3">
+    <div class="col-xxl-2 col-md-2">
       <app-select controlName="project" placeholder="Project" [options]="projectOptions"
         label="app.missCall.selectProject" [group]="form" [isRequired]="true"
         [errorMessages]="errorMessages.project"></app-select>
     </div>
-    <div class="col-xxl-3 col-md-3">
-      <app-daterange [group]="form" controlName="dateRange" label="app.missCall.dateRange">
-      </app-daterange>
+    <div class="col-xxl-2 col-md-2">
+      <app-date [group]="form" controlName="dateFrom"  [showValidationState]="false"
+        label="app.missCall.from">
+      </app-date>
     </div>
-    <div class="col-xxl-3 col-md-3 d-flex align-items-center">
-      <!-- <div class="row"> -->
-        <div class="me-2 ms-2 mt-4">
-          <app-button type="submit" text="Search" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
-            [showIconInButton]="true" spinnerText="spinnerText.searching" iconName="ri-search-line">
-          </app-button>
-        </div>
-        <div class="me-2 ms-2 mt-4">
-          <app-button type="submit" text="Download" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
-            [showIconInButton]="true" spinnerText="spinnerText.adding" iconName="ri-file-excel-line"
-            (onClick)="download()">
-          </app-button>
-        </div>
-        <div class="me-2 ms-2 mt-4">
-          <app-button text="button.clear" btnClass="w-100" colorClass="btn-dark"
-            (onClick)="clearFilters()">
-          </app-button>
-        </div>
-      <!-- </div> -->
+    <div class="col-xxl-2 col-md-2">
+      <app-date [group]="form" controlName="dateTo" label="app.missCall.to"
+        [showValidationState]="false">
+      </app-date>
+    </div>
+    <div class="col-xxl-2 col-md-2">
+      <app-input [group]="form" controlName="phoneNumber" [type]="'number'" placeholder="Mobile Number"
+        label="app.missCall.phoneNumber">
+      </app-input>
+    </div>
+    <div class="col-xxl-2 col-md-1 d-flex align-items-center">
+      <div class="me-1 mt-4">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
+          [showIconInButton]="true" spinnerText="spinnerText.searching">
+        </app-button>
+      </div>
+      <div class="me-1 mt-4">
+        <app-button type="submit" text="Download" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
+          [showIconInButton]="true" spinnerText="spinnerText.adding" iconName="ri-file-excel-line"
+          (onClick)="download()">
+        </app-button>
+      </div>
+      <div class="mt-4">
+        <app-button text="button.clear" btnClass="w-100" colorClass="btn-dark" (onClick)="clearFilters()">
+        </app-button>
+      </div>
     </div>
   </div>
 </ng-template>

@@ -21,12 +21,13 @@ export class DownloadMisscallComponent implements OnDestroy, OnInit {
   dataBaseListOptions: DropdownList[] = [];
   projectOptions: DropdownList[] = [];
   searchValue: any;
+  group: UntypedFormGroup;
   header: string[] = [];
   body: string[] = [];
   url = environment.viewProjectsUrl;
 
   errorMessages = {
-    dateRange: COMMON_VALIDATORS.messages.requiredOnly('Date Range'),
+    // dateRange: COMMON_VALIDATORS.messages.date('Date Range'),
     database: COMMON_VALIDATORS.messages.requiredOnly('Database'),
     project: COMMON_VALIDATORS.messages.requiredOnly('Project'),
   };
@@ -41,12 +42,12 @@ hideSearchbar: any;
 
   ngOnInit() {
     this.form = this.fb.group({
-      dateRange: this.fb.group({
-        from: [''],
-        to: ['']
-      }),
+        dateFrom: [null],
+        dateTo: [null],
+
       database: [null, COMMON_VALIDATORS.validators.requiredOnly],
       project: [null, COMMON_VALIDATORS.validators.requiredOnly],
+      phoneNumber: [null, COMMON_VALIDATORS.validators.mobile()],
     });
 
     this.getInitialData();
@@ -69,6 +70,7 @@ hideSearchbar: any;
   }
 
   getProject() {
+    this.loaderService.startLoader();
     this.subscription.push(
       this.formService.customActionCall<DownloadReports>(STATIC_MODULES.custom.getProjectsList, { database: this.form.get('database').value }, null, null)
         .pipe(

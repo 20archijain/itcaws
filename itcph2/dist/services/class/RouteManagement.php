@@ -113,24 +113,42 @@ class RouteManagement
         $sOrderCond = getOrderByCond("a.rlm", $this->_data["sort"]);
 
         // filter by search query
+        // $phoneNumber = isset($this->_data['searchbar']['phoneNumber']) ? $this->_data['searchbar']['phoneNumber'] : [];
+        // if (!empty($phoneNumber)) {
+        //      $phoneArray = array_filter(array_map('trim', explode(',', $phoneNumber)));
+        //     $phoneArray = array_map(function ($v) {
+        //         return addslashes($v);
+        //     }, $phoneArray);
+        //     $PhoneSql = "'" . implode("','", $phoneArray) . "'";
+        //     $where .= " AND a.outlet_mobile IN ($PhoneSql) ";
+        // }
+        $phoneNumber = isset($this->_data['searchbar']['phoneNumber'])
+            ? $this->_data['searchbar']['phoneNumber']
+            : '';
+
+        if (!empty(trim($phoneNumber))) {
+            $phoneArray = preg_split('/[\s,]+/', trim($phoneNumber));
+            $phoneArray = array_filter($phoneArray);
+            $phoneArray = array_map('addslashes', $phoneArray);
+            $PhoneSql = "'" . implode("','", $phoneArray) . "'";
+            $where .= " AND a.outlet_mobile IN ($PhoneSql) ";
+        }
+        // print_r($phoneNumber);
+        // die;
+
         $branch = isset($this->_data['searchbar']['branch']) ? $this->_data['searchbar']['branch'] : [];
         if (!empty($branch) && is_array($branch)) {
             $branchId = implode(',', $branch);
             $where .= "AND b.branch_id IN ($branchId)";
         }
 
-        $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : [];
-        if (!empty($recIds)) {
-
-            $recIdsArray = array_filter(array_map('trim', explode(',', $recIds)));
-
-            $recIdsArray = array_map(function ($v) {
-                return addslashes($v);
-            }, $recIdsArray);
-
+        $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : '';
+        if (!empty(trim($recIds))) {
+            $recIdsArray = preg_split('/[\s,]+/', trim($recIds));
+            $recIdsArray = array_filter($recIdsArray);
+            $recIdsArray = array_map('addslashes', $recIdsArray);
             // Convert to `'val1','val2','val3'`
             $recIdsSql = "'" . implode("','", $recIdsArray) . "'";
-
             $where .= " AND a.rec_id IN ($recIdsSql) ";
         }
 
