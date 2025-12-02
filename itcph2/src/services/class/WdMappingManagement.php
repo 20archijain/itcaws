@@ -119,6 +119,62 @@ class WdMappingManagement
         return $condition;
     }
 
+    final public function getAddProjectData()
+    {
+        $arrResult = array(
+            "districtList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['BRANCH_TABLE'], "district", "district", "dstatus = 0"),
+            "branchList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['BRANCH_TABLE'], "main_branch", "main_branch", "dstatus = 0"),
+        );
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+
+        echo json_encode($arrMessage);
+    }
+
+    final public function addProject()
+    {
+        $district = getFormData($this->_data, "district");
+        $branch = getFormData($this->_data, "branch");
+        $circle = html_entity_decode(getFormData($this->_data, "circle"));
+        $circle_name = html_entity_decode(getFormData($this->_data, "circle_name"));
+        $section = html_entity_decode(getFormData($this->_data, "section"));
+        $section_name = html_entity_decode(getFormData($this->_data, "section_name"));
+        $wdCode = html_entity_decode(getFormData($this->_data, "wd_code"));
+        $wd_firm_name = html_entity_decode(getFormData($this->_data, "wd_firm_name"));
+        $wd_market = html_entity_decode(getFormData($this->_data, "wd_market"));
+        $wd_pop_group = html_entity_decode(getFormData($this->_data, "wd_pop_group"));
+
+        $mappingTable = $this->_tables["WD_MAPPING_TABLE"];
+
+        //check if wd exists
+        // Don't use dstatus = 0
+        $iStatus = isRecordExist($this->_dbConn, $mappingTable, "wd_code", "wd_code = ?", array($wdCode));
+
+        // Not exist
+        if ($iStatus == 0) {
+            $cDT = currentDateTime();
+            $cD = currentDate();
+
+            $cols = "district, branch, circle, circle_name, section, section_name, wd_code, wd_firm_name, wd_market, wd_pop_group, rcd, rdt";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $arrParams = array($district, $branch, $circle, $circle_name, $section, $section_name, $wdCode, $wd_firm_name, $wd_market, $wd_pop_group, $cD, $cDT);
+
+            // Add wd
+            $iStatus = addRecord($this->_dbConn, $mappingTable, $cols, $vals, $arrParams);
+
+            // wd added
+            if ($iStatus == 2) {
+                $arrMessage = responseMessage(array($GLOBALS['DATA_ADDED']), 1);
+            } else {
+                $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_ADDED']));
+            }
+        } else {
+            $arrMessage = responseMessage(array($GLOBALS['WD_EXISTS']));
+        }
+
+
+        echo json_encode($arrMessage);
+    }
+
 
     final public function getViewWDMappingData()
     {

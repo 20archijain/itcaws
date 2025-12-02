@@ -294,7 +294,7 @@ class TargetReport
         // }
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
 
         // $branchCond = "";
         if ($branch) {
@@ -338,7 +338,7 @@ class TargetReport
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.is_type = 5 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
@@ -354,6 +354,7 @@ class TargetReport
                     $team_id = $row4["team_id"];
                     $district = $row4["district"];
                     $branch = $row4["main_branch"];
+                    $region = $row4["branch_name"];
                     $circle_name = $row4["circle_name"];
                     $circle = $row4["circle"];
                     $section_name = $row4["section_name"];
@@ -500,6 +501,7 @@ class TargetReport
                             $month,
                             $district,
                             $branch,
+                            $region,
                             $showCircle,
                             $showSection,
                             $wd_code,
@@ -524,6 +526,7 @@ class TargetReport
                             $month,
                             $district,
                             $branch,
+                            $region,
                             $showCircle,
                             $showSection,
                             $wd_code,
@@ -544,13 +547,13 @@ class TargetReport
                         ];
 
                         //Third Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""];
+                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""];
 
                         //Forth Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
+                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
 
                         //Fifth Column
-                        $arrExcelData[] = [$month, $district, $branch, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
+                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
 
                         $assignTarget = array();
                         $achieveTarget = array();

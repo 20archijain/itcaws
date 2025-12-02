@@ -385,6 +385,7 @@ class RouteDataUpload
         echo json_encode($arrMessage);
     }
 
+
     final public function getDownloadData()
     {
         $currentDateTime = currentDateTime();
@@ -405,10 +406,32 @@ class RouteDataUpload
             "Beat Name"
         ];
 
-        $fileName = "MDO_Transaction_Report_$currentDateTime.xlsx";
+        $fileName = "ROUTE_DATA_FORMAT.xlsx";
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->fromArray($arrExcelData);
+
+        // Apply yellow background to header row
+        $headerStyle = [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'FFFF00', // Yellow color
+                ],
+            ],
+            'font' => [
+                'bold' => true, 
+            ],
+        ];
+
+        // Get the last column letter (J in this case - 10 columns)
+        $lastColumn = $sheet->getHighestColumn();
+        $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($headerStyle);
+
+        // Optional: Auto-size columns
+        foreach (range('A', $lastColumn) as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
 
         if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
             mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
@@ -425,6 +448,4 @@ class RouteDataUpload
 
         echo json_encode($arrMessage);
     }
-
-
 }
