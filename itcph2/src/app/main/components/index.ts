@@ -49,6 +49,7 @@ import { TargetReportComponent } from './assign-target/target-report.component';
 import { MdoPerformanceComponent } from './mdo-performance/mdo-performance.component';
 import { MDORouteDataUploadComponent } from './route-data/mdo-route-upload.component';
 import { MDOViewTeamComponent } from './team/mdoview.team.component';
+import { FocusBrandReportingComponent } from './focus-brand-reporting/focus.brand.reporting.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -100,6 +101,7 @@ export const MAIN_COMPONENTS = [
   MdoPerformanceComponent,
   MDOViewTeamComponent,
   MDORouteDataUploadComponent,
+  FocusBrandReportingComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -152,4 +154,5 @@ export const MAP_MAIN_COMPONENTS = {
   MdoPerformanceComponent,
   MDOViewTeamComponent,
   MDORouteDataUploadComponent,
+  FocusBrandReportingComponent,
 };
