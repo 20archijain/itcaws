@@ -87,6 +87,21 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
                 label: 'app.team.add.dsNumber', type: CONTROL_CONFIG.INPUT_BOX, required: true,
                 validators: COMMON_VALIDATORS.validators.mobile(true),
               },
+              {
+                controlName: 'circle', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Circle'),
+                label: 'app.team.add.circle', type: CONTROL_CONFIG.SELECT_BOX, required: true,
+                validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.circleList,
+              },
+              {
+                controlName: 'section', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Section'),
+                label: 'app.team.add.section', type: CONTROL_CONFIG.SELECT_BOX, required: true,
+                validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.sectionList,
+              },
+              {
+                controlName: 'wd_code', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Section'),
+                label: 'app.team.add.wdCode', type: CONTROL_CONFIG.SELECT_BOX, required: true,
+                validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.wdCodeList
+              },
               // {
               //   controlName: 'password', errorMessages: LOGIN_VALIDATORS.messages.password,
               //   label: 'auth.login.form.password', required: true, type: CONTROL_CONFIG.INPUT_BOX,

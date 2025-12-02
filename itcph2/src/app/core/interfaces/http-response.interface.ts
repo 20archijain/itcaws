@@ -172,6 +172,8 @@ export interface GetDownloadFileDetails {
 }
 
 export interface GetAddProjectDataResponse {
+  branchList: DropdownList[];
+  districtList: DropdownList[];
   clientList: DropdownList[];
   landingPageList: DropdownList[];
   checkboxList: DropdownList[];

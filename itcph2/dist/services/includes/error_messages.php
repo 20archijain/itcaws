@@ -84,6 +84,11 @@ $PROJECT_NOT_ADDED = "Project not added";
 $PROJECT_EXISTS = "Project already exists";
 $LANDING_PAGE_NO_LONGER_EXISTS = "Landing page no longer exists, please choose another Landing page";
 
+// DATA
+$DATA_ADDED = "Data added";
+$DATA_NOT_ADDED = "Data not added";
+$WD_EXISTS = "Wd Code already exists";
+
 // TEAM
 $TEAM_ADDED = "Team added";
 $TEAM_NOT_ADDED = "Team not added";
