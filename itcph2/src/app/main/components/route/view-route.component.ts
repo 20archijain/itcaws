@@ -33,6 +33,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
       branch: [],
       team: [],
       recIds: [],
+      phoneNumber: [],
     });
     this.getInitialData();
   }

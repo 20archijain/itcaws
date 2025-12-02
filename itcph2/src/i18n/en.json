@@ -315,7 +315,9 @@
     "missCall": {
       "selectDatabase": "Select Database",
       "selectProject": "Select Project",
-      "dateRange": "Date Range"
+      "from": "From",
+      "to": "To",
+      "phoneNumber": "Mobile Number"
     },
     "download": {
       "downloadTargetReport": "Target Report",
@@ -401,7 +403,7 @@
     "downloadSummary": "Download Summary",
     "downloadBinder": "Download Binder Report",
     "downloadAttendance": "Download Attendance Report",
-    "downloadpdf": "Download PDF",
+    "downloadPdf": "Download PDF",
     "logout": "Logout",
     "login": "Login",
     "next": "Next",
