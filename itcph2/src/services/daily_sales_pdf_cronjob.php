@@ -266,6 +266,7 @@ class generatePDFCronjob
         $headerData = [
             ['DS ID', $teamId],
             ['DS Name', $teamName],
+            ['DS Type', $dsType],
             ['Date', $commonDate],
             ['Route', $commonRoute],
         ];
@@ -453,7 +454,7 @@ class generatePDFCronjob
     final public function generatePDF()
     {
         $currentDate = currentDate();
-        $sDateCond = "AND activity_date = '$currentDate'";
+        $sDateCond = "AND a.activity_date = '$currentDate'";
 
         $cDT = currentDateTime();
         $cD = $currentDate;
@@ -461,11 +462,10 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT summary_id, team_id, start_datetime, end_datetime FROM tblvands_summary WHERE dstatus = 0 AND pdf_generated = '0'" .
+        $sQuery = "SELECT a.summary_id, a.team_id, a.start_datetime, a.end_datetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.is_type in (0,5) AND a.pdf_generated = '0'" .
             " $sDateCond LIMIT 5";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
-
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $summary_id = $row["summary_id"];
