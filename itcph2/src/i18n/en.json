@@ -167,8 +167,13 @@
         "category": "Brand Family",
         "product": "Variant",
         "circle": "Circle",
+        "circle_name": "Circle Name",
         "section": "Section",
+        "section_name": "Section Name",
         "wdCode": "WD Code",
+        "wd_firm_name": "WD Firm Name",
+        "wd_market": "WD Market",
+        "wd_pop_group": "WD POP Group",
         "dsType": "Surveyor Type",
         "month": "Month",
         "year": "Year",
@@ -255,6 +260,17 @@
           "editHeading": "Edit User"
         }
       }
+    },
+    "focusBrandReporting":{
+      "id" : "ID",
+      "branch" : "Branch",
+      "month" : "Month",
+      "year" : "Year",
+      "category_name" : "Category Name",
+      "product_name" : "Product Name",
+      "summary_column_name" : "Summary Column Name",
+      "viewFocusBrand" : "Focus Brand Reporting",
+      "editProduct" : "Edit Product"
     },
     "reporting": {
       "timestamp": "Timestamp",

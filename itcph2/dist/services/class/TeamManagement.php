@@ -511,6 +511,9 @@ class TeamManagement
                 "json",
                 "deleteStatus"
             ),
+            "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "circle", "circle", "dstatus = 0"),
+            "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "section", "section", "dstatus = 0"),
+            "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "wd_code", "wd_code", "dstatus = 0"),
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -557,7 +560,7 @@ class TeamManagement
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.project_id, a.team_id, a.team_name, a.is_type, a.dstatus, a.wd_code, b.branch_name,a.ds_number, c.rec_id, c.username, c.password, c.mobile, c.c_init_xml FROM $projectTeamTable AS a, $branchTable AS b" .
+        $sQuery = "SELECT a.section, a.circle, a.project_id, a.team_id, a.team_name, a.is_type, a.dstatus, a.wd_code, b.branch_name,a.ds_number, c.rec_id, c.username, c.password, c.mobile, c.c_init_xml FROM $projectTeamTable AS a, $branchTable AS b" .
             ", $cloudDBName.$cloudAuthPinTable AS c WHERE  a.branch_id = b.branch_id AND a.s_id IN (99,10) AND a.team_id = c.team_id AND c.db_name = '{$GLOBALS['DB_DBNAME']}' $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
@@ -575,12 +578,16 @@ class TeamManagement
                     "projectId" => $arrData["project_id"],
                     "recId" => $arrData["rec_id"],
                     "mobile" => $arrData["mobile"],
+                    "phone" => $arrData["mobile"],
                     "username" => $arrData["username"],
                     "password" => $arrData["password"],
                     "json" => $arrData["c_init_xml"],
                     "branchName" => $arrData["branch_name"],
                     "wdCode" => $arrData["wd_code"],
                     "deleteValue" => $arrData['dstatus'],
+                    "circle" => $arrData['circle'],
+                    "section" => $arrData['section'],
+                    "wd_code" => $arrData['wd_code'],
                     "deleteStatus" => $GLOBALS["ARR_DELETE_STATUS"][$arrData['dstatus']],
                 );
             }
@@ -668,7 +675,9 @@ class TeamManagement
         $teamName = getFormData($this->_data, "teamName");
         $phone = getFormData($this->_data, "phone");
         // $password = getFormData($this->_data, "password");
-        // $json = getFormData($this->_data, "json");
+        $circle = getFormData($this->_data, "circle");
+        $section = getFormData($this->_data, "section");
+        $wdCode = getFormData($this->_data, "wd_code");
 
         $isValidated = $this->checkEditTeamValidation($teamName, $phone);
 
@@ -676,6 +685,7 @@ class TeamManagement
         if ($isValidated) {
             $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
             $cloudAuthPinTable = $this->_tables["CLOUD_AUTHPIN_TABLE"];
+            $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
 
             //check if team or username exists
             // Don't use dstatus = 0
@@ -685,8 +695,8 @@ class TeamManagement
 
             // Team not exist, edit
             if ($iStatus === 0 && $iStatusCloud === 0) {
-                $cols = "team_name = ?, ds_number = ?, modif_id = ?";
-                $arrParams = array($teamName, $phone, $this->_iUserId, $teamId);
+                $cols = "team_name = ?, ds_number = ?, modif_id = ?, circle = ?, section = ?, wd_code = ?";
+                $arrParams = array($teamName, $phone, $this->_iUserId, $circle, $section, $wdCode, $teamId);
 
                 $iStatus = updateRecord($this->_dbConn, $projectTeamTable, $cols, "dstatus = 0 AND team_id = ?", $arrParams);
 
@@ -697,6 +707,12 @@ class TeamManagement
 
                 // team modified
                 if ($iStatus === 1 || $iStatusCloud === 1) {
+                    if ($iStatus === 1 && isset($wdCode)) {
+                        $colsRoute = " wd_code = ?";
+                        $arrParamsRoute = array($wdCode, $teamId);
+
+                        $iStatusRoute = updateRecord($this->_dbConn, $routeTable, $colsRoute, "dstatus = 0 AND team_id = ?", $arrParamsRoute);
+                    }
                     $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
                 } else {
                     $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));

@@ -1,0 +1,29 @@
+<app-card cardTitle="{{ 'app.focusBrandReporting.viewFocusBrand' | translate }}" [options]="false">
+  <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
+    [searchTemplate]="searchTemplate" [searchGroup]="form" editLabel="app.focusBrandReporting.editProduct"
+    [editConfig]="editConfig" editModalSize="modal-lg" [isSelectable]="false">
+  </app-table-listing>
+</app-card>
+
+<ng-template #searchTemplate>
+  <div class="row">
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form" controlName="branch"
+        [options]="branchOptions" [errorMessages]="errorMessages.branch">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.salesDashboard.year' | translate }}" [group]="form" controlName="year"
+        [options]="yearOptions" [errorMessages]="errorMessages.year">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-select placeholder="{{ 'app.salesDashboard.month' | translate }}" [group]="form" controlName="month"
+         [options]="monthOptions" [errorMessages]="errorMessages.month">
+      </app-select>
+    </div>
+    <div class="col-sm-4 col-md-3">
+      <app-button type="submit" text="button.search"></app-button>
+    </div>
+  </div>
+</ng-template>
