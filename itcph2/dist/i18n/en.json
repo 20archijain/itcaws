@@ -167,8 +167,13 @@
         "category": "Brand Family",
         "product": "Variant",
         "circle": "Circle",
+        "circle_name": "Circle Name",
         "section": "Section",
+        "section_name": "Section Name",
         "wdCode": "WD Code",
+        "wd_firm_name": "WD Firm Name",
+        "wd_market": "WD Market",
+        "wd_pop_group": "WD POP Group",
         "dsType": "Surveyor Type",
         "month": "Month",
         "year": "Year",
@@ -256,6 +261,17 @@
         }
       }
     },
+    "focusBrandReporting":{
+      "id" : "ID",
+      "branch" : "Branch",
+      "month" : "Month",
+      "year" : "Year",
+      "category_name" : "Category Name",
+      "product_name" : "Product Name",
+      "summary_column_name" : "Summary Column Name",
+      "viewFocusBrand" : "Focus Brand Reporting",
+      "editProduct" : "Edit Product"
+    },
     "reporting": {
       "timestamp": "Timestamp",
       "team": "Team",
@@ -299,7 +315,9 @@
     "missCall": {
       "selectDatabase": "Select Database",
       "selectProject": "Select Project",
-      "dateRange": "Date Range"
+      "from": "From",
+      "to": "To",
+      "phoneNumber": "Mobile Number"
     },
     "download": {
       "downloadTargetReport": "Target Report",
@@ -385,7 +403,7 @@
     "downloadSummary": "Download Summary",
     "downloadBinder": "Download Binder Report",
     "downloadAttendance": "Download Attendance Report",
-    "downloadpdf": "Download PDF",
+    "downloadPdf": "Download PDF",
     "logout": "Logout",
     "login": "Login",
     "next": "Next",
