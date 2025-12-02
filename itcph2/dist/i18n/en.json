@@ -401,7 +401,8 @@
     "clear": "Clear",
     "show": "Show",
     "reset": "Reset",
-    "searchProduct": "Search Products"
+    "searchProduct": "Search Products",
+    "format" : "Format"
   },
   "err": {
     "username": {

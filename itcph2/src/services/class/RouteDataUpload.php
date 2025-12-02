@@ -1,6 +1,8 @@
 <?php
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // phpcs:ignore
 class RouteDataUpload
@@ -382,4 +384,47 @@ class RouteDataUpload
 
         echo json_encode($arrMessage);
     }
+
+    final public function getDownloadData()
+    {
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // create header
+        $arrExcelData = [];
+        $arrExcelData[] = [
+            "Team id",
+            "BRANCH CODE",
+            "CFP SECTION CODE",
+            "WD CODE",
+            "NPSR Name",
+            "NPSR Number",
+            "Dhanush id",
+            "Address",
+            "Outlet Name",
+            "Beat Name"
+        ];
+
+        $fileName = "MDO_Transaction_Report_$currentDateTime.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+
+        echo json_encode($arrMessage);
+    }
+
+
 }

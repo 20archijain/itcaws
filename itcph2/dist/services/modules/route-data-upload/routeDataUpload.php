@@ -12,6 +12,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_HEADER']:
             $routeData->getHeaderData();
             break;
+        case $ACTION_LIST['GET_DOWNLOAD_DATA']:
+            $routeData->getDownloadData();
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);

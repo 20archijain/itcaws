@@ -11,11 +11,12 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 import { FileUploadComponent } from 'src/app/shared/controls/file-upload/file-upload.component';
 import { FileUploadEvent } from 'src/app/core/interfaces/helpers.interface';
-import { RouteDataUploadExcelData, RouteDataUploadResponse } from 'src/app/core/interfaces/http-response.interface';
+import { GetDownloadFileDetails, RouteDataUploadExcelData, RouteDataUploadResponse } from 'src/app/core/interfaces/http-response.interface';
 import { ATLEAST_ONE_VALUE_REQUIRED_VALIDATOR } from 'src/app/core/validators/common.validator';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
+import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
   templateUrl: './route-data-upload.component.html',
@@ -172,6 +173,26 @@ export class RouteDataUploadComponent implements OnInit, OnDestroy {
             this.clearForm();
             this.removeDynamicControls();
             this.canGoBackGuard.markAsPristine();
+          }
+        })
+    );
+  }
+
+  format() {
+    this.loaderService.startLoader();
+    this.isDisabled = true;
+    this.subscription.push(
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData,
+        null, null, environment.getListingExcelUrl)
+        .pipe(
+          finalize(() => {
+            this.isDisabled = false;
+            this.loaderService.stopLoader();
+          })
+        )
+        .subscribe(response => {
+          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+            Functions.downloadFile(response.data.filePath, response.data.fileName);
           }
         })
     );

@@ -1,6 +1,8 @@
 <?php
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 // phpcs:ignore
 class RouteDataUpload
@@ -379,6 +381,70 @@ class RouteDataUpload
             $this->_dbConn->CommitTransaction();
             $arrMessage = responseMessage(array($GLOBALS["DATA_UPLOADED"]), 1);
         }
+
+        echo json_encode($arrMessage);
+    }
+
+
+    final public function getDownloadData()
+    {
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // create header
+        $arrExcelData = [];
+        $arrExcelData[] = [
+            "Team id",
+            "BRANCH CODE",
+            "CFP SECTION CODE",
+            "WD CODE",
+            "NPSR Name",
+            "NPSR Number",
+            "Dhanush id",
+            "Address",
+            "Outlet Name",
+            "Beat Name"
+        ];
+
+        $fileName = "ROUTE_DATA_FORMAT.xlsx";
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        // Apply yellow background to header row
+        $headerStyle = [
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => [
+                    'rgb' => 'FFFF00', // Yellow color
+                ],
+            ],
+            'font' => [
+                'bold' => true, 
+            ],
+        ];
+
+        // Get the last column letter (J in this case - 10 columns)
+        $lastColumn = $sheet->getHighestColumn();
+        $sheet->getStyle('A1:' . $lastColumn . '1')->applyFromArray($headerStyle);
+
+        // Optional: Auto-size columns
+        foreach (range('A', $lastColumn) as $column) {
+            $sheet->getColumnDimension($column)->setAutoSize(true);
+        }
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
 
         echo json_encode($arrMessage);
     }
