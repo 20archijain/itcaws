@@ -9,7 +9,7 @@ import { DropdownList, GetAddTeamDataResponse } from 'src/app/core/interfaces/ht
 import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { CONTROL_CONFIG, REQUEST_STATUS } from 'src/app/app.constants';
-import { COMMON_VALIDATORS, TEAM_VALIDATORS } from 'src/app/core/validators/validations.list';
+import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
@@ -75,10 +75,10 @@ export class FocusBrandReportingComponent implements OnInit, OnDestroy {
                 controlName: 'id', label: '', type: CONTROL_CONFIG.REC_ID,
               },
               {
-                controlName: 'product_name',
+                controlName: 'summary_column_name',
                 errorMessages: COMMON_VALIDATORS.messages.requiredOnly("Product Name"),
                 label: 'app.focusBrandReporting.product_name', required: true, type: CONTROL_CONFIG.SELECT_BOX,
-                validators: TEAM_VALIDATORS.validators.name,
+                validators: COMMON_VALIDATORS.validators.requiredOnly, options : resp.data.productList
               },
             ];
           }
