@@ -23,14 +23,13 @@ class ViewFocusBrandReporting
         $this->_validationLength = $GLOBALS['VALIDATOR_LENGTH'];
     }
 
-    final public function getBranchProduct($branchId = "")
+    final public function getBranchProduct()
     {
         $arrData = array();
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT distinct product_name, summary_column_name tblbranch_pickupstock_products" .
-            " Where dstatus = 0 AND branch_id = '$branchId' AND team_type = 5";
-
+        $sQuery = "SELECT distinct product_name, summary_column_name from tblbranch_pickupstock_products" .
+            " Where dstatus = 0 AND team_type = 5";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -52,6 +51,7 @@ class ViewFocusBrandReporting
             "yearList" => getYearList(),
             "monthList" => getMonthList(),
             "branchList" => getBranchList($this->_dbConn),
+            "productList" => $this->getBranchProduct(),
             "viewHeader" => array(
                 "app.focusBrandReporting.id",
                 "app.focusBrandReporting.branch",
@@ -127,54 +127,27 @@ class ViewFocusBrandReporting
 
     final public function editTeam()
     {
-        $teamId = getFormData($this->_data, "id");
-        $projectId = getFormData($this->_data, "projectId");
-        $recId = getFormData($this->_data, "recId");
-        $teamName = getFormData($this->_data, "teamName");
-        $phone = getFormData($this->_data, "phone");
-        // $password = getFormData($this->_data, "password");
-        // $json = getFormData($this->_data, "json");
+        $id = getFormData($this->_data, "id");
+        $summary_column_name = getFormData($this->_data, "summary_column_name");
+        $monthWiseTable = "tblbranch_products_month_wise";
+        $productTable = "tblbranch_pickupstock_products";
 
-        $isValidated = "";
+        $productAndCatogoryName = getRowColumns($this->_dbConn, $productTable, "category_name, product_name", "summary_column_name = '$summary_column_name'");
 
-        //inputs validated
-        if ($isValidated) {
-            $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
-            $cloudAuthPinTable = $this->_tables["CLOUD_AUTHPIN_TABLE"];
+        if (isset($productAndCatogoryName[0]) && $productAndCatogoryName[0] && isset($productAndCatogoryName[1]) && $productAndCatogoryName[1]) {
+            $cols = "category_name = ?, product_name = ?, summary_column_name = ?";
+            $arrParams = array($productAndCatogoryName[0], $productAndCatogoryName[1], $summary_column_name, $id);
 
-            //check if team or username exists
-            // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "team_id != ? AND project_id = ? AND ds_number = ?", array($teamId, $projectId, $phone));
-            // Don't use dstatus = 0
-            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "rec_id != ? AND mobile = ?", array($recId, $phone), true);
+            $iStatus = updateRecord($this->_dbConn, $monthWiseTable, $cols, "dstatus = 0 AND rec_id = ?", $arrParams);
 
-            // Team not exist, edit
-            if ($iStatus === 0 && $iStatusCloud === 0) {
-                $cols = "team_name = ?, ds_number = ?, modif_id = ?";
-                $arrParams = array($teamName, $phone, $this->_iUserId, $teamId);
-
-                $iStatus = updateRecord($this->_dbConn, $projectTeamTable, $cols, "dstatus = 0 AND team_id = ?", $arrParams);
-
-                $colsCloud = "team_name = ?, mobile = ?, modif_id = ?";
-                $arrParamsCloud = array($teamName, $phone, $this->_iUserId, $recId);
-
-                $iStatusCloud = updateRecord($this->_dbConn, $cloudAuthPinTable, $colsCloud, "dstatus = 0 AND rec_id = ?", $arrParamsCloud, true);
-
-                // team modified
-                if ($iStatus === 1 || $iStatusCloud === 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
-                } else {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
-                }
+            // team modified
+            if ($iStatus === 1) {
+                $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
             } else {
-                if ($iStatus === 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_EXISTS']));
-                } else {
-                    $arrMessage = responseMessage(array($GLOBALS['USERNAME_EXISTS']));
-                }
+                $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
             }
         } else {
-            $arrMessage = responseMessage($this->_valErrors);
+            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
         }
 
         echo json_encode($arrMessage);
