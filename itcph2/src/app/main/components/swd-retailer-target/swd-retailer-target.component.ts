@@ -21,6 +21,7 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './swd-retailer-target.component.html',
+  styleUrls: ['./swd-retailer-target.component.scss']
 })
 export class SWDTargetUploadComponent implements OnDestroy, OnInit {
   @ViewChildren(FileUploadComponent) private fileUploadComponents: FileUploadComponent[];
