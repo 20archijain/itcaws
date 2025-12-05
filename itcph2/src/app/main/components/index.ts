@@ -51,6 +51,7 @@ import { MDORouteDataUploadComponent } from './route-data/mdo-route-upload.compo
 import { MDOViewTeamComponent } from './team/mdoview.team.component';
 import { FocusBrandReportingComponent } from './focus-brand-reporting/focus.brand.reporting.component';
 import { AddWdMappingComponent } from './wd-mapping/add.wdmapping.component';
+import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-target.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -104,6 +105,7 @@ export const MAIN_COMPONENTS = [
   MDORouteDataUploadComponent,
   FocusBrandReportingComponent,
   AddWdMappingComponent,
+  SWDTargetUploadComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -158,4 +160,5 @@ export const MAP_MAIN_COMPONENTS = {
   MDORouteDataUploadComponent,
   FocusBrandReportingComponent,
   AddWdMappingComponent,
+  SWDTargetUploadComponent,
 };

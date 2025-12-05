@@ -1,0 +1,59 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+      <div class="card shadow-sm">
+        <form [formGroup]="form" (ngSubmit)="addData()" novalidate>
+          <!-- Header -->
+          <div class="card-header bg-primary text-white d-flex align-items-center">
+            <i class="las la-cloud-upload-alt fs-3 me-2"></i>
+            <h5 class="mb-0">SWD Retailer Target</h5>
+          </div>
+
+          <div class="card-body">
+            <!-- File Upload and Buttons in Single Row -->
+            <div class="row align-items-center justify-content-center">
+              <!-- File Upload Section -->
+              <div class="col-md-4 col-sm-12">
+                <app-file-upload
+                  [group]="form"
+                  controlName="excelFile"
+                  [dummyImage]="dummyImage1"
+                  label="Upload Excel File"
+                  [accept]="'.xlsx,.xls'"
+                  [errorMessages]="errorMessages.excelFile"
+                  (onSelect)="onSelect($event, 1)">
+                </app-file-upload>
+                <small class="text-muted d-block mt-2">
+                  Allowed file types: <strong>.xlsx, .xls</strong>
+                </small>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                <app-button
+                  type="button"
+                  text="Download Format"
+                  icon="las la-download"
+                  [isDisabled]="isDisabled"
+                  (click)="downloadFormat()"
+                  class="w-100">
+                </app-button>
+              </div>
+              <div class="col-md-3 col-sm-6 d-flex align-items-center">
+                <app-button
+                  type="submit"
+                  text="Upload Excel"
+                  icon="las la-upload"
+                  [isDisabled]="isDisabled"
+                  [showSpinner]="isDisabled"
+                  spinnerText="Uploading..."
+                  class="w-100">
+                </app-button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

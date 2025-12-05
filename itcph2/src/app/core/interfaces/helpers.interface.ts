@@ -110,3 +110,8 @@ export interface OnRadioChangeEvent {
   event: Event;
   value: number;
 }
+
+export interface CustomFile {
+  fileKey: string;
+  file: File;
+}
