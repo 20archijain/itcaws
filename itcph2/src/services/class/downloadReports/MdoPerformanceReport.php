@@ -509,7 +509,7 @@ class MdoPerformanceReport
         // $authDetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
         // $user_id = $this->_iUserId;
         // $groupId = getRowColumn($this->_dbConn, $authDetailsTable, "group_id", "user_id = $user_id");
-        // if ($groupId == 1 || $groupId == 2) {
+        // if ($groupId == 1 && $groupId == 2) {
         //     $branchList = getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch");
         //     $branchFilter = true;
         // } else {
@@ -577,7 +577,6 @@ class MdoPerformanceReport
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -833,88 +832,109 @@ class MdoPerformanceReport
             // Don't use b.dstatus = 0 AND c.dstatus = 0
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.team_id, a.team_name FROM $projectTeamTable as a WHERE a.dstatus = 0 $where";
+            $sQuery = "SELECT a.team_id, a.team_name, b.teams, b.is_type FROM $projectTeamTable as a, tblmdo_access AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.mdo_id $where";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
                 while ($row = $this->_dbConn->GetData($rsAction)) {
                     $mdoId = $row["team_id"];
                     $mdoName = $row["team_name"];
-                    $arrTeams = getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "mdo_id = $mdoId AND dstatus = 0 AND is_type = '0'");
-                    if (!empty($arrTeams)) {
-                        $teamIds = implode(",", $arrTeams);
-                        $arrTeamDeatils = getRowsColumns($this->_dbConn, $projectTeamTable, "team_name, is_type, team_id", "team_id IN ($teamIds) AND dstatus = 0 AND is_type = 0");
-                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 $branchCond", array(), true);
-                        $productCols = [];
-                        $productNames = [];
+                    $dsId = $row["teams"];
+                    $dsType = $row["is_type"];
+                    if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
+                        $teamTable = "tblbreeze_team";
+                    } else {
+                        $teamTable = $projectTeamTable;
+                    }
 
-                        foreach ($allBrandCols as $colRow) {
-                            $productCols[] = $colRow[0];
-                            $productNames[] = $colRow[1];
-                        }
-                        $summaryColumns = implode(") + SUM(", $productCols);
-                        $sumColumns = "SUM($summaryColumns)";
-                        $totalSale = 0;
-                        foreach ($arrTeamDeatils as $teamRow) {
-                            $dsName = $teamRow[0];
-                            $dsType = $teamRow[1];
-                            $dsId = $teamRow[2];
-                            // 1️⃣ Get the accompanied sale (only one record per ds_id)
-                            $sQueryAcc = "SELECT total_sale, capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
-                            $rsAcc = null;
-                            $iRowsAcc = 0;
-                            $this->_dbConn->ExecuteSelectQuery($sQueryAcc, $rsAcc, $iRowsAcc);
-                            $acompaniedSale = 0;
-                            $acompaniedDate = null;
+                    $arrTeamDeatils = getRowColumns(
+                        $this->_dbConn,
+                        $teamTable,
+                        "team_name, team_id",
+                        "team_id  = '$dsId' AND dstatus = 0"
+                    );
 
-                            if ($iRowsAcc > 0) {
-                                while ($rowAcc = $this->_dbConn->GetData($rsAcc)) {
-                                    $acompaniedSale = $rowAcc['total_sale'] ?? 0;
-                                    $acompaniedDate = $rowAcc['capture_date'];
-                                };
-                            }
+                    $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 $branchCond", array(), true);
+                    $productCols = [];
+                    $productNames = [];
 
-                            // 2️⃣ Determine unaccompanied dates (exclude accompanied date)
-                            $arrUnaccompaniedDates = [];
-                            foreach ($arrDates as $d) {
-                                if ($d !== $acompaniedDate) {
-                                    $arrUnaccompaniedDates[] = $d;
-                                }
-                            }
+                    foreach ($allBrandCols as $colRow) {
+                        $productCols[] = $colRow[0];
+                        $productNames[] = $colRow[1];
+                    }
+                    $summaryColumns = implode(") + SUM(", $productCols);
+                    $sumColumns = "SUM($summaryColumns)";
+                    $totalSale = 0;
+                    // foreach ($arrTeamDeatils as $teamRow) {
+                    $dsName = $arrTeamDeatils[0];
+                    $dsId = $arrTeamDeatils[1];
+                    // 1️⃣ Get the accompanied sale (only one record per ds_ d)
+                    $sQueryAcc = "SELECT total_sale, capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
+                    $rsAcc = null;
+                    $iRowsAcc = 0;
+                    $this->_dbConn->ExecuteSelectQuery($sQueryAcc, $rsAcc, $iRowsAcc);
+                    $acompaniedSale = 0;
+                    $acompaniedDate = null;
 
-                            $unaccompaniedDatesStr = "'" . implode("','", $arrUnaccompaniedDates) . "'";
-                            $unaccompaniedDays = count($arrUnaccompaniedDates);
-                            $acompaniedDays = $acompaniedDate ? 1 : 0; // only one record per DS
+                    if ($iRowsAcc > 0) {
+                        while ($rowAcc = $this->_dbConn->GetData($rsAcc)) {
+                            $acompaniedSale = $rowAcc['total_sale'] ?? 0;
+                            $acompaniedDate = $rowAcc['capture_date'];
+                        };
+                    }
 
-                            // 3️⃣ Get unaccompanied sale from response table
-                            $unacompaniedSale = 0;
-                            if (!empty($arrUnaccompaniedDates)) {
-                                $uncompaniedDates = [];
-                                $sQueryUnacc = "SELECT $sumColumns AS totalSum FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
-                                $rsUnacc = null;
-                                $iRowsUnacc = 0;
-                                $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
-                                if ($iRowsUnacc > 0) {
-                                    while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
-                                        $unacompaniedSale = $rowUnacc['totalSum'] ?? 0;
-                                    };
-                                }
-                            }
-
-                            // 4️⃣ Calculate per-day averages
-                            $acompaniedSalePerDay = $acompaniedDays > 0 ? ($acompaniedSale / $acompaniedDays) : 0;
-                            $unacompaniedSalePerDay = $unaccompaniedDays > 0 ? ($unacompaniedSale / $unaccompaniedDays) : 0;
-
-                            // 4️⃣ Add into Excel array
-                            $arrExcelData[] = [
-                                $mdoName,
-                                isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : "",
-                                $dsName,
-                                round($unacompaniedSalePerDay, 2),
-                                round($acompaniedSalePerDay, 2),
-                            ];
+                    // 2️⃣ Determine unaccompanied dates (exclude accompanied date)
+                    $arrUnaccompaniedDates = [];
+                    foreach ($arrDates as $d) {
+                        if ($d !== $acompaniedDate) {
+                            $arrUnaccompaniedDates[] = $d;
                         }
                     }
+
+                    $unaccompaniedDatesStr = "'" . implode("','", $arrUnaccompaniedDates) . "'";
+                    $unaccompaniedDays = count($arrUnaccompaniedDates);
+                    $acompaniedDays = $acompaniedDate ? 1 : 0; // only one record per DS
+
+                    // 3️⃣ Get unaccompanied sale from response table
+                    $unacompaniedSale = 0;
+                    if (!empty($arrUnaccompaniedDates)) {
+                        if ($dsType == 6 && $dsType == 8 && $dsType == 9) {
+                            // 1️⃣ Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
+                            $sQueryUnacc = "SELECT total_sale FROM tblbreeze_response_data WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
+                            $rsUnacc = null;
+                            $iRowsUnacc = 0;
+                            $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
+                            if ($iRowsUnacc > 0) {
+                                while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
+                                    $unacompaniedSale = $rowUnacc['total_sale'] ?? 0;
+                                };
+                            }
+                        } else {
+                            $sQueryUnacc = "SELECT $sumColumns AS totalSum FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
+                            $rsUnacc = null;
+                            $iRowsUnacc = 0;
+                            $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
+                            if ($iRowsUnacc > 0) {
+                                while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
+                                    $unacompaniedSale = $rowUnacc['totalSum'] ?? 0;
+                                };
+                            }
+                        }
+                    }
+
+                    // 4️⃣ Calculate per-day averages
+                    $acompaniedSalePerDay = $acompaniedDays > 0 ? ($acompaniedSale / $acompaniedDays) : 0;
+                    $unacompaniedSalePerDay = $unaccompaniedDays > 0 ? ($unacompaniedSale / $unaccompaniedDays) : 0;
+
+                    // 4️⃣ Add into Excel array
+                    $arrExcelData[] = [
+                        $mdoName,
+                        isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : "",
+                        $dsName,
+                        round($unacompaniedSalePerDay, 2),
+                        round($acompaniedSalePerDay, 2),
+                    ];
+                    // }
                 }
             }
         }
