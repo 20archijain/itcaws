@@ -26,9 +26,9 @@ $sessionMgmt = new SessionManagement();
 $sessionMgmt->startSession();
 
 //image data
-if (isset($_FILES) && isset($_FILES["file"])) {
+if (isset($_FILES) && count($_FILES) > 0) {
     $jsondata = json_decode($_POST["data"], true);
-    $jsonfiles = $_FILES["file"];
+    $jsonfiles = isset($_FILES["file"]) ? $_FILES["file"] : $_FILES;
 } else {
     //static data
     $jsondata = file_get_contents("php://input");
