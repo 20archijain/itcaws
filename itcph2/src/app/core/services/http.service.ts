@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { URL_PARAMS_KEYS } from 'src/app/app.constants';
 import { SessionUtil } from '../utils/session.util';
 import { HttpRequestParams, HttpRequestPayload, HttpRequestResponse } from '../interfaces/common.interface';
+import { CustomFile } from '../interfaces/helpers.interface';
 
 @Injectable()
 export class HttpService {
@@ -60,11 +61,21 @@ export class HttpService {
     return this.makeRequest<T>(url, requestPayload, headers);
   }
 
-  upload<T>(url: string, file: File, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
-    if (file) {
+  upload<T>(url: string, files: File | File[] | CustomFile[], params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
+    if (files) {
       const requestPayload = this.createRequestPayload(params);
       const formData = new FormData();
-      formData.append('file', file, file.name);
+      if (Array.isArray(files)) {
+        files.forEach((file, index) => {
+          if ((file as CustomFile)?.fileKey) {
+            formData.append((file as CustomFile).fileKey, file.file, file.file.name);
+          } else {
+            formData.append(`file${index}`, file, file.name);
+          }
+        });
+      } else {
+        formData.append('file', files, files.name);
+      }
       formData.append('data', JSON.stringify(requestPayload));
       const headers = this.getHeaders(true);
 

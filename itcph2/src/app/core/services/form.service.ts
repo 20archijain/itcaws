@@ -6,7 +6,7 @@ import { switchMap } from 'rxjs/operators';
 
 import { environment } from 'src/environments/environment';
 import { AUTOREFRESH, STATIC_MODULES } from 'src/app/app.constants';
-import { ValidationError } from '../interfaces/helpers.interface';
+import { CustomFile, ValidationError } from '../interfaces/helpers.interface';
 import { HttpRequestParams, HttpRequestParamsModuleInfo, HttpRequestResponse } from '../interfaces/common.interface';
 import { HttpService } from './http.service';
 
@@ -30,7 +30,7 @@ export class FormService implements OnDestroy {
   }
 
   private uploadData<T>({ action, moduleName, staticModule }: HttpRequestParams,
-    formData: UntypedFormGroup | any, file: File = null, url = environment.apiUrl) {
+    formData: UntypedFormGroup | any, file: File | File[] | CustomFile[] = null, url = environment.apiUrl) {
     let data: any;
     if (formData instanceof UntypedFormGroup) {
       data = this.getFormData(formData);
@@ -87,7 +87,7 @@ export class FormService implements OnDestroy {
     return errResp;
   }
 
-  addData<T = any>(form: UntypedFormGroup, file: File = null, url = environment.apiUrl,
+ addData<T = any>(form: UntypedFormGroup | any, file: File | File[] | CustomFile[] = null, url = environment.apiUrl,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.uploadData<T>({ action: STATIC_MODULES.listing.addData, moduleName, staticModule }, form, file, url);
   }

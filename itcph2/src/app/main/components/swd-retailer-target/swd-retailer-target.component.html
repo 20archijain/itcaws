@@ -1,0 +1,70 @@
+<div class="container-fluid py-4">
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-md-11">
+      <div class="card shadow-sm border-0">
+        <!-- Card Header -->
+        <div class="card-header bg-white border-bottom">
+          <h5 class="mb-0 fw-semibold">
+            <i class="las la-cloud-upload-alt me-2 text-primary"></i>
+            SWD Retailer Target
+          </h5>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body p-4">
+          <form [formGroup]="form" (ngSubmit)="addData()" novalidate>
+            <div class="row g-4">
+              <!-- File Upload Section -->
+              <div class="col-lg-6 col-md-12">
+                <label class="form-label fw-semibold mb-3">Upload Excel File</label>
+                <app-file-upload
+                  [group]="form"
+                  controlName="excelFile"
+                  [dummyImage]="dummyImage1"
+                  label=""
+                  [accept]="'.xlsx,.xls'"
+                  [errorMessages]="errorMessages.excelFile"
+                  (onSelect)="onSelect($event, 1)">
+                </app-file-upload>
+                <div class="mt-3">
+                  <small class="text-muted">
+                    <i class="las la-info-circle me-1"></i>
+                    Supported formats: <strong>.xlsx, .xls</strong>
+                  </small>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="col-lg-6 col-md-12">
+                <label class="form-label fw-semibold mb-3">Actions</label>
+                <div class="d-flex flex-column gap-2" style="max-width: 250px;">
+                  <button
+                    type="button"
+                    class="btn btn-outline-success btn-sm"
+                    [disabled]="isDisabled"
+                    (click)="downloadFormat()">
+                    <i class="las la-download me-2"></i>
+                    Download Format
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-primary btn-sm"
+                    [disabled]="isDisabled">
+                    <span *ngIf="!isDisabled">
+                      <i class="las la-upload me-2"></i>
+                      Upload Excel
+                    </span>
+                    <span *ngIf="isDisabled">
+                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                      Uploading...
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
