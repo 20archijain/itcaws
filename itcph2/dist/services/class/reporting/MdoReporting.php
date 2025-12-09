@@ -1979,7 +1979,7 @@ class MdoReporting
             $week = $this->getWeekNumber($captureDate);
             $typeOfWork = $row["ques_1"];
             $workWdCode = $row["wd_code"];  // wd code
-            $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = 'CA3523'");
+            $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
             $WdName = $arrWdDetails[0] ?? "";
             $WdMarket = $arrWdDetails[1] ?? "";
             $WdPopGroup = $arrWdDetails[2] ?? "";
