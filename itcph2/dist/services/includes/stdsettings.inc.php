@@ -116,6 +116,7 @@ $UPLOAD_URL = $SITE_URL . constant("PRODS_ANY_FOLDER");
 $LOGO_URL = $SITE_URL . '/logo';
 $MARKER_URL = $SITE_URL . '/markers';
 $SAVE_SPREADSHEET_URL = $SITE_URL . '/upload_xls';
+$SAVE_PDF_URL = $SITE_URL . '/pdf';
 
 // LIBRARY PATH
 $LIB_PATH = $UPROOTS_PATH . "/php_libs";

@@ -52,6 +52,7 @@ import { MDOViewTeamComponent } from './team/mdoview.team.component';
 import { FocusBrandReportingComponent } from './focus-brand-reporting/focus.brand.reporting.component';
 import { AddWdMappingComponent } from './wd-mapping/add.wdmapping.component';
 import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-target.component';
+import { FocusBrandDataListingComponent } from './reporting/FocusBrandData/FocusBrandData.component';
 
 import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
 
@@ -109,6 +110,7 @@ export const MAIN_COMPONENTS = [
   AddWdMappingComponent,
   SWDTargetUploadComponent,
   MdoDownloadRouteComponent,
+  FocusBrandDataListingComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -165,4 +167,5 @@ export const MAP_MAIN_COMPONENTS = {
   AddWdMappingComponent,
   SWDTargetUploadComponent,
   MdoDownloadRouteComponent,
+  FocusBrandDataListingComponent,
 };

@@ -2405,12 +2405,22 @@ class AppSummary extends Utilities
 
                         $overAllProduct = $this->tableUtil->getRowColumn("$dbName.tblbranch_products_month_wise", "summary_column_name", "dstatus = 0 AND is_focusbrand = '2' AND team_type = 5 AND branch_id = $branchId AND month = '$newMonth' AND year = '$year'");
 
-                        $focusBrand1TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[0]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
-                        $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
-                        $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        if (isset($arrFocusProduct[0]) && $arrFocusProduct[0]) {
+                            $focusBrand1TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[0]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        }
 
-                        $focusProduct1 = $arrFocusProductName[0];
-                        $focusProduct2 = $arrFocusProductName[1];
+                        if (isset($arrFocusProduct[1]) && $arrFocusProduct[1]) {
+
+                            $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        }
+
+                        if(isset($overAllProduct) && $overAllProduct)
+                        {
+                             $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        }
+
+                        $focusProduct1 = $arrFocusProductName[0] ?? "NA";
+                        $focusProduct2 = $arrFocusProductName[1] ?? "NA";
 
                         $focusBrand1Target = isset($focusBrand1TargetArr) && $focusBrand1TargetArr ? $focusBrand1TargetArr : 0;
 
