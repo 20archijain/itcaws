@@ -55,6 +55,8 @@ import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-tar
 import { BreezeResponseUploadComponent } from './breeze_reponse_upload/breezeResponseUpload.component';
 import { FocusBrandDataListingComponent } from './reporting/FocusBrandData/FocusBrandData.component';
 
+import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
+
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
   AttendanceTrackerComponent,
@@ -109,6 +111,7 @@ export const MAIN_COMPONENTS = [
   AddWdMappingComponent,
   SWDTargetUploadComponent,
   BreezeResponseUploadComponent,
+  MdoDownloadRouteComponent,
   FocusBrandDataListingComponent,
 ];
 
@@ -166,5 +169,6 @@ export const MAP_MAIN_COMPONENTS = {
   AddWdMappingComponent,
   SWDTargetUploadComponent,
   BreezeResponseUploadComponent,
+  MdoDownloadRouteComponent,
   FocusBrandDataListingComponent,
 };
