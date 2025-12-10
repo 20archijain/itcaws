@@ -53,6 +53,8 @@ import { FocusBrandReportingComponent } from './focus-brand-reporting/focus.bran
 import { AddWdMappingComponent } from './wd-mapping/add.wdmapping.component';
 import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-target.component';
 
+import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
+
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
   AttendanceTrackerComponent,
@@ -106,6 +108,7 @@ export const MAIN_COMPONENTS = [
   FocusBrandReportingComponent,
   AddWdMappingComponent,
   SWDTargetUploadComponent,
+  MdoDownloadRouteComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -161,4 +164,5 @@ export const MAP_MAIN_COMPONENTS = {
   FocusBrandReportingComponent,
   AddWdMappingComponent,
   SWDTargetUploadComponent,
+  MdoDownloadRouteComponent,
 };
