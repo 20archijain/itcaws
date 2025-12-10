@@ -1978,12 +1978,18 @@ class MdoReporting
             $captureDate = $row["capture_date"];
             $week = $this->getWeekNumber($captureDate);
             $typeOfWork = $row["ques_1"];
-            $workWdCode = $row["wd_code"];
+            $workWdCode = $row["wd_code"];  // wd code
             $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
+            $WdName = $arrWdDetails[0] ?? "";
+            $WdMarket = $arrWdDetails[1] ?? "";
+            $WdPopGroup = $arrWdDetails[2] ?? "";
             $mdoName = $row["team_name"];
             $route = $row["route_name"];
-            $shopId = $row["ques_4"];
+            $shopId = $row["ques_4"]; // outlet id
             $dsType = $row["type"];
+            // $dsId = $row["team_id"];
+            $captureDate = $row["capture_date"]; // timestamp
+            $captureDateTime = $row["capture_datetime"]; // timestamp for transaction
             $infraType = $row["is_type"];
             if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
                 $arrRoute = $shopId ? getRowColumns($this->_dbConn, "tblroute_details_breeze", "team_id, outlet_name", "rec_id = $shopId") : "";
@@ -2001,6 +2007,8 @@ class MdoReporting
             $mainBranch = $row["main_branch"];
             $circle = $row["circle"];
             $section = $row["section"];
+            $teamId = $row["team_id"];
+            $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND route_name = '$route' AND wd_code = '$workWdCode' AND team_id = $teamId");
             $lt = $row["lt"];
             $lg = $row["lg"];
 
@@ -2041,23 +2049,31 @@ class MdoReporting
                 $hasData = true;
                 $pdf->createPage();
 
-                // Add table with data
-                $tableData = array(
-                    array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WD CODE", "DS NAME", "DS TYPE", "OUTLET NAME"),
-                    array($district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $workWdCode, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", isset($arrRoute[1]) ? $arrRoute[1] : "")
+                // First table - Match Excel hierarchy
+                $tableData1 = array(
+                    array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WEEK"),
+                    array($district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $week)
                 );
 
-                $pdf->addTable($tableData, 2, 12, 5, 10, 287, 9, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
 
-                // Add images
+                $pdf->Ln(3);
+
+                // Second table - Continue Excel hierarchy
+                $tableData2 = array(
+                    array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "DS ID", "DS NAME", "DS TYPE", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"),
+                    array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $dsId, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", $shopId, isset($arrRoute[1]) ? $arrRoute[1] : "", $captureDateTime, $surveyVol, $lineCut)
+                );
+
+                $pdf->addTable($tableData2, 2, 12, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+
+                $imageY = $pdf->GetY() + 5;
+
                 $imgWidth = 130;
                 $imgSpacing = 10;
                 $numImages = count($images);
                 $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
-                $centeredX = ((277 - $totalImagesWidth) / 2) + 10; // Add left margin
-
-                // Get Y position after table
-                $imageY = $pdf->GetY() + 5;
+                $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
 
                 $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
             }
