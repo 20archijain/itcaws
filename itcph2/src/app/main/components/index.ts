@@ -52,6 +52,7 @@ import { MDOViewTeamComponent } from './team/mdoview.team.component';
 import { FocusBrandReportingComponent } from './focus-brand-reporting/focus.brand.reporting.component';
 import { AddWdMappingComponent } from './wd-mapping/add.wdmapping.component';
 import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-target.component';
+import { BreezeResponseUploadComponent } from './breeze_reponse_upload/breezeResponseUpload.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -106,6 +107,7 @@ export const MAIN_COMPONENTS = [
   FocusBrandReportingComponent,
   AddWdMappingComponent,
   SWDTargetUploadComponent,
+  BreezeResponseUploadComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -161,4 +163,5 @@ export const MAP_MAIN_COMPONENTS = {
   FocusBrandReportingComponent,
   AddWdMappingComponent,
   SWDTargetUploadComponent,
+  BreezeResponseUploadComponent,
 };

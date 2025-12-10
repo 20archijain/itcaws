@@ -502,6 +502,7 @@ export interface StackedGroupedColumnChartData {
 
 export interface RouteDataUploadResponse {
   excelData: RouteDataUploadExcelData;
+  excelDataDashboard: any[];
   excelHeader: string[];
   tableColumns: string[];
 }
