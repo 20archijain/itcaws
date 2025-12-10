@@ -158,13 +158,13 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
   getButtonCondition(): boolean {
     if (this.group.get('monthCheck').value === 2) {
-      if (this.currentDate['day'] > 21 || this.currentDate['day'] < 11) {
+      if (this.currentDate['day'] > 21 || this.currentDate['day'] < 13) {
         return true;
       } else {
         return false;
       }
     } else {
-      if (this.currentDate['day'] < 11) {
+      if (this.currentDate['day'] < 13) {
         return true;
       } else {
         return false;
@@ -178,7 +178,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
       this.showMonth = this.nextMonth;
       this.group.get('monthCheck').setValue(2);
       this.enableTargetFiled = true;
-    } else if (this.currentDate['day'] < 11) {
+    } else if (this.currentDate['day'] < 13) {
       this.tableColumnCondition = false;
       this.showMonth = this.currentMonth;
       this.group.get('monthCheck').setValue(null);
