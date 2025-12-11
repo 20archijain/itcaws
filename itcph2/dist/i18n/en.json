@@ -90,7 +90,9 @@
       "tableColumn": "Table Column",
       "atleastOneColumnError": "Please select at least one column name",
       "duplicateColumnError": "Duplicate column {COLUMN} found",
-      "downloadHeading": "Route Data Download"
+      "downloadHeading": "Route Data Download",
+      "breezeData": "Brezee Data Upload",
+      "breezeFile": "Select Breeze File"
     },
     "profile": {
       "changePassword": "Change Password",
@@ -517,7 +519,8 @@
     "downloading": "Downloading. Please wait...",
     "loggingIn": "Logging in. Please wait...",
     "saving": "Saving. Please wait...",
-    "sending": "Sending. Please wait..."
+    "sending": "Sending. Please wait...",
+    "uploading": "Uploading. Please wait..."
   },
   "text": {
     "actions": "Actions",
