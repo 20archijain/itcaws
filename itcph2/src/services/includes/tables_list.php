@@ -27,4 +27,7 @@ $TABLES = array(
     "LEADERBOARD_TABLE" => "tbl_leaderboard",
     "WD_MAPPING_TABLE" => "tblmapping_wd",
     "APP_NOTIFICATION_TABLE" => "tblapp_notification",
+    "BREEZE_TEAM_TABLE" => "tblbreeze_team",
+    "MDO_ACCESS_TABLE" => "tblmdo_access",
+    "ROUTE_DETAILS_BREEZE_TABLE" => "tblroute_details_breeze",
 );
