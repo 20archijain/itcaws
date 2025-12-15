@@ -30,6 +30,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
   circleOptions: DropdownList[] = [];
   sectionOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
+  teamTypeOptions: DropdownList[] = [];
   landingPageOptions: DropdownList[] = [];
   groupOptions: DropdownList[] = [];
   loginOptions: DropdownList[] = [];
@@ -50,6 +51,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     circle: COMMON_VALIDATORS.messages.requiredOnly('Circle'),
     section: COMMON_VALIDATORS.messages.requiredOnly('Section'),
     team: COMMON_VALIDATORS.messages.requiredOnly('Team'),
+    teamType: COMMON_VALIDATORS.messages.requiredOnly('Team Type'),
   };
   controlVisibility = {
     hideBranch: true,
@@ -59,6 +61,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     hideCircle: true,
     hideSection: true,
     hideTeam: true,
+    hideTeamType: true,
   };
   validators = {
     branch: COMMON_VALIDATORS.validators.dropdown,
@@ -68,6 +71,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
     circle: COMMON_VALIDATORS.validators.requiredOnly,
     section: COMMON_VALIDATORS.validators.requiredOnly,
     team: COMMON_VALIDATORS.validators.requiredOnly,
+    teamType: COMMON_VALIDATORS.validators.requiredOnly,
   };
   showSpinner = false;
 
@@ -100,6 +104,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
       circle: ['', COMMON_VALIDATORS.validators.requiredOnly],
       section: ['', COMMON_VALIDATORS.validators.requiredOnly],
       team: ['', COMMON_VALIDATORS.validators.requiredOnly],
+      teamType: ['', COMMON_VALIDATORS.validators.requiredOnly],
     }, {
       validator: [CONFIRM_PASSWORD_VALIDATOR({ newPass: 'password', confPass: 'confirmPassword' })]
     });
@@ -118,6 +123,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamTypeList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.landingPageOptions = resp.data.landingPageList;
             this.groupOptions = resp.data.groupList;
@@ -152,6 +158,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Client
@@ -164,6 +171,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Project
@@ -176,6 +184,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Branch
@@ -188,6 +197,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // WD Code
@@ -200,6 +210,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Circle
@@ -212,6 +223,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: false,
           hideSection: true,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Section
@@ -224,6 +236,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: false,
           hideTeam: true,
+          hideTeamType: true,
         };
         break;
       // Section
@@ -236,6 +249,20 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           hideCircle: true,
           hideSection: true,
           hideTeam: false,
+          hideTeamType: true,
+        };
+        break;
+      // Section
+      case '9':
+        this.controlVisibility = {
+          hideBranch: true,
+          hideClient: true,
+          hideProject: true,
+          hideWdCode: true,
+          hideCircle: true,
+          hideSection: true,
+          hideTeam: true,
+          hideTeamType: false,
         };
         break;
     }

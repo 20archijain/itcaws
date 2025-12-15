@@ -119,6 +119,15 @@
           [isHorizontalForm]="true" [options]="wdCodeOptions" [isRequired]="true" [errorMessages]="errorMessages.wdCode"
           [hide]="controlVisibility.hideWdCode" [validators]="validators.wdCode" [multiple]="true">
         </app-select>
+
+
+        <!-- Team -->
+        <app-select label="app.team.view.teamType" placeholder="{{ 'app.team.view.teamType' | translate }}" [group]="form"
+          controlName="teamType" groupClassName="row" labelClassName="form-label col-sm-4 col-xl-3"
+          [isHorizontalForm]="true" [options]="teamTypeOptions" [isRequired]="true"
+          [errorMessages]="errorMessages.teamType" [hide]="controlVisibility.hideTeamType"
+          [validators]="validators.teamType" [multiple]="true">
+        </app-select>
       </div>
     </div>
 
