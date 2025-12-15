@@ -446,11 +446,12 @@ class generatePDFCronjob
             $istatus = updateRecord($this->_dbConn, "tblvands_summary", "pdf_generated = ?", "summary_id = $summaryId", array(1));
             if ($istatus == 1) {
                 $currentDateTime = date("Y-m-d H:i:s");
+                $downloadPath = $GLOBALS["SAVE_PDF_URL"] . "/" . $currentDate . "/" . $fileName;
                 // debug_log(
                 //     "\r\nPDF Generated Successfully for Summary ID: $summaryId , Team ID: $teamId\r\n",
                 //     $this->logFilename
                 // );
-                return array(1, $filePath);
+                return array(1, $downloadPath);
             } else {
                 // debug_log(
                 //     "\r\nError: PDF Generated but Database Update Failed for Summary ID: $summaryId\r\n",
