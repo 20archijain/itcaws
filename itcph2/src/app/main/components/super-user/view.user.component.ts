@@ -139,6 +139,11 @@ export class ViewUserComponent implements OnDestroy, OnInit {
                 label: 'app.team.view.team', multiple: true, options: resp.data.teamList,
                 required: true, type: CONTROL_CONFIG.SELECT_BOX, validators: COMMON_VALIDATORS.validators.requiredOnly,
               },
+              {
+                controlName: 'teamType', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Team Type'), hide: true,
+                label: 'app.team.view.teamType', multiple: true, options: resp.data.teamTypeList,
+                required: true, type: CONTROL_CONFIG.SELECT_BOX, validators: COMMON_VALIDATORS.validators.requiredOnly,
+              },
             ];
           }
         })
@@ -158,6 +163,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 2:
         // Client
@@ -168,6 +174,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 3:
         // Project
@@ -178,6 +185,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 4:
         // Branch
@@ -188,6 +196,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 5:
         // WD Code
@@ -198,6 +207,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 6:
         // Circle
@@ -208,6 +218,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = false;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 7:
         // Section
@@ -218,6 +229,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = false;
         this.editConfig[16].hide = true;
+        this.editConfig[17].hide = true;
         break;
       case 8:
         // Section
@@ -228,6 +240,18 @@ export class ViewUserComponent implements OnDestroy, OnInit {
         this.editConfig[14].hide = true;
         this.editConfig[15].hide = true;
         this.editConfig[16].hide = false;
+        this.editConfig[17].hide = true;
+        break;
+      case 9:
+        // Section
+        this.editConfig[10].hide = true;
+        this.editConfig[11].hide = true;
+        this.editConfig[12].hide = true;
+        this.editConfig[13].hide = true;
+        this.editConfig[14].hide = true;
+        this.editConfig[15].hide = true;
+        this.editConfig[16].hide = true;
+        this.editConfig[17].hide = false;
         break;
     }
   }

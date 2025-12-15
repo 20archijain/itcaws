@@ -638,6 +638,9 @@ function getUserAccessList($dbConn, $iUserId, $access_type)
     } elseif ($access_type == 7) {
         //Team Level
         $cond = "AND b.team_id = c.team_id";
+    } elseif ($access_type == 8) {
+        //Team Level
+        $cond = "AND b.is_type = c.team_type";
     }
 
     // Don't use a.dstatus = 0 AND b.dstatus = 0
