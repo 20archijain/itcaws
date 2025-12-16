@@ -47,5 +47,7 @@ $ACTION_LIST = array(
     'GET_PRODUCT' => 'get_product',
     'RESTORE_DATA' => 'restore_data',
     'ATTENDANCE_REPORT' => 'get_download_attendance_report',
-    'PDF_REPORT' => 'get_download_pdf_report'
+    'PDF_REPORT' => 'get_download_pdf_report',
+    'GET_TABLES' => 'get_tables',
+    'GET_TABLE_COLUMNS' => 'get_tables_column'
 );
