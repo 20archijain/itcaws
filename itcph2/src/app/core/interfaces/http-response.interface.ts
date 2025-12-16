@@ -522,6 +522,8 @@ export interface DownloadReports {
   teamList: DropdownList<string, string>[];
   typeList: DropdownList<string, string>[];
   tableList: DropdownList<string, string>[];
+  operatorList: DropdownList<string, string>[];
+  logicalOperatorList: DropdownList<string, string>[];
   viewHeader: string[];
   viewBody: string[];
 }
