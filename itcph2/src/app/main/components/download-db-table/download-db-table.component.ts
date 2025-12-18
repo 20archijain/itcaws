@@ -64,6 +64,10 @@ export class DownloadDBTableComponent implements OnDestroy, OnInit {
     return this.form.get('conditions') as UntypedFormArray;
   }
 
+  getConditionGroup(index: number): UntypedFormGroup {
+    return this.conditions.at(index) as UntypedFormGroup;
+  }
+
   getInitialData() {
     this.loaderService.startLoader();
     this.subscription.push(

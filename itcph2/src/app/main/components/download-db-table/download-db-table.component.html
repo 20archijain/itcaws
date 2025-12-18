@@ -49,7 +49,7 @@
                         <div class="condition-header">
                           <div class="d-flex align-items-center">
                             <span *ngIf="i > 0" class="badge bg-primary me-2">
-                              {{ condition.get('logicalOperator')?.value }}
+                              {{ getConditionGroup(i).get('logicalOperator')?.value }}
                             </span>
                             <span class="fw-medium">Condition {{ i + 1 }}</span>
                           </div>
@@ -63,14 +63,14 @@
                           <!-- Logical Operator (for conditions after the first) -->
                           <div class="col-lg-2 col-md-3 col-sm-6" *ngIf="i > 0">
                             <app-select controlName="logicalOperator" placeholder="Logic"
-                              [options]="logicalOperatorOptions" label="Logic" [group]="condition">
+                              [options]="logicalOperatorOptions" label="Logic" [group]="getConditionGroup(i)">
                             </app-select>
                           </div>
 
                           <!-- Column Selection -->
                           <div class="col-lg-2 col-md-3 col-sm-6" [class.col-lg-2]="i > 0" [class.col-lg-3]="i === 0">
                             <app-select controlName="column" placeholder="Column" [options]="columnOptions"
-                              label="Column" [group]="condition" [isRequired]="true"
+                              label="Column" [group]="getConditionGroup(i)" [isRequired]="true"
                               [errorMessages]="errorMessages.column">
                             </app-select>
                           </div>
@@ -78,20 +78,20 @@
                           <!-- Operator Selection -->
                           <div class="col-lg-2 col-md-3 col-sm-6" [class.col-lg-2]="i > 0" [class.col-lg-3]="i === 0">
                             <app-select controlName="operator" placeholder="Operator" [options]="operatorOptions"
-                              label="Operator" [group]="condition" [isRequired]="true"
+                              label="Operator" [group]="getConditionGroup(i)" [isRequired]="true"
                               [errorMessages]="errorMessages.operator" (onChange)="onOperatorChange(i)">
                             </app-select>
                           </div>
 
                           <!-- Value 1 -->
                           <div class="col-lg-2 col-md-3 col-sm-6"
-                            *ngIf="shouldShowValue(condition.get('operator')?.value)" [class.col-lg-2]="i > 0"
+                            *ngIf="shouldShowValue(getConditionGroup(i).get('operator')?.value)" [class.col-lg-2]="i > 0"
                             [class.col-lg-3]="i === 0">
                             <div class="form-group">
                               <label class="form-label">Value</label>
                               <input type="text" class="form-control" formControlName="value" placeholder="Enter value">
                               <div class="invalid-feedback"
-                                *ngIf="condition.get('value')?.invalid && condition.get('value')?.touched">
+                                *ngIf="getConditionGroup(i).get('value')?.invalid && getConditionGroup(i).get('value')?.touched">
                                 {{ errorMessages.value }}
                               </div>
                             </div>
@@ -99,13 +99,13 @@
 
                           <!-- Value 2 (for BETWEEN operator) -->
                           <div class="col-lg-2 col-md-3 col-sm-6"
-                            *ngIf="shouldShowValue2(condition.get('operator')?.value)">
+                            *ngIf="shouldShowValue2(getConditionGroup(i).get('operator')?.value)">
                             <div class="form-group">
                               <label class="form-label">To Value</label>
                               <input type="text" class="form-control" formControlName="value2"
                                 placeholder="Enter to value">
                               <div class="invalid-feedback"
-                                *ngIf="condition.get('value2')?.invalid && condition.get('value2')?.touched">
+                                *ngIf="getConditionGroup(i).get('value2')?.invalid && getConditionGroup(i).get('value2')?.touched">
                                 {{ errorMessages.value }}
                               </div>
                             </div>
@@ -113,23 +113,23 @@
                         </div>
 
                         <!-- Condition Preview -->
-                        <div class="mt-2" *ngIf="condition.get('column')?.value && condition.get('operator')?.value">
+                        <div class="mt-2" *ngIf="getConditionGroup(i).get('column')?.value && getConditionGroup(i).get('operator')?.value">
                           <small class="text-muted">
                             <strong>Preview:</strong>
-                            <span *ngIf="i > 0">{{ condition.get('logicalOperator')?.value }} </span>
-                            {{ condition.get('column')?.value }}
-                            {{ getOperatorLabel(condition.get('operator')?.value) }}
-                            <span *ngIf="shouldShowValue(condition.get('operator')?.value)">
+                            <span *ngIf="i > 0">{{ getConditionGroup(i).get('logicalOperator')?.value }} </span>
+                            {{ getConditionGroup(i).get('column')?.value }}
+                            {{ getOperatorLabel(getConditionGroup(i).get('operator')?.value) }}
+                            <span *ngIf="shouldShowValue(getConditionGroup(i).get('operator')?.value)">
                               <span
-                                *ngIf="condition.get('operator')?.value === 'LIKE' || condition.get('operator')?.value === 'NOT LIKE'">
-                                '%{{ condition.get('value')?.value }}%'
+                                *ngIf="getConditionGroup(i).get('operator')?.value === 'LIKE' || getConditionGroup(i).get('operator')?.value === 'NOT LIKE'">
+                                '%{{ getConditionGroup(i).get('value')?.value }}%'
                               </span>
                               <span
-                                *ngIf="condition.get('operator')?.value !== 'LIKE' && condition.get('operator')?.value !== 'NOT LIKE'">
-                                '{{ condition.get('value')?.value }}'
+                                *ngIf="getConditionGroup(i).get('operator')?.value !== 'LIKE' && getConditionGroup(i).get('operator')?.value !== 'NOT LIKE'">
+                                '{{ getConditionGroup(i).get('value')?.value }}'
                               </span>
-                              <span *ngIf="shouldShowValue2(condition.get('operator')?.value)">
-                                AND '{{ condition.get('value2')?.value }}'
+                              <span *ngIf="shouldShowValue2(getConditionGroup(i).get('operator')?.value)">
+                                AND '{{ getConditionGroup(i).get('value2')?.value }}'
                               </span>
                             </span>
                           </small>

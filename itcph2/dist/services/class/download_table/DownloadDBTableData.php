@@ -409,8 +409,6 @@ class DownloadTable
                 array("label" => "OR", "value" => "OR"),
             ),
         );
-        echo "<pre>";
-        print_r($arrResult);die;
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
