@@ -808,7 +808,6 @@ class VanDsReporting
                     $branchId = $arrBranchColumns[0];
                     $productName = $arrBranchColumns[1];
                     $summaryColumnName = $arrBranchColumns[2];
-                    // $pktSize = $arrBranchColumns[4];
                     $pktSize = $arrBranchColumns[3];
 
                     if (!isset($this->arrBranchwiseProducts[$branchId][$teamType])) {
@@ -956,7 +955,7 @@ class VanDsReporting
 
     final public function getDownloadData()
     {
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
+        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "TOWN SWD", 5 => "NPSR");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 

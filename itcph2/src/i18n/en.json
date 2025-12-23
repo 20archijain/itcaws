@@ -444,6 +444,7 @@
     "sameLength": "{{ name }} must be {{ minLength }} characters long.",
     "emptyModuleList": "Please select alteast one module",
     "branchError": "Please select branch",
+    "dstypeError": "Please select DS Type",
     "ngbDateError": "{{ name }} is invalid"
   },
   "footer": {
