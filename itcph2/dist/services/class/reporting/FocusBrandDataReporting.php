@@ -58,6 +58,20 @@ class FocusBrandDataReporting
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
             "branchList" => $branchList,
+            "reportTypeList" => array(
+                array(
+                    "label" => "District-wise",
+                    "value" => "1",
+                ),
+                array(
+                    "label" => "Region-wise",
+                    "value" => "2",
+                ),
+                array(
+                    "label" => "Branch-wise",
+                    "value" => "3",
+                ),
+            ),
             "dsTypeList" => getTeamType($this->_dbConn),
         );
 
@@ -65,7 +79,93 @@ class FocusBrandDataReporting
         echo json_encode($arrMessage);
     }
 
+
     final public function downloadMasterData()
+    {
+        $reportType =  $this->_data["searchbar"]['reportType'] ?? $this->_data['reportType'];
+
+        if ($reportType == 1) {
+            $this->downloadMasterDataDistrict();
+        } elseif($reportType == 2) {
+            $this->downloadMasterDataRegion();
+        } else {
+            $this->downloadMasterDataBranch();
+        }
+    }
+
+    final public function downloadMasterDataDistrict()
+    {
+        $dwnCond = $this->getCondition();
+        $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+
+        // order by condition
+        $sOrderCond = getOrderByCond("a.rcd");
+
+        $arrExcelHeaderCheck = array();
+        // Don't use a.dstatus = 0 AND c.dstatus = 0
+        $arrExcelData = [];
+        $arrExcelData[] = array("District", "DS Type");
+        $arrBody = array();
+        $sAction = null;
+        $iRows = 0;
+        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        // echo $sQuery;die;
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($arrData = $this->_dbConn->GetData($sAction)) {
+                $district = $arrData["district"];
+                $dsType = $arrData["team_type"];
+                $prodName = $arrData["product_name"];
+                $arrBody[$district][$dsType][] = $prodName;
+            }
+        }
+        foreach ($arrBody as $exDistrict => $arrDistrict) {
+            foreach ($arrDistrict as $exDsType => $arrDsType) {
+                $arrExcelHeaderCheck[] = $arrDsType;
+                $localArr = array($exDistrict, $types[$exDsType]);
+                $arrExcelData[] = array_merge($localArr, $arrDsType);
+            }
+        }
+
+        $max = 0;
+        foreach ($arrExcelHeaderCheck as $item) {
+            $count = count($item);
+            if ($count > $max) {
+                $max = $count;
+            }
+        }
+        for ($i = 1; $i <= $max; $i++) {
+            $arrExcelData[0][] = "Focus Brand " . $i;
+        }
+
+        // echo $max;die;
+        $currentDateTime = currentDateTime();
+        $fileName = "Focus_Brand_SKU_District_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = [
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        ];
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
+        // } else {
+        //     $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+        // }
+        echo json_encode($arrMessage);
+    }
+
+    final public function downloadMasterDataRegion()
     {
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
@@ -82,7 +182,7 @@ class FocusBrandDataReporting
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $sQuery = "SELECT a.team_type, a.product_name, b.district,  b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0  AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district,  b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0  AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -116,14 +216,90 @@ class FocusBrandDataReporting
                 $max = $count;
             }
         }
-         for($i = 1 ; $i <= $max; $i++)
-         {
+        for ($i = 1; $i <= $max; $i++) {
             $arrExcelData[0][] = "Focus Brand " . $i;
-         }
+        }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = "Focus_Brand_SKU_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = "Focus_Brand_SKU_Region_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->fromArray($arrExcelData);
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+        $fileDetails = [
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        ];
+
+        $writer = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
+        // } else {
+        //     $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+        // }
+        echo json_encode($arrMessage);
+    }
+
+
+    final public function downloadMasterDataBranch()
+    {
+        $dwnCond = $this->getCondition();
+        $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+
+        // order by condition
+        $sOrderCond = getOrderByCond("a.rcd");
+
+        $arrExcelHeaderCheck = array();
+        // Don't use a.dstatus = 0 AND c.dstatus = 0
+        $arrExcelData = [];
+        $arrExcelData[] = array("District", "Branch", "DS Type");
+        $arrBody = array();
+        $sAction = null;
+        $iRows = 0;
+        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        // echo $sQuery;die;
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($arrData = $this->_dbConn->GetData($sAction)) {
+                $district = $arrData["district"];
+                $dsType = $arrData["team_type"];
+                $mainBranch = $arrData["main_branch"];
+                $prodName = $arrData["product_name"];
+                $arrBody[$district][$mainBranch][$dsType][] = $prodName;
+            }
+        }
+
+        foreach ($arrBody as $exDistrict => $arrDistrict) {
+            foreach ($arrDistrict as $exMainBranch => $arrMainBranch) {
+                foreach ($arrMainBranch as $exDsType => $arrDsType) {
+                        $arrExcelHeaderCheck[] = $arrDsType;
+                        $localArr = array($exDistrict, $exMainBranch, $types[$exDsType]);
+                        $arrExcelData[] = array_merge($localArr, $arrDsType);
+                    }
+                }
+            }
+
+        $max = 0;
+        foreach ($arrExcelHeaderCheck as $item) {
+            $count = count($item);
+            if ($count > $max) {
+                $max = $count;
+            }
+        }
+        for ($i = 1; $i <= $max; $i++) {
+            $arrExcelData[0][] = "Focus Brand " . $i;
+        }
+
+        // echo $max;die;
+        $currentDateTime = currentDateTime();
+        $fileName = "Focus_Brand_SKU_Branch_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

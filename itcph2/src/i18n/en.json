@@ -296,7 +296,8 @@
         "skucategory": "SKU Category",
         "skuName": "SKU Name",
         "baseRate": "Base Rate (M)",
-        "focusBrand": "Focus Brand"
+        "focusBrand": "Focus Brand",
+        "reportType": "Report Type"
       },
       "vanDs": {
         "heading": "View Van DS Reporting",

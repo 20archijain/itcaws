@@ -9,6 +9,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { environment } from 'src/environments/environment';
+import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
   templateUrl: './FocusBrandData.component.html'
@@ -22,6 +23,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   branchOptions: DropdownList[] = [];
   wdOptions: DropdownList[] = [];
   dsTypeOptions: DropdownList[] = [];
+  reportTypeOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   isDisabled = false;
@@ -29,12 +31,16 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   downloadDataBtnTitle = false;
   url = environment.getActiveVariantsDataUrl;
 
+  errorMessages = {
+      reportType: COMMON_VALIDATORS.messages.requiredOnly('Report Type')
+    };
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
   ngOnInit() {
     this.form = this.fb.group({
       branch: [],
       dsType: [],
+      reportType: [null, COMMON_VALIDATORS.validators.requiredOnly],
     });
 
     this.getInitialData();
@@ -57,6 +63,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
             this.sortOptions = resp.data.sortOptions;
             this.branchOptions = resp.data.branchList;
             this.dsTypeOptions = resp.data.dsTypeList;
+            this.reportTypeOptions = resp.data.reportTypeList;
             // this.header = resp.data.viewHeader;
             // this.body = resp.data.viewBody;
             // this.isSelectable = resp.data.isSelectable;

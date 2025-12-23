@@ -12,6 +12,11 @@
           controlName="dsType" [options]="dsTypeOptions">
         </app-select>
       </div>
+      <div class="col-sm-3 col-lg-2">
+        <app-select placeholder="{{ 'app.reporting.activeUSers.reportType' | translate }}" [group]="form"
+          controlName="reportType" [options]="reportTypeOptions" [errorMessages]="errorMessages.reportType">
+        </app-select>
+      </div>
       <div class="m-1">
         <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true" btnClass="m-t-30"
           btnTitle="button.download" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="form" btnClass="m-t-30"
