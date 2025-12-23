@@ -808,7 +808,7 @@ class VanDsReporting
                     $branchId = $arrBranchColumns[0];
                     $productName = $arrBranchColumns[1];
                     $summaryColumnName = $arrBranchColumns[2];
-                    $pktSize = $arrBranchColumns[4];
+                    $pktSize = $arrBranchColumns[3];
 
                     if (!isset($this->arrBranchwiseProducts[$branchId][$teamType])) {
                         $this->arrBranchwiseProducts[$branchId][$teamType] = [];
@@ -955,7 +955,7 @@ class VanDsReporting
 
     final public function getDownloadData()
     {
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
+        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "TOWN SWD", 5 => "NPSR");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -2066,5 +2066,301 @@ class VanDsReporting
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return $earthRadius * $c; // Distance in km
+    }
+
+    //Download PDF
+    final public function getDownloadPDFReport()
+    {
+        global  $CUST_FOLDER_PATH;
+        global  $UPLOAD_URL;
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        // $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // filter query
+        $where = $this->getCondition();
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $branch = getFormData($this->_data['searchbar'], "branch");
+        $dsType = getFormData($this->_data['searchbar'], "dsType");
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $this->getBranchWiseProducts(null, isNonEmptyArray($dsType) ? $dsType : null);
+        // Initialize PDF
+        $pdf = new Pdf();
+
+        // Create title page
+        $pdf->createPage();
+        $pdf->addTitle("VAN DS REPORT", 28, array(138, 51, 255));
+
+        $hasData = false;
+        $recordCount = 0;
+
+        if (checkIfAllSelected($branch)) {
+            $branch = $this->getBranches();
+        }
+
+        // Loop through each branch data
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+
+            $arrProductBought = $this->getBranchWiseProducts($branchId, isNonEmptyArray($dsType) ? $dsType : null);
+            $saleColumns = "";
+            $productColumnNames = [];
+            if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                $productColumnName = [];
+                foreach ($arrProductBought as $arrProduct) {
+                    if (is_array($arrProduct) && count($arrProduct) >= 2) {
+                        if (is_string($arrProduct[1]) && !empty($arrProduct[1])) {
+                            $productColumnName[] = $arrProduct[1];
+                        }
+                    }
+                }
+                if (!empty($productColumnName)) {
+                    $productColumnName = array_unique($productColumnName);
+                    $productColumnNames = $productColumnName;
+                    $selectColumns = array_map(function ($col) {
+                        return "a." . $col;
+                    }, $productColumnName);
+                    $saleColumns = ", " . implode(", ", $selectColumns);
+                }
+            }
+            $dsTypeCond = "";
+            if ($dsType) {
+                $matchAll = checkIfAllSelected($dsType);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($dsType)) {
+                        $dsTypes = implode(",", $dsType);
+                        $dsTypeCond = " AND b.is_type IN ($dsTypes)";
+                    } else {
+                        $dsTypeCond = " AND b.is_type = $dsType";
+                    }
+                }
+            }
+            $rsAction = null;
+            $iRows = 0;
+            // $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type, b.circle, b.wd_code, b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg $saleColumns FROM tblsurvey_response_details AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+            //     " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND $dsTypeCond $where $branchCond ORDER BY capture_datetime DESC";
+            $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg,
+           a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7,
+           a.ques_8, a.ques_9, a.ques_10, a.distance_in_meter,
+           b.team_id, b.team_name, b.branch_id, b.is_type, b.circle, b.wd_code, b.section,
+           c.district, c.branch_name, c.main_branch
+           $saleColumns
+           FROM tblsurvey_response_details AS a, $projectTeamTable AS b, $branchTable AS c
+           WHERE a.dstatus = 0
+           AND a.team_id = b.team_id
+           AND b.branch_id = c.branch_id
+           $dsTypeCond
+           $where
+           $branchCond
+           ORDER BY capture_datetime DESC";
+
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+            if ($iRows) {
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $uniId = $row["uni_id"];
+                    $shopFrontPicture = $row["ques_6"];
+                    $branchId = $row["branch_id"];
+                    $captureDate = $row["capture_date"];
+                    $week = $this->getWeekNumber($captureDate);
+                    $workWdCode = $row["wd_code"];  // wd code
+                    $WdName = "";
+                    $WdMarket = "";
+                    $WdPopGroup = "";
+                    $allImages = array();
+                    $rsAllImages = null;
+                    $iAllRows = 0;
+                    $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id = '$shopFrontPicture' ORDER BY b.mob_img_id";
+                    $this->_dbConn->ExecuteSelectQuery($sImageQuery, $rsAllImages, $iAllRows);
+
+                    if ($iAllRows > 0) {
+                        if (!isset($allImages[$uniId])) {
+                            $allImages[$uniId] = array();
+                        }
+                        while ($imgRow = $this->_dbConn->GetData($rsAllImages)) {
+                            $allImages[$uniId][$imgRow['mob_img_id']] = $imgRow;
+                        }
+                    }
+
+                    if (!empty($workWdCode)) {
+                        $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
+                        $WdName = $arrWdDetails[0] ?? "";
+                        $WdMarket = $arrWdDetails[1] ?? "";
+                        $WdPopGroup = $arrWdDetails[2] ?? "";
+                    }
+                    $team_id = $row['team_id'];
+                    $mdoName = $row["team_name"];
+                    $shopId = $row["ques_3"]; // outlet id
+                    $dsType = $row["is_type"];
+                    $dsTypeValue = isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : "";
+                    $captureDate = $row["capture_date"];
+                    $captureDateTime = $row["capture_datetime"];
+                    $outlet_name = "";
+                    if (!empty($shopId) && is_numeric($shopId)) {
+                        $outletResult = getRowColumns($this->_dbConn, "tblroute_details", "outlet_name", "rec_id = " . intval($shopId));
+                        $outlet_name = is_array($outletResult) ? ($outletResult[0] ?? "") : "";
+                    }
+                    $district = $row["district"];
+                    $branchName = $row["branch_name"];
+                    $mainBranch = $row["main_branch"];
+                    $circle = $row["circle"];
+                    $section = $row["section"];
+                    $lt = $row["lt"];
+                    $lg = $row["lg"];
+                    // Initialize total product sale, ulc, alc
+                    $totalProductSale = 0;
+                    $uniqueProductsSold = [];
+                    if (!empty($productColumnNames)) {
+                        foreach ($productColumnNames as $columnName) {
+                            // $totalProductSale += isset($row[$columnName]) ? floatval($row[$columnName]) : 0;
+                            $productValue = isset($row[$columnName]) ? floatval($row[$columnName]) : 0;
+                            $totalProductSale += $productValue;
+
+                            // Count unique products sold
+                            if ($productValue > 0) {
+                                $uniqueProductsSold[] = $columnName;
+                            }
+                        }
+                    }
+                    $totalULC = 0;
+                    $avgULC = 0;
+                    if (!empty($productColumnNames) && !empty($shopId) && !empty($team_id)) {
+                        $columnsStr = implode(", ", $productColumnNames);
+                        $currentMonth = date("Y-m", strtotime($captureDate));
+
+                        $sQueryULC = "SELECT $columnsStr
+                                    FROM tblsurvey_response_details
+                                    WHERE dstatus = 0
+                                    AND ques_3 = " . intval($shopId) . "
+                                    AND team_id = " . intval($team_id) . "
+                                    AND capture_date LIKE '$currentMonth%'";
+
+                        $rsULC = null;
+                        $iRowsULC = 0;
+                        $this->_dbConn->ExecuteSelectQuery($sQueryULC, $rsULC, $iRowsULC);
+
+                        $totalUniqueProducts = [];
+                        $visitCount = 0;
+
+                        if ($iRowsULC > 0) {
+                            while ($rowULC = $this->_dbConn->GetData($rsULC)) {
+                                $visitCount++;
+
+                                foreach ($productColumnNames as $columnName) {
+                                    $value = floatval($rowULC[$columnName] ?? 0);
+
+                                    if ($value > 0) {
+                                        if (!in_array($columnName, $totalUniqueProducts)) {
+                                            $totalUniqueProducts[] = $columnName;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        $totalULC = count($totalUniqueProducts);
+                        $avgULC = $visitCount > 0 ? round($totalULC / $visitCount, 2) : 0;
+                    }
+                    //Image
+                    $getCorrectImage = function ($arrImages, $mobImgId) {
+                        if (isset($arrImages[$mobImgId])) {
+                            return $arrImages[$mobImgId];
+                        }
+                        return null;
+                    };
+                    $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
+                    $images = array();
+                    if (isset($shopFrontPicture) && $shopFrontPicture) {
+                        $storePhoto = $getCorrectImage($arrImages2, $shopFrontPicture);
+                        if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
+                            $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                            if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                                $images[] = array(
+                                    'path' => $destImage,
+                                    'label' => "Outlet Visibility Picture"
+                                );
+                            }
+                        }
+                    }
+
+                    $hasData = true;
+                    $pdf->createPage();
+
+                    // First table
+                    $tableData1 = array(
+                        array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "VAN DS ID", "VAN DS NAME", "DS TYPE", "DATE", "WEEK"),
+                        array($district, $mainBranch, $branchName, $circle, $section, $team_id, $mdoName, $dsTypeValue, $captureDate, $week)
+                    );
+                    $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                    $pdf->Ln(3);
+
+                    // Second table
+                    $tableData2 = array(
+                        array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC", "ALC"),
+                        array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $shopId, $outlet_name, $captureDateTime, $totalProductSale, $totalULC, $avgULC)
+                    );
+                    $pdf->addTable($tableData2, 2, 10, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+
+                    if (!empty($images)) {
+                        $imageY = $pdf->GetY() + 5;
+                        $imgWidth = 130;
+                        $imgSpacing = 10;
+                        $numImages = count($images);
+                        $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
+                        $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
+                        $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
+                    } else {
+                        $pdf->Ln(5);
+                        $pdf->SetFont('Arial', 'I', 10);
+                        $pdf->Cell(287, 10, 'No Image Available', 0, 1, 'C');
+                    }
+
+                    $recordCount++;
+                    if ($recordCount % 50 == 0) {
+                        gc_collect_cycles();
+                    }
+                }
+            }
+        }
+
+        // Check if we have data to generate PDF
+        if (!$hasData) {
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Save PDF
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "VANDS_$currentDateTime.pdf";
+
+        $fileDetails = $pdf->savePdf($fileName, false);
+        $arrResponse = array(
+            "filePath" => $fileDetails["downloadUrl"],
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
+        echo json_encode($arrMessage);
     }
 }
