@@ -2069,7 +2069,7 @@ class VanDsReporting
     }
 
     //Download PDF
-    final public function getDownloadPDFReport()
+   final public function getDownloadPDFReport()
     {
         global  $CUST_FOLDER_PATH;
         global  $UPLOAD_URL;
@@ -2157,8 +2157,6 @@ class VanDsReporting
             }
             $rsAction = null;
             $iRows = 0;
-            // $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type, b.circle, b.wd_code, b.section, b.branch_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg $saleColumns FROM tblsurvey_response_details AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
-            //     " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND $dsTypeCond $where $branchCond ORDER BY capture_datetime DESC";
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg,
            a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7,
            a.ques_8, a.ques_9, a.ques_10, a.distance_in_meter,
@@ -2245,14 +2243,13 @@ class VanDsReporting
                     $avgULC = 0;
                     if (!empty($productColumnNames) && !empty($shopId) && !empty($team_id)) {
                         $columnsStr = implode(", ", $productColumnNames);
-                        $currentMonth = date("Y-m", strtotime($captureDate));
 
                         $sQueryULC = "SELECT $columnsStr
                                     FROM tblsurvey_response_details
                                     WHERE dstatus = 0
                                     AND ques_3 = " . intval($shopId) . "
                                     AND team_id = " . intval($team_id) . "
-                                    AND capture_date LIKE '$currentMonth%'";
+                                    AND capture_date LIKE '$captureDate%'";
 
                         $rsULC = null;
                         $iRowsULC = 0;
@@ -2278,7 +2275,7 @@ class VanDsReporting
                         }
 
                         $totalULC = count($totalUniqueProducts);
-                        $avgULC = $visitCount > 0 ? round($totalULC / $visitCount, 2) : 0;
+                        // $avgULC = $visitCount > 0 ? round($totalULC / $visitCount, 2) : 0;
                     }
                     //Image
                     $getCorrectImage = function ($arrImages, $mobImgId) {
@@ -2301,38 +2298,38 @@ class VanDsReporting
                             }
                         }
                     }
-
-                    $hasData = true;
-                    $pdf->createPage();
-
-                    // First table
-                    $tableData1 = array(
-                        array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "VAN DS ID", "VAN DS NAME", "DS TYPE", "DATE", "WEEK"),
-                        array($district, $mainBranch, $branchName, $circle, $section, $team_id, $mdoName, $dsTypeValue, $captureDate, $week)
-                    );
-                    $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
-                    $pdf->Ln(3);
-
-                    // Second table
-                    $tableData2 = array(
-                        array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC", "ALC"),
-                        array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $shopId, $outlet_name, $captureDateTime, $totalProductSale, $totalULC, $avgULC)
-                    );
-                    $pdf->addTable($tableData2, 2, 10, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
-
                     if (!empty($images)) {
-                        $imageY = $pdf->GetY() + 5;
-                        $imgWidth = 130;
-                        $imgSpacing = 10;
-                        $numImages = count($images);
-                        $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
-                        $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
-                        $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
-                    } else {
-                        $pdf->Ln(5);
-                        $pdf->SetFont('Arial', 'I', 10);
-                        $pdf->Cell(287, 10, 'No Image Available', 0, 1, 'C');
+                        $hasData = true;
+                        $pdf->createPage();
+
+                        // First table
+                        $tableData1 = array(
+                            array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "VAN DS ID", "VAN DS NAME", "DS TYPE", "DATE", "WEEK"),
+                            array($district, $mainBranch, $branchName, $circle, $section, $team_id, $mdoName, $dsTypeValue, $captureDate, $week)
+                        );
+                        $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                        $pdf->Ln(3);
+
+                        // Second table
+                        $tableData2 = array(
+                            array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"),
+                            array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $shopId, $outlet_name, $captureDateTime, $totalProductSale, $totalULC)
+                        );
+                        $pdf->addTable($tableData2, 2, 9, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+
+                            $imageY = $pdf->GetY() + 5;
+                            $imgWidth = 130;
+                            $imgSpacing = 10;
+                            $numImages = count($images);
+                            $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
+                            $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
+                            $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
                     }
+                    // else {
+                    //     $pdf->Ln(5);
+                    //     $pdf->SetFont('Arial', 'I', 10);
+                    //     $pdf->Cell(287, 10, 'No Image Available', 0, 1, 'C');
+                    // }
 
                     $recordCount++;
                     if ($recordCount % 50 == 0) {
