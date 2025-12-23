@@ -49,6 +49,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     thumbnailMaxWidth: '60px',
   };
   branchSelectError = 'err.branchError';
+  dsTypeSelectError = 'err.dstypeError';
   showTransactionDownloadBtn = false;
   showSummaryDownloadBtn = false;
 
@@ -85,9 +86,10 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.subscription.push(
-      this.translate.get(this.branchSelectError)
+      this.translate.get([this.branchSelectError, this.dsTypeSelectError])
         .subscribe(translatedMsg => {
-          this.branchSelectError = translatedMsg;
+          this.branchSelectError = translatedMsg[this.branchSelectError];
+          this.dsTypeSelectError = translatedMsg[this.dsTypeSelectError];
         })
     );
 
@@ -248,6 +250,37 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     }
   }
 
+ downloadPDF() {
+   const hasBranch = this.branchValue && this.branchValue.length;
+   const hasDsType = this.dsTypeValue && this.dsTypeValue.length;
+    if (hasBranch && hasDsType) {
+      this.isDownloading = true;
+      this.loaderService.startLoader();
+
+      this.subscription.push(
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadPdfReport,
+          this.group.getRawValue(), null, environment.getListingExcelUrl)
+          .pipe(
+            finalize(() => {
+              this.isDownloading = false;
+              this.loaderService.stopLoader();
+            }),
+          )
+          .subscribe(response => {
+            if (response && response.status === REQUEST_STATUS.SUCCESS) {
+              Functions.downloadFile(response.data.filePath, response.data.fileName);
+            }
+          })
+      );
+    } else {
+       if (!hasBranch) {
+      this.displayBranchError();
+      }
+      if (!hasDsType) {
+        this.displayDSError();
+      }
+    }
+  }
 
   showLocationOnMap(lt: number, lg: number) {
     this.locationOnMapModalService.show({
@@ -390,6 +423,10 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     this.toastr.toastr({ type: 'error', msg: this.branchSelectError });
   }
 
+  displayDSError() {
+    this.toastr.toastr({ type: 'error', msg: this.dsTypeSelectError });
+  }
+
   get branchValue() {
     return this.group && this.group.get('searchbar').get('branch').value;
   }
@@ -410,6 +447,11 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     this.wdCodeOptions = [];
     this.group.get('searchbar').get('wdCode').setValue(value);
   }
+
+  get dsTypeValue() {
+    return this.group && this.group.get('searchbar').get('dsType').value;
+  }
+
   set dsTypeValue(value: string) {
     this.teamTypeOptions = [];
     this.group.get('searchbar').get('dsType').setValue(value);
