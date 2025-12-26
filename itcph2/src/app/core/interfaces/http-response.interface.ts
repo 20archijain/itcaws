@@ -214,6 +214,7 @@ export interface ViewWdMappingResponse extends GetTableListingResponse {
 }
 
 export interface GetAddTeamDataResponse extends GetViewHeaderBody {
+  brandTypeList: DropdownList[];
   reportTypeList: DropdownList[];
   productList: DropdownList[];
   monthList: DropdownList[];

@@ -24,6 +24,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   wdOptions: DropdownList[] = [];
   dsTypeOptions: DropdownList[] = [];
   reportTypeOptions: DropdownList[] = [];
+  brandTypeOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   isDisabled = false;
@@ -32,7 +33,8 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   url = environment.getActiveVariantsDataUrl;
 
   errorMessages = {
-      reportType: COMMON_VALIDATORS.messages.requiredOnly('Report Type')
+      reportType: COMMON_VALIDATORS.messages.requiredOnly('Report Type'),
+      brandType: COMMON_VALIDATORS.messages.requiredOnly('Brand Type')
     };
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -41,6 +43,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
       branch: [],
       dsType: [],
       reportType: [null, COMMON_VALIDATORS.validators.requiredOnly],
+      brandType: [null, COMMON_VALIDATORS.validators.requiredOnly],
     });
 
     this.getInitialData();
@@ -64,6 +67,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
             this.branchOptions = resp.data.branchList;
             this.dsTypeOptions = resp.data.dsTypeList;
             this.reportTypeOptions = resp.data.reportTypeList;
+            this.brandTypeOptions = resp.data.brandTypeList;
             // this.header = resp.data.viewHeader;
             // this.body = resp.data.viewBody;
             // this.isSelectable = resp.data.isSelectable;
