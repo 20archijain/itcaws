@@ -2069,7 +2069,7 @@ class VanDsReporting
     }
 
     //Download PDF
-   final public function getDownloadPDFReport()
+    final public function getDownloadPDFReport()
     {
         global  $CUST_FOLDER_PATH;
         global  $UPLOAD_URL;
