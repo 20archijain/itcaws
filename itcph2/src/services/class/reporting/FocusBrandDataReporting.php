@@ -72,6 +72,16 @@ class FocusBrandDataReporting
                     "value" => "3",
                 ),
             ),
+            "brandTypeList" => array(
+                array(
+                    "label" => "Focus Brands",
+                    "value" => "1",
+                ),
+                array(
+                    "label" => "OverAll",
+                    "value" => "2",
+                ),
+            ),
             "dsTypeList" => getTeamType($this->_dbConn),
         );
 
@@ -98,6 +108,16 @@ class FocusBrandDataReporting
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
+        $brandType = $this->_data['brandType'];
+        if($brandType == 1)
+        {
+            $brandCond = ' AND a.is_focusbrand = 1';
+            $excelHeader = "Focus Brand";
+        }else
+        {
+            $brandCond = '';
+            $excelHeader = "Variant";
+        }
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
@@ -110,7 +130,7 @@ class FocusBrandDataReporting
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -138,12 +158,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = "Focus Brand " . $i;
+            $arrExcelData[0][] = $excelHeader." " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = "Focus_Brand_SKU_District_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader."_District_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -170,6 +190,16 @@ class FocusBrandDataReporting
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
+        $brandType = $this->_data['brandType'];
+        if($brandType == 1)
+        {
+            $brandCond = ' AND a.is_focusbrand = 1';
+            $excelHeader = "Focus Brand";
+        }else
+        {
+            $brandCond = '';
+            $excelHeader = "Variant";
+        }
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
@@ -182,7 +212,7 @@ class FocusBrandDataReporting
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district,  b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0  AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district,  b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0  AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -217,12 +247,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = "Focus Brand " . $i;
+            $arrExcelData[0][] = $excelHeader." " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = "Focus_Brand_SKU_Region_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader."_Region_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -250,6 +280,16 @@ class FocusBrandDataReporting
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
+        $brandType = $this->_data['brandType'];
+        if($brandType == 1)
+        {
+            $brandCond = ' AND a.is_focusbrand = 1';
+            $excelHeader = "Focus Brand";
+        }else
+        {
+            $brandCond = '';
+            $excelHeader = "Variant";
+        }
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
@@ -262,7 +302,7 @@ class FocusBrandDataReporting
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id AND a.is_focusbrand = 1 $dwnCond $sOrderCond";
+        $sQuery = "SELECT distinct a.team_type, a.product_name, b.district, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -294,12 +334,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = "Focus Brand " . $i;
+            $arrExcelData[0][] = $excelHeader." " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = "Focus_Brand_SKU_Branch_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader."_Branch_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
