@@ -13,6 +13,11 @@
         </app-select>
       </div>
       <div class="col-sm-3 col-lg-2">
+        <app-select placeholder="{{ 'app.reporting.activeUSers.brandType' | translate }}" [group]="form"
+          controlName="brandType" [options]="brandTypeOptions" [errorMessages]="errorMessages.brandType">
+        </app-select>
+      </div>
+      <div class="col-sm-3 col-lg-2">
         <app-select placeholder="{{ 'app.reporting.activeUSers.reportType' | translate }}" [group]="form"
           controlName="reportType" [options]="reportTypeOptions" [errorMessages]="errorMessages.reportType">
         </app-select>
