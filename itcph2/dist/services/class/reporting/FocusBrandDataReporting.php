@@ -96,7 +96,7 @@ class FocusBrandDataReporting
 
         if ($reportType == 1) {
             $this->downloadMasterDataDistrict();
-        } elseif($reportType == 2) {
+        } elseif ($reportType == 2) {
             $this->downloadMasterDataRegion();
         } else {
             $this->downloadMasterDataBranch();
@@ -109,12 +109,10 @@ class FocusBrandDataReporting
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $brandType = $this->_data['brandType'];
-        if($brandType == 1)
-        {
+        if ($brandType == 1) {
             $brandCond = ' AND a.is_focusbrand = 1';
             $excelHeader = "Focus Brand";
-        }else
-        {
+        } else {
             $brandCond = '';
             $excelHeader = "Variant";
         }
@@ -158,12 +156,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = $excelHeader." " . $i;
+            $arrExcelData[0][] = $excelHeader . " " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = $excelHeader."_District_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader . "_District_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -191,12 +189,10 @@ class FocusBrandDataReporting
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $brandType = $this->_data['brandType'];
-        if($brandType == 1)
-        {
+        if ($brandType == 1) {
             $brandCond = ' AND a.is_focusbrand = 1';
             $excelHeader = "Focus Brand";
-        }else
-        {
+        } else {
             $brandCond = '';
             $excelHeader = "Variant";
         }
@@ -247,12 +243,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = $excelHeader." " . $i;
+            $arrExcelData[0][] = $excelHeader . " " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = $excelHeader."_Region_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader . "_Region_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
@@ -281,12 +277,10 @@ class FocusBrandDataReporting
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $brandType = $this->_data['brandType'];
-        if($brandType == 1)
-        {
+        if ($brandType == 1) {
             $brandCond = ' AND a.is_focusbrand = 1';
             $excelHeader = "Focus Brand";
-        }else
-        {
+        } else {
             $brandCond = '';
             $excelHeader = "Variant";
         }
@@ -319,12 +313,12 @@ class FocusBrandDataReporting
         foreach ($arrBody as $exDistrict => $arrDistrict) {
             foreach ($arrDistrict as $exMainBranch => $arrMainBranch) {
                 foreach ($arrMainBranch as $exDsType => $arrDsType) {
-                        $arrExcelHeaderCheck[] = $arrDsType;
-                        $localArr = array($exDistrict, $exMainBranch, $types[$exDsType]);
-                        $arrExcelData[] = array_merge($localArr, $arrDsType);
-                    }
+                    $arrExcelHeaderCheck[] = $arrDsType;
+                    $localArr = array($exDistrict, $exMainBranch, $types[$exDsType]);
+                    $arrExcelData[] = array_merge($localArr, $arrDsType);
                 }
             }
+        }
 
         $max = 0;
         foreach ($arrExcelHeaderCheck as $item) {
@@ -334,12 +328,12 @@ class FocusBrandDataReporting
             }
         }
         for ($i = 1; $i <= $max; $i++) {
-            $arrExcelData[0][] = $excelHeader." " . $i;
+            $arrExcelData[0][] = $excelHeader . " " . $i;
         }
 
         // echo $max;die;
         $currentDateTime = currentDateTime();
-        $fileName = $excelHeader."_Branch_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
+        $fileName = $excelHeader . "_Branch_Wise_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

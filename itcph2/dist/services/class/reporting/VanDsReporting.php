@@ -1478,8 +1478,8 @@ class VanDsReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries" .
-                ", SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns FROM $summaryTable AS a" .
-                ", $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
+                ", SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, a.uni_total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns" .
+                " FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1567,7 +1567,7 @@ class VanDsReporting
                         // for planned outlets count don't use dstatus condition
                         $arrPlannedOutletBeatDay = getRowColumns($this->_dbConn, $routeTable, "COUNT(shop_uniq_code), beat_day", "route_name = '$routeName' AND team_id = $teamId");
                     }
-                    $sellInShop = $row['total_sellin_shops'];
+                    $sellInShop = $row['uni_total_sellin_shops'];
                     $distanceInKm = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
 
                     $mainBranch = $branchName = $district = "";
@@ -2317,13 +2317,13 @@ class VanDsReporting
                         );
                         $pdf->addTable($tableData2, 2, 9, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
 
-                            $imageY = $pdf->GetY() + 5;
-                            $imgWidth = 130;
-                            $imgSpacing = 10;
-                            $numImages = count($images);
-                            $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
-                            $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
-                            $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
+                        $imageY = $pdf->GetY() + 5;
+                        $imgWidth = 130;
+                        $imgSpacing = 10;
+                        $numImages = count($images);
+                        $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
+                        $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
+                        $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
                     }
                     // else {
                     //     $pdf->Ln(5);

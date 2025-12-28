@@ -20,7 +20,7 @@ class UploadFSOTracker
     private $_valErrors = [];
     private $_validationLength = [];
 
-    public function __construct($dbConn, $data, $arrAccessInfo,  $iUserId = null)
+    public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
         $this->_dbConn = $dbConn;
@@ -226,8 +226,8 @@ class UploadFSOTracker
                     $columns = "fso_id, fso_name, parameters, target, mtd_ach, ach_per, rcd";
                     $values = " ?, ?, ?, ?, ?, ?, ?";
                     $arrParams = [$fso_id, $fso_name, $parameter, $target, $mtd, $ach, $rcd];
-                        // Insert record
-                        $res = addRecord($this->_dbConn, "tbl_fso_tracker", $columns, $values, $arrParams);
+                    // Insert record
+                    $res = addRecord($this->_dbConn, "tbl_fso_tracker", $columns, $values, $arrParams);
 
                     // Check if insert was successful
                     if ($res == 2) {

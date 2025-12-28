@@ -324,9 +324,10 @@ class StoreOfflineDropdownOptions
                 "team_id = ?",
                 array($teamId)
             );
-            $allowedBranchIds = [1, 2, 3, 4, 5, 30];
+            $allowedBranchIds = [100];
+            // $allowedBranchIds = [1, 2, 3, 4, 5, 30, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 20];
             if (in_array($branchId, $allowedBranchIds) && isset($arrOptions[0])) {
-                $arrOptions[0]["allowed_distance_in_mtr"] = 350;
+                $arrOptions[0]["allowed_distance_in_mtr"] = 700;
             }
             // Add today's date in 'Y-m-d' format
             if (isset($arrOptions[0])) {

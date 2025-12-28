@@ -51,7 +51,7 @@ class processUpdateQualifiedMarketTime
                 $orderShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                 $addShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                 $totalShops = $orderShop + $addShop;
-                $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
+                $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"] ? $row["end_datetime"] : $row["resp_enddatetime"], true);
                 $totalTime = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
                 $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? 1 : 0;
                 $timeInMarket = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);

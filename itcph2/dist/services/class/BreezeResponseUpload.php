@@ -31,7 +31,9 @@ class BreezeResponseUpload
         $formats = ["d-m-Y", "Y-m-d", "d/m/Y", "d.m.Y"];
         foreach ($formats as $f) {
             $d = DateTime::createFromFormat($f, $val);
-            if ($d) return $d->format("Y-m-d");
+            if ($d) {
+                return $d->format("Y-m-d");
+            }
         }
         return $val;
     }
@@ -126,7 +128,6 @@ class BreezeResponseUpload
         $data = [];
 
         for ($r = 2; $r <= $highestRow; $r++) {
-
             // skip empty rows
             if ($sheet->getCell("A$r")->getValue() === null) {
                 continue;
@@ -136,7 +137,6 @@ class BreezeResponseUpload
             $i = 0;
 
             foreach (range('A', $highestCol) as $col) {
-
                 $header = $headers[$i];
                 $val = $sheet->getCell($col . $r)->getValue();
 
@@ -185,7 +185,6 @@ class BreezeResponseUpload
             $conn->beginTransaction();
 
             foreach (array_chunk($data, $chunkSize) as $batch) {
-
                 foreach ($batch as $row) {
                     $params = [];
 

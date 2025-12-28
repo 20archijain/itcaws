@@ -866,8 +866,8 @@ class MdoPerformanceReport
                     $sumColumns = "SUM($summaryColumns)";
                     $totalSale = 0;
                     // foreach ($arrTeamDeatils as $teamRow) {
-                    $dsName = $arrTeamDeatils[0];
-                    $dsId = $arrTeamDeatils[1];
+                    $dsName = isset($arrTeamDeatils[0]) ? $arrTeamDeatils[0] : "";
+                    $dsId = isset($arrTeamDeatils[1]) ? $arrTeamDeatils[1] : "";
                     // 1️⃣ Get the accompanied sale (only one record per ds_ d)
                     $sQueryAcc = "SELECT total_sale, capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
                     $rsAcc = null;
