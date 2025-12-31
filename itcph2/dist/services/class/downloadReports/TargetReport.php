@@ -547,7 +547,10 @@ class TargetReport
                         ];
 
                         //Third Column
-                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""];
+                        $arrExcelData[] = [
+                            $month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
+                            "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""
+                        ];
 
                         //Forth Column
                         $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];

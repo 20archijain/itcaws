@@ -128,6 +128,8 @@ export const STATIC_MODULES = {
     getDownloadPdfReport: 'get_download_pdf_report',
     getMapdata: 'get_mapdata',
     getMonth: 'get_month',
+    getTables: 'get_tables',
+    getTableColumns: 'get_tables_column',
   },
   forgot: {
     action: 'forgot',

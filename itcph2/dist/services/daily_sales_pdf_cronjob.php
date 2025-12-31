@@ -18,7 +18,7 @@ require $PHP_FPDF_PATH;
 // Custom PDF class with footer
 class SalesReportPDF extends FPDF
 {
-    function Footer()
+    public function footer()
     {
         $this->SetY(-15);
         $this->SetFont('Arial', 'I', 8);
@@ -218,6 +218,8 @@ class generatePDFCronjob
         $allProductCols = [];
         $totalSalesQty = 0;
         $totalOutlets = 0;
+        $totalLineCut = 0; // Sum of all line cuts across outlets
+        $totalShopsInData = count($groupedSalesData); // Total shops in data (including zero sales)
 
         foreach ($groupedSalesData as $outletKey => $outletData) {
             $validProducts = [];
@@ -232,10 +234,21 @@ class generatePDFCronjob
                 return $qty > 0;
             }));
             $groupedSalesData[$outletKey]['unique_lines'] = count($validProducts);
-            $allProductCols = array_merge($allProductCols, $validProducts);
-            $totalOutlets++;
+
+            // Only count outlets that have at least one product sale
+            if (count($validProducts) > 0) {
+                $allProductCols = array_merge($allProductCols, $validProducts);
+                $totalOutlets++; // Only count shops with at least 1 sale
+                $totalLineCut += count($validProducts); // Add this outlet's line cut to total
+            }
         }
+
+        // Calculate unique line cut: unique products / outlets with 1 or more product sale
         $totalUniqueLines = count(array_unique($allProductCols));
+        $uniqueLineCut = $totalOutlets > 0 ? round($totalUniqueLines / $totalOutlets, 2) : 0;
+
+        // Calculate average line cut per outlet: sum of all line cuts / outlets with 1 or more product sale
+        $avgLineCutPerOutlet = $totalOutlets > 0 ? round($totalLineCut / $totalOutlets, 2) : 0;
 
         // Generate PDF with custom class for footer
         $pdf = new SalesReportPDF('P', 'mm', 'A4');
@@ -302,9 +315,12 @@ class generatePDFCronjob
         $pdf->SetDrawColor(200, 200, 200);
 
         $summaryData = [
-            ['Total Outlets Surveyed', $totalOutlets],
+            ['Total Outlets Surveyed', $totalShopsInData],
+            // ['Total Outlets with Sales', $totalOutlets],
             ['Total Volume (Ms)', number_format($totalSalesQty, 2)],
-            ['Total Unique Lines Cut', $totalUniqueLines],
+            // ['Total Unique Lines Cut', $totalUniqueLines],
+            ['Unique Line Cut Per Outlet', $uniqueLineCut],
+            ['Average Line Cut Per Outlet', $avgLineCutPerOutlet],
         ];
 
         foreach ($summaryData as $summaryRow) {
@@ -463,8 +479,8 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.is_type in (0,5) AND a.pdf_generated = '0'" .
-            " $sDateCond LIMIT 5";
+        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null" .
+            " AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         if ($iRows > 0) {

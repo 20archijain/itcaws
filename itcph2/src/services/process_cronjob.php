@@ -48,7 +48,8 @@ class ProcessResponse
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT resp_id, uni_id, client_id, project_id, team_id, s_id, sur_response, distance_travelled_in_km, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt FROM $processTable WHERE project_id IN ($sPids) AND processed = '0' AND dstatus = 0 $cond ORDER BY resp_id LIMIT 250";
+        $sQuery = "SELECT resp_id, uni_id, client_id, project_id, team_id, s_id, sur_response, distance_travelled_in_km, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt" .
+            " FROM $processTable WHERE project_id IN ($sPids) AND processed = '0' AND dstatus = 0 $cond ORDER BY capture_datetime LIMIT 250";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {

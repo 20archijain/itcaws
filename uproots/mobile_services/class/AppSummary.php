@@ -2410,13 +2410,11 @@ class AppSummary extends Utilities
                         }
 
                         if (isset($arrFocusProduct[1]) && $arrFocusProduct[1]) {
-
                             $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         }
 
-                        if(isset($overAllProduct) && $overAllProduct)
-                        {
-                             $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        if (isset($overAllProduct) && $overAllProduct) {
+                            $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         }
 
                         $focusProduct1 = $arrFocusProductName[0] ?? "NA";

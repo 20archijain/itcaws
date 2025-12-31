@@ -164,6 +164,9 @@
           <app-button [isFaIcon]="true" iconName="fa fa-download" btnClass="m-l-5" [showIconInButton]="true"
             btnTitle="button.downloadBinder" (onClick)="downloadBinderReport()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-file-pdf" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadPdf" (onClick)="downloadPDF()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
             (onClick)="clearForm()"></app-button>
         </div>

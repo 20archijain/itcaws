@@ -42,7 +42,6 @@ class AddFocusBrand
 
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
-
                 $branch_id = $row['branch_id'];
                 $sAction1 = null;
                 $iRows1 = 0;
@@ -53,7 +52,6 @@ class AddFocusBrand
 
                 if ($iRows1 > 0) {
                     while ($row1 = $this->_dbConn->GetData($sAction1)) {
-
                         $summary_column_name = $row1['summary_column_name'];
                         $arrList = array(
                             $row1['json_id'],
@@ -71,9 +69,8 @@ class AddFocusBrand
 
                         $recId = getRowColumn($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "dstatus = 0 AND branch_id = $branch_id AND month = '$currentMonth' AND year = '$currentYear' AND summary_column_name = '$summary_column_name'");
 
-                        if($recId == 0)
-                        {
-                             addRecord($this->_dbConn, "tblbranch_products_month_wise", "json_id, team_type, is_focusbrand, category_name, product_name, summary_column_name, net_rate, sort_order, branch_id, month, year", "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?",  $arrList);
+                        if ($recId == 0) {
+                            addRecord($this->_dbConn, "tblbranch_products_month_wise", "json_id, team_type, is_focusbrand, category_name, product_name, summary_column_name, net_rate, sort_order, branch_id, month, year", "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?", $arrList);
                         }
                     };
                 }

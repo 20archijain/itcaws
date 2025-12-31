@@ -149,7 +149,7 @@ class BillCutReport
             }
         } else {
             // No team type filter → include all team types
-            $condition = " AND b.is_type IN (0,5)"; // or remove condition entirely
+            $condition = " AND b.is_type IN (0, 2, 5)"; // or remove condition entirely
         }
 
         $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
@@ -257,8 +257,8 @@ class BillCutReport
             $teamTypes = [$teamTypeFilter];
         } else {
             // ✅ No filter selected → include both 0 and 5 team types
-            $teamTypeCond = " AND team_type IN (0,5)";
-            $teamTypes = [0, 5];
+            $teamTypeCond = " AND team_type IN (0,2,5)";
+            $teamTypes = [0, 2, 5];
         }
 
         $productCond = "";

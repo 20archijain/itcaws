@@ -205,7 +205,8 @@
         "wdCode": "WD Code",
         "circle": "Circle",
         "section": "Section",
-        "team": "Team Name"
+        "team": "Team Name",
+        "teamType" :"Team Type"
       }
     },
     "user": {
@@ -295,7 +296,9 @@
         "skucategory": "SKU Category",
         "skuName": "SKU Name",
         "baseRate": "Base Rate (M)",
-        "focusBrand": "Focus Brand"
+        "focusBrand": "Focus Brand",
+        "reportType": "Report Type",
+        "brandType": "Brand Type"
       },
       "vanDs": {
         "heading": "View Van DS Reporting",
@@ -442,6 +445,7 @@
     "sameLength": "{{ name }} must be {{ minLength }} characters long.",
     "emptyModuleList": "Please select alteast one module",
     "branchError": "Please select branch",
+    "dstypeError": "Please select DS Type",
     "ngbDateError": "{{ name }} is invalid"
   },
   "footer": {

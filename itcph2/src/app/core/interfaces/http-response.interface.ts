@@ -65,6 +65,7 @@ export interface GroupDataResponse {
 }
 
 export interface GetUserDataResponse extends GetViewHeaderBody {
+  teamTypeList: DropdownList[];
   teamList: DropdownList[];
   sectionList: DropdownList[];
   circleList: DropdownList[];
@@ -213,6 +214,8 @@ export interface ViewWdMappingResponse extends GetTableListingResponse {
 }
 
 export interface GetAddTeamDataResponse extends GetViewHeaderBody {
+  brandTypeList: DropdownList[];
+  reportTypeList: DropdownList[];
   productList: DropdownList[];
   monthList: DropdownList[];
   yearList: DropdownList[];
@@ -521,6 +524,8 @@ export interface DownloadReports {
   teamList: DropdownList<string, string>[];
   typeList: DropdownList<string, string>[];
   tableList: DropdownList<string, string>[];
+  operatorList: DropdownList<string, string>[];
+  logicalOperatorList: DropdownList<string, string>[];
   viewHeader: string[];
   viewBody: string[];
 }

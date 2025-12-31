@@ -1,0 +1,181 @@
+<div class="row">
+  <div class="col-lg-12">
+    <div class="card">
+      <form [formGroup]="form" (ngSubmit)="download()" novalidate>
+        <div class="card-header align-items-center d-flex">
+          <h4 class="card-title mb-0 flex-grow-1">
+            <i class="ri-download-cloud-2-line"></i> Download Table with Conditions
+          </h4>
+        </div>
+        <div class="card-body">
+          <div class="live-preview">
+            <!-- All Dropdowns in Single Row -->
+            <div class="row gy-4 mb-4">
+              <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
+                <app-select controlName="database" placeholder="Database" [options]="dataBaseListOptions"
+                  label="app.missCall.selectDatabase" [group]="form" [isRequired]="true"
+                  [errorMessages]="errorMessages.database" (onChange)="getTables()">
+                </app-select>
+              </div>
+              <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
+                <app-select controlName="table" placeholder="Table" [options]="tableOptions" label="Table"
+                  [group]="form" [isRequired]="true" [errorMessages]="errorMessages.table"
+                  (onChange)="getColumns(); getProjectId()">
+                </app-select>
+              </div>
+              <div class="col-xxl-3 col-xl-4 col-lg-6 col-md-6">
+                <app-select controlName="type" placeholder="Export Type" [options]="typeOptions" label="Export Type"
+                  [group]="form">
+                </app-select>
+              </div>
+            </div>
+
+            <!-- Custom Conditions Section -->
+            <div class="row" *ngIf="columnOptions.length > 0">
+              <div class="col-12">
+                <div class="card border-dashed">
+                  <div class="card-header">
+                    <h5 class="card-title mb-0">
+                      <i class="ri-filter-3-line"></i> Custom Conditions
+                      <small class="text-muted ms-2">(Optional - Add conditions to filter data)</small>
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <!-- Existing Conditions -->
+                    <div formArrayName="conditions">
+                      <div *ngFor="let condition of conditions.controls; let i = index" [formGroupName]="i"
+                        class="condition-row mb-3">
+
+                        <div class="condition-header">
+                          <div class="d-flex align-items-center">
+                            <span *ngIf="i > 0" class="badge bg-primary me-2">
+                              {{ getConditionGroup(i).get('logicalOperator')?.value }}
+                            </span>
+                            <span class="fw-medium">Condition {{ i + 1 }}</span>
+                          </div>
+                          <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeCondition(i)">
+                            <i class="ri-delete-bin-line"></i>
+                          </button>
+                        </div>
+
+                        <!-- All Condition Fields in Single Row -->
+                        <div class="row gy-3">
+                          <!-- Logical Operator (for conditions after the first) -->
+                          <div class="col-lg-2 col-md-3 col-sm-6" *ngIf="i > 0">
+                            <app-select controlName="logicalOperator" placeholder="Logic"
+                              [options]="logicalOperatorOptions" label="Logic" [group]="getConditionGroup(i)">
+                            </app-select>
+                          </div>
+
+                          <!-- Column Selection -->
+                          <div class="col-lg-2 col-md-3 col-sm-6" [class.col-lg-2]="i > 0" [class.col-lg-3]="i === 0">
+                            <app-select controlName="column" placeholder="Column" [options]="columnOptions"
+                              label="Column" [group]="getConditionGroup(i)" [isRequired]="true"
+                              [errorMessages]="errorMessages.column">
+                            </app-select>
+                          </div>
+
+                          <!-- Operator Selection -->
+                          <div class="col-lg-2 col-md-3 col-sm-6" [class.col-lg-2]="i > 0" [class.col-lg-3]="i === 0">
+                            <app-select controlName="operator" placeholder="Operator" [options]="operatorOptions"
+                              label="Operator" [group]="getConditionGroup(i)" [isRequired]="true"
+                              [errorMessages]="errorMessages.operator" (onChange)="onOperatorChange(i)">
+                            </app-select>
+                          </div>
+
+                          <!-- Value 1 -->
+                          <div class="col-lg-2 col-md-3 col-sm-6"
+                            *ngIf="shouldShowValue(getConditionGroup(i).get('operator')?.value)" [class.col-lg-2]="i > 0"
+                            [class.col-lg-3]="i === 0">
+                            <div class="form-group">
+                              <label class="form-label">Value</label>
+                              <input type="text" class="form-control" formControlName="value" placeholder="Enter value">
+                              <div class="invalid-feedback"
+                                *ngIf="getConditionGroup(i).get('value')?.invalid && getConditionGroup(i).get('value')?.touched">
+                                {{ errorMessages.value }}
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Value 2 (for BETWEEN operator) -->
+                          <div class="col-lg-2 col-md-3 col-sm-6"
+                            *ngIf="shouldShowValue2(getConditionGroup(i).get('operator')?.value)">
+                            <div class="form-group">
+                              <label class="form-label">To Value</label>
+                              <input type="text" class="form-control" formControlName="value2"
+                                placeholder="Enter to value">
+                              <div class="invalid-feedback"
+                                *ngIf="getConditionGroup(i).get('value2')?.invalid && getConditionGroup(i).get('value2')?.touched">
+                                {{ errorMessages.value }}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Condition Preview -->
+                        <div class="mt-2" *ngIf="getConditionGroup(i).get('column')?.value && getConditionGroup(i).get('operator')?.value">
+                          <small class="text-muted">
+                            <strong>Preview:</strong>
+                            <span *ngIf="i > 0">{{ getConditionGroup(i).get('logicalOperator')?.value }} </span>
+                            {{ getConditionGroup(i).get('column')?.value }}
+                            {{ getOperatorLabel(getConditionGroup(i).get('operator')?.value) }}
+                            <span *ngIf="shouldShowValue(getConditionGroup(i).get('operator')?.value)">
+                              <span
+                                *ngIf="getConditionGroup(i).get('operator')?.value === 'LIKE' || getConditionGroup(i).get('operator')?.value === 'NOT LIKE'">
+                                '%{{ getConditionGroup(i).get('value')?.value }}%'
+                              </span>
+                              <span
+                                *ngIf="getConditionGroup(i).get('operator')?.value !== 'LIKE' && getConditionGroup(i).get('operator')?.value !== 'NOT LIKE'">
+                                '{{ getConditionGroup(i).get('value')?.value }}'
+                              </span>
+                              <span *ngIf="shouldShowValue2(getConditionGroup(i).get('operator')?.value)">
+                                AND '{{ getConditionGroup(i).get('value2')?.value }}'
+                              </span>
+                            </span>
+                          </small>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Add Condition Button -->
+                    <div class="text-center">
+                      <button type="button" class="btn btn-outline-primary btn-sm" (click)="addCondition()">
+                        <i class="ri-add-line"></i> Add Condition
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="row mt-4">
+              <div class="col-12">
+                <div class="d-flex gap-2 flex-wrap">
+                  <app-button type="submit" text="Download SQL" [appScrollToFirstInvalidInput]="form"
+                    btnClass="btn-primary" [showIconInButton]="true" spinnerText="spinnerText.downloading"
+                    iconName="ri-download-2-line">
+                  </app-button>
+
+                  <!-- <app-button
+                    type="button"
+                    text="Preview Query"
+                    btnClass="btn-info"
+                    [showIconInButton]="true"
+                    iconName="ri-eye-line"
+                    (onClick)="previewQuery()">
+                  </app-button> -->
+
+                  <app-button type="button" text="Clear All" [showIconInButton]="true" iconName="ri-refresh-line"
+                    (onClick)="clearFilters()">
+                  </app-button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

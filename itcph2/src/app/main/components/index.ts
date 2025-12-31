@@ -54,8 +54,9 @@ import { AddWdMappingComponent } from './wd-mapping/add.wdmapping.component';
 import { SWDTargetUploadComponent } from './swd-retailer-target/swd-retailer-target.component';
 import { BreezeResponseUploadComponent } from './breeze_reponse_upload/breezeResponseUpload.component';
 import { FocusBrandDataListingComponent } from './reporting/FocusBrandData/FocusBrandData.component';
-
 import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
+import { DownloadDBTableComponent } from './download-db-table/download-db-table.component';
+import { FSOTrackerDataUploadComponent } from './fso-tracker-upload/fso-tracker-upload.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -113,6 +114,8 @@ export const MAIN_COMPONENTS = [
   BreezeResponseUploadComponent,
   MdoDownloadRouteComponent,
   FocusBrandDataListingComponent,
+  DownloadDBTableComponent,
+  FSOTrackerDataUploadComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -171,4 +174,6 @@ export const MAP_MAIN_COMPONENTS = {
   BreezeResponseUploadComponent,
   MdoDownloadRouteComponent,
   FocusBrandDataListingComponent,
+  DownloadDBTableComponent,
+  FSOTrackerDataUploadComponent,
 };

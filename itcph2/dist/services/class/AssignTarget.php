@@ -51,6 +51,9 @@ class AssignTarget
         $nextYear  = date("Y", strtotime("first day of next month"));
 
         $teamList = $this->_arrAccessInfo["user_teams"];
+
+        // echo "<pre>";
+        // print_r($teamList);die;
         $where = "";
         $where1 = "";
         if ($teamList) {

@@ -18,6 +18,8 @@ files:
     - "src/app/shared/components/npsr-accordion/npsr-accordion.component.scss"
     - "src/app/shared/components/productive-accordion/productive-accordion.component.scss"
     - "src/app/main/components/notification/app.notification.component.scss"
+    - "src/app/main/components/download-db-table/download-db-table.component.scss"
+    - "src/app/main/components/swd-retailer-target/swd-retailer-target.component.scss"
 
 rules:
   # Extends
