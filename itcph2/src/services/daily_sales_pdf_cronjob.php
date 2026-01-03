@@ -494,15 +494,18 @@ class generatePDFCronjob
                 if (isset($start_datetime) && isset($end_datetime) && !empty($start_datetime) && !empty($end_datetime)) {
                     $pdfGenerated = $this->generatePDFForTeam($team_id, $start_datetime, $end_datetime, $summary_id);
                     if ($pdfGenerated[0] == 1) {
-                        $notificationText = "$pdfGenerated[1]";
-                        $cols = "team_id, notification_type, notification_title, notification_text, notification_date, notification_datetime,  rcd, rdt";
-                        $vals = "?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParams = array($team_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
+                        $actualPdfUrl = $pdfGenerated[1];
+
+                        // Create complete tracking URL - use summary_id as the tracking ID
+                        $trackingUrl = "https://upimg2.radardashboard.com/mobile_services/api/custom/track_pdf_access.php?sid=" . $summary_id . "&url=" . urlencode($actualPdfUrl);
+
+                        $notificationText = $trackingUrl;
+
+                        // Add summary_id to the notification record
+                        $cols = "team_id, summary_id, notification_type, notification_title, notification_text, notification_date, notification_datetime, rcd, rdt";
+                        $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?";
+                        $arrParams = array($team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
                         $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
-                        // debug_log(
-                        //     "\r\nData Added to Notification Table for Team ID: $team_id date - $currentDate\r\n" .
-                        //         $this->logFilename
-                        // );
                     } else {
                         // debug_log(
                         //     "\r\nData Not Added to Notification Table for Team ID: $team_id date - $currentDate\r\n" .
