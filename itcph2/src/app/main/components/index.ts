@@ -57,6 +57,7 @@ import { FocusBrandDataListingComponent } from './reporting/FocusBrandData/Focus
 import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
 import { DownloadDBTableComponent } from './download-db-table/download-db-table.component';
 import { FSOTrackerDataUploadComponent } from './fso-tracker-upload/fso-tracker-upload.component';
+import { PDFAccessReportComponent } from './pdf-access-report/pdf-access-report.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -116,6 +117,7 @@ export const MAIN_COMPONENTS = [
   FocusBrandDataListingComponent,
   DownloadDBTableComponent,
   FSOTrackerDataUploadComponent,
+  PDFAccessReportComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -176,4 +178,5 @@ export const MAP_MAIN_COMPONENTS = {
   FocusBrandDataListingComponent,
   DownloadDBTableComponent,
   FSOTrackerDataUploadComponent,
+  PDFAccessReportComponent,
 };
