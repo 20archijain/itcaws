@@ -135,7 +135,7 @@ class ActiveSKUReporting
                 $category = $arrData["category_name"];
                 $skuName = $arrData["product_name"];
                 $mainBranch = $arrData["main_branch"];
-                $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
+                $creationDate = !empty($arrData["rcd"]) ? date("Y-m-d", strtotime($arrData["rcd"])) : null;
                 $prodRate = $arrData["net_rate"];
 
                 $arrResult[] = array(
