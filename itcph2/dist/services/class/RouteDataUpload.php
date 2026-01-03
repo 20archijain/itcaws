@@ -201,7 +201,6 @@ class RouteDataUpload
                         }
 
                         if (in_array($arrSelectedColumns[$colIndex], ['ds_mobile', 'outlet_mobile'])) {
-
                             // ---- EMPTY CHECK ----
                             if ($columnData === '' || $columnData === null || trim($columnData) === '') {
                                 $errorMessage = ["Mobile number is required"];
@@ -244,12 +243,12 @@ class RouteDataUpload
                             // ---- DUPLICATE CHECK ONLY IN SAME FIELD ----
                             if ($arrSelectedColumns[$colIndex] === 'ds_mobile') {
                                 // Check ds_mobile only
-                                $isExist = isRecordExist( $this->_dbConn, $routeDetailsTable, "ds_mobile", "ds_mobile = '$columnData' AND dstatus = 0");
+                                $isExist = isRecordExist($this->_dbConn, $routeDetailsTable, "ds_mobile", "ds_mobile = '$columnData' AND dstatus = 0");
                             }
 
                             if ($arrSelectedColumns[$colIndex] === 'outlet_mobile') {
                                 // Check outlet_mobile only
-                                $isExist = isRecordExist($this->_dbConn, $routeDetailsTable,"outlet_mobile","outlet_mobile = '$columnData' AND dstatus = 0");
+                                $isExist = isRecordExist($this->_dbConn, $routeDetailsTable, "outlet_mobile", "outlet_mobile = '$columnData' AND dstatus = 0");
                             }
 
                             if ($isExist == 1) {
@@ -420,7 +419,7 @@ class RouteDataUpload
                 ],
             ],
             'font' => [
-                'bold' => true, 
+                'bold' => true,
             ],
         ];
 

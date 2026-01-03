@@ -32,7 +32,7 @@ class ProcessMdoData
         $type = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR", 6 => "RMD", 8 => "SCP DS", 9 => "Common FMCG Lite DS");
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND updated_date != '$currentDate' LIMIT 30";
+        $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND mdo_id = 22704 LIMIT 30";
 
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 

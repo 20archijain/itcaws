@@ -801,13 +801,12 @@ class MdoRouteDownload
            AND b.dstatus = 0
            AND a.team_id = b.mdo_id AND a.branch_id = c.branch_id
            $where";
+        //   echo "$sQuery";die;
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
-
             while ($row = $this->_dbConn->GetData($rsAction)) {
-
                 $mdoId      = $row['mdo_id'];
                 $mdoName    = $row['team_name'];
                 $teamsId    = $row['teams'];
@@ -832,10 +831,6 @@ class MdoRouteDownload
                     "team_id = '$teamsId'"
                 );
 
-                // $ds_type = $arrTeamType[$is_type];
-                // var_dump($ds_type);die;
-                // $arrAllData[$mdoId][$teamsId][$ds_type] = $routeRows;
-                // print_r($arrAllData);die;
                 $ds_type = $arrTeamType[$is_type];
 
                 $arrAllData[$mdoId][$teamsId] = [
@@ -848,7 +843,6 @@ class MdoRouteDownload
         }
         foreach ($arrAllData as $mdoId => $mdoData) {
             foreach ($mdoData as $teamsId => $teamData) {
-
                 $mdoName    = $teamData["mdo_name"];
                 $ds_type    = $teamData["ds_type"];
                 $mainBranch = $teamData["mainBranch"];
@@ -875,37 +869,12 @@ class MdoRouteDownload
             }
         }
 
-        // foreach ($arrAllData as $mdoId => $mdoData) {
-        //     foreach ($mdoData as $teamsId => $teamData) {
-        //         foreach ($teamData as $r) {
-        //             $arrDataHolder[] = [
-        //                 $r[0],            // rec_id
-        //                 $mdoId,
-        //                 $mdoName,
-        //                 $teamsId,
-        //                 $ds_type,         //ds_type
-        //                 $r[1],            // wd_code
-        //                 $mainBranch,
-        //                 $r[2],            // route_name
-        //                 $r[3],            // outlet_name
-        //                 $r[4],            // outlet_mobile
-        //                 $r[5],            // outlet_address
-        //                 $r[6],            // shop_uniq_code
-        //                 $r[7],            // lt
-        //                 $r[8],            // lg
-        //             ];
-        //         }
-        //     }
-        // }
-
-
-
         $arrResult = formatDownloadData("MDO_ROUTE_DATA", array($header), $arrDataHolder);
         $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
-    function cleanCSVValue($value)
+    private function cleanCSVValue($value)
     {
         $value = trim($value);
         $value = str_replace(["\n", "\r"], " ", $value);  // remove new lines

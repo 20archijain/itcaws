@@ -227,8 +227,7 @@ class SuperUserManagement
     {
         $arrTypes = array();
         global $ARR_TEAM_TYPES;
-        foreach($ARR_TEAM_TYPES as $id => $teamType)
-        {
+        foreach ($ARR_TEAM_TYPES as $id => $teamType) {
             $arrTypes[] = array(
                 "label" => $teamType,
                 "value" => $id,
@@ -409,7 +408,7 @@ class SuperUserManagement
                             "wdCode" => array(),
                             "circle" => array(),
                             "section" => array(),
-                            "team" =>array(),
+                            "team" => array(),
                             "teamType" => getRowsColumn($this->_dbConn, $userAccessTable, "team_type", "dstatus = 0 AND user_id = $userId"),
 
                         );

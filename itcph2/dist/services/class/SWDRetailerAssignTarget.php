@@ -20,7 +20,7 @@ class SWDRetailerAssignTarget
     private $_valErrors = [];
     private $_validationLength = [];
 
-    public function __construct($dbConn, $data, $arrAccessInfo,  $iUserId = null)
+    public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
         $this->_dbConn = $dbConn;
@@ -41,7 +41,7 @@ class SWDRetailerAssignTarget
             "Year"
         );
 
-        $products = getRowsColumn($this->_dbConn, "tblbranch_pickupstock_products", "product_name", "branch_id IN ('42','43')");
+        $products = getRowsColumn($this->_dbConn, "tblbranch_pickupstock_products", "product_name", "branch_id IN ('42','43')", array(), true);
 
         // Create header row
         if (isNonEmptyArray($products)) {

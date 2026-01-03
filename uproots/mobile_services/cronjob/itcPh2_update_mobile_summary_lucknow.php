@@ -8,5 +8,5 @@ require_once "../class/ItcPh2UpdateMobileSummary.php";
 
 $itcPh2UpdateMobileSummary = new ItcPh2UpdateMobileSummary($dbConn, $tableUtil, $commonFunctions);
 
-// update summary for branch 4
-$itcPh2UpdateMobileSummary->updateSummary(array(4));
+// update summary for branch 4, 54, 55, 56, 57
+$itcPh2UpdateMobileSummary->updateSummary(array(4, 54, 55, 56, 57));

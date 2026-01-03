@@ -34,6 +34,7 @@ class GetMdoNotification extends Utilities
 
         // Fetch all teams mapped to this MDO
         $arrTeamIds = $this->tableUtil->getRowsColumn("$dbName.tblmdo_access", "teams", "mdo_id = $teamId");
+        $mdoType = $this->tableUtil->getRowColumn("$dbName.tblproject_team", "is_type", "team_id = $teamId");
         $accessTeamList = "'" . implode("','", $arrTeamIds) . "'";
 
         $arrNotifications = [];
@@ -101,7 +102,7 @@ class GetMdoNotification extends Utilities
         }
 
         // After the loop, process all collected routes
-        if (!empty($allRoutes)) {
+        if (!empty($allRoutes) && $mdoType == 7) {
             // Build comma-separated route list for SQL IN()
             $routeList = "'" . implode("','", $allRoutes) . "'";
 
@@ -202,7 +203,7 @@ class GetMdoNotification extends Utilities
             }
         }
 
-        if (!empty($getTeams)) {
+        if (!empty($getTeams) && $mdoType == 7) {
             // Build comma-separated team list for SQL IN()
             $dsList = "'" . implode("','", $getTeams) . "'";
 
@@ -294,6 +295,76 @@ class GetMdoNotification extends Utilities
                 ];
             }
         }
+
+        if ($mdoType == 10) {
+            // if ($teamId == 22701) {
+            //     $bustarget = 40.00;
+            //     $busMtdAch = 8.34;
+            //     $busAch = 21 . " %";
+            //     $markTarget = 134;
+            //     $markMtdAch = 4;
+            //     $markAch = 3 . " %";
+            //     $UOBTarget = 600;
+            //     $UOBkMtdAch = 219;
+            //     $UOBAch = 37 . " %";
+            // } elseif ($teamId == 22693) {
+            //     $bustarget = 50.00;
+            //     $busMtdAch = 13.40;
+            //     $busAch = 27 . " %";
+            //     $markTarget = 120;
+            //     $markMtdAch = 43;
+            //     $markAch = 36 . " %";
+            //     $UOBTarget = 750;
+            //     $UOBkMtdAch = 390;
+            //     $UOBAch = 52 . " %";
+            // } elseif ($teamId == 22713) {
+            //     $bustarget = 30.00;
+            //     $busMtdAch = 11.05;
+            //     $busAch = 37 . " %";
+            //     $markTarget = 124;
+            //     $markMtdAch = 4;
+            //     $markAch = 3 . " %";
+            //     $UOBTarget = 450;
+            //     $UOBkMtdAch = 275;
+            //     $UOBAch = 61 . " %";
+            // } elseif ($teamId == 22716) {
+            //     $bustarget = 40.00;
+            //     $busMtdAch = 5.39;
+            //     $busAch = 13 . " %";
+            //     $markTarget = 134;
+            //     $markMtdAch = 5;
+            //     $markAch = 4 . " %";
+            //     $UOBTarget = 600;
+            //     $UOBkMtdAch = 294;
+            //     $UOBAch = 49 . " %";
+            // }
+            $arrTrackerDetails =  $this->tableUtil->getRowsColumns(
+                "$dbName.tbl_fso_tracker",
+                "parameters, target, mtd_ach, ach_per",
+                "fso_id = $teamId AND dstatus = 0"
+            );
+
+            $arrProductivityDetails = array();
+            foreach ($arrTrackerDetails as $trackerData) {
+                $arrProductivityDetails[] = array(
+                    "cardHeading" => $trackerData[0],
+                    "kpis" => array(
+                        array("label" => "Target", "value" => (string)$trackerData[1]),
+                        array("label" => "MTD Ach", "value" => (string)$trackerData[2]),
+                        array("label" => "Ach%", "value" => $trackerData[3]),
+                    )
+                );
+            }
+
+            $arrNotifications[] = [
+                "id" => 1,
+                "title" => "Productivity",
+                "shortMessage" => null,
+                "fullMessage" => null,
+                "metadata" => $arrProductivityDetails
+            ];
+        }
+
 
         $response = $this->response->sendResponse(array("message" => "", "response" => $arrNotifications ? $arrNotifications : array()), 1);
         $this->logOutput($response, $this->sExtraLogData);

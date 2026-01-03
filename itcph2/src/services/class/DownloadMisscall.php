@@ -58,14 +58,23 @@ class DownloadMisscall
     final public function getCondition()
     {
         $where = "";
-        $where.= getFilterResult(
+        $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
             array(
                 "dateFrom" => array("rcd", 2, "dateTo"),
             ),
             $this->_dbConn
         );
-        // if (isset($this->_data['searchbar']['dateRange']['from']['year'], $this->_data['searchbar']['dateRange']['from']['month'], $this->_data['searchbar']['dateRange']['from']['day'], $this->_data['searchbar']['dateRange']['to']['year'], $this->_data['searchbar']['dateRange']['to']['month'], $this->_data['searchbar']['dateRange']['to']['day'])) {
+        // if (
+        //     isset(
+        //         $this->_data['searchbar']['dateRange']['from']['year'],
+        //         $this->_data['searchbar']['dateRange']['from']['month'],
+        //         $this->_data['searchbar']['dateRange']['from']['day'],
+        //         $this->_data['searchbar']['dateRange']['to']['year'],
+        //         $this->_data['searchbar']['dateRange']['to']['month'],
+        //         $this->_data['searchbar']['dateRange']['to']['day']
+        //     )
+        // ) {
         //     $fromArr = $this->_data['searchbar']['dateRange']['from'];
         //     $toArr   = $this->_data['searchbar']['dateRange']['to'];
         //     $from = sprintf('%04d-%02d-%02d', $fromArr['year'], $fromArr['month'], $fromArr['day']);

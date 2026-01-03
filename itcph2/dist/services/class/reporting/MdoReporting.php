@@ -1277,10 +1277,10 @@ class MdoReporting
                     $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details, distance", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
                     if ($arrDayEndDetails) {
                         $endTime = isset($arrDayEndDetails[0]) ? $arrDayEndDetails[0] : "";
-                        $arrDayEndOtherDetails = json_decode($arrDayEndDetails[1], true);
-                        $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
-                        $salesVol = $arrDayEndOtherDetails['SalesVolume'];
-                        $salesValue = $arrDayEndOtherDetails['SalesValue'];
+                        $arrDayEndOtherDetails = !empty($arrDayEndDetails[1]) ? json_decode($arrDayEndDetails[1], true) : [];
+                        $dayEndOutlet = isset($arrDayEndOtherDetails['outlet']) ? $arrDayEndOtherDetails['outlet'] : "";
+                        $salesVol = isset($arrDayEndOtherDetails['SalesVolume']) ? $arrDayEndOtherDetails['SalesVolume'] : "";
+                        $salesValue = isset($arrDayEndOtherDetails['SalesValue']) ? $arrDayEndOtherDetails['SalesValue'] : "";
                         $distanceInKm = isset($arrDayEndDetails[2]) ? $arrDayEndDetails[2] : "";
                         // $dayEndOutlet = "";
                         // $salesVol = "";
@@ -1420,7 +1420,7 @@ class MdoReporting
                                 $attDsName = $dsDetails[1];
                                 $parts = explode(" - ", $attDsName, 2);
                                 $attDsNameOnly = $parts[0];
-                                $attDsType = $parts[1];
+                                $attDsType = isset($parts[1]) ? $parts[1] : "";
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
                                 $routeName = $dsDetails[2];
                             } elseif ($workWith == 1) {
@@ -1518,8 +1518,8 @@ class MdoReporting
                                 $rowAbsent["circle"],
                                 $rowAbsent["section"],
                                 isset($rowAbsent['is_type']) ? $arrInfraType[$rowAbsent['is_type']] : "",
-                                $rowAbsent["team_id"],
                                 $rowAbsent["ceil_id"],
+                                $rowAbsent["team_id"],
                                 $rowAbsent["team_name"],
                                 currentDate($date, "d-m-Y"),
                                 "",

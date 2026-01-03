@@ -2063,6 +2063,7 @@ class AppSummary extends Utilities
                 "dstatus = 0 AND team_id = $teamId"
             );
             // Get DS route and outlet id for getting the team id with MDO work's today
+            $pannedOutlets = "";
             $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4, type", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             if ($this->commonFunctions->isNonEmptyArray($route_outletId)) {
                 $arrRouteDetails = json_decode($route_outletId[0], true);
@@ -2076,23 +2077,31 @@ class AppSummary extends Utilities
                     $dsId = $outletId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "team_id", "dstatus = 0 AND route_name = '$route' AND rec_id = $outletId") : "";
                     $pannedOutlets = $dsId ? $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(rec_id)", "dstatus = 0 AND route_name = '$route' AND team_id = $dsId") : "";
                 }
-                $coverdOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
-                $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            }
+            $coverdOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
+            $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+            $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+            $arrOtherDetails = !empty($attendanceDetails) ? json_decode($attendanceDetails, true) : [];
+            $workingWith = isset($arrOtherDetails['workingWith']) ? $arrOtherDetails['workingWith'] : "";
+            if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
+                $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
+                $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+            } else {
                 $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                $arrOtherDetails = json_decode($attendanceDetails, true);
-                $workingWith = $arrOtherDetails['workingWith'];
-                if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
-                    $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                    $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                    $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
-                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                } else {
+                if ($this->commonFunctions->isNonEmptyArray($min_max_time) && (!empty($min_max_time[0]) || !empty($min_max_time[1]))) {
                     $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
                     $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                } else {
+                    $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                    $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                    $timeSpent = $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true);
+                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
                 }
             }
+
             // $distanceInKm = isset($distance) ? (string)round($distance / 1000, 2) : "0";
             $Query = "SELECT type, COUNT(DISTINCT CONCAT(ds_name, '_', DATE(capture_date))) AS cnt FROM $dbName.tblattendance WHERE dstatus = 0 AND team_id = $teamId AND capture_date LIKE '%$month%' AND type IN (0, 2, 5, 6, 8, 9) GROUP BY type";
             $sAction = null;
@@ -2392,8 +2401,8 @@ class AppSummary extends Utilities
                     //productlist
                     // $arrFocusProduct = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "summary_column_name", "dstatus = 0 AND is_focusbrand = '1' AND team_type = 5 AND branch_id = $branchId");
                     // $arrFocusProductName = $this->tableUtil->getRowsColumn("$dbName.tblbranch_pickupstock_products", "product_name", "dstatus = 0 AND is_focusbrand = '1' AND team_type = 5 AND branch_id = $branchId");
-                    $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops'");
-                    $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin'");
+                    $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops' AND team_type = '$teamType'");
+                    $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin' AND team_type = '$teamType'");
                     $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
                     $focusProduct1 = "";
                     $focusProduct2 = "";
@@ -2410,13 +2419,11 @@ class AppSummary extends Utilities
                         }
 
                         if (isset($arrFocusProduct[1]) && $arrFocusProduct[1]) {
-
                             $focusBrand2TargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$arrFocusProduct[1]", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         }
 
-                        if(isset($overAllProduct) && $overAllProduct)
-                        {
-                             $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
+                        if (isset($overAllProduct) && $overAllProduct) {
+                            $overAllProductTargetArr = $this->tableUtil->getRowColumn("$dbName.tblassign_target", "$overAllProduct", "dstatus = 0 AND team_id = $teamId AND year = '$year' AND month = '$newMonth'");
                         }
 
                         $focusProduct1 = $arrFocusProductName[0] ?? "NA";
@@ -2432,10 +2439,16 @@ class AppSummary extends Utilities
 
                         $columnExpression = implode(" + ", $productCols);
 
-                        $sumColumns = "SUM($columnExpression) AS total";
+                        $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
 
-                        $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $focusBrand1 = 0;
+                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[0]) && !empty($arrFocusProduct[0])) {
+                            $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        }
+                        $focusBrand2 = 0;
+                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[1]) && !empty($arrFocusProduct[1])) {
+                            $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        }
                         $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         // print_r($sumColumns);die;
 
@@ -2489,7 +2502,7 @@ class AppSummary extends Utilities
                             if ($i == 2) {
                                 $title = "Overall Survey";
                                 $color = "#FF0000";
-                                $achieved = round($overAllValue, 0);
+                                $achieved = isset($overAllValue) && $overAllValue !== null ? round($overAllValue, 0) : 0;
                                 $target = (float) $overAllProductTarget;
                                 $rewardMoney = 1000;
                                 if ($achieved > $target) {
@@ -2537,7 +2550,7 @@ class AppSummary extends Utilities
 
                             // Default progress item
                             $progressItem = [
-                                "earnedMoney" => round($earnedMoney, 0),
+                                "earnedMoney" => isset($earnedMoney) && $earnedMoney !== null ? round($earnedMoney, 0) : 0,
                                 "rewardMoney" => $rewardMoney,
                                 "title" => $title,
                                 "color" => $color,
