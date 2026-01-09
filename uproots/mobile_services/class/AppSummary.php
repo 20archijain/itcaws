@@ -2544,7 +2544,7 @@ class AppSummary extends Utilities
 
                             // Default progress item
                             $progressItem = [
-                                "earnedMoney" => round($earnedMoney, 0),
+                                "earnedMoney" => isset($earnedMoney) && $earnedMoney !== null ? round($earnedMoney, 0) : 0,
                                 "rewardMoney" => $rewardMoney,
                                 "title" => $title,
                                 "color" => $color,
