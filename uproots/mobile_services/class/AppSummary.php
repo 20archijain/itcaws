@@ -2062,8 +2062,8 @@ class AppSummary extends Utilities
                 "is_type",
                 "dstatus = 0 AND team_id = $teamId"
             );
+            $pannedOutlets = $coverdOutlets = "";
             // Get DS route and outlet id for getting the team id with MDO work's today
-            $pannedOutlets = "";
             $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4, type", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             if ($this->commonFunctions->isNonEmptyArray($route_outletId)) {
                 $arrRouteDetails = json_decode($route_outletId[0], true);
@@ -2439,16 +2439,10 @@ class AppSummary extends Utilities
 
                         $columnExpression = implode(" + ", $productCols);
 
-                        $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
+                        $sumColumns = "SUM($columnExpression) AS total";
 
-                        $focusBrand1 = 0;
-                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[0]) && !empty($arrFocusProduct[0])) {
-                            $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        }
-                        $focusBrand2 = 0;
-                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[1]) && !empty($arrFocusProduct[1])) {
-                            $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        }
+                        $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         // print_r($sumColumns);die;
 
@@ -2550,7 +2544,7 @@ class AppSummary extends Utilities
 
                             // Default progress item
                             $progressItem = [
-                                "earnedMoney" => isset($earnedMoney) && $earnedMoney !== null ? round($earnedMoney, 0) : 0,
+                                "earnedMoney" => round($earnedMoney, 0),
                                 "rewardMoney" => $rewardMoney,
                                 "title" => $title,
                                 "color" => $color,
