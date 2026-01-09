@@ -2439,7 +2439,7 @@ class AppSummary extends Utilities
 
                         $columnExpression = implode(" + ", $productCols);
 
-                        $sumColumns = "SUM($columnExpression) AS total";
+                        // $sumColumns = "SUM($columnExpression) AS total";
 
                         $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
 
