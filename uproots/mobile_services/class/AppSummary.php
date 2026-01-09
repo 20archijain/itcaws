@@ -2441,9 +2441,16 @@ class AppSummary extends Utilities
 
                         $sumColumns = "SUM($columnExpression) AS total";
 
-                        $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
+
+                        $focusBrand1 = 0;
+                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[0]) && !empty($arrFocusProduct[0])) {
+                            $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        }
+                        $focusBrand2 = 0;
+                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[1]) && !empty($arrFocusProduct[1])) {
+                            $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        }
                         // print_r($sumColumns);die;
 
                         $qualifiedAttendanceCount = 0;
