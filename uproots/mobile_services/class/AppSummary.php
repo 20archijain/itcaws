@@ -2062,8 +2062,8 @@ class AppSummary extends Utilities
                 "is_type",
                 "dstatus = 0 AND team_id = $teamId"
             );
+            $pannedOutlets = $coverdOutlets = "";
             // Get DS route and outlet id for getting the team id with MDO work's today
-            $pannedOutlets = "";
             $route_outletId = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "ques_2, ques_4, type", "dstatus = 0 AND ques_0 = 'Outlet Survey' AND team_id = $teamId AND capture_date = '$date'");
             if ($this->commonFunctions->isNonEmptyArray($route_outletId)) {
                 $arrRouteDetails = json_decode($route_outletId[0], true);
@@ -2439,6 +2439,8 @@ class AppSummary extends Utilities
 
                         $columnExpression = implode(" + ", $productCols);
 
+                        // $sumColumns = "SUM($columnExpression) AS total";
+
                         $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
 
                         $focusBrand1 = 0;
@@ -2449,7 +2451,6 @@ class AppSummary extends Utilities
                         if (is_array($arrFocusProduct) && isset($arrFocusProduct[1]) && !empty($arrFocusProduct[1])) {
                             $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         }
-                        $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         // print_r($sumColumns);die;
 
                         $qualifiedAttendanceCount = 0;
