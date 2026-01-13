@@ -83,7 +83,8 @@ class RouteManagement
                 "District",
                 "Route Name",
                 "Outlet Name",
-                "Outlet Mobile"
+                "Outlet Mobile",
+                "KYC Status"
             ),
             "viewBody" => array(
                 "id",
@@ -94,6 +95,7 @@ class RouteManagement
                 "routeName",
                 "outletName",
                 "outletMobile",
+                "kycStatus",
             ),
         );
 
@@ -162,7 +164,7 @@ class RouteManagement
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name,
-              a.outlet_mobile FROM $RouteTable AS a LEFT JOIN $projectTeamTable AS b ON a.team_id = b.team_id AND b.dstatus = 0 WHERE a.dstatus = 0 $where $sOrderCond";
+              a.outlet_mobile, a.kyc_done FROM $RouteTable AS a LEFT JOIN $projectTeamTable AS b ON a.team_id = b.team_id AND b.dstatus = 0 WHERE a.dstatus = 0 $where $sOrderCond";
 
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
@@ -175,7 +177,7 @@ class RouteManagement
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $recId = $arrData["rec_id"];
                 $teamId = $arrData["team_id"];
-
+                $kycDone = (isset($arrData['kyc_done']) && $arrData['kyc_done'] == '1') ? 'Yes' : 'No';
                 $arrResult[] = array(
                     "id" => $recId,
                     "teamId" => $teamId,
@@ -185,6 +187,7 @@ class RouteManagement
                     "routeName" => $arrData["route_name"],
                     "outletName" => $arrData["outlet_name"],
                     "outletMobile" => $arrData["outlet_mobile"],
+                    "kycStatus" => $kycDone,
                 );
             }
         }
