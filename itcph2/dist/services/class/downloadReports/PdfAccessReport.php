@@ -10,12 +10,16 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 
 // phpcs:ignore
-class MdoRouteDownload
+class PDFAccessReport
 {
     private $_dbConn = null;
     private $_data = null;
     private $_tables = [];
     private $_arrAccessInfo = [];
+    private $_projectId = 1;
+    private $arrBranchwiseProducts = [];
+    private $arrBranchwiseCompetition = [];
+    private $arrBranchWiseStockProducts = [];
     private $session;
     private $_iUserId = null;
 
@@ -40,9 +44,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($district)) {
                     $districts = "'" . implode("','", $district) . "'";
-                    $condition .= " AND b.district IN ($districts)";
+                    $condition .= " AND d.district IN ($districts)";
                 } else {
-                    $condition .= " AND b.district = $district";
+                    $condition .= " AND d.district = $district";
                 }
             }
         }
@@ -52,9 +56,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($branch)) {
                     $branchIds = "'" . implode("','", $branch) . "'";
-                    $condition .= " AND b.branch_id IN ($branchIds)";
+                    $condition .= " AND d.branch_id IN ($branchIds)";
                 } else {
-                    $condition .= " AND b.branch_id = $branch";
+                    $condition .= " AND d.branch_id = $branch";
                 }
             }
         }
@@ -88,9 +92,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($wdCode)) {
                     $wdCodeIds = "'" . implode("','", $wdCode) . "'";
-                    $condition .= " AND c.wd_code IN ($wdCodeIds)";
+                    $condition .= " AND b.wd_code IN ($wdCodeIds)";
                 } else {
-                    $condition .= " AND c.wd_code = '$wdCode'";
+                    $condition .= " AND b.wd_code = '$wdCode'";
                 }
             }
         }
@@ -103,7 +107,7 @@ class MdoRouteDownload
                 $condition .= " ";
             } else {
                 $wdMarket = "'" . implode("','", $wdMarket) . "'";
-                $condition .= " AND c.wd_market IN ($wdMarket)";
+                $condition .= " AND e.wd_market IN ($wdMarket)";
             }
         }
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
@@ -115,20 +119,23 @@ class MdoRouteDownload
                 $condition .= " ";
             } else {
                 $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
-                $condition .= " AND c.wd_pop_group IN ($wdPopGroup)";
+                $condition .= " AND e.wd_pop_group IN ($wdPopGroup)";
             }
         }
-
         $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
-        if (isset($teamType) && $teamType != "" && $teamType >= 0) {
+
+        if (isset($teamType) && $teamType != ""  && $teamType >= 0) {
             $matchAll = checkIfAllSelected($teamType);
             if (!$matchAll) {
                 if (isNonEmptyArray($teamType)) {
                     $teamTypes = "'" . implode("','", $teamType) . "'";
-                    $condition .= " AND a.is_type IN ($teamTypes)";
+                    $condition .= " AND b.is_type IN ($teamTypes)";
+                } else {
+                    $condition .= " AND b.is_type = $teamType";
                 }
             }
         }
+
 
         $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
         if ($dsName) {
@@ -136,18 +143,18 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($dsName)) {
                     $dsNames = "'" . implode("','", $dsName) . "'";
-                    $condition .= " AND a.team_id IN ($dsNames)";
+                    $condition .= " AND b.team_id IN ($dsNames)";
                 } else {
-                    $condition .= " AND a.team_id = $dsName";
+                    $condition .= " AND b.team_id = $dsName";
                 }
             }
         }
 
         $where = "";
         if ($condition && $andCondition) {
-            $where .= " AND a.team_id IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as c, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+            $where .= " AND a.team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
         } elseif ($condition) {
-            $where .= " AND a.team_id IN (SELECT a.ateam_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND c.rec_id = d.wd_id $condition)";
+            $where .= " AND a.team_id IN (SELECT b.team_id FROM $teamTable as b, $branchTable as d, $mappingTable as e WHERE b.dstatus = '0' AND d.dstatus = '0' AND e.dstatus = '0' AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code $condition)";
         }
 
         $teamList = $this->_arrAccessInfo["user_teams"];
@@ -155,6 +162,7 @@ class MdoRouteDownload
             $where .= " AND a.team_id IN $teamList";
         }
 
+        // print_r($where);die;
         return $where;
     }
 
@@ -174,7 +182,7 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '10' $where order by a.district";
+        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -210,7 +218,7 @@ class MdoRouteDownload
         // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '10' $where order by a.branch_name";
+        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by a.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -245,8 +253,8 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.circle";
+        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -280,8 +288,8 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.section";
+        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -295,6 +303,7 @@ class MdoRouteDownload
 
         return $arrData;
     }
+
 
     final public function getWdCodeList($cond = "")
     {
@@ -315,8 +324,8 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.wd_code";
+        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -330,6 +339,7 @@ class MdoRouteDownload
 
         return $arrData;
     }
+
 
     final public function getWdMarketList($cond = "")
     {
@@ -350,8 +360,8 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by c.wd_market";
+        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -385,8 +395,8 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by c.wd_pop_group";
+        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = '99' $where order by c.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -400,6 +410,7 @@ class MdoRouteDownload
 
         return $arrData;
     }
+
 
     final public function getDsTypeList($cond = "")
     {
@@ -420,8 +431,7 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.is_type IN (7, 10) AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND b.is_type != 4 AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99' $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -437,10 +447,6 @@ class MdoRouteDownload
                     $teamType = "Hybrid";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
-                } elseif ($row['is_type'] == 7) {
-                    $teamType = "MDO";
-                } elseif ($row['is_type'] == 10) {
-                    $teamType = "FSO";
                 }
                 $arrData[] = array(
                     "label" => $teamType,
@@ -451,6 +457,7 @@ class MdoRouteDownload
 
         return $arrData;
     }
+
 
     final public function getTeamsList($cond = "")
     {
@@ -471,8 +478,7 @@ class MdoRouteDownload
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '99' $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -523,6 +529,7 @@ class MdoRouteDownload
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
+            "binderReportDownloadDays" => 5
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -569,6 +576,7 @@ class MdoRouteDownload
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
+
 
     final public function getCircle($branch = "branch_id")
     {
@@ -720,21 +728,19 @@ class MdoRouteDownload
     final public function getTeamList()
     {
         $dsType = $this->_data['dsType'];
-        $typeCond = "";
-        if ($dsType) {
-            if ($dsType) {
-                if (!is_array($dsType)) {
-                    $dsType = array($dsType);
-                }
-                if (in_array('all', $dsType)) {
-                    $typeCond = ""; // No condition for 'all'
-                } else {
-                    $dsType = "'" . implode("','", $dsType) . "'";
-                    $typeCond = " AND b.is_type IN ($dsType)";
-                }
+        $dsTypeCond = "";
+        if (isset($dsType) && $dsType != "" && $dsType >= 0) {
+            if (!is_array($dsType)) {
+                $dsType = array($dsType);
+            }
+            if (in_array('all', $dsType)) {
+                $dsTypeCond = ""; // No condition for 'all'
+            } else {
+                $dsType = "'" . implode("','", $dsType) . "'";
+                $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
             $arrResult = array(
-                "teamList" => $this->getTeamsList($typeCond),
+                "teamList" => $this->getTeamsList($dsTypeCond),
             );
         } else {
             $arrResult = array(
@@ -748,142 +754,127 @@ class MdoRouteDownload
 
     final public function getDownloadData()
     {
-        global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
-        $currentDateTime = currentDateTime();
-        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-
-        // filter query
-        $where = $this->getCondition();
-        $where .= getFilterResult(
-            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
-            $this->_dbConn
-        );
-        $branch = getFormData($this->_data['searchbar'], "branch");
-
+        $dwnCond = $this->getCondition();
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
-        $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
-        $mdoAccessTable = $this->_tables["MDO_ACCESS_TABLE"];
-        $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
-        $routeDetailsBreezeTable = $this->_tables["ROUTE_DETAILS_BREEZE_TABLE"];
-        // create header
-        $arrExcelData = [];
-        $header = [];
-        $header[] = [
-            "Rec_id",
-            "MDO ID",
-            "Ciel Id",
-            "MDO Name",
-            "DMS Ds ID",
-            "DS Type",
-            "WD_Code",
-            "Branch",
-            "Beat",
-            "Customer Name",
-            "outlet_mobile",
-            "Billing Address",
-            "Customer ID",
-            "Lt",
-            "Lg"
-        ];
+        $tblpdf_access_log = "tblpdf_access_log";
 
-        $arrAllData = [];
-        $arrDataHolder = [];
-        $rsAction = null;
+        // order by condition
+        $sOrderCond = getOrderByCond("c.rcd");
+
+        // filter by search query
+        $where = "";
+
+        $projectList = $this->_arrAccessInfo["user_projects"];
+        $teamList = $this->_arrAccessInfo["user_teams"];
+
+        // user has some specific permission
+        if ($projectList) {
+            $where .= " AND a.project_id IN $projectList";
+        }
+        if ($teamList) {
+            $where .= " AND b.team_id IN $teamList";
+        }
+
+        // Don't use a.dstatus = 0 AND c.dstatus = 0
+        $arrBody = array();
+        $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT b.mdo_id, a.team_name, a.ceil_id, b.teams, b.is_type, a.branch_id
-           FROM $projectTeamTable AS a, $mdoAccessTable AS b, $branchTable AS c
-           WHERE a.dstatus = 0
-           AND b.dstatus = 0
-           AND a.team_id = b.mdo_id AND a.branch_id = c.branch_id
-           $where";
-        //   echo "$sQuery";die;
-
-        $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+        // $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD");
+        $sQuery = "SELECT c.rcd, c.team_id, c.access_datetime, a.is_type, a.team_name, a.circle, a.section, a.wd_code, b.district, b.branch_name,b.main_branch" .
+            " FROM $projectTeamTable AS a, $branchTable AS b,$tblpdf_access_log as c WHERE a.dstatus = 0 AND a.branch_id = b.branch_id AND a.team_id = c.team_id AND c.dstatus = 0 $where $dwnCond $sOrderCond";
+        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $mdoId      = $row['mdo_id'];
-                $mdoName    = $row['team_name'];
-                $teamsId    = $row['teams'];
-                $is_type    = $row['is_type'];
-                $ceil_id    = $row['ceil_id'];
+            $arrData = array(
+                array(
+                    "Date",
+                    "District",
+                    "Branch",
+                    "Circle",
+                    "Section",
+                    "WD Code",
+                    "DS ID",
+                    "DS Name",
+                    "PDF Accessed",
+                    "PDF Access DateTime",
 
-                if ($is_type == 6 || $is_type == 8 || $is_type == 9) {
-                    $teamTable  = $breezeTeamTable;
-                    $routeTable = $routeDetailsBreezeTable;
-                    $addressCol = "outlet_address";
+                ),
+            );
+            while ($row = $this->_dbConn->GetData($sAction)) {
+                $teamId = $row['team_id'];
+                $captureDate = $row['rcd'];
+                $is_type = $row['is_type'];
+                $access_datetime = $row['access_datetime'];
+                if ($access_datetime == null) {
+                    $pdfAccessed = "No";
                 } else {
-                    $teamTable  = $projectTeamTable;
-                    $routeTable = $routeDetailsTable;
-                    $addressCol = "market_name";
+                    $pdfAccessed = "Yes";
                 }
-                $branchId   = getRowColumn($this->_dbConn, $teamTable, "branch_id", "team_id = '$teamsId'");
-                $mainBranch = getRowColumn($this->_dbConn, $branchTable, "main_branch", "branch_id = '$branchId'");
+                $team_name = $row['team_name'];
+                $circle = $row['circle'];
+                $section = $row['section'];
+                $wd_code = $row['wd_code'];
+                $district = $row['district'];
+                $branch_name = $row['branch_name'];
+                $main_branch = $row['main_branch'];
 
-                $routeRows = getRowsColumns(
-                    $this->_dbConn,
-                    $routeTable,
-                    "rec_id, wd_code, route_name, outlet_name, outlet_mobile, $addressCol, shop_uniq_code, lt, lg",
-                    "team_id = '$teamsId'"
+                $arrData[] = array(
+                    $captureDate,
+                    $district,
+                    $branch_name,
+                    $circle,
+                    $section,
+                    $wd_code,
+                    $teamId,
+                    $team_name,
+                    $pdfAccessed,
+                    $access_datetime,
                 );
-
-                $ds_type = $arrTeamType[$is_type];
-
-                $arrAllData[$mdoId][$teamsId] = [
-                    "mdo_name"   => $mdoName,
-                    "ceil_id"    => $ceil_id,
-                    "ds_type"    => $ds_type,
-                    "mainBranch" => $mainBranch,
-                    "routes"     => $routeRows
-                ];
-            }
-        }
-        foreach ($arrAllData as $mdoId => $mdoData) {
-            foreach ($mdoData as $teamsId => $teamData) {
-                $mdoName    = $teamData["mdo_name"];
-                $ceil_id   = $teamData["ceil_id"];
-                $ds_type    = $teamData["ds_type"];
-                $mainBranch = $teamData["mainBranch"];
-                $routes     = $teamData["routes"];
-
-                foreach ($routes as $r) {
-                    $arrDataHolder[] = [
-                        $this->cleanCSVValue($r[0]),
-                        $this->cleanCSVValue($mdoId),
-                        $this->cleanCSVValue($ceil_id),
-                        $this->cleanCSVValue($mdoName),
-                        $this->cleanCSVValue($teamsId),
-                        $this->cleanCSVValue($ds_type),
-                        $this->cleanCSVValue($r[1]),
-                        $this->cleanCSVValue($mainBranch),
-                        $this->cleanCSVValue($r[2]),
-                        $this->cleanCSVValue($r[3]),
-                        $this->cleanCSVValue($r[4]),
-                        $this->cleanCSVValue($r[5]),
-                        $this->cleanCSVValue($r[6]),
-                        $this->cleanCSVValue($r[7]),
-                        $this->cleanCSVValue($r[8]),
-                    ];
-                }
             }
         }
 
-        $arrResult = formatDownloadData("MDO_ROUTE_DATA", array($header), $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        if (!empty($arrData)) {
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $sheet->fromArray($arrData);
+
+            // Auto-size columns
+            foreach (range('A', $sheet->getHighestDataColumn()) as $columnID) {
+                $sheet->getColumnDimension($columnID)->setAutoSize(true);
+            }
+
+            $headerRow = '1';
+            $styleHeader = $sheet->getStyle('A' . $headerRow . ':' . $sheet->getHighestDataColumn() . $headerRow);
+            $styleHeader->getFont()->setBold(true);
+            $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF00');
+
+            $allStyle = [
+                'alignment' => array(
+                    'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                ),
+            ];
+            $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
+
+            // Save the spreadsheet
+            $fileName = "PDF_ACCESS_REPORT_" . date('Y-m-d_H-i-s') . ".xlsx";
+            $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+            $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+            $fileDetails = array(
+                "filePath" => $downloadFileLocation,
+                "fileName" => $fileName,
+            );
+            $writer = new Xlsx($spreadsheet);
+            try {
+                $writer->save($filename);
+                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+            } catch (PhpOffice\PhpSpreadsheet\Writer\Exception $e) {
+                echo "Error saving spreadsheet: " . $e->getMessage();
+            }
+        } else {
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+        }
+
         echo json_encode($arrMessage);
-    }
-
-    private function cleanCSVValue($value)
-    {
-        $value = trim((string)($value ?? ''));
-        $value = str_replace(["\n", "\r"], " ", $value);
-        $value = str_replace('"', '""', $value);
-        return '"' . $value . '"';
     }
 }
