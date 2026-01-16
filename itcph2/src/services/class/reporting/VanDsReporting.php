@@ -949,8 +949,118 @@ class VanDsReporting
 
     private function safeValue($value)
     {
+        // If value is null, return as-is to avoid type issues
+        if ($value === null) {
+            return null;
+        }
+
         // If value has characters that need encoding
         return preg_match('/[<>&"\']/', $value) ? htmlentities($value) : $value;
+    }
+
+    //Batch load all shop details by rec_id
+
+    private function getBatchShopDetails($shopIds = [], $branchId = null)
+    {
+        $shopCache = [];
+
+        // Return empty array if no shop IDs provided
+        if (empty($shopIds) || !is_array($shopIds)) {
+            return $shopCache;
+        }
+
+        // Remove duplicates and filter only numeric IDs
+        $uniqueShopIds = array_unique(array_filter($shopIds, 'is_numeric'));
+
+        if (empty($uniqueShopIds)) {
+            return $shopCache;
+        }
+
+        // Determine which table to query based on branch
+        if ($branchId == 40) {
+            $routeDetailsTable = "tblroute_details_delhi";
+        } else {
+            $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
+        }
+
+        // Build the IN clause for SQL query
+        $inClause = implode(",", $uniqueShopIds);
+
+        // Execute single batch query instead of N individual queries
+        // NOTE: Removed dstatus = 0 filter to get ALL shop details (not just active ones)
+        // This matches the original getRowColumns behavior which didn't filter by dstatus
+        $rsAction = null;
+        $iRows = 0;
+        $query = "SELECT rec_id, outlet_name, shop_uniq_code, outlet_mobile, outlet_type, shop_type
+              FROM $routeDetailsTable
+              WHERE rec_id IN ($inClause)";
+
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                // WIN #3: PRE-PROCESS ALL STRINGS HERE (only once per shop, not per row)
+                $shopCache[$row['rec_id']] = [
+                    removeSpecialCharFromString($row['outlet_name']),  // [0] - Already cleaned
+                    $this->safeValue($row['shop_uniq_code']),          // [1] - Already safe
+                    $this->safeValue($row['outlet_mobile']),           // [2] - Already safe
+                    $this->safeValue($row['outlet_type']),             // [3] - Already safe
+                    $row['shop_type']                                   // [4] - Shop Type
+                ];
+            }
+        }
+
+        return $shopCache;
+    }
+
+    //Batch load all MDO summary data by ds_id and capture_date
+
+    private function getBatchMDODetails($mdoFilters = [])
+    {
+        $mdoCache = [];
+
+        // Return empty array if no filters provided
+        if (empty($mdoFilters) || !is_array($mdoFilters)) {
+            return $mdoCache;
+        }
+
+        // Build WHERE clause with multiple conditions
+        // (ds_id = X AND capture_date = Y) OR (ds_id = Z AND capture_date = W)
+        $orConditions = [];
+        foreach ($mdoFilters as $filter) {
+            if (isset($filter['ds_id']) && isset($filter['capture_date'])) {
+                $dsId = (int)$filter['ds_id'];
+                $captureDate = $filter['capture_date'];
+                $orConditions[] = "(ds_id = $dsId AND capture_date = '$captureDate')";
+            }
+        }
+
+        if (empty($orConditions)) {
+            return $mdoCache;
+        }
+
+        // Execute single batch query instead of N individual queries
+        $rsAction = null;
+        $iRows = 0;
+        $whereClause = implode(" OR ", $orConditions);
+        $query = "SELECT ds_id, capture_date, mdo_id, mdo_name
+              FROM tblmdo_summary
+              WHERE $whereClause";
+
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                // Use composite key: ds_id|capture_date
+                $key = $row['ds_id'] . "|" . $row['capture_date'];
+                $mdoCache[$key] = [
+                    $row['mdo_id'],     // [0] - MDO ID
+                    $row['mdo_name']    // [1] - MDO Name
+                ];
+            }
+        }
+
+        return $mdoCache;
     }
 
     final public function getDownloadData()
@@ -1082,212 +1192,284 @@ class VanDsReporting
             $iRows = 0;
             $sQuery = "SELECT a.pro_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.distance_in_meter" .
                 ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.wd_code, b.branch_id, c.district, c.branch_name, c.main_branch $sProductSaleColumns FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
-                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id IN ('99',55) AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id IN ('99',55) AND a.pro_id > 0 $where $branchCond";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
-                $productCount = 0;
-                // $sReplacedProductSaleColumns = trim(substr(str_replace("a.", "", $sProductSaleColumns), 1));
-                $index = count($arrDownload["sale"]);
-                while ($row = $this->_dbConn->GetData($rsAction)) {
-                    $proId = $row["pro_id"];
-                    $branchId = $row["branch_id"];
-                    $captureDate = $row["capture_date"];
-                    $week = $this->getWeekNumber($captureDate);
-                    $time = round($row["call_time"] / 1000);  // convert ms → seconds
-                    $minutes = floor($time / 60);
-                    $seconds = $time % 60;
-                    $timeSpent = sprintf("%d:%02d", $minutes, $seconds);
-                    $meters = $row["distance_in_meter"] / 1000;
-                    $roundedMeters = round($meters, 2);
-                    $teamId = $row["team_id"];
-                    $isMdoWorks = getRowColumns($this->_dbConn, "tblmdo_summary", "mdo_id, mdo_name", "ds_id = $teamId AND capture_date = '$captureDate'");
-                    if (isNonEmptyArray($isMdoWorks)) {
-                        $isMdo = "1";
-                        $mdoId = isset($isMdoWorks[0]) ? $isMdoWorks[0] : "";
-                        $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
-                    } else {
-                        $isMdo = "0";
-                        $mdoId = "";
-                        $mdoName = "";
-                    }
-                    // Convert seconds to HH:MM:SS format
+                // OPTIMIZATION: Collect all shop IDs and MDO filters first, then batch load
+                $allShopIds = [];
+                $mdoFilters = [];
+                $branchShopData = [];
 
-                    $shopId = $row["ques_3"];
-                    $branchId = $row["branch_id"];
-                    if ($branchId == 40) {
-                        $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, "tblroute_details_delhi", "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
-                    } else {
-                        // Don't use dstatus = 0
-                        $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "outlet_name, shop_uniq_code, outlet_mobile, outlet_type", "rec_id = $shopId") : array("", "", "");
-                    }
-                    $shopName     = isset($shopDetails[0]) ? $this->safeValue($shopDetails[0]) : "";
-                    $shopUniqCode = isset($shopDetails[1]) ? $this->safeValue($shopDetails[1]) : "";
-                    $mobileNumber = isset($shopDetails[2]) ? $this->safeValue($shopDetails[2]) : "";
-                    $shopType     = isset($shopDetails[3]) ? $this->safeValue($shopDetails[3]) : "";
-                    if ($branchId == 40) {
-                        $allProductsSold = false;
-
-                        if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
-                            foreach ($arrProductBought as $arrProduct) {
-                                $productColumnName = $arrProduct[1];
-                                $iSale = isset($row[$productColumnName]) ? floatval($row[$productColumnName]) : 0;
-
-                                if ($iSale > 0) {
-                                    $allProductsSold = true;
-                                }
-                            }
+                // Step 1: Collect shop IDs and MDO filters from result set
+                if ($iRows > 0) {
+                    $tempIndex = 0;
+                    while ($row = $this->_dbConn->GetData($rsAction)) {
+                        // Collect shop IDs for Phase 1A
+                        $shopId = $row["ques_3"];
+                        if (is_numeric($shopId)) {
+                            $allShopIds[] = $shopId;
                         }
 
-                        $sellIinOrder = $allProductsSold ? "Yes" : "No";
-                    } else {
-                        $sellIinOrder = $row["ques_4"];
+                        // Collect MDO filters for Phase 1B
+                        $teamId = $row["team_id"];
+                        $captureDate = $row["capture_date"];
+                        $mdoFilters[] = [
+                            'ds_id' => $teamId,
+                            'capture_date' => $captureDate
+                        ];
+
+                        // PRE-DECODE JSON FIELDS (decode once, use many times)
+                        $ques1Decoded = json_decode($row["ques_1"], true);
+                        $row['_ques_1_decoded'] = isset($ques1Decoded[0]) ? $ques1Decoded[0] : '';
+
+                        // PRE-COMPUTE TIMESTAMP FOR SORTING (convert once, sort faster)
+                        $row['_timestamp'] = strtotime($row["capture_datetime"]);
+
+                        // Save row for processing
+                        $branchShopData[$tempIndex] = $row;
+                        $tempIndex++;
                     }
+                }
 
-                    // $arrDownload["competition"][$index] = array();
-                    $arrDownload["sale"][$index][] = $proId;
-                    $arrDownload["sale"][$index][] = $captureDate;
-                    $arrDownload["sale"][$index][] = $week;
-                    $arrDownload["sale"][$index][] = currentDateTime($row["capture_datetime"], "d-m-Y h:i:s A");
-                    $arrDownload["sale"][$index][] = $row["lt"];
-                    $arrDownload["sale"][$index][] = $row["lg"];
-                    $arrDownload["sale"][$index][] = $row["district"];
-                    $arrDownload["sale"][$index][] = $row["main_branch"];
-                    $arrDownload["sale"][$index][] = $row["branch_name"];
-                    $arrDownload["sale"][$index][] = $row["circle"];
-                    $arrDownload["sale"][$index][] = $row["section"];
-                    $arrDownload["sale"][$index][] = $row["wd_code"];
-                    $arrDownload["sale"][$index][] = $row["team_id"];
-                    $arrDownload["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
-                    $arrDownload["sale"][$index][] = $row["team_name"];
-                    $arrDownload["sale"][$index][] = $isMdo;
-                    $arrDownload["sale"][$index][] = $mdoId;
-                    $arrDownload["sale"][$index][] = $mdoName;
-                    $arrDownload["sale"][$index][] = $row["ques_0"];
-                    $arrDownload["sale"][$index][] = htmlspecialchars_decode(json_decode($row["ques_1"], true)[0]);
-                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($feederMarketName);
-                    $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopName);
-                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiMarketId);
-                    // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiPopGroup);
-                    $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopUniqCode);
-                    $arrDownload["sale"][$index][] = $mobileNumber;
-                    $arrDownload["sale"][$index][] = $shopType;
-                    $arrDownload["sale"][$index][] = $sellIinOrder;
-                    $arrDownload["sale"][$index][] = $roundedMeters;
-                    $arrDownload["sale"][$index][] = $timeSpent;
-                    $arrDownload["sale"][$index][] = "";
+                $shopCache = $this->getBatchShopDetails($allShopIds, $branchId);
 
-                    if ($sellIinOrder === "Yes") {
-                        // get Stock in Products Bought
-                        // $arrStock = getRowColumns($this->_dbConn, $stockSummaryTable, $sReplacedProductSaleColumns, "stock_type = 2 AND rec_id = $proId", array(), true, 2);
+                $mdoCache = $this->getBatchMDODetails($mdoFilters);
 
-                        // $competitionDetails = getGridDataAsArray(
-                        //     json_decode($row["ques_7"], true),
-                        //     2,
-                        //     isNonEmptyArray($arrCompetition) ? count($arrCompetition) : 1
-                        // );
-                        $productCount = 0; // Initialize product count before the loop
-                        // get each product sale
-                        if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
-                            foreach ($arrProductBought as $productIndex => $arrProduct) {
-                                $productName = strtoupper($arrProduct[0]);
-                                $productColumnName = $arrProduct[1];
-                                $pktSize = $arrProduct[2];
-                                $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
-                                // Ensure the product value exists and is strictly greater than 0
-                                if (isset($iSale) && floatval($iSale) > 0) {
-                                    $productCount++; // Count only if the value is greater than 0
-                                }
+                usort($branchShopData, function ($a, $b) {
+                    return $b['_timestamp'] - $a['_timestamp'];  // Descending order
+                });
 
-                                $arrDownload["sale"][$index][$cftIndex + 1] = isset($productCount) ? $productCount : 0;
-                                // get index of product and insert sale
-                                $iProductIndex = $arrProductIndex[$productName];
-                                if ($branchId == 40) {
-                                    $arrDownload["sale"][$index][$iProductIndex] = round(floatval($iSale) / $pktSize, 2);
-                                } else {
-                                    $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
-                                }
-                                // insert Stock in Products Bought
-                                // $iStock = isset($arrStock[$productColumnName]) && floatval($arrStock[$productColumnName]) ? floatval($arrStock[$productColumnName]) : 0;
-                                // $arrDownload["sale"][$index][$iProductIndex + 1] = $iStock;
-                            }
+                if ($iRows > 0) {
+                    $productCount = 0;
+                    // $sReplacedProductSaleColumns = trim(substr(str_replace("a.", "", $sProductSaleColumns), 1));
+                    $index = count($arrDownload["sale"]);
+
+                    foreach ($branchShopData as $row) {
+                        // Convert seconds to HH:MM:SS format
+                        $proId = $row["pro_id"];
+                        $currentBranchId = $row["branch_id"];
+                        $captureDate = $row["capture_date"];
+                        $week = $this->getWeekNumber($captureDate);
+                        $time = round($row["call_time"] / 1000);  // convert ms → seconds
+                        $minutes = floor($time / 60);
+                        $seconds = $time % 60;
+                        $timeSpent = sprintf("%d:%02d", $minutes, $seconds);
+                        $meters = $row["distance_in_meter"] / 1000;
+                        $roundedMeters = round($meters, 2);
+                        $teamId = $row["team_id"];
+                        $mdoKey = $teamId . "|" . $captureDate;
+                        if (isset($mdoCache[$mdoKey])) {
+                            $isMdo = "1";
+                            $mdoId = $mdoCache[$mdoKey][0];
+                            $mdoName = $mdoCache[$mdoKey][1];
+                        } else {
+                            $isMdo = "0";
+                            $mdoId = "";
+                            $mdoName = "";
                         }
 
-                        // get each competition
-                        // if ($arrCompetition && isNonEmptyArray($arrCompetition)) {
-                        //     foreach ($arrCompetition as $compIndex => $competition) {
-                        //         $iCompetitionAvgSale = isset($competitionDetails[0][$compIndex]) ? $competitionDetails[0][$compIndex] : 0;
-                        //         $iCompetitionStock = isset($competitionDetails[1][$compIndex]) ? $competitionDetails[1][$compIndex] : 0;
+                        $shopId = $row["ques_3"];
 
-                        //         // get index of competition
-                        //         $competition = strtoupper($competition);
-                        //         $iCompetitionIndex = $arrCompetitionIndex[$competition];
-                        //         $arrDownload["competition"][$index][$iCompetitionIndex] = floatval($iCompetitionAvgSale);
-                        //         $arrDownload["competition"][$index][$iCompetitionIndex + 1] = floatval($iCompetitionStock);
-                        //     }
-                        // }
+                        // Lookup in cache (O(1) operation) instead of database query
+                        if (is_numeric($shopId) && isset($shopCache[$shopId])) {
+                            $shopDetails = $shopCache[$shopId];
+                        } else {
+                            $shopDetails = ["", "", "", "", ""];  // Default values matching array size
+                        }
+
+                        // Just use them directly (no need to call removeSpecialCharFromString, safeValue again)
+                        $shopName     = isset($shopDetails[0]) ? $shopDetails[0] : "";
+                        $shopUniqCode = isset($shopDetails[1]) ? $shopDetails[1] : "";
+                        $mobileNumber = isset($shopDetails[2]) ? $shopDetails[2] : "";
+                        $shopType     = isset($shopDetails[3]) ? $shopDetails[3] : "";
+
+                        // Determine sell-in order
+                        if ($currentBranchId == 40) {
+                            $allProductsSold = false;
+
+                            if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                                foreach ($arrProductBought as $arrProduct) {
+                                    $productColumnName = $arrProduct[1];
+                                    $iSale = isset($row[$productColumnName]) ? floatval($row[$productColumnName]) : 0;
+
+                                    if ($iSale > 0) {
+                                        $allProductsSold = true;
+                                    }
+                                }
+                            }
+
+                            $sellIinOrder = $allProductsSold ? "Yes" : "No";
+                        } else {
+                            $sellIinOrder = $row["ques_4"];
+                        }
+
+                        // $arrDownload["competition"][$index] = array();
+                        $arrDownload["sale"][$index][] = $proId;
+                        $arrDownload["sale"][$index][] = $captureDate;
+                        $arrDownload["sale"][$index][] = $week;
+                        $arrDownload["sale"][$index][] = currentDateTime($row["capture_datetime"], "d-m-Y h:i:s A");
+                        $arrDownload["sale"][$index][] = $row["lt"];
+                        $arrDownload["sale"][$index][] = $row["lg"];
+                        $arrDownload["sale"][$index][] = $row["district"];
+                        $arrDownload["sale"][$index][] = $row["main_branch"];
+                        $arrDownload["sale"][$index][] = $row["branch_name"];
+                        $arrDownload["sale"][$index][] = $row["circle"];
+                        $arrDownload["sale"][$index][] = $row["section"];
+                        $arrDownload["sale"][$index][] = $row["wd_code"];
+                        $arrDownload["sale"][$index][] = $row["team_id"];
+                        $arrDownload["sale"][$index][] = $row["is_type"] != "" ? $arrTeamType[$row["is_type"]] : "";
+                        $arrDownload["sale"][$index][] = $row["team_name"];
+                        $arrDownload["sale"][$index][] = $isMdo;
+                        $arrDownload["sale"][$index][] = $mdoId;
+                        $arrDownload["sale"][$index][] = $mdoName;
+                        $arrDownload["sale"][$index][] = $row["ques_0"];
+                        // USE PRE-DECODED JSON (no need to decode again!)
+                        $arrDownload["sale"][$index][] = htmlspecialchars_decode($row['_ques_1_decoded']);
+                        // $arrDownload["sale"][$index][] = htmlspecialchars_decode($feederMarketName);
+                        $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopName);
+                        // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiMarketId);
+                        // $arrDownload["sale"][$index][] = htmlspecialchars_decode($goiPopGroup);
+                        $arrDownload["sale"][$index][] = htmlspecialchars_decode($shopUniqCode);  // ← OUTLET ID
+                        $arrDownload["sale"][$index][] = $mobileNumber;
+                        $arrDownload["sale"][$index][] = $shopType;
+                        $arrDownload["sale"][$index][] = $sellIinOrder;
+                        $arrDownload["sale"][$index][] = $roundedMeters;
+                        $arrDownload["sale"][$index][] = $timeSpent;
+                        $arrDownload["sale"][$index][] = "";
+
+                        if ($sellIinOrder === "Yes") {
+                            // get Stock in Products Bought
+                            // $arrStock = getRowColumns($this->_dbConn, $stockSummaryTable, $sReplacedProductSaleColumns, "stock_type = 2 AND rec_id = $proId", array(), true, 2);
+
+                            // $competitionDetails = getGridDataAsArray(
+                            //     json_decode($row["ques_7"], true),
+                            //     2,
+                            //     isNonEmptyArray($arrCompetition) ? count($arrCompetition) : 1
+                            // );
+                            $productCount = 0; // Initialize product count before the loop
+                            // get each product sale
+                            if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
+                                foreach ($arrProductBought as $productIndex => $arrProduct) {
+                                    $productName = strtoupper($arrProduct[0]);
+                                    $productColumnName = $arrProduct[1];
+                                    $pktSize = $arrProduct[2];
+                                    $iSale = isset($row[$productColumnName]) ? $row[$productColumnName] : 0;
+                                    // Ensure the product value exists and is strictly greater than 0
+                                    if (isset($iSale) && floatval($iSale) > 0) {
+                                        $productCount++; // Count only if the value is greater than 0
+                                    }
+
+                                    $arrDownload["sale"][$index][$cftIndex + 1] = isset($productCount) ? $productCount : 0;
+                                    // get index of product and insert sale
+                                    $iProductIndex = $arrProductIndex[$productName];
+                                    if ($currentBranchId == 40) {
+                                        $arrDownload["sale"][$index][$iProductIndex] = round(floatval($iSale) / $pktSize, 2);
+                                    } else {
+                                        $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
+                                    }
+                                    // insert Stock in Products Bought
+                                    // $iStock = isset($arrStock[$productColumnName]) && floatval($arrStock[$productColumnName]) ? floatval($arrStock[$productColumnName]) : 0;
+                                    // $arrDownload["sale"][$index][$iProductIndex + 1] = $iStock;
+                                }
+                            }
+
+                            // get each competition
+                            // if ($arrCompetition && isNonEmptyArray($arrCompetition)) {
+                            //     foreach ($arrCompetition as $compIndex => $competition) {
+                            //         $iCompetitionAvgSale = isset($competitionDetails[0][$compIndex]) ? $competitionDetails[0][$compIndex] : 0;
+                            //         $iCompetitionStock = isset($competitionDetails[1][$compIndex]) ? $competitionDetails[1][$compIndex] : 0;
+
+                            //         // get index of competition
+                            //         $competition = strtoupper($competition);
+                            //         $iCompetitionIndex = $arrCompetitionIndex[$competition];
+                            //         $arrDownload["competition"][$index][$iCompetitionIndex] = floatval($iCompetitionAvgSale);
+                            //         $arrDownload["competition"][$index][$iCompetitionIndex + 1] = floatval($iCompetitionStock);
+                            //     }
+                            // }
+                        }
+                        $index++;
                     }
-                    $index++;
                 }
             }
         }
 
-        $fileName = "VanDs_Report_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        $iNofOfProductsColumn = count($arrDownload["sale"][0]) - $iStartofProductsColumn;
-        // $iNofOfCompetitionColumn = count($arrDownload["competition"][0]);
-
-        // Prepare excel data to download
-        $arrExcelData = array();
-        foreach ($arrDownload["sale"] as $index => $arrBody) {
-            // header
-            if ($index === 0) {
-                $arrValues = array();
-                foreach ($arrBody as $body) {
-                    $arrValues[] = $body;
-                }
-                // foreach ($arrDownload["competition"][$index] as $competition) {
-                //     $arrValues[] = $competition;
-                // }
-            } else {
-                // body
-                $arrValues = $productCount;
-                // Take first $iStartofProductsColumn values
-                $arrValues = array_slice($arrBody, 0, $iStartofProductsColumn);
-
-                // insert each product sale
-                for ($productIndex = 0; $productIndex < $iNofOfProductsColumn; $productIndex++) {
-                    $arrValues[] = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : 0;
-                }
-
-                // insert each competition
-                // for ($competitionIndex = 0; $competitionIndex < $iNofOfCompetitionColumn; $competitionIndex++) {
-                //     $arrValues[] = isset($arrDownload["competition"][$index][$competitionIndex]) ? $arrDownload["competition"][$index][$competitionIndex] : 0;
-                // }
-            }
-
-            $arrExcelData[] = $arrValues;
-        }
-
-        // Pass complete data
-        $sheet->fromArray($arrExcelData);
+        // CSV GENERATION WITH SPECIAL CHARACTER HANDLING
+        $fileName = "VanDs_Report_$currentDateTime.csv";
 
         if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
             mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
         }
+
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        // Open file for writing
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Write UTF-8 BOM for proper Excel compatibility with special characters
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        $iNofOfProductsColumn = count($arrDownload["sale"][0]) - $iStartofProductsColumn;
+
+        // Process and write data
+        foreach ($arrDownload["sale"] as $index => $arrBody) {
+            if ($index === 0) {
+                // Write header
+                $this->writeCsvRow($fp, $arrBody);
+            } else {
+                // Prepare body data
+                $arrValues = array_slice($arrBody, 0, $iStartofProductsColumn);
+
+                // Add product data
+                for ($productIndex = 0; $productIndex < $iNofOfProductsColumn; $productIndex++) {
+                    $arrValues[] = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : '';
+                }
+
+                // Write row
+                $this->writeCsvRow($fp, $arrValues);
+            }
+        }
+
+        fclose($fp);
+
         $fileDetails = array(
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
         );
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
 
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
+    }
+
+    private function writeCsvRow($fileHandle, $data)
+    {
+        $escapedData = array();
+
+        foreach ($data as $field) {
+            // Convert to string
+            $field = (string)$field;
+
+            // Escape double quotes by doubling them (CSV standard)
+            $field = str_replace('"', '""', $field);
+
+            // Always quote fields to prevent issues with:
+            // - Commas (,)
+            // - Double quotes (")
+            // - Newlines (\n, \r)
+            // - Leading/trailing spaces
+            // - Special characters from other languages
+            $escapedData[] = '"' . $field . '"';
+        }
+
+        // Write the row
+        fwrite($fileHandle, implode(',', $escapedData) . "\n");
     }
 
     final public function getDownloadSummary()
@@ -1948,7 +2130,7 @@ class VanDsReporting
                 }
                 $sProductSaleColumns = implode(",", $summaryColName);
 
-                $isType = [0 => "Van DS", 1 => "Niches", 5 => "NPSR"];
+                $isType = [0 => "Van DS", 1 => "Niches", 5 => "NPSR", 2 => "Town SWD"];
                 $rsAction = null;
                 $iRows = 0;
 
