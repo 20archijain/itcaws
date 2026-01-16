@@ -326,6 +326,7 @@
       "phoneNumber": "Mobile Number"
     },
     "download": {
+      "downloadLineCut": "Line Cut Report",
       "downloadTargetReport": "Target Report",
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
