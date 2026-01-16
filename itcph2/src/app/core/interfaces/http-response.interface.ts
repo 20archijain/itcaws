@@ -111,6 +111,7 @@ export interface GetAttendanceDataResponse {
 }
 
 export interface GetDownloadBillCutResponse {
+  reportTypeList: DropdownList[];
   monthList: DropdownList[];
   districtList: DropdownList[];
   wdMarketList: DropdownList[];
