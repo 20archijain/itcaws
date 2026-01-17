@@ -177,10 +177,10 @@ class LineCutReport
                     "label" => "DS Level",
                     "value" => "1",
                 ),
-                // array(
-                //     "label" => "Outlet Level",
-                //     "value" => "2",
-                // )
+                array(
+                    "label" => "Outlet Level",
+                    "value" => "2",
+                )
             )
         );
 
@@ -497,7 +497,7 @@ class LineCutReport
 
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Id", "DS Name", "Total Line Cut", "Billed Outlet", "ALC", "ULC"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Id", "DS Name", "Route Name", "Outlet Name", "Outlet ID", "Total LIne Cut", "Total Transaction", "ALC", "ULC"];
 
         // $branchCond = "";
         if ($branch) {
@@ -569,12 +569,13 @@ class LineCutReport
                         $lastDate  = date('Y-m-t', strtotime($month));
 
 
-                        $queryNew = "SELECT $skuForQuery, a.pro_id, a.ques_3, a.team_id FROM tblsurvey_response_details AS a" .
+                        $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, tblroute_details as b" .
                             " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
-                            "";
+                            " AND a.ques_3 = b.rec_id AND b.dstatus = 0";
                         // echo $queryNew;die;
 
                         $extractedData = [];
+                        $outletArray = array();
 
                         $rsAction1 = null;
                         $iActionRows1 = 0;
@@ -585,7 +586,13 @@ class LineCutReport
                             while ($row1 = $this->_dbConn->GetData($rsAction1)) {
 
                                 $pro_id = $row1['pro_id'];
-                                $shopID = $row1['ques_3'];
+                                $shopID = $row1['shop_uniq_code'];
+                                $outlet_name = $row1['outlet_name'];
+                                $route_name = $row1['route_name'];
+                                $outletArray[$shopID] = array(
+                                    $outlet_name,
+                                    $route_name,
+                                );
 
 
                                 foreach ($arrColumnsAllProduct as $col) {
@@ -598,39 +605,26 @@ class LineCutReport
                             }
                         }
 
-                        $productsWithSales = [];
+                        $totalLineCutArr = array();
+                        $productsWithSales = array();
 
-                        $totalLineCut = 0;
                         if (isset($extractedData) && !empty($extractedData)) {
                             foreach ($extractedData as  $shop => $shopArr) {
+                                $totalLineCut = 0;
                                 foreach ($shopArr as $pro => $proArr) {
                                     foreach ($proArr as $index => $lastData)
                                         if ($lastData > 0) {
                                             $totalLineCut++;
-                                            $productsWithSales[$index] = true;
+                                            $totalLineCutArr[$shop] = $totalLineCut;
+                                            $productsWithSales[$shop][$index] = true;
                                         }
                                 }
                             }
                         }
 
-                        $shopCount = 0;
-                        if (isset($extractedData) && !empty($extractedData)) {
-                            foreach ($extractedData as  $shop => $shopArr) {
-                                $hasSale = false;
-                                foreach ($shopArr as $pro => $proArr) {
-                                    foreach ($proArr as $index => $lastData)
-                                        if ($lastData > 0) {
-                                            $hasSale = true;
-                                            break 2;
-                                        }
-                                }
-                                if ($hasSale) {
-                                    $shopCount++;
-                                }
-                            }
-                        }
 
-                        $arrExcelData[] = [
+                        foreach ($extractedData as $index => $shopArr) {
+                            $arrExcelData[] = [
                             $month,
                             $district,
                             $branch,
@@ -643,11 +637,15 @@ class LineCutReport
                             $wd_market,
                             $team_id,
                             $team_name,
-                            $totalLineCut,
-                            $shopCount,
-                            $shopCount > 0 ? round((float) ($totalLineCut / $shopCount), 2) : 0,
-                            isset($productsWithSales) && !empty($productsWithSales) ? count($productsWithSales) : 0,
+                            $outletArray[$index][1],
+                            $outletArray[$index][0],
+                            $index,
+                            $totalLineCutArr[$index] ?? 0,
+                            count($shopArr),
+                            count($shopArr) > 0 ? $totalLineCutArr[$index] ?? 0 / count($shopArr) : 0,
+                            isset($productsWithSales[$index]) && !empty($productsWithSales[$index]) ? count($productsWithSales[$index]) : 0,
                         ];
+                        }
                     }
                 }
             }
