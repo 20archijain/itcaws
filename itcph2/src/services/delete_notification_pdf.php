@@ -12,7 +12,7 @@ require_once $include_path . 'includes/filters.php';
 require_once $include_path . 'includes/project_process_info.php';
 require_once $include_path . 'class/DBConnection.php';
 
-
+// 2025-01-12
 class PDFDeleter
 {
     private $_dbConn = null;
@@ -26,66 +26,78 @@ class PDFDeleter
 
     final public function deletePDFForTeam()
     {
-        // For local
-        $baseFolder = realpath(__DIR__ . '/../../../uproots/pdf');
+        // $baseFolder = realpath(__DIR__ . '/../../../uproots/pdf');
 
         // For production
-        // $baseFolder = '/home/itcawsportal/public_html/uproots/pdf';
+        $baseFolder = '/home/itcawsportal/public_html/uproots/pdf';
         $daysToKeep = 5;
 
-        $today = strtotime(date('Y-m-d'));
+        if (!$baseFolder || !is_dir($baseFolder)) {
+            echo "Directory not found: $baseFolder\n";
+            return;
+        }
 
-        if ($baseFolder && is_dir($baseFolder)) {
+        // Cutoff date in YYYY-MM-DD
+        $cutoffDate = date('Y-m-d', strtotime("-{$daysToKeep} days"));
 
-            $folders = glob($baseFolder . '/*', GLOB_ONLYDIR);
-            $deletedCount = 0;
+        $folders = glob($baseFolder . '/*', GLOB_ONLYDIR);
+        $deletedCount = 0;
 
-            foreach ($folders as $folderPath) {
+        foreach ($folders as $folderPath) {
 
-                $folderName = basename($folderPath);
+            $folderName = basename($folderPath);
+            $folderDate = null;
 
-                // Try to parse date from folder name
-                // Supports: YYYY-MM-DD | YYYY_MM_DD | YYYYMMDD
-                $folderDate = false;
-
-                if (preg_match('/^\d{4}[-_]\d{2}[-_]\d{2}$/', $folderName)) {
-                    $folderDate = strtotime(str_replace('_', '-', $folderName));
-                } elseif (preg_match('/^\d{8}$/', $folderName)) {
-                    $folderDate = strtotime(
-                        substr($folderName, 0, 4) . '-' .
-                            substr($folderName, 4, 2) . '-' .
-                            substr($folderName, 6, 2)
-                    );
-                }
-
-                if ($folderDate === false) {
-                    continue; // Skip non-date folders
-                }
-
-                $ageInDays = ($today - $folderDate) / 86400;
-
-                if ($ageInDays > $daysToKeep) {
-
-                    // Delete all files inside folder
-                    $files = glob($folderPath . '/*');
-                    foreach ($files as $file) {
-                        if (is_file($file)) {
-                            unlink($file);
-                        }
-                    }
-
-                    // Remove the folder
-                    if (rmdir($folderPath)) {
-                        $deletedCount++;
-                    }
-                    $iStatus = updateRecord($this->_dbConn, "tblapp_notification", "dstatus = 1", " notification_date < DATE_SUB(CURDATE(), INTERVAL 5 DAY)");
-                }
+            // Normalize folder date to YYYY-MM-DD
+            // YYYY-MM-DD
+            if (preg_match('/^\d{4}-\d{2}-\d{2}$/', $folderName)) {
+                $folderDate = $folderName;
+            } elseif (preg_match('/^\d{8}$/', $folderName)) {
+                $folderDate =
+                    substr($folderName, 0, 4) . '-' .
+                    substr($folderName, 4, 2) . '-' .
+                    substr($folderName, 6, 2);
             }
 
-            echo "Deleted $deletedCount folder(s) older than $daysToKeep days.\n";
-        } else {
-            echo "Directory not found: $baseFolder\n";
+            // ⛔ Skip invalid folders SAFELY
+            if (!$folderDate) {
+                echo "Skipped (invalid): $folderName\n";
+                continue;
+            }
+
+            echo "Folder: $folderName | Date: $folderDate\n"; // DEBUG
+
+            // print_r($cutoffDate);
+            // die;
+            if (!$folderDate) {
+                continue;
+            }
+
+            // 🔥 DATE STRING COMPARISON
+            if ($folderDate < $cutoffDate) {
+
+                echo "Deleting: $folderName\n";
+
+                foreach (glob($folderPath . '/*') as $file) {
+                    if (is_file($file)) {
+                        unlink($file);
+                    }
+                }
+
+                rmdir($folderPath);
+            } else {
+                echo "Keeping: $folderName\n";
+            }
         }
+
+        updateRecord(
+            $this->_dbConn,
+            "tblapp_notification",
+            "dstatus = 1",
+            "notification_date < DATE_SUB(CURDATE(), INTERVAL {$daysToKeep} DAY)"
+        );
+
+        echo "Deleted {$deletedCount} folder(s). Kept last {$daysToKeep} days.\n";
     }
 }
 
