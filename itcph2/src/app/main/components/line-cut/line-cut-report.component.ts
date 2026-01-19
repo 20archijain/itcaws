@@ -10,6 +10,7 @@ import { Functions } from 'src/app/core/utils/functions.list';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
+import { ToastrService } from 'src/app/core/services/toastr.service';
 
 @Component({
   templateUrl: './line-cut-report.component.html'
@@ -36,7 +37,7 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
   isDisabled = false;
   url = environment.getUobReportDataUrl;
 
-  constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
+  constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService, private toastrService: ToastrService) { }
 
   ngOnInit() {
     this.group = this.fb.group({
@@ -51,7 +52,7 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
       wdPopGroup: [''],
       product: [''],
       reportType: ['1'],
-      month : ['', COMMON_VALIDATORS.validators.requiredOnly],
+      month: ['', COMMON_VALIDATORS.validators.requiredOnly],
     });
 
     this.loaderService.startLoader();
@@ -83,24 +84,55 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
   }
 
   download() {
-    if (!this.isDisabled && this.group.valid) {
-      this.isDisabled = true;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
-          null, environment.downloadExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDisabled = false;
-              this.loaderService.stopLoader();
+    const reportType = this.group.get('reportType').value;
+    if (reportType == '1') {
+      if (!this.isDisabled && this.group.valid) {
+        this.isDisabled = true;
+        this.loaderService.startLoader();
+        this.subscription.push(
+          this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+            null, environment.downloadExcelUrl)
+            .pipe(
+              finalize(() => {
+                this.isDisabled = false;
+                this.loaderService.stopLoader();
+              })
+            )
+            .subscribe(resp => {
+              if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+                Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+              }
             })
-          )
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
-            }
-          })
-      );
+        );
+      }
+    } else {
+      if (this.group.get('month').value.length < 2) {
+        if (!this.isDisabled && this.group.valid) {
+          this.isDisabled = true;
+          this.loaderService.startLoader();
+          this.subscription.push(
+            this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+              null, environment.downloadExcelUrl)
+              .pipe(
+                finalize(() => {
+                  this.isDisabled = false;
+                  this.loaderService.stopLoader();
+                })
+              )
+              .subscribe(resp => {
+                if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+                  Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+                }
+              })
+          );
+        }
+      } else {
+        this.toastrService.toastr({
+          msg: 'Please Select only One Month For Outlet Level Report',
+          type: 'error'
+        });
+      }
+
     }
   }
 
