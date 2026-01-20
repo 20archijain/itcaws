@@ -298,10 +298,15 @@ class LineCutReport
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
+        if ($teamType) {
+            if ($teamType != 'all') {
+                $teamTypeCond .= " AND b.is_type = $teamType";
+            }
+        }
 
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Id", "DS Name", "Total Line Cut", "Billed Outlet", "ALC", "ULC"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Total Line Cut", "Billed Outlet", "ALC", "ULC"];
 
         // $branchCond = "";
         if ($branch) {
@@ -318,7 +323,7 @@ class LineCutReport
             $sAction3 = null;
             $iRows3 = 0;
             $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                "  AND a.branch_id = $branchId $teamType
+                "  AND a.branch_id = $branchId $teamTypeCond
                 $Cond $whereFilter ORDER BY a.category_name, a.product_name";
             // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
@@ -341,7 +346,7 @@ class LineCutReport
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+            $sQuery4 = "SELECT b.is_type, b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
@@ -365,6 +370,20 @@ class LineCutReport
                     $showSection = $section . ' - ' . $section_name;
                     $showCircle = $circle . ' - ' . $circle_name;
 
+                    $showTeamType = "";
+                    if ($row4['is_type'] == 0) {
+                        $showTeamType = "Van DS";
+                    } elseif ($row4['is_type'] == 1) {
+                        $showTeamType = "Niche";
+                    } elseif ($row4['is_type'] == 2) {
+                        $showTeamType = "Town SWD";
+                    } elseif ($row4['is_type'] == 3) {
+                        $showTeamType = "Hybrid";
+                    } elseif ($row4['is_type'] == 4) {
+                        $showTeamType = "SCP";
+                    } elseif ($row4['is_type'] == 5) {
+                        $showTeamType = "NPSR";
+                    }
 
 
                     $arrMonth = $this->_data['month'];
@@ -445,6 +464,7 @@ class LineCutReport
                             $wd_firm_name,
                             $wd_pop_group,
                             $wd_market,
+                            $showTeamType,
                             $team_id,
                             $team_name,
                             $totalLineCut,
@@ -494,10 +514,15 @@ class LineCutReport
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
+        if ($teamType) {
+            if ($teamType != 'all') {
+                $teamTypeCond .= " AND b.is_type = $teamType";
+            }
+        }
 
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Id", "DS Name", "Route Name", "Outlet Name", "Outlet ID", "Total LIne Cut", "Total Transaction", "ALC", "ULC"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Route Name", "Outlet Name", "Outlet ID", "Total SKU", "Total LIne Cut", "Total Transaction", "ALC", "ULC"];
 
         // $branchCond = "";
         if ($branch) {
@@ -510,34 +535,11 @@ class LineCutReport
         }
 
         foreach ($branchIds as $branchId) {
-            //All Brand Query
-            $sAction3 = null;
-            $iRows3 = 0;
-            $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                "  AND a.branch_id = $branchId $teamType
-                $Cond $whereFilter ORDER BY a.category_name, a.product_name";
-            // echo $sQuery3;die;
-            $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
-
-            $arrProductColumnsAllProduct = array();
-            $arrColumnsAllProduct = array();
-            if ($iRows3 > 0) {
-                while ($row3 = $this->_dbConn->GetData($sAction3)) {
-                    // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
-                    $arrProductColumnsAllProduct[] = "a.{$row3["summary_column_name"]} AS {$row3["summary_column_name"]}";
-                    $arrColumnsAllProduct[] = "{$row3["summary_column_name"]}";
-                }
-            }
-
-            $skuForQuery = "";
-            if (!empty($arrProductColumnsAllProduct)) {
-                $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
-            }
 
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+            $sQuery4 = "SELECT b.is_type, b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
@@ -561,90 +563,142 @@ class LineCutReport
                     $showSection = $section . ' - ' . $section_name;
                     $showCircle = $circle . ' - ' . $circle_name;
 
-
+                    $showTeamType = "";
+                    if ($row4['is_type'] == 0) {
+                        $showTeamType = "Van DS";
+                    } elseif ($row4['is_type'] == 1) {
+                        $showTeamType = "Niche";
+                    } elseif ($row4['is_type'] == 2) {
+                        $showTeamType = "Town SWD";
+                    } elseif ($row4['is_type'] == 3) {
+                        $showTeamType = "Hybrid";
+                    } elseif ($row4['is_type'] == 4) {
+                        $showTeamType = "SCP";
+                    } elseif ($row4['is_type'] == 5) {
+                        $showTeamType = "NPSR";
+                    }
 
                     $arrMonth = $this->_data['month'];
                     foreach ($arrMonth as $month) {
                         $firstDate = date('Y-m-01', strtotime($month));
                         $lastDate  = date('Y-m-t', strtotime($month));
 
+                        if ($firstDate > '2025-12-31') {
+                            $date = DateTime::createFromFormat('F Y', $month);
 
-                        $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, tblroute_details as b" .
-                            " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
-                            " AND a.ques_3 = b.rec_id AND b.dstatus = 0";
-                        // echo $queryNew;die;
+                            $numericMonth = $date->format('m');
+                            $numericYear  = $date->format('Y');
+                        } else {
+                            $numericMonth = 12;
+                            $numericYear  = 2025;
+                        }
 
-                        $extractedData = [];
-                        $outletArray = array();
+                        //All Brand Query
+                        $sAction3 = null;
+                        $iRows3 = 0;
+                        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_history as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+                            "  AND a.branch_id = $branchId $teamTypeCond AND a.month = '$numericMonth' AND a.year = '$numericYear'
+                        $Cond $whereFilter ORDER BY a.category_name, a.product_name";
+                        // echo $sQuery3;die;
+                        $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
-                        $rsAction1 = null;
-                        $iActionRows1 = 0;
-                        $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
+                        $arrProductColumnsAllProduct = array();
+                        $arrColumnsAllProduct = array();
+                        if ($iRows3 > 0) {
+                            while ($row3 = $this->_dbConn->GetData($sAction3)) {
+                                // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
+                                $arrProductColumnsAllProduct[] = "a.{$row3["summary_column_name"]} AS {$row3["summary_column_name"]}";
+                                $arrColumnsAllProduct[] = "{$row3["summary_column_name"]}";
+                            }
+                        }
+
+                        $skuForQuery = "";
+                        if (!empty($arrProductColumnsAllProduct)) {
+                            $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
+                        }
+
+                        if (isset($arrColumnsAllProduct) && !empty($arrColumnsAllProduct)) {
+                            $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, tblroute_details as b" .
+                                " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
+                                " AND a.ques_3 = b.rec_id AND b.dstatus = 0";
+                            // echo $queryNew;die;
+
+                            $extractedData = [];
+                            $outletArray = array();
+
+                            $rsAction1 = null;
+                            $iActionRows1 = 0;
+                            $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
 
 
-                        if ($iActionRows1 > 0) {
-                            while ($row1 = $this->_dbConn->GetData($rsAction1)) {
+                            if ($iActionRows1 > 0) {
+                                while ($row1 = $this->_dbConn->GetData($rsAction1)) {
 
-                                $pro_id = $row1['pro_id'];
-                                $shopID = $row1['shop_uniq_code'];
-                                $outlet_name = $row1['outlet_name'];
-                                $route_name = $row1['route_name'];
-                                $outletArray[$shopID] = array(
-                                    $outlet_name,
-                                    $route_name,
-                                );
+                                    $pro_id = $row1['pro_id'];
+                                    $shopID = $row1['shop_uniq_code'];
+                                    $outlet_name = $row1['outlet_name'];
+                                    $route_name = $row1['route_name'];
+                                    $outletArray[$shopID] = array(
+                                        $outlet_name,
+                                        $route_name,
+                                    );
 
 
-                                foreach ($arrColumnsAllProduct as $col) {
-                                    if (array_key_exists($col, $row1)) {
-                                        $extractedData[$shopID][$pro_id][$col] = $row1[$col];
-                                    } else {
-                                        $extractedData[$shopID][$pro_id][$col] = $row1[$col];
+                                    foreach ($arrColumnsAllProduct as $col) {
+                                        if (array_key_exists($col, $row1)) {
+                                            $extractedData[$shopID][$pro_id][$col] = $row1[$col];
+                                        } else {
+                                            $extractedData[$shopID][$pro_id][$col] = $row1[$col];
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        $totalLineCutArr = array();
-                        $productsWithSales = array();
+                            $totalLineCutArr = array();
+                            $productsWithSales = array();
 
-                        if (isset($extractedData) && !empty($extractedData)) {
-                            foreach ($extractedData as  $shop => $shopArr) {
-                                $totalLineCut = 0;
-                                foreach ($shopArr as $pro => $proArr) {
-                                    foreach ($proArr as $index => $lastData)
-                                        if ($lastData > 0) {
-                                            $totalLineCut++;
-                                            $totalLineCutArr[$shop] = $totalLineCut;
-                                            $productsWithSales[$shop][$index] = true;
-                                        }
+                            if (isset($extractedData) && !empty($extractedData)) {
+                                foreach ($extractedData as  $shop => $shopArr) {
+                                    $totalLineCut = 0;
+                                    foreach ($shopArr as $pro => $proArr) {
+                                        foreach ($proArr as $index => $lastData)
+                                            if ($lastData > 0) {
+                                                $totalLineCut++;
+                                                $totalLineCutArr[$shop] = $totalLineCut;
+                                                $productsWithSales[$shop][$index] = true;
+                                            }
+                                    }
                                 }
                             }
-                        }
 
 
-                        foreach ($extractedData as $index => $shopArr) {
-                            $arrExcelData[] = [
-                            $month,
-                            $district,
-                            $branch,
-                            $region,
-                            $showCircle,
-                            $showSection,
-                            $wd_code,
-                            $wd_firm_name,
-                            $wd_pop_group,
-                            $wd_market,
-                            $team_id,
-                            $team_name,
-                            $outletArray[$index][1],
-                            $outletArray[$index][0],
-                            $index,
-                            $totalLineCutArr[$index] ?? 0,
-                            count($shopArr),
-                            count($shopArr) > 0 ? $totalLineCutArr[$index] ?? 0 / count($shopArr) : 0,
-                            isset($productsWithSales[$index]) && !empty($productsWithSales[$index]) ? count($productsWithSales[$index]) : 0,
-                        ];
+                            foreach ($extractedData as $index => $shopArr) {
+                                $totalLine = $totalLineCutArr[$index] ?? 0;
+                                $billed = count($shopArr) ?? 0;
+                                $arrExcelData[] = [
+                                    $month,
+                                    $district,
+                                    $branch,
+                                    $region,
+                                    $showCircle,
+                                    $showSection,
+                                    $wd_code,
+                                    $wd_firm_name,
+                                    $wd_pop_group,
+                                    $wd_market,
+                                    $showTeamType,
+                                    $team_id,
+                                    $team_name,
+                                    $outletArray[$index][1],
+                                    $outletArray[$index][0],
+                                    $index,
+                                    count($arrColumnsAllProduct) ?? 0,
+                                    $totalLine,
+                                    $billed,
+                                    round((float) ($totalLine / $billed), 2),
+                                    isset($productsWithSales[$index]) && !empty($productsWithSales[$index]) ? count($productsWithSales[$index]) : 0,
+                                ];
+                            }
                         }
                     }
                 }
@@ -1209,6 +1263,8 @@ class LineCutReport
                     $teamType = "Town SWD";
                 } elseif ($row['is_type'] == 3) {
                     $teamType = "Hybrid";
+                } elseif ($row['is_type'] == 4) {
+                    $teamType = "SCP";
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
