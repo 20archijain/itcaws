@@ -481,7 +481,10 @@ class TeamManagement
             "dsTypeList" => array(
                 array("label" => "DS", "value" => "0"),
                 array("label" => "Town SWD", "value" => "2"),
+                array("label" => "SCP", "value" => "4"),
                 array("label" => "NSPR", "value" => "5"),
+                array("label" => "MDO A", "value" => "7"),
+                array("label" => "MDO B", "value" => "10"),
             ),
             "statusList" => array(
                 array("label" => "Active", "value" => '0'),
@@ -575,6 +578,7 @@ class TeamManagement
                     "id" => $teamId,
                     "teamName" => $arrData["team_name"],
                     "dsType" => $dsType[$arrData["is_type"]],
+                    "is_type" => (string) $arrData["is_type"],
                     "projectId" => $arrData["project_id"],
                     "recId" => $arrData["rec_id"],
                     "mobile" => $arrData["mobile"],
@@ -678,6 +682,7 @@ class TeamManagement
         $circle = getFormData($this->_data, "circle");
         $section = getFormData($this->_data, "section");
         $wdCode = getFormData($this->_data, "wd_code");
+        $is_type = getFormData($this->_data, "is_type");
 
         $isValidated = $this->checkEditTeamValidation($teamName, $phone);
 
@@ -695,8 +700,8 @@ class TeamManagement
 
             // Team not exist, edit
             if ($iStatus === 0 && $iStatusCloud === 0) {
-                $cols = "team_name = ?, ds_number = ?, modif_id = ?, circle = ?, section = ?, wd_code = ?";
-                $arrParams = array($teamName, $phone, $this->_iUserId, $circle, $section, $wdCode, $teamId);
+                $cols = "team_name = ?, ds_number = ?, modif_id = ?, circle = ?, section = ?, wd_code = ?, is_type = ?";
+                $arrParams = array($teamName, $phone, $this->_iUserId, $circle, $section, $wdCode, $is_type, $teamId);
 
                 $iStatus = updateRecord($this->_dbConn, $projectTeamTable, $cols, "dstatus = 0 AND team_id = ?", $arrParams);
 
