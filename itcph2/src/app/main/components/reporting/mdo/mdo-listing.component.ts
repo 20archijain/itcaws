@@ -12,6 +12,7 @@ import { LISTING, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { DashboardData, DropdownList, GetDownloadFileDetails, MdoListing, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
 import { environment } from 'src/environments/environment';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { ListingBulkActionOutput } from 'src/app/core/interfaces/helpers.interface';
 import { ListingService } from 'src/app/core/services/listing.service';
 import { CustomGalleryConfig } from 'src/app/core/interfaces/common.interface';
@@ -241,6 +242,32 @@ export class MdoListingComponent implements OnDestroy, OnInit {
           .subscribe(response => {
             if (response && response.status === REQUEST_STATUS.SUCCESS) {
               Functions.downloadFile(response.data.filePath, response.data.fileName);
+            }
+          })
+      );
+    } else {
+      this.displayBranchError();
+    }
+  }
+
+  //CSV Download
+  downloadCsv() {
+    if (this.branchValue && this.branchValue.length) {
+      this.isDownloading = true;
+      this.loaderService.startLoader();
+
+      this.subscription.push(
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadCSV,
+          this.group.getRawValue(), null, environment.getListingExcelUrl)
+          .pipe(
+            finalize(() => {
+              this.isDownloading = false;
+              this.loaderService.stopLoader();
+            }),
+          )
+          .subscribe(response => {
+            if (response && response.status === REQUEST_STATUS.SUCCESS) {
+              Functions.createCSV(response.data);
             }
           })
       );

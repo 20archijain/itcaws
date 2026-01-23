@@ -49,5 +49,6 @@ $ACTION_LIST = array(
     'ATTENDANCE_REPORT' => 'get_download_attendance_report',
     'PDF_REPORT' => 'get_download_pdf_report',
     'GET_TABLES' => 'get_tables',
-    'GET_TABLE_COLUMNS' => 'get_tables_column'
+    'GET_TABLE_COLUMNS' => 'get_tables_column',
+    "GET_DOWNLOAD_CSV" => 'get_download_csv',
 );
