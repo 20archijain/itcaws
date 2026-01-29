@@ -1,0 +1,244 @@
+<app-card cardTitle="{{ 'app.reporting.order.heading' | translate }}" [options]="false">
+  <div class="table-listing">
+    <app-listing-searchbar [group]="group" [searchGroup]="searchbarForm" [searchTemplate]="searchTemplate"
+      (onAction)="onSearchAction($event)">
+    </app-listing-searchbar>
+
+    <div class="listing" *ngIf="!isSkeletonModeOn; else skeletonData">
+      <div class="listing-row" *ngFor="let data of tableData; let di = index">
+        <app-card [options]="false">
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="row">
+                <div class="col-sm-4 v-border">
+                  <app-listing-column header="app.reporting.vanDs.route" [content]="data.route">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.branch" [content]="data.branchName">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.circle" [content]="data.circle">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.section" [content]="data.section">
+                  </app-listing-column>
+                </div>
+                <div class="col-sm-4 v-border">
+                  <app-listing-column header="app.team.add.wdCode" [content]="data.wdCode">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopName" [content]="data.shopName">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.mobileNumber" [content]="data.mobileNumber">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopType" [content]="data.shopType">
+                  </app-listing-column>
+                </div>
+                <div class="col-sm-4">
+                  <app-listing-column header="app.reporting.vanDs.sellIinOrder" [content]="data.sellIinOrder">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.dsName" [content]="data.team">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.timestamp" [content]="data.timestamp">
+                  </app-listing-column>
+                </div>
+              </div>
+            </div>
+
+            <!-- Images -->
+            <!-- <div class="col-sm-2">
+              <app-custom-gallery *ngIf="data['images']" [images]="data['images']" [cgConfig]="cgConfig">
+              </app-custom-gallery>
+            </div> -->
+
+            <!-- Actions -->
+            <div class="col-sm-2 listing-actions" *ngIf="isMapAllowed">
+              <i class="feather icon-map-pin link first" title="{{ 'icon.map' | translate }}"
+                (click)="showLocationOnMap(data.lt, data.lg)"></i>
+            </div>
+
+            <div class="col-sm-1 listing-actions">
+              <button style="width: 90px; height:40px; border-radius: 18px; color: white;" class="btn btn-danger"
+                (click)="openDelivered(deliveredContent, data['pro_id'])">Details</button>
+            </div>
+
+            <ng-template #deliveredContent let-modal>
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-basic-title">Ordered at: {{data['timestamp']}}</h6>
+                <h6 class="modal-title ms-5" id="modal-basic-title">Delivered at: {{data['deliveryTime']}}</h6>
+                <button type="button" class="btn-close" aria-label="Close"
+                  (click)="closeDeliveredModal(modal)"></button>
+              </div>
+              <ng-container *ngIf="clickedOrderId">
+                <div class="modal-body" style="width:auto">
+                  <table class="table w-100 custom-table table-hover table-striped table-bordered align-middle">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Ordered Qty</th>
+                        <th>Delivered Qty</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let mdata of deliveredDataResponse">
+                      <tr>
+                        <td>{{ mdata.sku_details }}</td>
+                        <td>{{ mdata.ordered_qty }}</td>
+                        <td>{{ mdata.delivered_qty }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+            </ng-template>
+
+          </div>
+        </app-card>
+      </div>
+    </div>
+
+    <ng-template #skeletonData>
+      <div class="listing-row" *ngFor="let sA of skeletonArray">
+        <app-card [options]="false">
+          <div class="row">
+            <div class="col-sm-10">
+              <div class="row">
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+                <div class="col-sm-4">
+                  <app-skeleton></app-skeleton>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-2" *ngIf="isMapAllowed">
+              <app-skeleton></app-skeleton>
+            </div>
+            <div class="col-sm-1">
+              <app-skeleton></app-skeleton>
+            </div>
+          </div>
+        </app-card>
+      </div>
+    </ng-template>
+
+    <ng-template #searchTemplate>
+      <!-- If Superadmin or Admin Login -->
+      <div *ngIf="branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="searchbarForm" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="searchbarForm" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="district" groupClassName="row" sizeClass="col-sm-12"
+            [options]="districtOptions" [isHorizontalForm]="true"
+            placeholder="{{ 'app.team.add.district' | translate }}" [multiple]="true" (onChange)="getBranch()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="branch" groupClassName="row" sizeClass="col-sm-12"
+            [options]="branchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+            [isRequired]="true" [errorMessages]="errorMessages.branch" (onChange)="getCircle()" [multiple]="true"
+            groupBy="mainBranch">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-3 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="circle" [options]="circleOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+          </app-select>
+        </div>
+        <div *ngIf="branchFilter" class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="section" [options]="sectionOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="wdMarket" [options]="wdMarketOptions" [multiple]="true"
+            placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
+            placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-2">
+          <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-6 col-lg-4">
+          <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true"
+            btnTitle="button.search"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
+          <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+            (onClick)="clearForm()"></app-button>
+        </div>
+      </div>
+
+      <!-- If Regional Login -->
+      <div *ngIf="!branchFilter" class="row">
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="searchbarForm" controlName="dateFrom" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.from' | translate }}" [showValidationState]="false"
+            [maxDate]="group.get('searchbar').get('dateTo').value">
+          </app-date>
+        </div>
+        <div class="col-sm-3 col-lg-2">
+          <app-date [group]="searchbarForm" controlName="dateTo" groupClassName="row" sizeClass="col-sm-12"
+            [isHorizontalForm]="true" placeholder="{{ 'placeholder.to' | translate }}" [showValidationState]="false"
+            [minDate]="group.get('searchbar').get('dateFrom').value">
+          </app-date>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-4 col-md-2">
+          <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
+          </app-select>
+        </div>
+        <div class="col-sm-4 col-lg-3">
+          <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true"
+            btnTitle="button.search"></app-button>
+          <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
+            btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
+            [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
+          <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+            (onClick)="clearForm()"></app-button>
+        </div>
+      </div>
+    </ng-template>
+
+    <app-pagination #pagination [group]="group" [limit]="limit" [totalRecords]="totalRecords"
+      (onPageChange)="listingData()"></app-pagination>
+  </div>
+</app-card>
+
+<app-location-on-map-modal></app-location-on-map-modal>
+<!-- <app-modal></app-modal> -->
