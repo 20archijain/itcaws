@@ -3983,4 +3983,43 @@ class Worksheet
 
         return true;
     }
+
+     /**
+     * Set a cell value by using numeric cell coordinates.
+     *
+     * @param int $columnIndex Numeric column coordinate of the cell
+     * @param int $row Numeric row coordinate of the cell
+     * @param mixed $value Value of the cell
+     *
+     * @return Worksheet
+     */
+    public function setCellValueByColumnAndRow($columnIndex, $row, $value)
+    {
+        $this->getCellByColumnAndRow($columnIndex, $row)->setValue($value);
+
+        return $this;
+    }
+
+    /**
+     * Get cell at a specific coordinate by using numeric cell coordinates.
+     *
+     * @param int $columnIndex Numeric column coordinate of the cell
+     * @param int $row Numeric row coordinate of the cell
+     * @param bool $createIfNotExists Flag indicating whether a new cell should be created if it doesn't
+     *                                       already exist, or a null should be returned instead
+     *
+     * @return null|Cell Cell that was found/created or null
+     */
+    public function getCellByColumnAndRow($columnIndex, $row, $createIfNotExists = true)
+    {
+        $columnLetter = Coordinate::stringFromColumnIndex($columnIndex);
+        $coordinate = $columnLetter . $row;
+
+        if ($this->cellCollection->has($coordinate)) {
+            return $this->cellCollection->get($coordinate);
+        }
+
+        // Create new cell object, if required
+        return $createIfNotExists ? $this->createNewCell($coordinate) : null;
+    }
 }

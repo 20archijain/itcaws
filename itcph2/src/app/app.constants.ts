@@ -130,6 +130,7 @@ export const STATIC_MODULES = {
     getMonth: 'get_month',
     getTables: 'get_tables',
     getTableColumns: 'get_tables_column',
+    getDownloadCSV : 'get_download_csv',
   },
   forgot: {
     action: 'forgot',
