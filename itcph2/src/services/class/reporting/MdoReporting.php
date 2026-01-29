@@ -2108,4 +2108,123 @@ class MdoReporting
         $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
         echo json_encode($arrMessage);
     }
+
+    final public function getDownloadCSV()
+    {
+        global $UPLOAD_URL;
+        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 2 => "SWD", 7 => "MDO", 10 => "FSO", 6 => "RMD", 8 => "SCP DS", 9 => "Common FMCG Lite DS");
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+
+        // filter query
+        $where = $this->getCondition();
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("a.capture_date", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
+        $branch = getFormData($this->_data['searchbar'], "branch");
+
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+
+        // create header
+        $arrExcelData = [];
+        $header = [];
+        $header[] = [
+            "Date",
+            "Branch",
+            "MDO ID",
+            "MDO Name",
+            "MDO Type",
+            "DS Id",
+            "DS Name",
+            "DS Type",
+            "WD Code",
+            "Route Name",
+            "Total Outlet Visited",
+            "Total Sales Volume in (M)",
+            "Sales Value in (Rs)"
+        ];
+
+        $arrDataHolder = [];
+        foreach ($branch as $branchId) {
+            $branchCond = "";
+            if ($branchId) {
+                $matchAll = checkIfAllSelected($branchId);
+                if (!$matchAll) {
+                    if (isNonEmptyArray($branchId)) {
+                        $branchIds = implode(",", $branchId);
+                        $branchCond = " AND b.branch_id IN ($branchIds)";
+                    } else {
+                        $branchCond = " AND b.branch_id = $branchId";
+                    }
+                }
+            }
+            $rsAction = null;
+            $iRows = 0;
+            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'Infra Details'" .
+                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id  $where ORDER BY capture_datetime DESC";
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+            if ($iRows) {
+                while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $captureDate = $row["capture_datetime"];
+                    $wdCode = $row["wd_code"];
+                    $route = $row["route_name"];
+                    $branch = $row["branch_name"];
+
+                    // MDO Details
+                    $mdoId = $row["team_id"];
+                    $mdoDetails = getRowColumns($this->_dbConn, "tblproject_team", "team_name, is_type", "team_id = $mdoId AND dstatus = 0");
+                    $mdoName = $mdoDetails[0];
+                    $mdoType = $mdoDetails[1];
+                    $mdoType = isset($mdoType) ? $arrTeamType[$mdoType] : "";
+
+                    // DS Details
+                    $dsDetails = getRowColumns($this->_dbConn, "tblmdo_offline_data", "ds_id, type, ds_name", "dstatus = 0 AND route_name = '$route' AND wd_code = '$wdCode' AND team_id = $mdoId");
+                    // $dsName = $row["ds_name"];
+                    $dsId = $dsDetails[0];
+                    $dsType = $dsDetails[1];
+                    $dsName = $dsDetails[2];
+                    $dsType = isset($dsType) ? $arrTeamType[$dsType] : "";
+
+                    // Survey Details
+                    $totalOutletVisited = $row['ques_4'];
+                    $totalSalesVolume = $row['ques_5'];
+                    $totalSalesValue = $row['ques_6'];
+
+                    $arrDataHolder[] = [
+                        $this->cleanCSVValue($captureDate),
+                        $this->cleanCSVValue($branch),
+                        $this->cleanCSVValue($mdoId),
+                        $this->cleanCSVValue($mdoName),
+                        $this->cleanCSVValue($mdoType),
+                        $this->cleanCSVValue($dsId),
+                        $this->cleanCSVValue($dsName),
+                        $this->cleanCSVValue($dsType),
+                        $this->cleanCSVValue($wdCode),
+                        $this->cleanCSVValue($route),
+                        $this->cleanCSVValue($totalOutletVisited),
+                        $this->cleanCSVValue($totalSalesVolume),
+                        $this->cleanCSVValue($totalSalesValue)
+                    ];
+                }
+            }
+        }
+        $arrResult = formatDownloadData("MDO_Transaction_Report", array($header), $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        echo json_encode($arrMessage);
+    }
+
+    private function cleanCSVValue($value)
+    {
+        $value = trim((string)($value ?? ''));
+        $value = str_replace(["\n", "\r"], " ", $value);
+        $value = str_replace('"', '""', $value);
+        return '"' . $value . '"';
+    }
 }
