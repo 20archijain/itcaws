@@ -414,6 +414,7 @@
     "downloadBinder": "Download Binder Report",
     "downloadAttendance": "Download Attendance Report",
     "downloadPdf": "Download PDF",
+    "dayendReport": "Day End Report",
     "logout": "Logout",
     "login": "Login",
     "next": "Next",
