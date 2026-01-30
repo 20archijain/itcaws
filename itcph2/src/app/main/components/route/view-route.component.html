@@ -1,35 +1,41 @@
 <app-card cardTitle="Route Delete" [options]="false">
-  <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
+  <!-- <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
     [searchTemplate]="searchTemplate" [searchGroup]="form">
+  </app-table-listing> -->
+  <app-table-listing [url]="url" [header]="header" [body]="body" [sortOptions]="sortOptions"
+    [searchTemplate]="searchTemplate" [searchGroup]="form" [isSelectable]="isSelectable"
+    [deleteCondition]="deleteCondition" checkKey="id" deleteKey="id" editKey="id">
   </app-table-listing>
 </app-card>
 
 <ng-template #searchTemplate>
   <div class="row">
-    <div class="col-xxl-3 col-md-3">
+
+    <div class="col-md-2">
       <app-select placeholder="Branch" [group]="form" controlName="branch" [options]="branchOptions"
         (onChange)="getTeamNames()">
       </app-select>
     </div>
-    <div class="col-xxl-3 col-md-3">
+    <div class="col-md-2">
       <app-select placeholder="Team" [multiple]="true" [group]="form" controlName="team" [options]="teamOptions">
       </app-select>
     </div>
-    <div class="col-xxl-3 col-md-12 d-flex align-items-center">
-      <div class="me-1 w-50">
-        <app-textarea rows="3" [group]="form" controlName="recIds" label="SHOP IDS" placeholder="SHOP IDS">
-        </app-textarea>
-      </div>
-      <div class="ms-2 w-50">
-        <app-textarea rows="3" [group]="form" controlName="phoneNumber" label="Mobile Number"
-          placeholder="Mobile Number">
-        </app-textarea>
-      </div>
-      <!-- search button  -->
+    <div class="col-md-3">
+      <app-textarea rows="2" [group]="form" controlName="recIds"
+        placeholder="Enter Shop Ids ex:- 1234,3456,....">
+      </app-textarea>
     </div>
-    <div class="d-flex gap-2 me-2">
-      <app-button type="submit" text="button.search"></app-button>
-      <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
+    <div class="col-md-3">
+      <app-textarea rows="2" [group]="form" controlName="phoneNumber"
+        placeholder="Enter Mobile Number ex:- 8795678908,9876789876,....">
+      </app-textarea>
+    </div>
+    <div class="col-md-2">
+      <div class="d-flex gap-2">
+        <app-button type="submit" text="button.search"></app-button>
+        <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
+      </div>
     </div>
 
-</div>
+  </div>
+
