@@ -22,9 +22,11 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
+  statusOptions: DropdownList[] = [];
   form: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
+  deleteCondition: [string, number] = ['dstatus', 0];
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -42,8 +44,6 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
     this.subscription.forEach(sub => sub.unsubscribe());
   }
 
-
-
   getInitialData() {
     this.loaderService.startLoader();
     this.subscription.push(
@@ -56,6 +56,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
             this.sortOptions = resp.data.sortOptions;
             this.branchOptions = resp.data.branchList;
             this.teamOptions = resp.data.teamList;
+            this.statusOptions = resp.data.statusList;
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
           }

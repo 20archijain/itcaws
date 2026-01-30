@@ -28,7 +28,6 @@ class RouteManagement
         $this->_validationLength = $GLOBALS['VALIDATOR_LENGTH'];
     }
 
-
     final public function getAddTeamData()
     {
         $arrResult = array(
@@ -64,7 +63,6 @@ class RouteManagement
         echo json_encode($arrMessage);
     }
 
-
     final public function getViewRouteData()
     {
         $arrResult = array(
@@ -75,6 +73,10 @@ class RouteManagement
                 array("label" => "Team ID", "value" => "a.team_id"),
                 array("label" => "Date Created - ASC", "value" => "a.rlm"),
             ),
+            "statusList" => array(
+                array("label" => "Active", "value" => '0'),
+                array("label" => "Deleted", "value" => '1'),
+            ),
             "viewHeader" => array(
                 "Rec_ID",
                 "Team ID",
@@ -84,7 +86,8 @@ class RouteManagement
                 "Route Name",
                 "Outlet Name",
                 "Outlet Mobile",
-                "KYC Status"
+                "KYC Status",
+                "Status"
             ),
             "viewBody" => array(
                 "id",
@@ -96,6 +99,7 @@ class RouteManagement
                 "outletName",
                 "outletMobile",
                 "kycStatus",
+                "deleteStatus"
             ),
         );
 
@@ -114,29 +118,17 @@ class RouteManagement
         // order by condition
         $sOrderCond = getOrderByCond("a.rlm", $this->_data["sort"]);
 
-        // filter by search query
-        // $phoneNumber = isset($this->_data['searchbar']['phoneNumber']) ? $this->_data['searchbar']['phoneNumber'] : [];
-        // if (!empty($phoneNumber)) {
-        //      $phoneArray = array_filter(array_map('trim', explode(',', $phoneNumber)));
-        //     $phoneArray = array_map(function ($v) {
-        //         return addslashes($v);
-        //     }, $phoneArray);
-        //     $PhoneSql = "'" . implode("','", $phoneArray) . "'";
-        //     $where .= " AND a.outlet_mobile IN ($PhoneSql) ";
-        // }
+        //Phone number
         $phoneNumber = isset($this->_data['searchbar']['phoneNumber'])
             ? $this->_data['searchbar']['phoneNumber']
             : '';
-
         if (!empty(trim($phoneNumber))) {
             $phoneArray = preg_split('/[\s,]+/', trim($phoneNumber));
             $phoneArray = array_filter($phoneArray);
             $phoneArray = array_map('addslashes', $phoneArray);
             $PhoneSql = "'" . implode("','", $phoneArray) . "'";
-            $where .= " AND a.outlet_mobile IN ($PhoneSql) ";
+            $where .= "AND a.outlet_mobile IN ($PhoneSql) ";
         }
-        // print_r($phoneNumber);
-        // die;
 
         $branch = isset($this->_data['searchbar']['branch']) ? $this->_data['searchbar']['branch'] : [];
         if (!empty($branch) && is_array($branch)) {
@@ -144,12 +136,13 @@ class RouteManagement
             $where .= "AND b.branch_id IN ($branchId)";
         }
 
+        // Convert to `'val1','val2','val3'`
+        //Shop Ids
         $recIds = isset($this->_data['searchbar']['recIds']) ? $this->_data['searchbar']['recIds'] : '';
         if (!empty(trim($recIds))) {
             $recIdsArray = preg_split('/[\s,]+/', trim($recIds));
             $recIdsArray = array_filter($recIdsArray);
             $recIdsArray = array_map('addslashes', $recIdsArray);
-            // Convert to `'val1','val2','val3'`
             $recIdsSql = "'" . implode("','", $recIdsArray) . "'";
             $where .= " AND a.rec_id IN ($recIdsSql) ";
         }
@@ -163,13 +156,11 @@ class RouteManagement
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name,
-              a.outlet_mobile, a.kyc_done FROM $RouteTable AS a LEFT JOIN $projectTeamTable AS b ON a.team_id = b.team_id AND b.dstatus = 0 WHERE a.dstatus = 0 $where $sOrderCond";
+        $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name, a.dstatus,
+              a.outlet_mobile, a.kyc_done FROM $RouteTable AS a, $projectTeamTable AS b WHERE a.team_id = b.team_id $where $sOrderCond";
 
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
-
-        // print_r($sQuery);die;
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -188,6 +179,8 @@ class RouteManagement
                     "outletName" => $arrData["outlet_name"],
                     "outletMobile" => $arrData["outlet_mobile"],
                     "kycStatus" => $kycDone,
+                    "dstatus" => (int)$arrData['dstatus'],
+                    "deleteStatus" => $GLOBALS["ARR_DELETE_STATUS"][$arrData['dstatus']],
                 );
             }
         }
@@ -254,6 +247,64 @@ class RouteManagement
             $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
         } else {
             $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']], 2);
+        }
+
+        echo json_encode($arrMessage);
+    }
+
+    final public function restoredata($data, $iUserId)
+    {
+        $requestData = $data;
+        $assign_id = $iUserId;
+        $where = "";
+        $whereMob = "";
+        $istatus = [];
+
+        $ids = $requestData['id'];
+        if (!is_array($ids)) {
+            $ids = [$ids];
+        }
+        $ids = array_filter($ids, function ($v) {
+            return !empty($v);
+        });
+        $rec_id = implode(',', $ids);
+
+        if ($rec_id) {
+            $where .= "rec_id IN ($rec_id) AND dstatus = 1";
+        }
+
+        $mobNo = getRowsColumn($this->_dbConn, "tblroute_details", "outlet_mobile", $where);
+        if (isset($mobNo) && isNonEmptyArray($mobNo)) {
+            $mobNo = array_filter($mobNo, function ($v) {
+                return !empty($v);
+            });
+
+            if (!empty($mobNo)) {
+                $mobImplode = implode(',', array_map('intval', $mobNo));
+                $whereMob = "rec_who IN ($mobImplode) AND dstatus = 1";
+
+                $statusCloud = updateRecord(
+                    $this->_dbConn,
+                    "tblcloudring_live",
+                    "dstatus = 0, modif_id = $assign_id",
+                    $whereMob
+                );
+                $istatus[] = $statusCloud;
+            }
+        }
+
+        $statusRoute = updateRecord(
+            $this->_dbConn,
+            "tblroute_details",
+            "dstatus = 0, modif_id = $assign_id",
+            $where
+        );
+        $istatus[] = $statusRoute;
+
+        if (in_array(1, $istatus, true)) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_RESTORED_SUCCESSFULL']], 1);
+        } else {
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_RESTORED']], 2);
         }
 
         echo json_encode($arrMessage);
