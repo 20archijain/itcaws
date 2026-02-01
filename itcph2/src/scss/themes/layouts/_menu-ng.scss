@@ -596,6 +596,10 @@ body {
         .pcoded-submenu {
           opacity: 0;
           visibility: hidden;
+          overflow-y: auto;
+          overflow-x: hidden;
+          min-height: 180px;
+          height: 100%;
           transform-origin: 50% 50%;
           transition: transform 0.3s, opacity 0.3s;
           transform-style: preserve-3d;
@@ -608,7 +612,7 @@ body {
           list-style: outside none none;
           margin: 0;
           border-radius: 4px;
-          padding: 15px;
+          padding: 5px 5px;
           box-shadow: 0 4px 24px 0 rgba(62, 57, 107, 0.18);
           background: #fff;
 

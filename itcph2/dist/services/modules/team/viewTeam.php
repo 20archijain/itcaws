@@ -21,10 +21,14 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['DELETE_DATA']:
             deleteListingRecord($dbConn, $TABLES["CLOUD_AUTHPIN_TABLE"], "team_id", $iUserId, "AND db_name = '{$GLOBALS['DB_DBNAME']}'", $requestData, "id", true, false);
             deleteListingRecord($dbConn, $TABLES["PROJECT_TEAM_TABLE"], "team_id", $iUserId, "", $requestData, "id");
+            deleteListingRecord($dbConn, "tblmdo_access", "teams", $iUserId, "", $requestData, "id", false, false);
+            deleteListingRecord($dbConn, "tblroute_details", "team_id", $iUserId, "", $requestData, "id", false, false);
             break;
         case $ACTION_LIST['RESTORE_DATA']:
             restoreListingRecord($dbConn, $TABLES["CLOUD_AUTHPIN_TABLE"], "team_id", $iUserId, "AND db_name = '{$GLOBALS['DB_DBNAME']}'", $requestData, "id", true, false);
             restoreListingRecord($dbConn, $TABLES["PROJECT_TEAM_TABLE"], "team_id", $iUserId, "", $requestData, "id");
+            restoreListingRecord($dbConn, "tblmdo_access", "teams", $iUserId, "", $requestData, "id", false, false);
+            restoreListingRecord($dbConn, "tblroute_details", "team_id", $iUserId, "", $requestData, "id", false, false);
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));

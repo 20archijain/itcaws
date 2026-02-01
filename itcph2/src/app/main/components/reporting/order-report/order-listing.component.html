@@ -1,4 +1,4 @@
-<app-card cardTitle="{{ 'app.reporting.mdo.heading' | translate }}" [options]="false">
+<app-card cardTitle="{{ 'app.reporting.order.heading' | translate }}" [options]="false">
   <div class="table-listing">
     <app-listing-searchbar [group]="group" [searchGroup]="searchbarForm" [searchTemplate]="searchTemplate"
       (onAction)="onSearchAction($event)">
@@ -11,47 +11,82 @@
             <div class="col-sm-9">
               <div class="row">
                 <div class="col-sm-4 v-border">
-                  <app-listing-column header="app.reporting.vanDs.reportingType" [content]="data.reportingType">
-                  </app-listing-column>
-                  <app-listing-column header="app.reporting.mdo.workType" [content]="data.workType">
-                  </app-listing-column>
                   <app-listing-column header="app.reporting.vanDs.route" [content]="data.route">
-                  </app-listing-column>
-                  <app-listing-column header="app.reporting.mdo.dsName" [content]="data.dsName">
-                  </app-listing-column>
-                </div>
-                <div class="col-sm-4 v-border">
-                  <app-listing-column header="app.team.add.section" [content]="data.section">
-                  </app-listing-column>
-                  <app-listing-column header="app.team.add.wdCode" [content]="data.wdCode">
                   </app-listing-column>
                   <app-listing-column header="app.team.add.branch" [content]="data.branchName">
                   </app-listing-column>
                   <app-listing-column header="app.team.add.circle" [content]="data.circle">
                   </app-listing-column>
-
+                  <app-listing-column header="app.team.add.section" [content]="data.section">
+                  </app-listing-column>
+                </div>
+                <div class="col-sm-4 v-border">
+                  <app-listing-column header="app.team.add.wdCode" [content]="data.wdCode">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopName" [content]="data.shopName">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.mobileNumber" [content]="data.mobileNumber">
+                  </app-listing-column>
+                  <app-listing-column header="app.reporting.vanDs.shopType" [content]="data.shopType">
+                  </app-listing-column>
                 </div>
                 <div class="col-sm-4">
+                  <app-listing-column header="app.reporting.vanDs.sellIinOrder" [content]="data.sellIinOrder">
+                  </app-listing-column>
+                  <app-listing-column header="app.team.add.dsName" [content]="data.team">
+                  </app-listing-column>
                   <app-listing-column header="app.reporting.timestamp" [content]="data.timestamp">
                   </app-listing-column>
-                  <app-listing-column header="app.reporting.mdo.mdoName" [content]="data.team">
-                  </app-listing-column>
-
                 </div>
               </div>
             </div>
 
             <!-- Images -->
-            <div class="col-sm-2">
+            <!-- <div class="col-sm-2">
               <app-custom-gallery *ngIf="data['images']" [images]="data['images']" [cgConfig]="cgConfig">
               </app-custom-gallery>
-            </div>
+            </div> -->
 
             <!-- Actions -->
-            <div class="col-sm-1 listing-actions" *ngIf="isMapAllowed">
+            <div class="col-sm-2 listing-actions" *ngIf="isMapAllowed">
               <i class="feather icon-map-pin link first" title="{{ 'icon.map' | translate }}"
                 (click)="showLocationOnMap(data.lt, data.lg)"></i>
             </div>
+
+            <div class="col-sm-1 listing-actions">
+              <button style="width: 90px; height:40px; border-radius: 18px; color: white;" class="btn btn-danger"
+                (click)="openDelivered(deliveredContent, data['pro_id'])">Details</button>
+            </div>
+
+            <ng-template #deliveredContent let-modal>
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-basic-title">Ordered at: {{data['timestamp']}}</h6>
+                <h6 class="modal-title ms-5" id="modal-basic-title">Delivered at: {{data['deliveryTime']}}</h6>
+                <button type="button" class="btn-close" aria-label="Close"
+                  (click)="closeDeliveredModal(modal)"></button>
+              </div>
+              <ng-container *ngIf="clickedOrderId">
+                <div class="modal-body" style="width:auto">
+                  <table class="table w-100 custom-table table-hover table-striped table-bordered align-middle">
+                    <thead>
+                      <tr>
+                        <th>Product Name</th>
+                        <th>Ordered Qty</th>
+                        <th>Delivered Qty</th>
+                      </tr>
+                    </thead>
+                    <tbody *ngFor="let mdata of deliveredDataResponse">
+                      <tr>
+                        <td>{{ mdata.sku_details }}</td>
+                        <td>{{ mdata.ordered_qty }}</td>
+                        <td>{{ mdata.delivered_qty }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </ng-container>
+            </ng-template>
+
           </div>
         </app-card>
       </div>
@@ -74,10 +109,10 @@
                 </div>
               </div>
             </div>
-            <div class="col-sm-1">
+            <div class="col-sm-2" *ngIf="isMapAllowed">
               <app-skeleton></app-skeleton>
             </div>
-            <div class="col-sm-1" *ngIf="isMapAllowed">
+            <div class="col-sm-1">
               <app-skeleton></app-skeleton>
             </div>
           </div>
@@ -140,12 +175,12 @@
         </div>
         <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
-            placeholder="{{ 'app.team.add.mdoType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
+            placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()" [multiple]="true">
           </app-select>
         </div>
         <div class="col-sm-4 col-lg-2">
           <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
-            placeholder="{{ 'app.team.add.mdoName' | translate }}">
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
           </app-select>
         </div>
         <div class="col-sm-6 col-lg-4">
@@ -154,21 +189,6 @@
           <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
             btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
-          <app-button [isFaIcon]="true" iconName="fa fa-list-alt" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
-          <app-button [isFaIcon]="true" iconName="fa fa-download" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadAttendance" (onClick)="downloadAttendanceReport()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
-
-          <app-button [isFaIcon]="true" iconName="fa fa-file-pdf" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadpdf" (onClick)="downloadPDF()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
-
-          <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.dayendReport" (onClick)="downloadCsv()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
-
           <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
             (onClick)="clearForm()"></app-button>
         </div>
@@ -190,17 +210,17 @@
         </div>
         <div class="col-12 col-sm-4 col-md-2">
           <app-select [group]="searchbarForm" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
-            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsName()">
+            placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
           </app-select>
         </div>
-        <!-- <div class="col-12 col-sm-4 col-md-2">
+        <div class="col-12 col-sm-4 col-md-2">
           <app-select [group]="searchbarForm" controlName="dsType" [options]="teamTypeOptions"
             placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
           </app-select>
-        </div> -->
+        </div>
         <div class="col-12 col-sm-4 col-md-2">
           <app-select [group]="searchbarForm" controlName="dsName" [options]="teamOptions" [multiple]="true"
-            placeholder="{{ 'app.team.add.mdoName' | translate }}">
+            placeholder="{{ 'app.team.add.dsName' | translate }}">
           </app-select>
         </div>
         <div class="col-sm-4 col-lg-3">
@@ -209,12 +229,6 @@
           <app-button [isFaIcon]="true" iconName="fa fa-file-excel" btnClass="m-l-5" [showIconInButton]="true"
             btnTitle="button.downloadList" (onClick)="downloadData()" [showSpinner]="isDownloading"
             [isDisabled]="isDownloading" *ngIf="showTransactionDownloadBtn"></app-button>
-          <app-button [isFaIcon]="true" iconName="fa fa-list-alt" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadSummary" (onClick)="downloadSummary()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
-          <app-button [isFaIcon]="true" iconName="fa-solid fa-download" btnClass="m-l-5" [showIconInButton]="true"
-            btnTitle="button.downloadAttendance" (onClick)="downloadAttendanceReport()" [showSpinner]="isDownloading"
-            [isDisabled]="isDownloading" *ngIf="showSummaryDownloadBtn"></app-button>
           <app-button type="button" text="button.clear" btnClass="m-l-5" colorClass="btn-danger"
             (onClick)="clearForm()"></app-button>
         </div>
@@ -227,3 +241,4 @@
 </app-card>
 
 <app-location-on-map-modal></app-location-on-map-modal>
+<!-- <app-modal></app-modal> -->

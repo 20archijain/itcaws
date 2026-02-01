@@ -316,6 +316,9 @@
         "workType": "Type Of Market Work",
         "dsName": "DS Name",
         "mdoName": "MDO Name"
+      },
+      "order": {
+        "heading": "View Order Reporting"
       }
     },
     "missCall": {
@@ -326,6 +329,7 @@
       "phoneNumber": "Mobile Number"
     },
     "download": {
+      "downloadLineCut": "Line Cut Report",
       "downloadTargetReport": "Target Report",
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
@@ -426,7 +430,8 @@
     "show": "Show",
     "reset": "Reset",
     "searchProduct": "Search Products",
-    "format" : "Format"
+    "format" : "Format",
+    "details" : "Details"
   },
   "err": {
     "username": {

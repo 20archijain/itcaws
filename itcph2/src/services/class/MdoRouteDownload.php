@@ -777,6 +777,7 @@ class MdoRouteDownload
         $header[] = [
             "Rec_id",
             "MDO ID",
+            "Ciel Id",
             "MDO Name",
             "DMS Ds ID",
             "DS Type",
@@ -795,7 +796,7 @@ class MdoRouteDownload
         $arrDataHolder = [];
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT b.mdo_id, a.team_name, b.teams, b.is_type, a.branch_id
+        $sQuery = "SELECT b.mdo_id, a.team_name, a.ceil_id, b.teams, b.is_type, a.branch_id
            FROM $projectTeamTable AS a, $mdoAccessTable AS b, $branchTable AS c
            WHERE a.dstatus = 0
            AND b.dstatus = 0
@@ -811,6 +812,7 @@ class MdoRouteDownload
                 $mdoName    = $row['team_name'];
                 $teamsId    = $row['teams'];
                 $is_type    = $row['is_type'];
+                $ceil_id    = $row['ceil_id'];
 
                 if ($is_type == 6 || $is_type == 8 || $is_type == 9) {
                     $teamTable  = $breezeTeamTable;
@@ -835,6 +837,7 @@ class MdoRouteDownload
 
                 $arrAllData[$mdoId][$teamsId] = [
                     "mdo_name"   => $mdoName,
+                    "ceil_id"    => $ceil_id,
                     "ds_type"    => $ds_type,
                     "mainBranch" => $mainBranch,
                     "routes"     => $routeRows
@@ -844,6 +847,7 @@ class MdoRouteDownload
         foreach ($arrAllData as $mdoId => $mdoData) {
             foreach ($mdoData as $teamsId => $teamData) {
                 $mdoName    = $teamData["mdo_name"];
+                $ceil_id   = $teamData["ceil_id"];
                 $ds_type    = $teamData["ds_type"];
                 $mainBranch = $teamData["mainBranch"];
                 $routes     = $teamData["routes"];
@@ -852,6 +856,7 @@ class MdoRouteDownload
                     $arrDataHolder[] = [
                         $this->cleanCSVValue($r[0]),
                         $this->cleanCSVValue($mdoId),
+                        $this->cleanCSVValue($ceil_id),
                         $this->cleanCSVValue($mdoName),
                         $this->cleanCSVValue($teamsId),
                         $this->cleanCSVValue($ds_type),
@@ -876,9 +881,9 @@ class MdoRouteDownload
 
     private function cleanCSVValue($value)
     {
-        $value = trim($value);
-        $value = str_replace(["\n", "\r"], " ", $value);  // remove new lines
-        $value = str_replace('"', '""', $value);  // escape double quotes
-        return '"' . $value . '"';  // force CSV-safe quotes
+        $value = trim((string)($value ?? ''));
+        $value = str_replace(["\n", "\r"], " ", $value);
+        $value = str_replace('"', '""', $value);
+        return '"' . $value . '"';
     }
 }

@@ -111,6 +111,7 @@ export interface GetAttendanceDataResponse {
 }
 
 export interface GetDownloadBillCutResponse {
+  reportTypeList: DropdownList[];
   monthList: DropdownList[];
   districtList: DropdownList[];
   wdMarketList: DropdownList[];
@@ -239,6 +240,7 @@ export interface GetAddTeamDataResponse extends GetViewHeaderBody {
   separatorList?: DropdownList[];
   sortOptions?: DropdownList[];
   accessList: DropdownList[];
+  deleteCondition: [string, number];
   isSelectable: boolean;
   jsonName?: string;
   branchFilter?: boolean

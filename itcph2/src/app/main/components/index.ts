@@ -59,6 +59,9 @@ import { DownloadDBTableComponent } from './download-db-table/download-db-table.
 import { FSOTrackerDataUploadComponent } from './fso-tracker-upload/fso-tracker-upload.component';
 import { NpsrDashboardComponent2 } from './npsr-dashboard/npsr-dashboard.component2';
 import { PDFAccessReportComponent } from './pdf-access-report/pdf-access-report.component';
+import { LineCutReportComponent } from './line-cut/line-cut-report.component';
+import { OrderListingComponent } from './reporting/order-report/order-listing.component';
+
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -120,6 +123,8 @@ export const MAIN_COMPONENTS = [
   FSOTrackerDataUploadComponent,
   NpsrDashboardComponent2,
   PDFAccessReportComponent,
+  LineCutReportComponent,
+  OrderListingComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -182,4 +187,6 @@ export const MAP_MAIN_COMPONENTS = {
   FSOTrackerDataUploadComponent,
   NpsrDashboardComponent2,
   PDFAccessReportComponent,
+  LineCutReportComponent,
+  OrderListingComponent,
 };

@@ -98,9 +98,14 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
                 validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.sectionList,
               },
               {
-                controlName: 'wd_code', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Section'),
+                controlName: 'wd_code', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('WD Code'),
                 label: 'app.team.add.wdCode', type: CONTROL_CONFIG.SELECT_BOX, required: true,
                 validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.wdCodeList
+              },
+              {
+                controlName: 'is_type',
+                label: 'app.team.add.dsType', type: CONTROL_CONFIG.SELECT_BOX,
+                options: resp.data.dsTypeList
               },
               // {
               //   controlName: 'password', errorMessages: LOGIN_VALIDATORS.messages.password,

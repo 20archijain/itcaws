@@ -1,10 +1,10 @@
 <?php
 
 require_once $include_path . "defined_index.php";
-require_once $include_path . "class/reporting/MdoReporting.php";
+require_once $include_path . "class/reporting/OrderReporting.php";
 
 if (!isEmptyString($requestAction)) {
-    $reporting = new MdoReporting($dbConn, $requestData, $arrAccessInfo, $iUserId);
+    $reporting = new OrderReporting($dbConn, $requestData, $arrAccessInfo, $iUserId);
     switch ($requestAction) {
         case $ACTION_LIST['GET_DATA']:
             $reporting->getData();
@@ -30,20 +30,11 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_TEAM_LIST']:
             $reporting->getTeamList();
             break;
+        case $ACTION_LIST['GET_DELIVERY_DATA']:
+            $reporting->getDeliveredData();
+            break;
         case $ACTION_LIST['GET_DOWNLOAD_DATA']:
             $reporting->getDownloadData();
-            break;
-        case $ACTION_LIST['GET_DOWNLOAD_SUMMARY']:
-            $reporting->getDownloadSummary();
-            break;
-        case $ACTION_LIST['ATTENDANCE_REPORT']:
-            $reporting->attendanceDayEndReport();
-            break;
-        case $ACTION_LIST['PDF_REPORT']:
-            $reporting->getDownloadPDFReport();
-            break;
-        case $ACTION_LIST['GET_DOWNLOAD_CSV']:
-            $reporting->getDownloadCSV();
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));

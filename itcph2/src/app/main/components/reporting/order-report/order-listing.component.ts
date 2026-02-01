@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
@@ -9,23 +9,23 @@ import { FormService } from 'src/app/core/services/form.service';
 import { LocationOnMapModalService } from 'src/app/core/services/location-on-map-modal.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { LISTING, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
-import { DashboardData, DropdownList, GetDownloadFileDetails, MdoListing, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
+import { DashboardData, DropdownList, GetDownloadFileDetails, VanDsListing, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
 import { environment } from 'src/environments/environment';
 import { Functions } from 'src/app/core/utils/functions.list';
-import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { ListingBulkActionOutput } from 'src/app/core/interfaces/helpers.interface';
 import { ListingService } from 'src/app/core/services/listing.service';
 import { CustomGalleryConfig } from 'src/app/core/interfaces/common.interface';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
+import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  templateUrl: './mdo-listing.component.html'
+  templateUrl: './order-listing.component.html'
 })
-export class MdoListingComponent implements OnDestroy, OnInit {
+export class OrderListingComponent implements OnDestroy, OnInit {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;
   private subscription: Subscription[] = [];
-  tableData: MdoListing[] = [];
+  tableData: VanDsListing[] = [];
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   teamTypeOptions: DropdownList[] = [];
@@ -42,6 +42,11 @@ export class MdoListingComponent implements OnDestroy, OnInit {
   totalRecords = 0;
   isMapAllowed = false;
   branchFilter = false;
+  clickedOrderId: string;
+  closeResult: string;
+  isDisabled = false;
+  deliveredDataResponse: any;
+  binderReportDownloadDays: number = null;
   skeletonArray = Array(5);
   cgConfig: CustomGalleryConfig = {
     showThumbnailText: false,
@@ -49,6 +54,7 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     thumbnailMaxWidth: '60px',
   };
   branchSelectError = 'err.branchError';
+  dsTypeSelectError = 'err.dstypeError';
   showTransactionDownloadBtn = false;
   showSummaryDownloadBtn = false;
 
@@ -56,10 +62,11 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
   };
   searchbarForm: UntypedFormGroup;
+  deliveredContent: TemplateRef<any>;
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private listingService: ListingService,
     private locationOnMapModalService: LocationOnMapModalService, private loaderService: LoaderService,
-    private toastr: ToastrService, private translate: TranslateService) { }
+    private toastr: ToastrService, private translate: TranslateService, private modalService: NgbModal) { }
 
   ngOnInit() {
     this.group = this.fb.group({
@@ -85,9 +92,10 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     this.searchbarForm = this.group.get('searchbar') as UntypedFormGroup;
 
     this.subscription.push(
-      this.translate.get(this.branchSelectError)
+      this.translate.get([this.branchSelectError, this.dsTypeSelectError])
         .subscribe(translatedMsg => {
-          this.branchSelectError = translatedMsg;
+          this.branchSelectError = translatedMsg[this.branchSelectError];
+          this.dsTypeSelectError = translatedMsg[this.dsTypeSelectError];
         })
     );
 
@@ -111,6 +119,7 @@ export class MdoListingComponent implements OnDestroy, OnInit {
             this.showTransactionDownloadBtn = resp.data.showTransactionDownloadBtn;
             this.showSummaryDownloadBtn = resp.data.showSummaryDownloadBtn;
             this.branchFilter = resp.data.branchFilter;
+            this.binderReportDownloadDays = resp.data.binderReportDownloadDays;
             if (resp.data.userBranch) {
               this.group.get('searchbar').get('branch').setValue(resp.data.userBranch);
             }
@@ -129,7 +138,7 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     this.tableData = [];
     this.isSkeletonModeOn = true;
     this.subscription.push(
-      this.formService.getList<VanDsListingData<MdoListing>>(environment.viewVanDsDataUrl, this.group.getRawValue())
+      this.formService.getList<VanDsListingData<VanDsListing>>(environment.viewVanDsDataUrl, this.group.getRawValue())
         .pipe(
           finalize(() => this.isSkeletonModeOn = false),
         )
@@ -174,113 +183,74 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     }
   }
 
-  downloadSummary() {
-    if (this.branchValue && this.branchValue.length) {
-      this.isDownloading = true;
-      this.loaderService.startLoader();
-
-      this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadSummary,
-          this.group.getRawValue(), null, environment.getListingExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDownloading = false;
-              this.loaderService.stopLoader();
-            }),
-          )
-          .subscribe(response => {
-            if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
-            }
-          })
-      );
-    } else {
-      this.displayBranchError();
-    }
-  }
-
-  //For download PDF
-  downloadPDF() {
-    if (this.branchValue && this.branchValue.length) {
-      this.isDownloading = true;
-      this.loaderService.startLoader();
-
-      this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadPdfReport,
-          this.group.getRawValue(), null, environment.getListingExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDownloading = false;
-              this.loaderService.stopLoader();
-            }),
-          )
-          .subscribe(response => {
-            if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
-            }
-          })
-      );
-    } else {
-      this.displayBranchError();
-    }
-  }
-
-  downloadAttendanceReport() {
-    if (this.branchValue && this.branchValue.length) {
-      this.isDownloading = true;
-      this.loaderService.startLoader();
-
-      this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadAttendanceReport,
-          this.group.getRawValue(), null, environment.getListingExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDownloading = false;
-              this.loaderService.stopLoader();
-            }),
-          )
-          .subscribe(response => {
-            if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
-            }
-          })
-      );
-    } else {
-      this.displayBranchError();
-    }
-  }
-
-  //CSV Download
-  downloadCsv() {
-    if (this.branchValue && this.branchValue.length) {
-      this.isDownloading = true;
-      this.loaderService.startLoader();
-
-      this.subscription.push(
-        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadCSV,
-          this.group.getRawValue(), null, environment.getListingExcelUrl)
-          .pipe(
-            finalize(() => {
-              this.isDownloading = false;
-              this.loaderService.stopLoader();
-            }),
-          )
-          .subscribe(response => {
-            if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.createCSV(response.data);
-            }
-          })
-      );
-    } else {
-      this.displayBranchError();
-    }
-  }
-
   showLocationOnMap(lt: number, lg: number) {
     this.locationOnMapModalService.show({
       [LISTING.mapKeys.lt]: lt,
       [LISTING.mapKeys.lg]: lg,
     });
+  }
+
+  open(content: TemplateRef<any>, orderId: string) {
+  this.clickedOrderId = orderId;
+  this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdrop: 'static' }).result.then(
+    (result) => {
+      this.closeResult = `Closed with: ${result}`;
+    },
+    (reason) => {
+      this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    },
+  );
+  // this.generateFormControls();
+ }
+
+   openDelivered(deliveredContent: TemplateRef<any>, orderId: string) {
+    this.clickedOrderId = orderId;
+    const modalRef = this.modalService.open(deliveredContent, { ariaLabelledBy: 'modal-basic-title', backdrop: 'static', windowClass: 'modal-lg',
+  centered: true });
+
+    modalRef.result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
+    this.showDeliveredQuantity(this.clickedOrderId);
+  }
+
+   private getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return 'by pressing ESC';
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
+  }
+
+  showDeliveredQuantity(orderId: any) {
+    this.isDisabled = true;
+    this.subscription.push(
+      this.formService.customActionCall('get_delivery_data', { orderId })
+        .pipe(
+          finalize(() => {
+            this.isDisabled = false;
+          })
+        )
+        .subscribe(
+          (response) => {
+            if (response && response.data.deliveredData && Array.isArray(response.data.deliveredData)) {
+              this.deliveredDataResponse = response.data.deliveredData;
+            }
+          }
+        )
+    );
+  }
+
+   closeDeliveredModal(modal: NgbModalRef) {
+    modal.dismiss('Cross click');
   }
 
   getBranch() {
@@ -417,6 +387,10 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     this.toastr.toastr({ type: 'error', msg: this.branchSelectError });
   }
 
+  displayDSError() {
+    this.toastr.toastr({ type: 'error', msg: this.dsTypeSelectError });
+  }
+
   get branchValue() {
     return this.group && this.group.get('searchbar').get('branch').value;
   }
@@ -437,6 +411,11 @@ export class MdoListingComponent implements OnDestroy, OnInit {
     this.wdCodeOptions = [];
     this.group.get('searchbar').get('wdCode').setValue(value);
   }
+
+  get dsTypeValue() {
+    return this.group && this.group.get('searchbar').get('dsType').value;
+  }
+
   set dsTypeValue(value: string) {
     this.teamTypeOptions = [];
     this.group.get('searchbar').get('dsType').setValue(value);
