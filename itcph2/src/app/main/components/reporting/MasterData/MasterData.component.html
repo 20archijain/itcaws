@@ -1,6 +1,7 @@
 <app-card cardTitle="{{ 'app.reporting.activeUSers.activeSKU' | translate }}" [options]="false">
   <app-table-listing checkKey="id" [header]="header" [body]="body" [isSelectable]="isSelectable"
-    [sortOptions]="sortOptions" [searchTemplate]="searchTemplate" [searchGroup]="form" [url]="url">
+    [sortOptions]="sortOptions" [searchTemplate]="searchTemplate" [searchGroup]="form" [url]="url"
+    [editConfig]="editConfig" editModalSize="modal-md" editLabel="app.reporting.activeUSers.changeFocus">
   </app-table-listing>
 </app-card>
 

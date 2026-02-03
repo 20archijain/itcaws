@@ -297,6 +297,7 @@
         "skuName": "SKU Name",
         "baseRate": "Base Rate (M)",
         "focusBrand": "Focus Brand",
+        "changeFocus": "Change Focus Brand",
         "reportType": "Report Type",
         "brandType": "Brand Type"
       },
