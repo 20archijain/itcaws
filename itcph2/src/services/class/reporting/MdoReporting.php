@@ -2128,6 +2128,7 @@ class MdoReporting
         $header[] = [
             "Date",
             "Branch",
+            "Region",
             "MDO ID",
             "MDO Name",
             "MDO Type",
@@ -2135,7 +2136,6 @@ class MdoReporting
             "DS Name",
             "DS Type",
             "WD Code",
-            "Route Name",
             "Total Outlet Visited",
             "Total Sales Volume in (M)",
             "Sales Value in (Rs)"
@@ -2157,7 +2157,7 @@ class MdoReporting
             }
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' AND a.team_id = b.team_id AND b.branch_id = c.branch_id $where $branchCond ORDER BY capture_datetime DESC";
+            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name, c.main_branch FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' AND a.team_id = b.team_id AND b.branch_id = c.branch_id $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
@@ -2171,7 +2171,8 @@ class MdoReporting
                     $parts = explode(" - ", $dsNameFull, 2);
                     $dsName = isset($parts[0]) ? trim($parts[0]) : '';
                     $dsType = isset($parts[1]) ? trim($parts[1]) : '';
-                    $branch = $row["branch_name"];
+                    $region = $row["branch_name"];
+                    $branch = $row["main_branch"];
 
                     // MDO Details
                     $mdoId = $row["team_id"];
@@ -2191,6 +2192,7 @@ class MdoReporting
                     $arrDataHolder[] = [
                         $this->cleanCSVValue($captureDate),
                         $this->cleanCSVValue($branch),
+                        $this->cleanCSVValue($region),
                         $this->cleanCSVValue($mdoId),
                         $this->cleanCSVValue($mdoName),
                         $this->cleanCSVValue($mdoType),
@@ -2198,7 +2200,6 @@ class MdoReporting
                         $this->cleanCSVValue($dsName),
                         $this->cleanCSVValue($dsType),
                         $this->cleanCSVValue($wdCode),
-                        $this->cleanCSVValue($route),
                         $this->cleanCSVValue($totalOutletVisited),
                         $this->cleanCSVValue($totalSalesVolume),
                         $this->cleanCSVValue($totalSalesValue)
