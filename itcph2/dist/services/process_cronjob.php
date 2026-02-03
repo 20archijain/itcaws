@@ -653,7 +653,7 @@ class ProcessResponse
                                 // add each Products Bought stock in separate column if not exists in stock summary table
                                 if ($projectId == 1) {
                                     if ($jsonId == 10) {
-                                        if ($arrParams[13] == 'Outlet Survey') {
+                                        if ($arrParams[13] == 'Outlet Survey' || $arrParams[13] == 'InfraDetails') {
                                             $arrType = array("VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
                                             $arrDetails = json_decode($arrParams[15], true);
                                             if ($arrDetails[0] == 'Market work with DS') {
