@@ -45,6 +45,9 @@ $CHOOSE_DIFFERENT_PASSWORD = "Please enter different New Password";
 $PROFILE_UPDATED_SUCCESSFULL = "Profile updated succesfully";
 $PROFILE_NOT_UPDATED = "Profile not updated";
 
+$DATA_UPDATED_SUCCESSFULL = "Data updated succesfully";
+$DATA_NOT_UPDATED = "Data not updated";
+
 // USER
 $USER_ADDED = "User added";
 $USER_NOT_ADDED = "User not added";
