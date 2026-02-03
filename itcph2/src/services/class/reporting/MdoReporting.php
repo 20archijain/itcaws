@@ -943,7 +943,7 @@ class MdoReporting
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.pro_id, a.uni_id,a.call_time,a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11, a.distance_in_meter" .
-                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id,b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0" .
+                ", b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id,b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 != 'InfraDetails'" .
                 " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -1133,9 +1133,7 @@ class MdoReporting
             "Survey Volume (Ms) (Surveyed outlets)",
             "Survey Value (Rs) (Surveyed outlets)",
             "Lines Cut",
-            "Outlet Visited (MDO Day-End)",
-            "Sales Volume (Ms) (MDO Day-End)",
-            "Sales Value (Rs) (MDO Day-End)",
+            "ALC",
             "Visited Outlets (by DS)",
             "Billed Outlets (by DS)",
             "Total Sale (M) (by DS)",
@@ -1275,12 +1273,12 @@ class MdoReporting
                     $dsType = $parts[1];
                     $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
                     $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details, distance", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
-                    if ($arrDayEndDetails) {
+                    if (isNonEmptyArray($arrDayEndDetails)) {
                         $endTime = isset($arrDayEndDetails[0]) ? $arrDayEndDetails[0] : "";
-                        $arrDayEndOtherDetails = !empty($arrDayEndDetails[1]) ? json_decode($arrDayEndDetails[1], true) : [];
-                        $dayEndOutlet = isset($arrDayEndOtherDetails['outlet']) ? $arrDayEndOtherDetails['outlet'] : "";
-                        $salesVol = isset($arrDayEndOtherDetails['SalesVolume']) ? $arrDayEndOtherDetails['SalesVolume'] : "";
-                        $salesValue = isset($arrDayEndOtherDetails['SalesValue']) ? $arrDayEndOtherDetails['SalesValue'] : "";
+                        $arrDayEndOtherDetails = $arrDayEndDetails[1] ? json_decode($arrDayEndDetails[1], true) : "";
+                        $dayEndOutlet = $arrDayEndOtherDetails ? $arrDayEndOtherDetails['outlet'] : "";
+                        $salesVol = $arrDayEndOtherDetails ? $arrDayEndOtherDetails['SalesVolume'] : "";
+                        $salesValue = $arrDayEndOtherDetails ? $arrDayEndOtherDetails['SalesValue'] : "";
                         $distanceInKm = isset($arrDayEndDetails[2]) ? $arrDayEndDetails[2] : "";
                         // $dayEndOutlet = "";
                         // $salesVol = "";
@@ -1300,10 +1298,12 @@ class MdoReporting
                     $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
                     $firstOutletTime = isset($arrfist_lastTime[0]) ? $arrfist_lastTime[0] : "";
                     $lastOutletTime = isset($arrfist_lastTime[1]) ? $arrfist_lastTime[1] : "";
-                    $coverdOutlets = getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    $coverdOutlets_lineCut = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4) AS count, AVG(ques_7) AS avg", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    $coverdOutlets = $coverdOutlets_lineCut ? $coverdOutlets_lineCut[0] : "";
                     $surveyVol = $row["surveyVol"];
                     $surveyVal = $row["surveyVal"];
                     $lineCut = $row["lineCut"];
+                    $avgLineCut = $coverdOutlets_lineCut ? round($coverdOutlets_lineCut[1], 2) : "";
                     if (empty($distanceInKm)) {
                         $distanceInKm =  getRowColumn($this->_dbConn, "tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
                     }
@@ -1355,9 +1355,7 @@ class MdoReporting
                         $surveyVol,
                         $surveyVal,
                         $lineCut,
-                        $dayEndOutlet,
-                        $salesVol,
-                        $salesValue,
+                        $avgLineCut,
                         $totalShops,
                         $sellInShop,
                         $totalSale,
@@ -1408,9 +1406,6 @@ class MdoReporting
                             $distanceInKm = $endDetails[1] ? $endDetails[1] : 0;
                             if (!empty($endDetails[2])) {
                                 $arrDayEndOtherDetails = json_decode($endDetails[2], true);
-                                $dayEndOutlet = $arrDayEndOtherDetails['outlet'];
-                                $salesVol = $arrDayEndOtherDetails['SalesVolume'];
-                                $salesValue = $arrDayEndOtherDetails['SalesValue'];
                             }
                             $arrAttenOtherDetails = json_decode($rowTeam["other_details"], true);
                             $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
@@ -1420,7 +1415,7 @@ class MdoReporting
                                 $attDsName = $dsDetails[1];
                                 $parts = explode(" - ", $attDsName, 2);
                                 $attDsNameOnly = $parts[0];
-                                $attDsType = isset($parts[1]) ? $parts[1] : "";
+                                $attDsType = $parts[1];
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
                                 $routeName = $dsDetails[2];
                             } elseif ($workWith == 1) {
@@ -1493,10 +1488,7 @@ class MdoReporting
                                 "",
                                 "",
                                 "",
-                                "",
-                                isset($dayEndOutlet) ? $dayEndOutlet : 0,
-                                isset($salesVol) ? $salesVol : 0,
-                                isset($salesValue) ? $salesValue : 0,
+                                ""
                             ];
                         }
                     }
@@ -2132,7 +2124,6 @@ class MdoReporting
         $branchTable = $this->_tables["BRANCH_TABLE"];
 
         // create header
-        $arrExcelData = [];
         $header = [];
         $header[] = [
             "Date",
@@ -2166,15 +2157,20 @@ class MdoReporting
             }
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails'" .
-                " AND a.team_id = b.team_id AND b.branch_id = c.branch_id  $where ORDER BY capture_datetime DESC";
+            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' AND a.team_id = b.team_id AND b.branch_id = c.branch_id $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
                 while ($row = $this->_dbConn->GetData($rsAction)) {
                     $captureDate = $row["capture_datetime"];
-                    $wdCode = $row["wd_code"];
-                    $route = $row["route_name"];
+                    $captureDate = $row["capture_datetime"];
+                    $mainDetails = json_decode($row['ques_2'], true);
+                    $wdCode = isset($mainDetails[0]) ? $mainDetails[0] : '';
+                    $route = isset($mainDetails[2]) ? $mainDetails[2] : '';
+                    $dsNameFull = isset($mainDetails[1]) ? $mainDetails[1] : '';
+                    $parts = explode(" - ", $dsNameFull, 2);
+                    $dsName = isset($parts[0]) ? trim($parts[0]) : '';
+                    $dsType = isset($parts[1]) ? trim($parts[1]) : '';
                     $branch = $row["branch_name"];
 
                     // MDO Details
@@ -2185,12 +2181,7 @@ class MdoReporting
                     $mdoType = isset($mdoType) ? $arrTeamType[$mdoType] : "";
 
                     // DS Details
-                    $dsDetails = getRowColumns($this->_dbConn, "tblmdo_offline_data", "ds_id, type, ds_name", "dstatus = 0 AND route_name = '$route' AND wd_code = '$wdCode' AND team_id = $mdoId");
-                    // $dsName = $row["ds_name"];
-                    $dsId = $dsDetails[0];
-                    $dsType = $dsDetails[1];
-                    $dsName = $dsDetails[2];
-                    $dsType = isset($dsType) ? $arrTeamType[$dsType] : "";
+                    $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND ds_name = '$dsName' AND wd_code = '$wdCode' AND team_id = $mdoId");
 
                     // Survey Details
                     $totalOutletVisited = $row['ques_4'];
