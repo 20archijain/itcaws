@@ -172,9 +172,20 @@ class ProcessResponse
                         $cols = "resp_id, client_id, project_id, team_id, s_id, uni_id, mob_img_id, distance, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array(
-                            $respId, $clientId, $projectId, $teamId, $jsonId, $uniId,
+                            $respId,
+                            $clientId,
+                            $projectId,
+                            $teamId,
+                            $jsonId,
+                            $uniId,
                             isset($arrData[$attendanceMobImgIdForm[0]][$attendanceMobImgIdForm[1]]) ? $arrData[$attendanceMobImgIdForm[0]][$attendanceMobImgIdForm[1]] : "",
-                            $distanceTravelledInKm, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt
+                            $distanceTravelledInKm,
+                            $captureDate,
+                            $captureDatetime,
+                            $lt,
+                            $lg,
+                            $rcd,
+                            $rdt
                         );
 
                         // Check if JSON contains other data that should be stored in attendance table
@@ -255,9 +266,21 @@ class ProcessResponse
                         $cols = "resp_id, client_id, project_id, team_id, s_id, uni_id, mob_img_id, distance, call_type, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array(
-                            $respId, $clientId, $projectId, $teamId, $jsonId, $uniId,
+                            $respId,
+                            $clientId,
+                            $projectId,
+                            $teamId,
+                            $jsonId,
+                            $uniId,
                             isset($arrData[$dayendMobImgIdForm[0]][$dayendMobImgIdForm[1]]) ? $arrData[$dayendMobImgIdForm[0]][$dayendMobImgIdForm[1]] : "",
-                            $distanceTravelledInKm, '1', $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt
+                            $distanceTravelledInKm,
+                            '1',
+                            $captureDate,
+                            $captureDatetime,
+                            $lt,
+                            $lg,
+                            $rcd,
+                            $rdt
                         );
 
                         // Check if JSON contains other data that can should be stored in table
@@ -420,8 +443,29 @@ class ProcessResponse
                                             $kycDone = 1;
                                             $swdWest = in_array($branchId, [42, 43]) ? 1 : 0;
                                             $arrOtherParams = array(
-                                                $respId, $teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $sectionCode, $state, $district, $subDistrictGoi,
-                                                $beatDay, $marketName, $goiMarketId, $wdTown, $goiPopGroup, $shopType, $captureDate, $captureDatetime, $lt, $lg, $sort_order, $kycDone, $swdWest
+                                                $respId,
+                                                $teamId,
+                                                $route,
+                                                $shopName,
+                                                $ownerMobileNumber,
+                                                $wdcode,
+                                                $sectionCode,
+                                                $state,
+                                                $district,
+                                                $subDistrictGoi,
+                                                $beatDay,
+                                                $marketName,
+                                                $goiMarketId,
+                                                $wdTown,
+                                                $goiPopGroup,
+                                                $shopType,
+                                                $captureDate,
+                                                $captureDatetime,
+                                                $lt,
+                                                $lg,
+                                                $sort_order,
+                                                $kycDone,
+                                                $swdWest
                                             );
                                             $existingShopId = getRowColumn(
                                                 $this->_dbConn,
@@ -633,11 +677,27 @@ class ProcessResponse
                                                 array($wdCode, $dsName, $route, $currentMonth, $arrType[$vanDs], $distanceTravelledInKm)
                                             );
                                         }
+                                        //DayEnd
+                                        elseif ($arrParams[13] == 'InfraDetails') {
+                                            $arrDetails = json_decode($arrParams[15], true);
+                                            $wdCode = $arrDetails[0];
+                                            $dsNameFull = isset($arrDetails[1]) ? $arrDetails[1] : '';
+                                            $parts = explode(" - ", $dsNameFull, 2);
+                                            $dsName = isset($parts[0]) ? trim($parts[0]) : '';
+                                            $dsType = isset($parts[1]) ? trim($parts[1]) : '';
+                                            $route = $arrDetails[2];
+                                            updateRecord(
+                                                $this->_dbConn,
+                                                $responseTable,
+                                                "wd_code = ?, ds_name = ?, route_name = ?, type = ?",
+                                                "pro_id = $lastRecId",
+                                                array($wdCode, $dsName, $route, $dsType)
+                                            );
+                                        }
                                     } else {
                                         if ($arrParams[13] == "Outlet Survey") {
                                             updateRecord($this->_dbConn, "tblsurvey_response_details", "ques_0 = 'Outlet Order'", "pro_id = $lastRecId");
                                         }
-
                                         // Add each product bought Qty in separate column
                                         if ($productsBought && $jsonId = 99) {
                                             $stockColumns = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
