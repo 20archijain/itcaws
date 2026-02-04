@@ -4,7 +4,7 @@
  * Breeze API: Breeze response data
  *
  * Endpoint (preferred):  POST .../custom/send-data
- * Legacy path:           POST .../custom/fetch_breeze_data.php
+ * Legacy path will not work directly(Configuration written in .htaccess):   POST .../custom/fetch_breeze_data.php
  *
  * Auth: Basic (token in username) or Bearer.
  * Body: JSON object(s) whose keys are tblbreeze_response_data column names.
@@ -60,8 +60,8 @@ class FetchBreezeData extends Utilities
     private const RATE_LIMIT_PER_MINUTE = 1;
     /** Max 50 calls per hour per token */
     private const RATE_LIMIT_PER_HOUR = 50;
-    /** Max length per field value to prevent oversized payloads */
-    private const MAX_FIELD_LENGTH = 500;
+    /** Max length per field value (client must not exceed this; longer = invalid) */
+    private const MAX_FIELD_LENGTH = 50;
 
     private static $TABLE_COLUMNS = [
         'capture_date',
@@ -243,6 +243,85 @@ class FetchBreezeData extends Utilities
     }
 
     /**
+     * Validate record data types and formats. Returns null if valid, or error message if invalid.
+     * Invalid records are ignored (not inserted).
+     */
+    private function validateRecord(array $row, int $idx): ?string
+    {
+        // No null or empty values for any key that is sent (allowed columns only)
+        foreach (self::$TABLE_COLUMNS as $col) {
+            if (!array_key_exists($col, $row)) {
+                continue;
+            }
+            $val = $row[$col];
+            if ($val === null) {
+                return "$col cannot be null";
+            }
+            if (is_string($val) && trim($val) === '') {
+                return "$col cannot be empty";
+            }
+            if (strlen((string)$val) > self::MAX_FIELD_LENGTH) {
+                return "$col must be at most " . self::MAX_FIELD_LENGTH . " characters";
+            }
+        }
+
+        // capture_date: must be valid date Y-m-d (e.g. 2025-01-01)
+        $captureDate = isset($row['capture_date']) ? trim((string)$row['capture_date']) : '';
+        if ($captureDate === '') {
+            return "capture_date is required";
+        }
+        $dt = \DateTime::createFromFormat('Y-m-d', $captureDate);
+        if ($dt === false || $dt->format('Y-m-d') !== $captureDate) {
+            return "capture_date must be Y-m-d (e.g. 2025-01-01), got: " . substr($captureDate, 0, 50);
+        }
+
+        // Optional time fields: if present and non-empty, must be valid time (H:i:s or H:i)
+        $timeFields = ['start_time', 'end_time', 'total_time_spent'];
+        foreach ($timeFields as $field) {
+            $v = isset($row[$field]) ? trim((string)$row[$field]) : '';
+            if ($v === '') {
+                continue;
+            }
+            $t = \DateTime::createFromFormat('H:i:s', $v) ?: \DateTime::createFromFormat('H:i', $v);
+            if ($t === false) {
+                return "$field must be time (H:i:s or H:i), got: " . substr($v, 0, 30);
+            }
+        }
+
+        // ds_id: required and must be integer-like
+        if (!array_key_exists('ds_id', $row)) {
+            return "ds_id is required";
+        }
+        $dsId = $row['ds_id'];
+        if (trim((string)$dsId) === '' && $dsId !== 0 && $dsId !== '0') {
+            return "ds_id is required";
+        }
+        if (!is_numeric($dsId) || (string)(int)$dsId !== (string)$dsId) {
+            return "ds_id must be an integer";
+        }
+
+        // Numeric fields: if present and non-empty, must be numeric
+        $numericFields = [
+            'branch_id', 'qualified', 'present', 'type',
+            'total_km_travelled', 'planned_outlets', 'outlet_re_visit', 'new_outlet_visited', 'total_sale'
+        ];
+        foreach ($numericFields as $field) {
+            if (!array_key_exists($field, $row)) {
+                continue;
+            }
+            $v = $row[$field];
+            if ($v === '' || $v === null) {
+                continue;
+            }
+            if (!is_numeric($v)) {
+                return "$field must be numeric, got invalid type/value";
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Validate token and insert rows. Entry point.
      */
     final public function processRequest(): void
@@ -301,6 +380,8 @@ class FetchBreezeData extends Utilities
 
         $fullTableName = self::DB_NAME . '.' . self::RESP_TABLE;
         $insertedCount = 0;
+        $skippedCount = 0;
+        $invalidCount = 0;
         $errors = [];
         $hasError = false;
 
@@ -313,11 +394,33 @@ class FetchBreezeData extends Utilities
                     $hasError = true;
                     break;
                 }
+
+                // Reject record if data types/formats are invalid (e.g. wrong capture_date format)
+                $validationError = $this->validateRecord($row, $idx);
+                if ($validationError !== null) {
+                    $this->breezeLog("Row $idx invalid (ignored): $validationError");
+                    $invalidCount++;
+                    continue;
+                }
+
                 $filtered = [];
                 foreach (self::$TABLE_COLUMNS as $col) {
                     $raw = array_key_exists($col, $row) ? $row[$col] : '';
                     $filtered[$col] = $this->sanitizeFieldValue($raw);
                 }
+
+                // Only first data per ds_id per capture_date: skip if already exists
+                $exists = $this->tableUtil->isRecordExist(
+                    $fullTableName,
+                    'ds_id',
+                    'ds_id = ? AND capture_date = ?',
+                    [$filtered['ds_id'], $filtered['capture_date']]
+                );
+                if ($exists > 0) {
+                    $skippedCount++;
+                    continue;
+                }
+
                 $cols = implode(', ', array_keys($filtered));
                 $placeholders = implode(', ', array_fill(0, count($filtered), '?'));
                 $arrParams = array_values($filtered);
@@ -330,20 +433,21 @@ class FetchBreezeData extends Utilities
                     break;
                 }
             }
-
-            if ($hasError || $insertedCount !== count($rowsToInsert)) {
+            if ($hasError) {
                 $this->dbConn->RollbackTransaction();
-                $errMsg = $hasError ? implode('; ', $errors) : 'Not all rows inserted.';
+                $errMsg = implode('; ', $errors);
                 $this->breezeLog("INSERT_FAILED (rollback) | total=" . count($rowsToInsert) . " | " . $errMsg);
                 $this->sendApiResponse(500, true, 'No data saved. ' . ($errors[0] ?? 'Transaction rolled back due to error.'), ['errors' => $errors], 'INSERT_FAILED');
                 return;
             }
 
             $this->dbConn->CommitTransaction();
-            $this->breezeLog("INSERT_SUCCESS | inserted=$insertedCount total=" . count($rowsToInsert));
+            $this->breezeLog("INSERT_SUCCESS | inserted=$insertedCount skipped=$skippedCount invalid=$invalidCount total=" . count($rowsToInsert));
             $this->sendApiResponse(200, false, 'Data received successfully', [
                 'saved' => true,
                 'inserted' => $insertedCount,
+                'skipped' => $skippedCount,
+                'invalid' => $invalidCount,
                 'total' => count($rowsToInsert),
             ]);
         } catch (Exception $e) {
