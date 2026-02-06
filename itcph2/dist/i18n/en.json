@@ -297,6 +297,7 @@
         "skuName": "SKU Name",
         "baseRate": "Base Rate (M)",
         "focusBrand": "Focus Brand",
+        "changeFocus": "Change Focus Brand",
         "reportType": "Report Type",
         "brandType": "Brand Type"
       },
@@ -414,6 +415,7 @@
     "downloadBinder": "Download Binder Report",
     "downloadAttendance": "Download Attendance Report",
     "downloadPdf": "Download PDF",
+    "dayendReport": "Day End Report",
     "logout": "Logout",
     "login": "Login",
     "next": "Next",

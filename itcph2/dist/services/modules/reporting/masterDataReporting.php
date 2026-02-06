@@ -15,6 +15,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_DOWNLOAD_DATA']:
             $team->downloadMasterData();
             break;
+        case $ACTION_LIST['EDIT_DATA']:
+            $team->editData();
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);
