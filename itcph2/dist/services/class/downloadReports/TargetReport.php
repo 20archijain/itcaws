@@ -294,7 +294,7 @@ class TargetReport
         // }
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Is Team Active", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
 
         // $branchCond = "";
         if ($branch) {
@@ -338,7 +338,7 @@ class TargetReport
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+            $sQuery4 = "SELECT b.rcd, b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.is_type = 5 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
@@ -352,6 +352,7 @@ class TargetReport
                     $wd_firm_name = $row4["wd_firm_name"];
                     $team_name = $row4["team_name"];
                     $team_id = $row4["team_id"];
+                    $rcd = $row4["rcd"];
                     $district = $row4["district"];
                     $branch = $row4["main_branch"];
                     $region = $row4["branch_name"];
@@ -359,8 +360,9 @@ class TargetReport
                     $circle = $row4["circle"];
                     $section_name = $row4["section_name"];
                     $section = $row4["section"];
-                    $showSection = $section . ' - ' . $section_name;
-                    $showCircle = $circle . ' - ' . $circle_name;
+                    $showSection = $section;
+                    $showCircle = $circle;
+
 
                     $assignFocus1 = 0;
                     $assignFocus2 = 0;
@@ -375,6 +377,21 @@ class TargetReport
 
                         $numericMonth = $date->format('m');
                         $numericYear  = $date->format('Y');
+
+                        $creationDate = new DateTime($rcd);
+
+                        $creationMonth = $creationDate->format("m");
+                        $creationYear  = $creationDate->format("Y");
+
+                        $current = ($numericYear * 100) + $numericMonth;
+                        $creation = ($creationYear * 100) + $creationMonth;
+
+                        if ($creation <= $current) {
+                            $activeTeam = "Active";
+                        } else {
+                            $activeTeam = "Inactive";
+                        }
+
 
                         //Focus Brand Query
                         $sAction = null;
@@ -510,6 +527,7 @@ class TargetReport
                             $wd_market,
                             $team_id,
                             $team_name,
+                            $activeTeam,
                             "Business Parameter",
                             "Focus Variant 1 Survey",
                             $arrProducts[0] ?? "",
@@ -535,6 +553,7 @@ class TargetReport
                             $wd_market,
                             $team_id,
                             $team_name,
+                            $activeTeam,
                             "Business Parameter",
                             "Focus Variant 2 Survey",
                             $arrProducts[1] ?? "",
@@ -548,15 +567,15 @@ class TargetReport
 
                         //Third Column
                         $arrExcelData[] = [
-                            $month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
+                            $month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, $activeTeam,
                             "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""
                         ];
 
                         //Forth Column
-                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
+                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, $activeTeam, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
 
                         //Fifth Column
-                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
+                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, $activeTeam, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
 
                         $assignTarget = array();
                         $achieveTarget = array();
