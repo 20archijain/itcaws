@@ -8,7 +8,8 @@ import { environment } from 'src/environments/environment';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
+import { DashboardData, DropdownList, GetDownloadBillCutResponse} from 'src/app/core/interfaces/http-response.interface';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
@@ -82,7 +83,7 @@ export class MdoPerformanceComponent implements OnDestroy, OnInit {
       this.isDisabled = true;
       this.loaderService.startLoader();
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
           null, environment.downloadExcelUrl)
           .pipe(
             finalize(() => {
@@ -92,7 +93,7 @@ export class MdoPerformanceComponent implements OnDestroy, OnInit {
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+              Functions.createCSV(resp.data);
             }
           })
       );

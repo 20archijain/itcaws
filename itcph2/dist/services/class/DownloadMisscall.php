@@ -25,7 +25,6 @@ class DownloadMisscall
         $this->_iUserId = $iUserId;
     }
 
-
     final public function getData()
     {
         $arrResult = array(
@@ -81,7 +80,8 @@ class DownloadMisscall
         //     $to   = sprintf('%04d-%02d-%02d', $toArr['year'], $toArr['month'], $toArr['day']);
         //     $where .= "AND  rcd BETWEEN '$from' AND '$to'";
         // }
-        $phoneNumber = getFormData($this->_data['searchbar'], "phoneNumber");
+        // $phoneNumber = getFormData($this->_data['searchbar'], "phoneNumber");
+        $phoneNumber = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "phoneNumber");
         if (isset($phoneNumber) && !empty($phoneNumber)) {
             $where .= " AND rec_who = $phoneNumber";
         }
@@ -141,29 +141,31 @@ class DownloadMisscall
 
     final public function getDownloadMissCallReport()
     {
-
         $database = getFormData($this->_data, 'database');
         $project = getFormData($this->_data, 'project');
         $where = $this->getCondition();
-        $arrExcelData = array();
+
         $rsAction = null;
         $iRows = 0;
 
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  $where";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-        if ($iRows > 0) {
-            $arrExcelData = array(array(
-                'ID',
-                'OTP',
-                'Phone',
-                'Processed',
-                'Processed On',
-                'rcd',
-                'rdt'
-            ));
-            $excelTitle = "Miss_Call_Report_";
 
-            $showVerified = "";
+        // Create header
+        $header = [];
+        $header[] = [
+            'ID',
+            'OTP',
+            'Phone',
+            'Processed',
+            'Processed On',
+            'rcd',
+            'rdt'
+        ];
+
+        $arrDataHolder = [];
+
+        if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $process = $row['process'];
                 if ($process == 1) {
@@ -171,39 +173,26 @@ class DownloadMisscall
                 } else {
                     $showVerified = "Not Verified";
                 }
-                $arrExcelData[] = array(
-                    $row['rec_id'],
-                    $row['token'],
-                    $row['rec_who'],
-                    $showVerified,
-                    $row['processed_on'],
-                    $row['rcd'],
-                    $row['rdt'],
-                );
+
+                $arrDataHolder[] = [
+                    cleanCSVValue($row['rec_id']),
+                    cleanCSVValue($row['token']),
+                    cleanCSVValue($row['rec_who']),
+                    cleanCSVValue($showVerified),
+                    cleanCSVValue($row['processed_on']),
+                    cleanCSVValue($row['rcd']),
+                    cleanCSVValue($row['rdt'])
+                ];
             }
         }
 
-
-        if (!empty($arrExcelData)) {
-            $currentDateTime = currentDateTime();
-            $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-            $fileName = "$excelTitle$currentDateTime.xlsx";
-            $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $sheet->fromArray($arrExcelData);
-            $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-            $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
-                "filePath" => $downloadFileLocation,
-                "fileName" => $fileName,
-            );
-            $writer = new Xlsx($spreadsheet);
-            $writer->save($filename);
-            $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        if (!empty($arrDataHolder)) {
+            $arrResult = formatDownloadData("Miss_Call_Report", $header, $arrDataHolder);
+            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
         }
+
         echo json_encode($arrMessage);
     }
 

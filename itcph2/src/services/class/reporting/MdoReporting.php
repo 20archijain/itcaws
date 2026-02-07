@@ -2190,19 +2190,19 @@ class MdoReporting
                     $totalSalesValue = $row['ques_6'];
 
                     $arrDataHolder[] = [
-                        $this->cleanCSVValue($captureDate),
-                        $this->cleanCSVValue($branch),
-                        $this->cleanCSVValue($region),
-                        $this->cleanCSVValue($mdoId),
-                        $this->cleanCSVValue($mdoName),
-                        $this->cleanCSVValue($mdoType),
-                        $this->cleanCSVValue($dsId),
-                        $this->cleanCSVValue($dsName),
-                        $this->cleanCSVValue($dsType),
-                        $this->cleanCSVValue($wdCode),
-                        $this->cleanCSVValue($totalOutletVisited),
-                        $this->cleanCSVValue($totalSalesVolume),
-                        $this->cleanCSVValue($totalSalesValue)
+                       cleanCSVValue($captureDate),
+                       cleanCSVValue($branch),
+                       cleanCSVValue($region),
+                       cleanCSVValue($mdoId),
+                       cleanCSVValue($mdoName),
+                       cleanCSVValue($mdoType),
+                       cleanCSVValue($dsId),
+                       cleanCSVValue($dsName),
+                       cleanCSVValue($dsType),
+                       cleanCSVValue($wdCode),
+                       cleanCSVValue($totalOutletVisited),
+                       cleanCSVValue($totalSalesVolume),
+                       cleanCSVValue($totalSalesValue)
                     ];
                 }
             }
@@ -2212,11 +2212,4 @@ class MdoReporting
         echo json_encode($arrMessage);
     }
 
-    private function cleanCSVValue($value)
-    {
-        $value = trim((string)($value ?? ''));
-        $value = str_replace(["\n", "\r"], " ", $value);
-        $value = str_replace('"', '""', $value);
-        return '"' . $value . '"';
-    }
 }

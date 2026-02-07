@@ -2000,7 +2000,6 @@ class VanDsReporting
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
-
         // Filter query
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
@@ -2025,6 +2024,7 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
+
         if ($dsType) {
             $matchAll = checkIfAllSelected($dsType);
             if (!$matchAll) {
@@ -2038,8 +2038,7 @@ class VanDsReporting
                 }
             }
         }
-        // print_r($district);
-        // die;
+
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
@@ -2109,8 +2108,33 @@ class VanDsReporting
             $allCond .= " AND a.team_id IN (SELECT team_id FROM $projectTeamTable WHERE dstatus = 0  $Cond)";
         }
 
-        $arrExcelData = [];
-        $arrExcelData[] = ["Branch", "Region", "Circle", "Section", "WD Code", "DS Type", "DS ID", "DS Name", "Accompanied by MDO", "MDO ID", "MDO Name", "Date", "Week", "Route", "Outlet Name", "Owner Moblie Number", "Outlet ID", "Outlet Type", "Category", "Variant", "Sales Qty (M)"];
+        // Create header
+        $header = [];
+        $header[] = [
+            "Branch",
+            "Region",
+            "Circle",
+            "Section",
+            "WD Code",
+            "DS Type",
+            "DS ID",
+            "DS Name",
+            "Accompanied by MDO",
+            "MDO ID",
+            "MDO Name",
+            "Date",
+            "Week",
+            "Route",
+            "Outlet Name",
+            "Owner Moblie Number",
+            "Outlet ID",
+            "Outlet Type",
+            "Category",
+            "Variant",
+            "Sales Qty (M)"
+        ];
+
+        $arrDataHolder = [];
 
         foreach ($branch as $branchId) {
             $sProductQuery = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $teamTypeCond ORDER BY product_name";
@@ -2172,7 +2196,7 @@ class VanDsReporting
                             $mdoName = "";
                         }
 
-                        $outletName  = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
+                        $outletName = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
                         $shopUniqueCode = $outletData[1] ?? "";
                         $outletType = $outletData[2] ?? "";
                         $mobileNo = $outletData[3] ?? "";
@@ -2182,28 +2206,28 @@ class VanDsReporting
                             $salesQty = $row[$colName] ?? 0;
 
                             if ($salesQty > 0) {
-                                $arrExcelData[] = [
-                                    'Branch' => $mainBranchName,
-                                    'Region' => $branchName,
-                                    'Circle' => $circle,
-                                    'Section' => $section,
-                                    'WD Code' => $wdCode,
-                                    'DS Type' => $dsType,
-                                    'DS ID' => $teamId,
-                                    'DS Name' => $teamName,
-                                    'Accompanied by MDO' => $isMdo,
-                                    'MDO ID' => $mdoId,
-                                    'MDO Name' => $mdoName,
-                                    'Date' => $date,
-                                    'Week' => $week,
-                                    'Route' => $route,
-                                    'Outlet Name' => $outletName,
-                                    'Owner Moblie Number' => $mobileNo,
-                                    'Outlet ID' => $shopUniqueCode,
-                                    'Outlet Type' => $outletType,
-                                    'Category' => $category_name[$colName] ?? '',
-                                    'Variant' => $productNames[array_search($colName, $summaryColName)],
-                                    'Sales Qty (M)' => $salesQty,
+                                $arrDataHolder[] = [
+                                   cleanCSVValue($mainBranchName),
+                                   cleanCSVValue($branchName),
+                                   cleanCSVValue($circle),
+                                   cleanCSVValue($section),
+                                   cleanCSVValue($wdCode),
+                                   cleanCSVValue($dsType),
+                                   cleanCSVValue($teamId),
+                                   cleanCSVValue($teamName),
+                                   cleanCSVValue($isMdo),
+                                   cleanCSVValue($mdoId),
+                                   cleanCSVValue($mdoName),
+                                   cleanCSVValue($date),
+                                   cleanCSVValue($week),
+                                   cleanCSVValue($route),
+                                   cleanCSVValue($outletName),
+                                   cleanCSVValue($mobileNo),
+                                   cleanCSVValue($shopUniqueCode),
+                                   cleanCSVValue($outletType),
+                                   cleanCSVValue($category_name[$colName] ?? ''),
+                                   cleanCSVValue($productNames[array_search($colName, $summaryColName)]),
+                                   cleanCSVValue($salesQty)
                                 ];
                             }
                         }
@@ -2212,24 +2236,8 @@ class VanDsReporting
             }
         }
 
-        $fileName = "BINDER_REPORT_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
-
-        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
-            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
-        }
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = [
-            "filePath" => $downloadFileLocation,
-            "fileName" => $fileName,
-        ];
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
-
+        $arrResult = formatDownloadData("BINDER_REPORT", $header, $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
     }
 

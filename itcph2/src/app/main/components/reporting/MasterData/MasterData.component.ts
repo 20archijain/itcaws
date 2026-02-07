@@ -4,7 +4,8 @@ import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 import { FormService } from 'src/app/core/services/form.service';
-import { DropdownList, GetAddTeamDataResponse, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
+import { DropdownList, GetAddTeamDataResponse } from 'src/app/core/interfaces/http-response.interface';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { CONTROL_CONFIG, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
@@ -85,7 +86,7 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
       this.isDisabled = true;
       this.loaderService.startLoader();
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.form.getRawValue(), null, environment.downloadExcelUrl)
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData, this.form.getRawValue(), null, environment.downloadExcelUrl)
           .pipe(
             finalize(() => {
               this.isDisabled = false;
@@ -94,7 +95,7 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+              Functions.createCSV(resp.data);
             }
           })
       );
