@@ -756,7 +756,7 @@ class MdoPerformanceReport
 
     final public function getDownloadData()
     {
-        global  $UPLOAD_URL;
+        global $UPLOAD_URL;
         $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $arrInfraType = array(7 => "MDO", 10 => "FSO");
         $currentDateTime = currentDateTime();
@@ -804,9 +804,9 @@ class MdoPerformanceReport
         $branchPickupStockTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
 
-        // create header
-        $arrExcelData = [];
-        $arrExcelData[] = [
+        // Create header
+        $header = [];
+        $header[] = [
             "MDO Name",
             "DS Type",
             "DS Name",
@@ -814,7 +814,9 @@ class MdoPerformanceReport
             "Accompanied Sales/Day",
         ];
 
-        // Loop through each brach data
+        $arrDataHolder = [];
+
+        // Loop through each branch data
         foreach ($branch as $branchId) {
             $branchCond = "";
             if ($branchId) {
@@ -829,7 +831,6 @@ class MdoPerformanceReport
                 }
             }
 
-            // Don't use b.dstatus = 0 AND c.dstatus = 0
             $rsAction = null;
             $iRows = 0;
             $sQuery = "SELECT a.team_id, a.team_name, b.teams, b.is_type FROM $projectTeamTable as a, tblmdo_access AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.mdo_id $where";
@@ -841,6 +842,7 @@ class MdoPerformanceReport
                     $mdoName = $row["team_name"];
                     $dsId = $row["teams"];
                     $dsType = $row["is_type"];
+
                     if ($dsType == 6 || $dsType == 8 || $dsType == 9) {
                         $teamTable = "tblbreeze_team";
                     } else {
@@ -851,7 +853,7 @@ class MdoPerformanceReport
                         $this->_dbConn,
                         $teamTable,
                         "team_name, team_id",
-                        "team_id  = '$dsId' AND dstatus = 0"
+                        "team_id = '$dsId' AND dstatus = 0"
                     );
 
                     $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 $branchCond", array(), true);
@@ -865,10 +867,11 @@ class MdoPerformanceReport
                     $summaryColumns = implode(") + SUM(", $productCols);
                     $sumColumns = "SUM($summaryColumns)";
                     $totalSale = 0;
-                    // foreach ($arrTeamDeatils as $teamRow) {
+
                     $dsName = isset($arrTeamDeatils[0]) ? $arrTeamDeatils[0] : "";
                     $dsId = isset($arrTeamDeatils[1]) ? $arrTeamDeatils[1] : "";
-                    // 1️⃣ Get the accompanied sale (only one record per ds_ d)
+
+                    // 1️⃣ Get the accompanied sale (only one record per ds_id)
                     $sQueryAcc = "SELECT total_sale, capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
                     $rsAcc = null;
                     $iRowsAcc = 0;
@@ -898,8 +901,8 @@ class MdoPerformanceReport
                     // 3️⃣ Get unaccompanied sale from response table
                     $unacompaniedSale = 0;
                     if (!empty($arrUnaccompaniedDates)) {
-                        if ($dsType == 6 && $dsType == 8 && $dsType == 9) {
-                            // 1️⃣ Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
+                       if ($dsType == 6 && $dsType == 8 && $dsType == 9) {
+                            // Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
                             $sQueryUnacc = "SELECT total_sale FROM tblbreeze_response_data WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
                             $rsUnacc = null;
                             $iRowsUnacc = 0;
@@ -926,37 +929,20 @@ class MdoPerformanceReport
                     $acompaniedSalePerDay = $acompaniedDays > 0 ? ($acompaniedSale / $acompaniedDays) : 0;
                     $unacompaniedSalePerDay = $unaccompaniedDays > 0 ? ($unacompaniedSale / $unaccompaniedDays) : 0;
 
-                    // 4️⃣ Add into Excel array
-                    $arrExcelData[] = [
-                        $mdoName,
-                        isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : "",
-                        $dsName,
-                        round($unacompaniedSalePerDay, 2),
-                        round($acompaniedSalePerDay, 2),
+                    // 5️⃣ Add into data holder array
+                    $arrDataHolder[] = [
+                        cleanCSVValue($mdoName),
+                        cleanCSVValue(isset($arrTeamType[$dsType]) ? $arrTeamType[$dsType] : ""),
+                        cleanCSVValue($dsName),
+                        cleanCSVValue(round($unacompaniedSalePerDay, 2)),
+                        cleanCSVValue(round($acompaniedSalePerDay, 2))
                     ];
-                    // }
                 }
             }
         }
 
-        $fileName = "MDO_Performance_Report_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
-
-        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
-            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
-        }
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = array(
-            "filePath" => $downloadFileLocation,
-            "fileName" => $fileName,
-        );
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
-
+        $arrResult = formatDownloadData("MDO_Performance_Report", $header, $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
     }
 }

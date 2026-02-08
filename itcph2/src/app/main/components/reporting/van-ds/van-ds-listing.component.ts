@@ -11,6 +11,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { LISTING, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { DashboardData, DropdownList, GetDownloadFileDetails, VanDsListing, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
 import { environment } from 'src/environments/environment';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { ListingBulkActionOutput } from 'src/app/core/interfaces/helpers.interface';
 import { ListingService } from 'src/app/core/services/listing.service';
@@ -227,7 +228,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
       this.loaderService.startLoader();
 
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(
+        this.formService.customActionCall<CsvDataFormat>(
           STATIC_MODULES.custom.getDownloadBinderReport,
           this.group.getRawValue(),
           null,
@@ -241,7 +242,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
           )
           .subscribe(response => {
             if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
+              Functions.createCSV(response.data);
             }
           })
       );
