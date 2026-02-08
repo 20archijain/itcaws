@@ -424,14 +424,13 @@ function getMonthList()
     );
 }
 
-// escape comma for csv data
-function escapeCommaCsv($data)
+//for clean csv data
+function cleanCSVValue($value)
 {
-    if (strpos($data, ",") !== false) {
-        return '"' . str_replace('"', '""', $data) . '"';
-    }
-
-    return $data;
+    $value = trim((string)($value ?? ''));
+    $value = str_replace(["\n", "\r"], " ", $value);
+    $value = str_replace('"', '""', $value);
+    return '"' . $value . '"';
 }
 
 function calculateDistanceBwCoordinates($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $getDistanceInM = true)

@@ -816,11 +816,15 @@ class MasterDataDownload
             $arrHeader[] = "Billing Status";
         }
 
-        $arrData = array();
+        // Create header array for CSV
+        $header = [];
+        $header[] = $arrHeader;
+
+        $arrDataHolder = [];
         $iRows = 0;
         $rsAction = null;
 
-        $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99  AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
+        $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
         $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group" .
             ", a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, a.kyc_done, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
@@ -863,7 +867,7 @@ class MasterDataDownload
                 }
 
                 $firstDate = "$year-$month-01";
-                $lastDate  = date("Y-m-t", strtotime($firstDate));
+                $lastDate = date("Y-m-t", strtotime($firstDate));
 
                 // Count inside selected/current month
                 $billingCountArr = getRowColumns(
@@ -893,75 +897,52 @@ class MasterDataDownload
                 }
 
                 $rowData = array(
-                    $row["rec_id"],
-                    $row["team_id"],
-                    $row["team_name"],
-                    $row["district"],
-                    $row["main_branch"],
-                    $row["branch_name"],
-                    $row["circle"],
-                    $row["section"],
-                    $row["wd_code"],
-                    $row["wd_town"],
-                    $row["state"],
-                    $row["district"],
-                    $row["sub_district_goi"],
-                    $dayName,
-                    $route_name,
-                    $row["market_name"],
-                    $row["goi_market_id"],
-                    $row["outlet_name"],
-                    $row["outlet_mobile"],
-                    $row["goi_pop_group"],
-                    $row["ds_sify_id"],
-                    $row["ds_mobile"],
-                    $row["outlet_type"],
-                    $row["shop_type"],
-                    $row["shop_uniq_code"],
-                    $kyc,
-                    $row["lt"],
-                    $row["lg"],
-                    isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : "",
-                    $billingStatus
+                    cleanCSVValue($row["rec_id"]),
+                    cleanCSVValue($row["team_id"]),
+                    cleanCSVValue($row["team_name"]),
+                    cleanCSVValue($row["district"]),
+                    cleanCSVValue($row["main_branch"]),
+                    cleanCSVValue($row["branch_name"]),
+                    cleanCSVValue($row["circle"]),
+                    cleanCSVValue($row["section"]),
+                    cleanCSVValue($row["wd_code"]),
+                    cleanCSVValue($row["wd_town"]),
+                    cleanCSVValue($row["state"]),
+                    cleanCSVValue($row["district"]),
+                    cleanCSVValue($row["sub_district_goi"]),
+                    cleanCSVValue($dayName),
+                    cleanCSVValue($route_name),
+                    cleanCSVValue($row["market_name"]),
+                    cleanCSVValue($row["goi_market_id"]),
+                    cleanCSVValue($row["outlet_name"]),
+                    cleanCSVValue($row["outlet_mobile"]),
+                    cleanCSVValue($row["goi_pop_group"]),
+                    cleanCSVValue($row["ds_sify_id"]),
+                    cleanCSVValue($row["ds_mobile"]),
+                    cleanCSVValue($row["outlet_type"]),
+                    cleanCSVValue($row["shop_type"]),
+                    cleanCSVValue($row["shop_uniq_code"]),
+                    cleanCSVValue($kyc),
+                    cleanCSVValue($row["lt"]),
+                    cleanCSVValue($row["lg"]),
+                    cleanCSVValue(isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : ""),
+                    cleanCSVValue($billingStatus)
                 );
 
                 if ($captureDateCondition) {
-                    $rowData[] = $noOfTimesVisited;
-                    $rowData[] = $billingStatus;
+                    $rowData[] = cleanCSVValue($noOfTimesVisited);
+                    $rowData[] = cleanCSVValue($billingStatus);
                 }
 
-                $arrData[] = $rowData;
+                $arrDataHolder[] = $rowData;
             }
         }
 
-        if (!empty($arrData)) {
-            $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
-            array_unshift($arrData, $arrHeader);
-            $sheet->fromArray($arrData);
-
-            $endColumnName = $sheet->getHighestDataColumn();
-            foreach (range('A', $endColumnName) as $columnID) {
-                $sheet->getColumnDimension($columnID)->setAutoSize(true);
-            }
-
-            $fileName = "Route_Report_" . date('Y-m-d_H-i-s') . ".xlsx";
-            $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-            $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
-                "filePath" => $downloadFileLocation,
-                "fileName" => $fileName,
-            );
-
-            $writer = new Xlsx($spreadsheet);
-            try {
-                $writer->save($filename);
-                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
-            } catch (Exception $e) {
-                $arrMessage = responseMessage(array($GLOBALS['FILE_NOT_DOWNLOADING']));
-            }
+        if (!empty($arrDataHolder)) {
+            $arrResult = formatDownloadData("Route_Report", $header, $arrDataHolder);
+            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
         }
 
         echo json_encode($arrMessage);
