@@ -1084,13 +1084,50 @@ class MdoReporting
             ),
             $this->_dbConn
         );
+        $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
 
-        // prepare missing team condition
-        $sTeamCond = getFilterResult(
-            $this->_data['searchbar'],
-            array("dsName" => array("team_id", 0, true, true)),
-            $this->_dbConn
-        );
+        $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
+
+        $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+        $dateTo   = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+
+        $start = new DateTime($dateFrom);
+        $end   = new DateTime($dateTo);
+
+        /**
+         * Move start to FIRST DAY of its month
+         */
+        $start->modify('first day of this month');
+
+        /**
+         * Move end to LAST DAY of its month
+         */
+        $end->modify('last day of this month');
+
+        $arrDates = [];
+
+        while ($start <= $end) {
+
+            // Get first and last day of current loop month
+            $firstDay = (clone $start)->modify('first day of this month');
+            $lastDay  = (clone $start)->modify('last day of this month');
+
+            $period = new DatePeriod(
+                $firstDay,
+                new DateInterval('P1D'),
+                (clone $lastDay)->modify('+1 day')
+            );
+
+            foreach ($period as $dt) {
+                $arrDates[] = $dt->format('Y-m-d');
+            }
+
+            // Move to next month
+            $start->modify('first day of next month');
+        }
+
+        $dates = "'" . implode("','", $arrDates) . "'";
+
         // $branch = array();
         $branch = getFormData($this->_data['searchbar'], "branch");
 
@@ -1134,11 +1171,15 @@ class MdoReporting
             "Survey Value (Rs) (Surveyed outlets)",
             "Lines Cut",
             "ALC",
-            "Visited Outlets (by DS)",
-            "Billed Outlets (by DS)",
-            "Total Sale (M) (by DS)",
-            "Sale (M) (by DS) (outlets which MDO surveyed)",
-            "Total Lines Cut (by DS)"
+            "Visited Outlets (by DS) Accompanied",
+            "Billed Outlets (by DS) Accompanied",
+            "Total Sale (M) (by DS) Accompanied",
+            "Sale (M) (by DS) (outlets which MDO surveyed) Accompanied",
+            "ULC (by DS) Accompanied",
+            "Avg Daily Visited Outlets (by DS) Unaccompanied",
+            "Avg Daily Billed Outlets (by DS) Unaccompanied",
+            "Avg Daily Total Sale (by DS) Unaccompanied",
+            "Avg ULC (by DS) Unaccompanied",
         ];
 
         // Loop through each brach data
@@ -1181,6 +1222,34 @@ class MdoReporting
                     $shopId = $row["ques_4"];
                     if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
                         $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "rec_id = $shopId") : "";
+                    } else {
+                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
+                    }
+                    $sQueryAcc = "SELECT capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
+                    $rsAcc = null;
+                    $iRowsAcc = 0;
+                    $this->_dbConn->ExecuteSelectQuery($sQueryAcc, $rsAcc, $iRowsAcc);
+                    $acompaniedDate = null;
+
+                    if ($iRowsAcc > 0) {
+                        while ($rowAcc = $this->_dbConn->GetData($rsAcc)) {
+                            $acompaniedDate = $rowAcc['capture_date'];
+                        };
+                    }
+
+                    // 2️⃣ Determine unaccompanied dates (exclude accompanied date)
+                    $arrUnaccompaniedDates = [];
+                    foreach ($arrDates as $d) {
+                        if ($d !== $acompaniedDate) {
+                            $arrUnaccompaniedDates[] = $d;
+                        }
+                    }
+
+                    $unaccompaniedDatesStr = "'" . implode("','", $arrUnaccompaniedDates) . "'";
+                    $unaccompaniedDays = count($arrUnaccompaniedDates);
+                    // 3️⃣ Get unaccompanied sale from response table
+                    $unacompaniedSale = 0;
+                    if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
                         $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "team_id = '$dsId'") : "";
                         $orderShop = "";
                         $addShop = "";
@@ -1191,8 +1260,26 @@ class MdoReporting
                         $arrMdoSurveyedOutlets = array();
                         $mdoSurveyedOutlets = "";
                         $sellbByDsMdoSurveyed = "";
+                        $unacompaniedULCPerDay = "";
+                        if (!empty($arrUnaccompaniedDates)) {
+                            // 3️⃣ Get unaccompanied sale from response table
+                            $unacompaniedSale = 0;
+                            $unacompaniedOutlets = 0;
+                            $unacompaniedSellOutlets = 0;
+                            // 1️⃣ Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
+                            $sQueryUnacc = "SELECT SUM(outlet_re_visit) AS outlets, SUM(total_sale) AS total_sale FROM tblbreeze_response_data WHERE dstatus = 0 AND ds_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
+                            $rsUnacc = null;
+                            $iRowsUnacc = 0;
+                            $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
+                            if ($iRowsUnacc > 0) {
+                                while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
+                                    $unacompaniedSale = $rowUnacc['total_sale'] ?? 0;
+                                    $unacompaniedOutlets = $rowUnacc['outlets'] ?? 0;
+                                    $unacompaniedSellOutlets = $rowUnacc['outlets'] ?? 0;
+                                };
+                            }
+                        }
                     } else {
-                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
                         $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details", "COUNT(rec_id)", "route_name = '$routeName' AND team_id = $dsId") : "";
                         $orderShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                         $addShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
@@ -1265,7 +1352,67 @@ class MdoReporting
                         $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                         $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
                         $sellbByDsMdoSurveyed = $dsId ? getRowColumn($this->_dbConn, $respTable, "$sumColumns AS totalSum", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)") : 0;
+                        if (!empty($arrUnaccompaniedDates)) {
+                            // 3️⃣ Get unaccompanied sale from response table
+                            $unacompaniedSale = 0;
+                            $unacompaniedOutlets = 0;
+                            $unacompaniedSellOutlets = 0;
+                            $sQueryUnacc = "SELECT $sumColumns AS totalSum, COUNT(DISTINCT ques_3) AS outlets FROM $respTable WHERE dstatus = 0 AND ques_0 = 'Outlet Order' AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
+                            $rsUnacc = null;
+                            $iRowsUnacc = 0;
+                            $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
+                            if ($iRowsUnacc > 0) {
+                                while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
+                                    $unacompaniedSale = $rowUnacc['totalSum'] ?? 0;
+                                    $unacompaniedOutlets = $rowUnacc['outlets'] ?? 0;
+                                };
+                            }
+                            $unacompaniedSellOutlets = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date IN ($unaccompaniedDatesStr) AND team_id = $dsId HAVING $sumColumns > 0") : 0;
+
+                            $sQuery4 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
+
+                            $sAction4 = null;
+                            $iRows4 = 0;
+                            $unaccomtotalUniqueProducts = []; // store unique products across ALL records
+                            $unaccomPerRecordUlc = []; // store ULC per record
+
+                            $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
+                            if ($iRows4 > 0) {
+                                while ($row4 = $this->_dbConn->GetData($sAction4)) {
+                                    $unaccomSeenProducts = []; // for this record only
+                                    $unaccomUlc = 0;
+                                    foreach ($allBrandCols as $colRow) {
+                                        $colName     = $colRow[0]; // summary_column_name
+                                        $productName = $colRow[1]; // product name
+                                        $value       = floatval($row4[$colName]);
+
+                                        if ($value > 0) {
+                                            // Count for this record
+                                            if (!in_array($productName, $unaccomSeenProducts)) {
+                                                $unaccomSeenProducts[] = $productName;
+                                                $unaccomUlc++;
+                                            }
+
+                                            // Count for total unique across all records
+                                            if (!in_array($productName, $unaccomtotalUniqueProducts)) {
+                                                $unaccomtotalUniqueProducts[] = $productName;
+                                            }
+                                        }
+                                    }
+
+                                    $unaccomPerRecordUlc[] = $unaccomUlc;
+                                }
+                                // Final totals
+                                $unaccomTotalUlc = count($totalUniqueProducts); // unique products across all records
+                            }
+                        }
+                        $unacompaniedULCPerDay        = $unaccompaniedDays > 0 ? (int) round($unaccomTotalUlc / $unaccompaniedDays) : 0;
                     }
+
+                    $unacompaniedSalePerDay        = $unaccompaniedDays > 0 ? round($unacompaniedSale / $unaccompaniedDays, 2) : 0;
+                    $unacompaniedOutletPerDay     = $unaccompaniedDays > 0 ? (int) round($unacompaniedOutlets / $unaccompaniedDays) : 0;
+                    $unacompaniedSellOutletPerDay = $unaccompaniedDays > 0 ? (int) round($unacompaniedSellOutlets / $unaccompaniedDays) : 0;
+
 
                     $dsName = $row["ds_name"];
                     $parts = explode(" - ", $dsName, 2);
@@ -1360,7 +1507,11 @@ class MdoReporting
                         $sellInShop,
                         $totalSale,
                         $sellbByDsMdoSurveyed,
-                        $totalUlc
+                        $totalUlc,
+                        $unacompaniedOutletPerDay,
+                        $unacompaniedSellOutletPerDay,
+                        $unacompaniedSalePerDay,
+                        $unacompaniedULCPerDay
                     ];
                 }
             }
@@ -1494,11 +1645,16 @@ class MdoReporting
                     }
 
                     // Query to get teams who have not uploaded any record on that date
+                    $teamList = $this->_arrAccessInfo["user_teams"];
+                    $absentWhere = "";
+                    if ($teamList) {
+                        $absentWhere .= " AND a.team_id IN $teamList";
+                    }
 
                     $iAbsentRows = 0;
                     $rsAbsentAction = 0;
                     $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch, a.ceil_id FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
-                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') ORDER BY a.team_name";
+                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') $absentWhere ORDER BY a.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sAbsentQuery, $rsAbsentAction, $iAbsentRows);
 
                     if ($iAbsentRows) {
@@ -2128,6 +2284,7 @@ class MdoReporting
         $header[] = [
             "Date",
             "Branch",
+            "Region",
             "MDO ID",
             "MDO Name",
             "MDO Type",
@@ -2135,7 +2292,6 @@ class MdoReporting
             "DS Name",
             "DS Type",
             "WD Code",
-            "Route Name",
             "Total Outlet Visited",
             "Total Sales Volume in (M)",
             "Sales Value in (Rs)"
@@ -2157,7 +2313,7 @@ class MdoReporting
             }
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' AND a.team_id = b.team_id AND b.branch_id = c.branch_id $where $branchCond ORDER BY capture_datetime DESC";
+            $sQuery = "SELECT a.uni_id, a.team_id, a.call_time, a.capture_date, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type, a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, a.ques_11 , a.lt, a.lg, b.branch_id, c.branch_name, c.main_branch FROM tblsurvey_response_details_mdo As a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' AND a.team_id = b.team_id AND b.branch_id = c.branch_id $where $branchCond ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows) {
@@ -2171,7 +2327,8 @@ class MdoReporting
                     $parts = explode(" - ", $dsNameFull, 2);
                     $dsName = isset($parts[0]) ? trim($parts[0]) : '';
                     $dsType = isset($parts[1]) ? trim($parts[1]) : '';
-                    $branch = $row["branch_name"];
+                    $region = $row["branch_name"];
+                    $branch = $row["main_branch"];
 
                     // MDO Details
                     $mdoId = $row["team_id"];
@@ -2191,6 +2348,7 @@ class MdoReporting
                     $arrDataHolder[] = [
                         $this->cleanCSVValue($captureDate),
                         $this->cleanCSVValue($branch),
+                        $this->cleanCSVValue($region),
                         $this->cleanCSVValue($mdoId),
                         $this->cleanCSVValue($mdoName),
                         $this->cleanCSVValue($mdoType),
@@ -2198,7 +2356,6 @@ class MdoReporting
                         $this->cleanCSVValue($dsName),
                         $this->cleanCSVValue($dsType),
                         $this->cleanCSVValue($wdCode),
-                        $this->cleanCSVValue($route),
                         $this->cleanCSVValue($totalOutletVisited),
                         $this->cleanCSVValue($totalSalesVolume),
                         $this->cleanCSVValue($totalSalesValue)
