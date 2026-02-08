@@ -45,16 +45,28 @@ class ProductivityReport
 
         $where = "AND capture_date LIKE '$year-$month-%'";
 
-        // $respTable = getRespTable(1, $this->_projectId);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $summaryTable = $this->_tables["STOCK_SUMMARY_TABLE"];
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $attendanceTable = $this->_tables["ATTENDANCE_TABLE"];
 
-        $arrExcelData = [];
-        $arrExcelData[] = ["District", "Branch", "No of DS registered", " No of DS Using the App", "% of P1 DS", "Avg Route per Ds", "% of DS having >6 routes", "% of DS marking attendance (>=15 days)", "% of DS with qualified attendance (>=15 days)", "Total Outlet Mapped"];
+        // Create header
+        $header = [];
+        $header[] = [
+            "District",
+            "Branch",
+            "No of DS registered",
+            "No of DS Using the App",
+            "% of P1 DS",
+            "Avg Route per Ds",
+            "% of DS having >6 routes",
+            "% of DS marking attendance (>=15 days)",
+            "% of DS with qualified attendance (>=15 days)",
+            "Total Outlet Mapped"
+        ];
 
+        $arrDataHolder = [];
 
         $sbranchQuery = "SELECT DISTINCT branch_name, branch_id, district FROM $branchTable WHERE dstatus = 0 ORDER BY branch_name";
         $sbranchAction = null;
@@ -121,26 +133,23 @@ class ProductivityReport
 
                 $ttlOutletMapped = getRowColumn($this->_dbConn, "$routeTable", "Count(Distinct shop_uniq_code)", "dstatus = 0 AND team_id IN (SELECT team_id FROM $projectTeamTable WHERE branch_id = $branchId)");
 
-
-                $arrExcelData[] = [$district, $branchName, $noOfDsRegistered, $noOfDsActive, "", $avgRoutePerDs, $percentDsMoreThan6Routes, $percentDsWithAttendanceGreaterthen15days, "", $ttlOutletMapped];
+                $arrDataHolder[] = [
+                    cleanCSVValue($district),
+                    cleanCSVValue($branchName),
+                    cleanCSVValue($noOfDsRegistered),
+                    cleanCSVValue($noOfDsActive),
+                    cleanCSVValue(""),
+                    cleanCSVValue($avgRoutePerDs),
+                    cleanCSVValue($percentDsMoreThan6Routes),
+                    cleanCSVValue($percentDsWithAttendanceGreaterthen15days),
+                    cleanCSVValue(""),
+                    cleanCSVValue($ttlOutletMapped)
+                ];
             }
         }
 
-        $fileName = "Productivity_Report_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
-
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = [
-            "filePath" => $downloadFileLocation,
-            "fileName" => $fileName,
-        ];
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
-
+        $arrResult = formatDownloadData("Productivity_Report", array($header), $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
     }
 }

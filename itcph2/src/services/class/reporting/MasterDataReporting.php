@@ -162,6 +162,7 @@ class ActiveSKUReporting
         echo json_encode($arrMessage);
     }
 
+    //CSV Report
     final public function downloadMasterData()
     {
         $dwnCond = $this->getCondition();
@@ -171,17 +172,27 @@ class ActiveSKUReporting
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
 
-        // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrExcelData = [];
-        $arrExcelData[] = array("District", "Branch", "Region", "DS Type", "Focus Brand", "SKU Category", "SKU Name", "Base Rate (M)");
-        $arrBody = array();
+        // Create header
+        $header = [];
+        $header[] = [
+            "District",
+            "Branch",
+            "Region",
+            "DS Type",
+            "Focus Brand",
+            "SKU Category",
+            "SKU Name",
+            "Base Rate (M)"
+        ];
+
+        $arrDataHolder = [];
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $focusType = array(0 => "No", 1 => "Yes");
-        $sQuery = "SELECT a.branch_id, a.team_type,a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.district,  b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0  AND a.branch_id = b.branch_id  $dwnCond $sOrderCond";
 
-        // echo $sQuery;die;
+        $sQuery = "SELECT a.branch_id, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
+
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -195,38 +206,21 @@ class ActiveSKUReporting
                 $prodName = $arrData["product_name"];
                 $prodRate = $arrData["net_rate"];
 
-                $arrExcelData[] = array(
-                    $district,
-                    $mainBranch,
-                    $branchName,
-                    $types[$dsType],
-                    $focusType[$focusBrand],
-                    $categoryName,
-                    $prodName,
-                    $prodRate,
-                );
+                $arrDataHolder[] = [
+                    cleanCSVValue($district),
+                    cleanCSVValue($mainBranch),
+                    cleanCSVValue($branchName),
+                    cleanCSVValue($types[$dsType]),
+                    cleanCSVValue($focusType[$focusBrand]),
+                    cleanCSVValue($categoryName),
+                    cleanCSVValue($prodName),
+                    cleanCSVValue($prodRate)
+                ];
             }
         }
-        $currentDateTime = currentDateTime();
-        $fileName = "Active_SKU_" . str_replace(":", "_", $currentDateTime) . ".xlsx";
 
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
-
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = [
-            "filePath" => $downloadFileLocation,
-            "fileName" => $fileName,
-        ];
-
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
-        // } else {
-        //     $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
-        // }
+        $arrResult = formatDownloadData("Active_SKU", array($header), $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
