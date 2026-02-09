@@ -184,7 +184,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
       this.loaderService.startLoader();
 
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadSummary,
+        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadSummary,
           this.group.getRawValue(), null, environment.getListingExcelUrl)
           .pipe(
             finalize(() => {
@@ -194,7 +194,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
           )
           .subscribe(response => {
             if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
+              Functions.createCSV(response.data);
             }
           })
       );
