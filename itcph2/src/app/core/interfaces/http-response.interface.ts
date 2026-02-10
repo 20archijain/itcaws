@@ -235,6 +235,7 @@ export interface GetAddTeamDataResponse extends GetViewHeaderBody {
   mdoTypeList: DropdownList[];
   statusList: DropdownList[];
   teamList: DropdownList[];
+  routeList: DropdownList[];
   aeNameList: DropdownList[];
   jsonIdList: DropdownList[];
   amNameList: DropdownList[];
@@ -562,5 +563,6 @@ export interface teams {
   wdName: DropdownList<string, string>[];
   tlName: DropdownList<string, string>[];
   teamList: DropdownList<string, string>[];
+  routeList: DropdownList<string, string>[];
 }
 

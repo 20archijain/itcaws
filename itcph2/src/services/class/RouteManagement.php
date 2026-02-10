@@ -309,4 +309,104 @@ class RouteManagement
 
         echo json_encode($arrMessage);
     }
+
+    final public function getRoute($team = "team_id")
+    {
+        $team = $this->_data['team'];
+        $teamCond = "";
+        if ($team) {
+            if (!is_array($team)) {
+                $team = array($team);
+            }
+            $team = "'" . implode("','", $team) . "'";
+            $teamCond .= "team_id IN ($team)";
+
+            $arrResult = array(
+                "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "rec_id", "$teamCond"),
+
+            );
+        } else {
+            $arrResult = array(
+                "routeList" => "",
+            );
+        }
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function editRoutedata($data, $iUserId)
+    {
+        $recIds = isset($data['id']) ? $data['id'] : '';
+        $teamId = isset($data['teamId']) ? $data['teamId'] : '';
+        $newRouteName = isset($data['routeName']) ? trim($data['routeName']) : '';
+        $errors = [];
+
+        if (empty($recIds)) {
+            $errors[] = "Route ID is required";
+        }
+        if (empty($teamId)) {
+            $errors[] = "Team is required";
+        }
+        if (empty($newRouteName)) {
+            $errors[] = "Route name is required";
+        }
+
+        if (!empty($errors)) {
+            $arrMessage = responseMessage($errors, 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Handle both single and multiple rec_ids
+        if (!is_array($recIds)) {
+            $recIds = array($recIds);
+        }
+        $recIds = array_filter($recIds, function ($v) {
+            return !empty($v);
+        });
+
+        if (empty($recIds)) {
+            $errors[] = "At least one Route ID is required";
+            $arrMessage = responseMessage($errors, 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        $recIdList = implode(',', $recIds);
+        $where = "rec_id IN ($recIdList) AND team_id = '$teamId' AND dstatus = 0";
+
+        // Check if routes exist
+        $existingRoutes = getRowsColumn(
+            $this->_dbConn,
+            $this->_tables['ROUTE_DETAILS_TABLE'],
+            "rec_id",
+            $where
+        );
+
+        if (empty($existingRoutes)) {
+            $arrMessage = responseMessage(["Routes not found or do not belong to selected team"], 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // Update the route names for all selected routes
+        $updateData = "route_name = '" . addslashes($newRouteName) . "', modif_id = $iUserId";
+        $updateWhere = "rec_id IN ($recIdList) AND team_id = '$teamId' AND dstatus = 0";
+
+        $status = updateRecord(
+            $this->_dbConn,
+            $this->_tables['ROUTE_DETAILS_TABLE'],
+            $updateData,
+            $updateWhere
+        );
+
+        if ($status == 1) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
+        } else {
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']], 2);
+        }
+
+        echo json_encode($arrMessage);
+    }
 }
+

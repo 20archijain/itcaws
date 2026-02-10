@@ -148,7 +148,7 @@ class DownloadMisscall
         $rsAction = null;
         $iRows = 0;
 
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project $where";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project WHERE dstatus = 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         // Create header
