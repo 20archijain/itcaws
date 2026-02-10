@@ -260,7 +260,8 @@
         "view": {
           "heading": "View Users",
           "userId": "User ID",
-          "editHeading": "Edit User"
+          "editHeading": "Edit User",
+          "editHeadingRoute": "Edit Route"
         }
       }
     },

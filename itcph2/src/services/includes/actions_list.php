@@ -14,6 +14,7 @@ $ACTION_LIST = array(
     'GET_LIST' => 'get_list',
     'GET_PROJECT_LIST' => 'get_projects',
     'GET_TEAM_LIST' => 'get_teams',
+    'GET_ROUTE_LIST' => 'get_route_list',
     'GET_TEAM_TYPE_LIST' => 'get_teams_type',
     'LOGIN' => 'login',
     'LOGOUT' => 'logout',

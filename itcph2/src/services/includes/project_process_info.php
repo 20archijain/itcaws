@@ -120,7 +120,7 @@ $PROJECT_SPECIFIC_SETTINGS = array(
                         // needs to be in lowercase
                         "attendance" => array(1, 0),
                         "day end selfie" => array(1, 11),
-                        "infra details" => array(1, 11),
+                        "infradetails" => array(1, 11),
                     ),
                 ),
                 "PROCESS_ATTENDANCE" => true,
