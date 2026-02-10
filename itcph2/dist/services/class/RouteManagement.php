@@ -33,6 +33,7 @@ class RouteManagement
         $arrResult = array(
             "branchList" => getBranchList($this->_dbConn, true, "dstatus = 0"),
             "teamList" => getTeamsOptions($this->_dbConn, true, "dstatus = 0"),
+            "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "rec_id"),
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -57,6 +58,31 @@ class RouteManagement
         } else {
             $arrResult = array(
                 "teamList" => "",
+                "routeList" => "",
+            );
+        }
+        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function getRoute($team = "team_id")
+    {
+        $team = $this->_data['team'];
+        $teamCond = "";
+        if ($team) {
+            if (!is_array($team)) {
+                $team = array($team);
+            }
+            $team = "'" . implode("','", $team) . "'";
+            $teamCond .= "team_id IN ($team)";
+
+            $arrResult = array(
+                "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name", "$teamCond"),
+
+            );
+        } else {
+            $arrResult = array(
+                "routeList" => "",
             );
         }
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -68,6 +94,7 @@ class RouteManagement
         $arrResult = array(
             "branchList" => getBranchList($this->_dbConn),
             "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id"),
+            "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name"),
             "sortOptions" => array(
                 array("label" => "Team Name", "value" => "b.team_name"),
                 array("label" => "Team ID", "value" => "a.team_id"),
@@ -148,17 +175,23 @@ class RouteManagement
         }
 
         $team = isset($this->_data['searchbar']['team']) ? $this->_data['searchbar']['team'] : [];
-
         if (!empty($team) && is_array($team)) {
             $teamId = implode(',', $team);
             $where .= "AND a.team_id IN ($teamId)";
+        }
+
+        $routeName = isset($this->_data['searchbar']['routeName']) ? $this->_data['searchbar']['routeName'] : [];
+        if (!empty($routeName) && is_array($routeName)) {
+            $routeName = array_map('addslashes', $routeName);
+            $routeNameFind = "'" . implode("','", $routeName) . "'";
+            $where .= " AND a.route_name IN ($routeNameFind)";
         }
 
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.team_id, a.rec_id, b.team_name, a.wd_code, a.district, a.route_name, a.outlet_name, a.dstatus,
               a.outlet_mobile, a.kyc_done FROM $RouteTable AS a, $projectTeamTable AS b WHERE a.team_id = b.team_id $where $sOrderCond";
-
+        // print_r($sQuery);
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
 
@@ -307,6 +340,66 @@ class RouteManagement
             $arrMessage = responseMessage([$GLOBALS['DATA_NOT_RESTORED']], 2);
         }
 
+        echo json_encode($arrMessage);
+    }
+
+    final public function editRoutedata($data, $iUserId)
+    {
+        $teamId = isset($data['teamName']) ? $data['teamName'] : '';
+        $oldRouteName = isset($data['routeName']) ? trim($data['routeName']) : '';
+        $newRouteName = isset($data['newRouteName']) ? trim($data['newRouteName']) : '';
+        $errors = [];
+        if (empty($teamId)) {
+            $errors[] = "Team is required";
+        }
+        if (empty($oldRouteName)) {
+            $errors[] = "Route name is required";
+        }
+        if (empty($newRouteName)) {
+            $errors[] = "New route name is required";
+        }
+        if (!empty($errors)) {
+            $arrMessage = responseMessage($errors, 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+        $where = "team_id = '$teamId' AND route_name = '" . addslashes($oldRouteName) . "' AND dstatus = 0";
+        $existingRoute = getRowsColumn(
+            $this->_dbConn,
+            $this->_tables['ROUTE_DETAILS_TABLE'],
+            "rec_id",
+            $where
+        );
+        if (empty($existingRoute)) {
+            $arrMessage = responseMessage(["Route not found for the selected team"], 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+        $checkDuplicateWhere = "team_id = '$teamId' AND route_name = '" . addslashes($newRouteName) . "' AND dstatus = 0";
+        $duplicateRoute = getRowsColumn(
+            $this->_dbConn,
+            $this->_tables['ROUTE_DETAILS_TABLE'],
+            "rec_id",
+            $checkDuplicateWhere
+        );
+        if (!empty($duplicateRoute)) {
+            $arrMessage = responseMessage(["New route name already exists for this team"], 2);
+            echo json_encode($arrMessage);
+            return;
+        }
+        $updateData = "route_name = '" . addslashes($newRouteName) . "', modif_id = $iUserId";
+        $updateWhere = "team_id = '$teamId' AND route_name = '" . addslashes($oldRouteName) . "' AND dstatus = 0";
+        $status = updateRecord(
+            $this->_dbConn,
+            $this->_tables['ROUTE_DETAILS_TABLE'],
+            $updateData,
+            $updateWhere
+        );
+        if ($status == 1) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
+        } else {
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']], 2);
+        }
         echo json_encode($arrMessage);
     }
 }

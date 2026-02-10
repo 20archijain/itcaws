@@ -97,6 +97,7 @@ export const STATIC_MODULES = {
     getDownloadSummary: 'get_download_summary',
     getProjectsList: 'get_projects',
     getTeamsList: 'get_teams',
+    getRouteList: 'get_route_list',
     getTeamsTypeList: 'get_teams_type',
     getWDList: 'get_wd_code',
     getHeader: 'get_header',
