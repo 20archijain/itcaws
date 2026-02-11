@@ -306,7 +306,7 @@ class LineCutReport
 
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Total Line Cut", "Billed Outlet", "ALC", "ULC"];
+        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Total SKU Mapped", "Total Line Cut", "Total Outlet Mapped",  "Total Outlet Visited", "Unique Billed Outlet", "ALC", "ULC/Month"];
 
         // $branchCond = "";
         if ($branch) {
@@ -319,36 +319,12 @@ class LineCutReport
         }
 
         foreach ($branchIds as $branchId) {
-            //All Brand Query
-            $sAction3 = null;
-            $iRows3 = 0;
-            $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                "  AND a.branch_id = $branchId $teamTypeCond
-                $Cond $whereFilter ORDER BY a.category_name, a.product_name";
-            // echo $sQuery3;die;
-            $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
-
-            $arrProductColumnsAllProduct = array();
-            $arrColumnsAllProduct = array();
-            if ($iRows3 > 0) {
-                while ($row3 = $this->_dbConn->GetData($sAction3)) {
-                    // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
-                    $arrProductColumnsAllProduct[] = "a.{$row3["summary_column_name"]} AS {$row3["summary_column_name"]}";
-                    $arrColumnsAllProduct[] = "{$row3["summary_column_name"]}";
-                }
-            }
-
-            $skuForQuery = "";
-            if (!empty($arrProductColumnsAllProduct)) {
-                $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
-            }
-
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
             $sQuery4 = "SELECT b.is_type, b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
-                " AND b.branch_id = $branchId $teamTypeCond $whereFilter";
+                " AND b.is_type NOT IN (100, 101) AND b.branch_id = $branchId $teamTypeCond $whereFilter";
             // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
 
@@ -367,8 +343,42 @@ class LineCutReport
                     $circle = $row4["circle"];
                     $section_name = $row4["section_name"];
                     $section = $row4["section"];
+                    $teamType = $row4['is_type'];
                     $showSection = $section . ' - ' . $section_name;
                     $showCircle = $circle . ' - ' . $circle_name;
+
+                    //All Brand Query
+                    $sAction3 = null;
+                    $iRows3 = 0;
+                    $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+                        "  AND a.branch_id = $branchId $teamTypeCond
+                        $Cond $whereFilter AND a.team_type = '$teamType' ORDER BY a.category_name, a.product_name";
+                    // echo $sQuery3;
+                    // die;
+                    $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
+
+                    $arrProductColumnsAllProduct = array();
+                    $arrColumnsAllProduct = array();
+                    if ($iRows3 > 0) {
+                        while ($row3 = $this->_dbConn->GetData($sAction3)) {
+                            // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
+                            $arrProductColumnsAllProduct[] = "a.{$row3["summary_column_name"]} AS {$row3["summary_column_name"]}";
+                            $arrColumnsAllProduct[] = "{$row3["summary_column_name"]}";
+                        }
+                    }
+
+                    $skuForQuery = "";
+                    if (!empty($arrProductColumnsAllProduct)) {
+                        $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
+                    }
+
+
+                    $allShops = getRowColumn(
+                        $this->_dbConn,
+                        "tblroute_details",
+                        "COUNT(rec_id) AS total",
+                        "dstatus = 0 AND team_id = $team_id"
+                    );
 
                     $showTeamType = "";
                     if ($row4['is_type'] == 0) {
@@ -423,15 +433,18 @@ class LineCutReport
 
                         $productsWithSales = [];
 
+                        $totalVisitedShop = 0;
                         $totalLineCut = 0;
                         if (isset($extractedData) && !empty($extractedData)) {
                             foreach ($extractedData as  $shop => $shopArr) {
                                 foreach ($shopArr as $pro => $proArr) {
-                                    foreach ($proArr as $index => $lastData)
+                                    $totalVisitedShop++;
+                                    foreach ($proArr as $index => $lastData) {
                                         if ($lastData > 0) {
                                             $totalLineCut++;
                                             $productsWithSales[$index] = true;
                                         }
+                                    }
                                 }
                             }
                         }
@@ -441,11 +454,12 @@ class LineCutReport
                             foreach ($extractedData as  $shop => $shopArr) {
                                 $hasSale = false;
                                 foreach ($shopArr as $pro => $proArr) {
-                                    foreach ($proArr as $index => $lastData)
+                                    foreach ($proArr as $index => $lastData) {
                                         if ($lastData > 0) {
                                             $hasSale = true;
                                             break 2;
                                         }
+                                    }
                                 }
                                 if ($hasSale) {
                                     $shopCount++;
@@ -467,10 +481,14 @@ class LineCutReport
                             $showTeamType,
                             $team_id,
                             $team_name,
+                            count($arrColumnsAllProduct),
                             $totalLineCut,
+                            $allShops,
+                            $totalVisitedShop,
                             $shopCount,
                             $shopCount > 0 ? round((float) ($totalLineCut / $shopCount), 2) : 0,
-                            isset($productsWithSales) && !empty($productsWithSales) ? count($productsWithSales) : 0,
+                            isset($productsWithSales) && !empty($productsWithSales) ? count($productsWithSales) : 0
+
                         ];
                     }
                 }
@@ -560,6 +578,7 @@ class LineCutReport
                     $circle = $row4["circle"];
                     $section_name = $row4["section_name"];
                     $section = $row4["section"];
+                    $isType = $row4["is_type"];
                     $showSection = $section . ' - ' . $section_name;
                     $showCircle = $circle . ' - ' . $circle_name;
 
@@ -597,7 +616,7 @@ class LineCutReport
                         $sAction3 = null;
                         $iRows3 = 0;
                         $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_history as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
-                            "  AND a.branch_id = $branchId $teamTypeCond AND a.month = '$numericMonth' AND a.year = '$numericYear'
+                            "  AND a.branch_id = $branchId $teamTypeCond AND a.team_type = '$isType' AND a.month = '$numericMonth' AND a.year = '$numericYear'
                         $Cond $whereFilter ORDER BY a.category_name, a.product_name";
                         // echo $sQuery3;die;
                         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
@@ -808,8 +827,7 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-    final public function getCircle($branch = "branch_id")
-    {
+    final public function getCircle($branch = "branch_id"){
         $branch = $this->_data['branch'];
         $branchCond = "";
         if ($branch) {
@@ -849,8 +867,7 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-    final public function getSection($circle = "circle")
-    {
+    final public function getSection($circle = "circle"){
         $circle = $this->_data['circle'];
         $circleCond = "";
         if ($circle) {
