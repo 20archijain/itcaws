@@ -74,11 +74,10 @@ class RouteManagement
                 $team = array($team);
             }
             $team = "'" . implode("','", $team) . "'";
-            $teamCond .= "team_id IN ($team)";
+            $teamCond .= "team_id IN ($team) AND dstatus = 0";
 
             $arrResult = array(
                 "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name", "$teamCond"),
-
             );
         } else {
             $arrResult = array(
@@ -93,8 +92,8 @@ class RouteManagement
     {
         $arrResult = array(
             "branchList" => getBranchList($this->_dbConn),
-            "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id"),
-            "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name"),
+            "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "dstatus = 0"),
+            "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name", "dstatus = 0"),
             "sortOptions" => array(
                 array("label" => "Team Name", "value" => "b.team_name"),
                 array("label" => "Team ID", "value" => "a.team_id"),
@@ -129,7 +128,6 @@ class RouteManagement
                 "deleteStatus"
             ),
         );
-
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
@@ -349,6 +347,8 @@ class RouteManagement
         $oldRouteName = isset($data['routeName']) ? trim($data['routeName']) : '';
         $newRouteName = isset($data['newRouteName']) ? trim($data['newRouteName']) : '';
         $errors = [];
+
+        // Validate inputs
         if (empty($teamId)) {
             $errors[] = "Team is required";
         }
@@ -358,11 +358,17 @@ class RouteManagement
         if (empty($newRouteName)) {
             $errors[] = "New route name is required";
         }
+        if (strlen($newRouteName) < 3) {
+            $errors[] = "New route name must be at least 3 characters";
+        }
+
         if (!empty($errors)) {
             $arrMessage = responseMessage($errors, 2);
             echo json_encode($arrMessage);
             return;
         }
+
+        // Check if the old route exists and is active (dstatus = 0)
         $where = "team_id = '$teamId' AND route_name = '" . addslashes($oldRouteName) . "' AND dstatus = 0";
         $existingRoute = getRowsColumn(
             $this->_dbConn,
@@ -370,11 +376,14 @@ class RouteManagement
             "rec_id",
             $where
         );
+
         if (empty($existingRoute)) {
-            $arrMessage = responseMessage(["Route not found for the selected team"], 2);
+            $arrMessage = responseMessage(["Active route not found for the selected team. Only active routes (not deleted) can be edited."], 2);
             echo json_encode($arrMessage);
             return;
         }
+
+        // Check if new route name already exists for this team (only check active routes)
         $checkDuplicateWhere = "team_id = '$teamId' AND route_name = '" . addslashes($newRouteName) . "' AND dstatus = 0";
         $duplicateRoute = getRowsColumn(
             $this->_dbConn,
@@ -382,24 +391,30 @@ class RouteManagement
             "rec_id",
             $checkDuplicateWhere
         );
+
         if (!empty($duplicateRoute)) {
             $arrMessage = responseMessage(["New route name already exists for this team"], 2);
             echo json_encode($arrMessage);
             return;
         }
-        $updateData = "route_name = '" . addslashes($newRouteName) . "', modif_id = $iUserId";
+
+        // Update only routes with dstatus = 0
+        $updateData = "route_name = '" . addslashes($newRouteName) . "', modif_id = $iUserId, rlm = NOW()";
         $updateWhere = "team_id = '$teamId' AND route_name = '" . addslashes($oldRouteName) . "' AND dstatus = 0";
+
         $status = updateRecord(
             $this->_dbConn,
             $this->_tables['ROUTE_DETAILS_TABLE'],
             $updateData,
             $updateWhere
         );
+
         if ($status == 1) {
             $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
         } else {
             $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']], 2);
         }
+
         echo json_encode($arrMessage);
     }
 }
