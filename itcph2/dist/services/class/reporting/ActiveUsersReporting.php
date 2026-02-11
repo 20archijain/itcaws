@@ -709,19 +709,30 @@ class ActiveUsersReporting
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
+        // Initialize result array
+        $arrResult = array();
+
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $teamId = $arrData["team_id"];
                 $teamType = $arrData["is_type"];
                 $mainBranch = $arrData["main_branch"];
                 $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
+                $istatus = "";
 
                 $isQualified = getRowColumn(
                     $this->_dbConn,
                     "tblvands_summary",
                     "summary_id",
-                    "dstatus = 0 AND team_id = '$teamId' AND is_qualified = 1 AND rcd >= '$firstDateLastToLastMonth' AND rcd <= '$lastDatePreviousMonth'"
+                    "dstatus = 0 AND team_id = '$teamId' AND is_qualified = 1 AND activity_date BETWEEN '$firstDateLastToLastMonth' AND '$lastDatePreviousMonth'"
                 );
+            //    print_r($isQualified);die;
+
+                if ($isQualified > 0) {
+                    $istatus = "Qualified";
+                } else {
+                    $istatus = "Not Qualified";
+                }
 
                 $arrResult[] = array(
                     "id" => $teamId,
@@ -733,7 +744,7 @@ class ActiveUsersReporting
                     "wdCode" => $arrData["wd_code"] . ' - ' . $arrData['wd_market'] . ' - ' . $arrData['wd_firm_name'],
                     "dsType" =>  $types[$teamType],
                     "dsNum" =>  $arrData["ds_number"],
-                    "status" => $isQualified ? "Qualified" : "Not Qualified",
+                    "status" => $istatus,
                     "creationDate" => $creationDate,
                 );
             }
