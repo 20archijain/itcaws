@@ -36,7 +36,7 @@
       <div class="d-flex gap-2">
         <app-button type="submit" text="button.search"></app-button>
         <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
-        <app-button text="Edit Route" (onClick)="openEditRouteModal()"></app-button>
+        <app-button text="Edit" (onClick)="openEditRouteModal()"></app-button>
       </div>
     </div>
   </div>
@@ -44,19 +44,21 @@
 
 <!-- Edit Route Modal -->
 <div class="modal fade" [class.show]="showEditModal" [style.display]="showEditModal ? 'block' : 'none'"
-     tabindex="-1" role="dialog" aria-labelledby="editRouteModalLabel">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+     tabindex="-1" role="dialog" aria-labelledby="editRouteModalLabel" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="editRouteModalLabel">Edit Route</h5>
-        <button type="button" class="close" (click)="closeEditRouteModal()" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-semibold" id="editRouteModalLabel">
+          <i class="bi bi-pencil-square me-2"></i>Edit Route
+        </h5>
+        <button type="button" class="btn-close" (click)="closeEditRouteModal()" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body p-4">
         <form [formGroup]="editRouteForm">
-          <div class="form-group mb-3">
-            <label for="teamName">Team Name <span class="text-danger">*</span></label>
+          <div class="mb-4">
+            <label for="teamName" class="form-label fw-medium">
+              Team Name <span class="text-danger">*</span>
+            </label>
             <app-select
               [group]="editRouteForm"
               controlName="teamName"
@@ -64,52 +66,66 @@
               placeholder="Select Team"
               (onChange)="getRouteNamesForModal()">
             </app-select>
-            <div class="text-danger mt-1"
-                 *ngIf="editRouteForm.get('teamName').touched && editRouteForm.get('teamName').invalid">
-              Team name is required
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('teamName')?.touched && editRouteForm.get('teamName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>Team name is required
             </div>
           </div>
 
-          <div class="form-group mb-3">
-            <label for="routeName">Route Name <span class="text-danger">*</span></label>
+          <div class="mb-4">
+            <label for="routeName" class="form-label fw-medium">
+              Route Name <span class="text-danger">*</span>
+            </label>
             <app-select
               [group]="editRouteForm"
               controlName="routeName"
               [options]="editRouteOptions"
               placeholder="Select Route">
             </app-select>
-            <div class="text-danger mt-1"
-                 *ngIf="editRouteForm.get('routeName').touched && editRouteForm.get('routeName').invalid">
-              Route name is required
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('routeName')?.touched && editRouteForm.get('routeName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>Route name is required
             </div>
           </div>
 
-          <div class="form-group mb-3">
-            <label for="newRouteName">New Route Name <span class="text-danger">*</span></label>
+          <div class="mb-4">
+            <label for="newRouteName" class="form-label fw-medium">
+              New Route Name <span class="text-danger">*</span>
+            </label>
             <input
               type="text"
               class="form-control"
               formControlName="newRouteName"
               placeholder="Enter new route name">
-            <div class="text-danger mt-1"
-                 *ngIf="editRouteForm.get('newRouteName').touched && editRouteForm.get('newRouteName').invalid">
-              <span *ngIf="editRouteForm.get('newRouteName').errors?.['required']">
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('newRouteName')?.touched && editRouteForm.get('newRouteName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              <span *ngIf="editRouteForm.get('newRouteName')?.errors?.['required']">
                 New route name is required
               </span>
-              <span *ngIf="editRouteForm.get('newRouteName').errors?.['minlength']">
+              <span *ngIf="editRouteForm.get('newRouteName')?.errors?.['minlength']">
                 New route name must be at least 3 characters
               </span>
             </div>
           </div>
         </form>
       </div>
-      <div class="modal-footer">
-        <app-button text="Cancel" (onClick)="closeEditRouteModal()"></app-button>
-        <app-button text="Save Changes" type="submit" (onClick)="submitEditRoute()"></app-button>
+      <div class="modal-footer border-top bg-light">
+        <app-button
+          text="Cancel"
+          [class]="'btn btn-primary'"
+          (onClick)="closeEditRouteModal()">
+        </app-button>
+        <app-button
+          text="Save Changes"
+          type="submit"
+          [class]="'btn btn-primary'"
+          (onClick)="submitEditRoute()">
+        </app-button>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Modal Backdrop -->
-<div class="modal-backdrop fade" [class.show]="showEditModal" *ngIf="showEditModal"></div>
+<div class="modal-backdrop fade show" *ngIf="showEditModal" (click)="closeEditRouteModal()"></div>
