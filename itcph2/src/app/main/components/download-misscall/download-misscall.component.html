@@ -1,6 +1,6 @@
 <app-card [options]="false">
   <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [searchGroup]="form"
-    [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false">
+    [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false" deleteKey="id" [deleteWithFormData]="true">
   </app-table-listing>
 </app-card>
 <ng-template #searchTemplate>
