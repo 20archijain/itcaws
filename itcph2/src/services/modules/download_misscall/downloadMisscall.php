@@ -18,6 +18,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_LIST']:
             $download->viewData();
             break;
+        case $ACTION_LIST['DELETE_WITH_FORM_DATA']:
+            $download->deleteData($requestData, $iUserId);
+            break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);
