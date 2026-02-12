@@ -30,17 +30,17 @@ class DownloadMisscall
         $arrResult = array(
             "dataBaseList" => $this->getDatabaseName(),
             "viewHeader" => array(
-                // "Id",
+                "Id",
                 "OTP",
                 "Mobile Number",
                 "Is Verified",
                 "Processed On",
                 "RCD",
-                "RDT",
+                "RDT"
 
             ),
             "viewBody" => array(
-                // "id",
+                "id",
                 "token",
                 "rec_who",
                 "showVerified",
@@ -204,7 +204,7 @@ class DownloadMisscall
         $project = getFormData($this->_data['searchbar'], 'project');
         $arrData = array();
         $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt, dstatus FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
         // print_r($sQuery);
@@ -222,7 +222,7 @@ class DownloadMisscall
                     $showVerified = "Not Verified";
                 }
                 $arrData[] = array(
-                    //    "id" => $row['rec_id'],
+                    "id" => $row['rec_id'],
                     "token" => $row["token"],
                     "rec_who" => $row["rec_who"],
                     "showVerified" => $showVerified,
@@ -237,6 +237,46 @@ class DownloadMisscall
         );
 
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrData), true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function deleteData($data, $iUserId)
+    {
+        $assign_id = $iUserId;
+        $where = "";
+        $istatus = [];
+        $database = getFormData($data, 'database');
+        $project = getFormData($data, 'project');
+
+        if (isset($data['id']) && !empty($data['id'])) {
+            $recIds = getStringFromArray($data['id']);
+            $where = "rec_id = $recIds";
+        }
+        // else {
+        //     $conditionWhere = $this->getCondition();
+        //     $where = ltrim($conditionWhere, " AND");
+
+        //     if (empty($where)) {
+        //         $arrMessage = responseMessage(['No filter conditions provided for bulk deletion'], 0);
+        //         echo json_encode($arrMessage);
+        //         return;
+        //     }
+        // }
+
+        $statusRoute = updateRecord(
+            $this->_dbConn,
+            "$database.$project",
+            "dstatus = 1, modif_id = $assign_id",
+            $where
+        );
+        $istatus[] = $statusRoute;
+
+        if (in_array(1, $istatus, true)) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_DELETED_SUCCESSFULL']], 1);
+        } else {
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_DELETED']], 2);
+        }
+
         echo json_encode($arrMessage);
     }
 }
