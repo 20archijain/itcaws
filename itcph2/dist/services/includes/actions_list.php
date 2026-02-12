@@ -5,6 +5,7 @@ $ACTION_LIST = array(
     'CAPTCHA' => 'captcha',
     'CHANGE_PASSWORD' => 'change_password',
     'DELETE_DATA' => 'delete_data',
+    'DELETE_WITH_FORM_DATA' => 'delete_with_form_data',
     'DELETE_IMAGE' => 'delete_image',
     'EDIT_DATA' => 'edit_data',
     'GET_DATA' => 'get_data',

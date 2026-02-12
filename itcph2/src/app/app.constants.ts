@@ -149,6 +149,7 @@ export const STATIC_MODULES = {
   listing: {
     addData: 'add_data',
     deleteData: 'delete_data',
+    deleteWithFormData: 'delete_with_form_data',
     deleteImage: 'delete_image',
     editData: 'edit_data',
     getData: 'get_data',
