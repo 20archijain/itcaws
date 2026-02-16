@@ -1840,8 +1840,8 @@ class MdoReporting
                         $dsName = $arrRouteDetails[1];
                         $routeName = $arrRouteDetails[2];
                         $parts = explode(" - ", $dsName, 2);
-                        $dsNameOnly = $parts[0];
-                        $dsType = $parts[1];
+                        $dsNameOnly = $parts ? $parts[0] : "";
+                        $dsType = $parts ? $parts[1] : "";
                         $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'");
                         $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND route_name = '$routeName' AND wd_code = '$wdCode' AND team_id = $teamId");
                     } else {
