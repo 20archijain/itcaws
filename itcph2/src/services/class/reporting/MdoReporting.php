@@ -1202,7 +1202,7 @@ class MdoReporting
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
                 ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
                 ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
-                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
+                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 IN ('Infra Details','InfraDetails') AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1347,66 +1347,67 @@ class MdoReporting
                             }
                             // Final totals
                             $totalUlc = count($totalUniqueProducts); // unique products across all records
-                        }
-                        $sellInShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0") : 0;
-                        $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
-                        $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
-                        $sellbByDsMdoSurveyed = $dsId ? getRowColumn($this->_dbConn, $respTable, "$sumColumns AS totalSum", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)") : 0;
-                        if (!empty($arrUnaccompaniedDates)) {
-                            // 3️⃣ Get unaccompanied sale from response table
-                            $unacompaniedSale = 0;
-                            $unacompaniedOutlets = 0;
-                            $unacompaniedSellOutlets = 0;
-                            $sQueryUnacc = "SELECT $sumColumns AS totalSum, COUNT(DISTINCT ques_3) AS outlets FROM $respTable WHERE dstatus = 0 AND ques_0 = 'Outlet Order' AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
-                            $rsUnacc = null;
-                            $iRowsUnacc = 0;
-                            $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
-                            if ($iRowsUnacc > 0) {
-                                while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
-                                    $unacompaniedSale = $rowUnacc['totalSum'] ?? 0;
-                                    $unacompaniedOutlets = $rowUnacc['outlets'] ?? 0;
-                                };
-                            }
-                            $unacompaniedSellOutlets = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date IN ($unaccompaniedDatesStr) AND team_id = $dsId HAVING $sumColumns > 0") : 0;
 
-                            $sQuery4 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
+                            $sellInShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0") : 0;
+                            $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                            $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
+                            $sellbByDsMdoSurveyed = $dsId ? getRowColumn($this->_dbConn, $respTable, "$sumColumns AS totalSum", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)") : 0;
+                            if (!empty($arrUnaccompaniedDates)) {
+                                // 3️⃣ Get unaccompanied sale from response table
+                                $unacompaniedSale = 0;
+                                $unacompaniedOutlets = 0;
+                                $unacompaniedSellOutlets = 0;
+                                $sQueryUnacc = "SELECT $sumColumns AS totalSum, COUNT(DISTINCT ques_3) AS outlets FROM $respTable WHERE dstatus = 0 AND ques_0 = 'Outlet Order' AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
+                                $rsUnacc = null;
+                                $iRowsUnacc = 0;
+                                $this->_dbConn->ExecuteSelectQuery($sQueryUnacc, $rsUnacc, $iRowsUnacc);
+                                if ($iRowsUnacc > 0) {
+                                    while ($rowUnacc = $this->_dbConn->GetData($rsUnacc)) {
+                                        $unacompaniedSale = $rowUnacc['totalSum'] ?? 0;
+                                        $unacompaniedOutlets = $rowUnacc['outlets'] ?? 0;
+                                    };
+                                }
+                                $unacompaniedSellOutlets = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date IN ($unaccompaniedDatesStr) AND team_id = $dsId HAVING $sumColumns > 0") : 0;
 
-                            $sAction4 = null;
-                            $iRows4 = 0;
-                            $unaccomtotalUniqueProducts = []; // store unique products across ALL records
-                            $unaccomPerRecordUlc = []; // store ULC per record
+                                $sQuery4 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
 
-                            $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
-                            if ($iRows4 > 0) {
-                                while ($row4 = $this->_dbConn->GetData($sAction4)) {
-                                    $unaccomSeenProducts = []; // for this record only
-                                    $unaccomUlc = 0;
-                                    foreach ($allBrandCols as $colRow) {
-                                        $colName     = $colRow[0]; // summary_column_name
-                                        $productName = $colRow[1]; // product name
-                                        $value       = floatval($row4[$colName]);
+                                $sAction4 = null;
+                                $iRows4 = 0;
+                                $unaccomtotalUniqueProducts = []; // store unique products across ALL records
+                                $unaccomPerRecordUlc = []; // store ULC per record
 
-                                        if ($value > 0) {
-                                            // Count for this record
-                                            if (!in_array($productName, $unaccomSeenProducts)) {
-                                                $unaccomSeenProducts[] = $productName;
-                                                $unaccomUlc++;
-                                            }
+                                $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
+                                if ($iRows4 > 0) {
+                                    while ($row4 = $this->_dbConn->GetData($sAction4)) {
+                                        $unaccomSeenProducts = []; // for this record only
+                                        $unaccomUlc = 0;
+                                        foreach ($allBrandCols as $colRow) {
+                                            $colName     = $colRow[0]; // summary_column_name
+                                            $productName = $colRow[1]; // product name
+                                            $value       = floatval($row4[$colName]);
 
-                                            // Count for total unique across all records
-                                            if (!in_array($productName, $unaccomtotalUniqueProducts)) {
-                                                $unaccomtotalUniqueProducts[] = $productName;
+                                            if ($value > 0) {
+                                                // Count for this record
+                                                if (!in_array($productName, $unaccomSeenProducts)) {
+                                                    $unaccomSeenProducts[] = $productName;
+                                                    $unaccomUlc++;
+                                                }
+
+                                                // Count for total unique across all records
+                                                if (!in_array($productName, $unaccomtotalUniqueProducts)) {
+                                                    $unaccomtotalUniqueProducts[] = $productName;
+                                                }
                                             }
                                         }
-                                    }
 
-                                    $unaccomPerRecordUlc[] = $unaccomUlc;
+                                        $unaccomPerRecordUlc[] = $unaccomUlc;
+                                    }
+                                    // Final totals
+                                    $unaccomTotalUlc = count($totalUniqueProducts); // unique products across all records
                                 }
-                                // Final totals
-                                $unaccomTotalUlc = count($totalUniqueProducts); // unique products across all records
                             }
+                            $unacompaniedULCPerDay        = $unaccompaniedDays > 0 ? (int) round($unaccomTotalUlc / $unaccompaniedDays) : 0;
                         }
-                        $unacompaniedULCPerDay        = $unaccompaniedDays > 0 ? (int) round($unaccomTotalUlc / $unaccompaniedDays) : 0;
                     }
 
                     $unacompaniedSalePerDay        = $unaccompaniedDays > 0 ? round($unacompaniedSale / $unaccompaniedDays, 2) : 0;
