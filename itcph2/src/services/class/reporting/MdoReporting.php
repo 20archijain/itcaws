@@ -1347,7 +1347,7 @@ class MdoReporting
                             }
                             // Final totals
                             $totalUlc = count($totalUniqueProducts); // unique products across all records
-
+                        
                             $sellInShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0") : 0;
                             $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                             $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
@@ -1368,14 +1368,14 @@ class MdoReporting
                                     };
                                 }
                                 $unacompaniedSellOutlets = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date IN ($unaccompaniedDatesStr) AND team_id = $dsId HAVING $sumColumns > 0") : 0;
-
+    
                                 $sQuery4 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
-
+    
                                 $sAction4 = null;
                                 $iRows4 = 0;
                                 $unaccomtotalUniqueProducts = []; // store unique products across ALL records
                                 $unaccomPerRecordUlc = []; // store ULC per record
-
+    
                                 $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
                                 if ($iRows4 > 0) {
                                     while ($row4 = $this->_dbConn->GetData($sAction4)) {
@@ -1385,21 +1385,21 @@ class MdoReporting
                                             $colName     = $colRow[0]; // summary_column_name
                                             $productName = $colRow[1]; // product name
                                             $value       = floatval($row4[$colName]);
-
+    
                                             if ($value > 0) {
                                                 // Count for this record
                                                 if (!in_array($productName, $unaccomSeenProducts)) {
                                                     $unaccomSeenProducts[] = $productName;
                                                     $unaccomUlc++;
                                                 }
-
+    
                                                 // Count for total unique across all records
                                                 if (!in_array($productName, $unaccomtotalUniqueProducts)) {
                                                     $unaccomtotalUniqueProducts[] = $productName;
                                                 }
                                             }
                                         }
-
+    
                                         $unaccomPerRecordUlc[] = $unaccomUlc;
                                     }
                                     // Final totals
@@ -1840,8 +1840,8 @@ class MdoReporting
                         $dsName = $arrRouteDetails[1];
                         $routeName = $arrRouteDetails[2];
                         $parts = explode(" - ", $dsName, 2);
-                        $dsNameOnly = $parts[0];
-                        $dsType = $parts[1];
+                        $dsNameOnly = $parts ? $parts[0] : "";
+                        $dsType = $parts ? $parts[1] : "";
                         $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'");
                         $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND route_name = '$routeName' AND wd_code = '$wdCode' AND team_id = $teamId");
                     } else {
