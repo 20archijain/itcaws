@@ -910,6 +910,9 @@ class VanDsReporting
                     )
                 );
 
+                // PRE-COMPUTE TIMESTAMP FOR SORTING (convert once, sort faster)
+                $row['_timestamp'] = strtotime($row["capture_datetime"]);
+
                 $arrData[$i] = array(
                     "reportingType" => $row["ques_0"],
                     "wdCode" => $row["wd_code"],
@@ -927,10 +930,22 @@ class VanDsReporting
                     "lt" => $row["lt"],
                     "lg" => $row["lg"],
                     "images" => $arrImages,
+                    "_timestamp" => $row['_timestamp'],
                 );
 
                 $i++;
             }
+
+            // Sort by capture_datetime descending 
+            usort($arrData, function ($a, $b) {
+                return $b['_timestamp'] - $a['_timestamp'];
+            });
+
+            // Remove sort key from response
+            foreach ($arrData as &$item) {
+                unset($item['_timestamp']);
+            }
+            unset($item);
         }
 
         $arrResponse = array(
