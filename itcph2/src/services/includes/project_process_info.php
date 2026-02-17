@@ -113,14 +113,14 @@ $PROJECT_SPECIFIC_SETTINGS = array(
                 "PROCESS_TABLE" => "tblsurvey_response_new",
                 "RESPONSE_TABLE" => "tblsurvey_response_details_mdo",
                 "IMG_TABLE" => "tblsurvey_response_file_new",
-                "NO_OF_QUESTIONS" => array(4, 1, 9, 9, 9, 9, 9, 9, 9, 2, 4),
+                "NO_OF_QUESTIONS" => array(4, 1, 9, 9, 9, 9, 9, 9, 9, 2, 4, 4),
                 "PROCESS_BASED_ON_SKIP_LOGIC" => array(
                     1 => array(
                         "QUES_ID" => 1,
                         // needs to be in lowercase
                         "attendance" => array(1, 0),
                         "day end selfie" => array(1, 11),
-                        "infradetails" => array(1, 11),
+                        "infradetails" => array(1, 12),
                     ),
                 ),
                 "PROCESS_ATTENDANCE" => true,

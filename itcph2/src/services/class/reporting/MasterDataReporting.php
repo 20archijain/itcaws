@@ -207,20 +207,53 @@ class ActiveSKUReporting
                 $prodRate = $arrData["net_rate"];
 
                 $arrDataHolder[] = [
-                    cleanCSVValue($district),
-                    cleanCSVValue($mainBranch),
-                    cleanCSVValue($branchName),
-                    cleanCSVValue($types[$dsType]),
-                    cleanCSVValue($focusType[$focusBrand]),
-                    cleanCSVValue($categoryName),
-                    cleanCSVValue($prodName),
-                    cleanCSVValue($prodRate)
+                    $district,
+                    $mainBranch,
+                    $branchName,
+                    $types[$dsType],
+                    $focusType[$focusBrand],
+                    $categoryName,
+                    $prodName,
+                    $prodRate,
                 ];
             }
         }
+        $currentDateTime = currentDateTime();
+         $fileName = "Active_SKU_" . str_replace(":", "_", $currentDateTime) . ".csv";
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
 
-        $arrResult = formatDownloadData("Active_SKU", array($header), $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
