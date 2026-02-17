@@ -1202,8 +1202,9 @@ class MdoReporting
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
                 ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
                 ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
-                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 IN ('Infra Details','InfraDetails') AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
+                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 NOT IN ('Infra Details','InfraDetails') AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+            // echo "$sQuery";die;
 
             if ($iRows > 0) {
                 while ($row = $this->_dbConn->GetData($rsAction)) {
@@ -1220,11 +1221,16 @@ class MdoReporting
                     $workWdCode = $row["wd_code"];
                     $arrWdDetails = getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$workWdCode'");
                     $shopId = $row["ques_4"];
-                    if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
-                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "rec_id = $shopId") : "";
-                    } else {
-                        $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
-                    }
+                    // if (!empty($shopId)) {
+                        if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
+                            $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "team_id", "rec_id = $shopId") : "";
+                        } else {
+                            $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
+                        }
+                    // } else {
+                    //     $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
+                    // }
+
                     $sQueryAcc = "SELECT capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date IN ($dates)";
                     $rsAcc = null;
                     $iRowsAcc = 0;
@@ -1347,9 +1353,9 @@ class MdoReporting
                             }
                             // Final totals
                             $totalUlc = count($totalUniqueProducts); // unique products across all records
-                        
+
                             $sellInShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId HAVING $sumColumns > 0") : 0;
-                            $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                            $arrMdoSurveyedOutlets = getRowsColumn($this->_dbConn, "tblsurvey_response_details_mdo", "ques_4", "dstatus = '0' AND ques_0 NOT IN ('Infra Details','InfraDetails') AND ques_4 IS NOT NULL AND capture_date = '$date' AND team_id = $teamId");
                             $mdoSurveyedOutlets = implode(",", $arrMdoSurveyedOutlets);
                             $sellbByDsMdoSurveyed = $dsId ? getRowColumn($this->_dbConn, $respTable, "$sumColumns AS totalSum", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId AND ques_3 IN ($mdoSurveyedOutlets)") : 0;
                             if (!empty($arrUnaccompaniedDates)) {
@@ -1368,14 +1374,14 @@ class MdoReporting
                                     };
                                 }
                                 $unacompaniedSellOutlets = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_4 = 'Yes' AND dstatus = '0' AND capture_date IN ($unaccompaniedDatesStr) AND team_id = $dsId HAVING $sumColumns > 0") : 0;
-    
+
                                 $sQuery4 = "SELECT $summaryColumnsUlc FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN ($unaccompaniedDatesStr)";
-    
+
                                 $sAction4 = null;
                                 $iRows4 = 0;
                                 $unaccomtotalUniqueProducts = []; // store unique products across ALL records
                                 $unaccomPerRecordUlc = []; // store ULC per record
-    
+
                                 $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
                                 if ($iRows4 > 0) {
                                     while ($row4 = $this->_dbConn->GetData($sAction4)) {
@@ -1385,21 +1391,21 @@ class MdoReporting
                                             $colName     = $colRow[0]; // summary_column_name
                                             $productName = $colRow[1]; // product name
                                             $value       = floatval($row4[$colName]);
-    
+
                                             if ($value > 0) {
                                                 // Count for this record
                                                 if (!in_array($productName, $unaccomSeenProducts)) {
                                                     $unaccomSeenProducts[] = $productName;
                                                     $unaccomUlc++;
                                                 }
-    
+
                                                 // Count for total unique across all records
                                                 if (!in_array($productName, $unaccomtotalUniqueProducts)) {
                                                     $unaccomtotalUniqueProducts[] = $productName;
                                                 }
                                             }
                                         }
-    
+
                                         $unaccomPerRecordUlc[] = $unaccomUlc;
                                     }
                                     // Final totals
@@ -1651,12 +1657,19 @@ class MdoReporting
                     if ($teamList) {
                         $absentWhere .= " AND a.team_id IN $teamList";
                     }
+                    // prepare missing team condition
+                    $sTeamCond = getFilterResult(
+                        $this->_data['searchbar'],
+                        array("dsName" => array("a.team_id", 0, true, true)),
+                        $this->_dbConn
+                    );
 
                     $iAbsentRows = 0;
                     $rsAbsentAction = 0;
                     $sAbsentQuery = "SELECT a.team_id, a.team_name, a.is_type, a.circle, a.section, a.wd_code, b.district, b.branch_name, b.main_branch, a.ceil_id FROM $projectTeamTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.s_id = '10' AND a.branch_id = b.branch_id $branchCond" .
-                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') $absentWhere ORDER BY a.team_name";
+                        " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM tblattendance WHERE dstatus = 0 AND capture_date = '$date' AND call_type = '0') $absentWhere $sTeamCond ORDER BY a.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sAbsentQuery, $rsAbsentAction, $iAbsentRows);
+                    // echo "$sAbsentQuery";die;
 
                     if ($iAbsentRows) {
                         while ($rowAbsent = $this->_dbConn->GetData($rsAbsentAction)) {
