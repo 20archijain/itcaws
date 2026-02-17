@@ -5,8 +5,7 @@ import { finalize } from 'rxjs/operators';
 import { Subscription } from 'rxjs';
 
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
-import { DownloadReports, DropdownList} from 'src/app/core/interfaces/http-response.interface';
-import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
+import { DownloadReports, DropdownList, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
 import { FormService } from 'src/app/core/services/form.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
@@ -99,7 +98,7 @@ hideSearchbar: any;
     if (this.form.valid) {
       this.loaderService.startLoader();
       this.subscription.push(
-        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData, this.form.getRawValue(),
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.form.getRawValue(),
           null, environment.downloadExcelUrl)
           .pipe(
             finalize(() => {
@@ -108,7 +107,7 @@ hideSearchbar: any;
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.createCSV(resp.data);
+              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
       );

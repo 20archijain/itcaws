@@ -510,132 +510,132 @@ class TargetReport
 
                         //First Row - Focus Variant 1
                         $arrDataHolder[] = [
-                            cleanCSVValue($month),
-                            cleanCSVValue($district),
-                            cleanCSVValue($branch),
-                            cleanCSVValue($region),
-                            cleanCSVValue($showCircle),
-                            cleanCSVValue($showSection),
-                            cleanCSVValue($wd_code),
-                            cleanCSVValue($wd_firm_name),
-                            cleanCSVValue($wd_pop_group),
-                            cleanCSVValue($wd_market),
-                            cleanCSVValue($team_id),
-                            cleanCSVValue($team_name),
-                            cleanCSVValue($activeTeam),
-                            cleanCSVValue("Business Parameter"),
-                            cleanCSVValue("Focus Variant 1 Survey"),
-                            cleanCSVValue($arrProducts[0] ?? ""),
-                            cleanCSVValue($assignFocus1),
-                            cleanCSVValue($achieveFocus1),
-                            cleanCSVValue($showPerF1),
-                            cleanCSVValue($focus1Max),
-                            cleanCSVValue($focus1Earned),
-                            cleanCSVValue("")
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Business Parameter",
+                            "Focus Variant 1 Survey",
+                            $arrProducts[0] ?? "",
+                            $assignFocus1,
+                            $achieveFocus1,
+                            $showPerF1,
+                            $focus1Max,
+                            $focus1Earned,
+                            ""
                         ];
 
                         //Second Row - Focus Variant 2
                         $arrDataHolder[] = [
-                            cleanCSVValue($month),
-                            cleanCSVValue($district),
-                            cleanCSVValue($branch),
-                            cleanCSVValue($region),
-                            cleanCSVValue($showCircle),
-                            cleanCSVValue($showSection),
-                            cleanCSVValue($wd_code),
-                            cleanCSVValue($wd_firm_name),
-                            cleanCSVValue($wd_pop_group),
-                            cleanCSVValue($wd_market),
-                            cleanCSVValue($team_id),
-                            cleanCSVValue($team_name),
-                            cleanCSVValue($activeTeam),
-                            cleanCSVValue("Business Parameter"),
-                            cleanCSVValue("Focus Variant 2 Survey"),
-                            cleanCSVValue($arrProducts[1] ?? ""),
-                            cleanCSVValue($assignFocus2),
-                            cleanCSVValue($achieveFocus2),
-                            cleanCSVValue($showPerF2),
-                            cleanCSVValue($focus2Max),
-                            cleanCSVValue($focus2Earned),
-                            cleanCSVValue("")
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Business Parameter",
+                            "Focus Variant 2 Survey",
+                            $arrProducts[1] ?? "",
+                            $assignFocus2,
+                            $achieveFocus2,
+                            $showPerF2,
+                            $focus2Max,
+                            $focus2Earned,
+                            ""
                         ];
 
                         //Third Row - Overall Survey
                         $arrDataHolder[] = [
-                            cleanCSVValue($month),
-                            cleanCSVValue($district),
-                            cleanCSVValue($branch),
-                            cleanCSVValue($region),
-                            cleanCSVValue($showCircle),
-                            cleanCSVValue($showSection),
-                            cleanCSVValue($wd_code),
-                            cleanCSVValue($wd_firm_name),
-                            cleanCSVValue($wd_pop_group),
-                            cleanCSVValue($wd_market),
-                            cleanCSVValue($team_id),
-                            cleanCSVValue($team_name),
-                            cleanCSVValue($activeTeam),
-                            cleanCSVValue("Business Parameter"),
-                            cleanCSVValue("Overall Survey"),
-                            cleanCSVValue(""),
-                            cleanCSVValue($assignOverall),
-                            cleanCSVValue($achieveOverall),
-                            cleanCSVValue($showPerOverall),
-                            cleanCSVValue($overAllMax),
-                            cleanCSVValue($overAllEarned),
-                            cleanCSVValue("")
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Business Parameter",
+                            "Overall Survey",
+                            "",
+                            $assignOverall,
+                            $achieveOverall,
+                            $showPerOverall,
+                            $overAllMax,
+                            $overAllEarned,
+                            ""
                         ];
 
                         //Fourth Row - Qualified Attendance
                         $arrDataHolder[] = [
-                            cleanCSVValue($month),
-                            cleanCSVValue($district),
-                            cleanCSVValue($branch),
-                            cleanCSVValue($region),
-                            cleanCSVValue($showCircle),
-                            cleanCSVValue($showSection),
-                            cleanCSVValue($wd_code),
-                            cleanCSVValue($wd_firm_name),
-                            cleanCSVValue($wd_pop_group),
-                            cleanCSVValue($wd_market),
-                            cleanCSVValue($team_id),
-                            cleanCSVValue($team_name),
-                            cleanCSVValue($activeTeam),
-                            cleanCSVValue("Gate Parameter"),
-                            cleanCSVValue("Qualified Attendance"),
-                            cleanCSVValue(""),
-                            cleanCSVValue($totalQualifiedLimit),
-                            cleanCSVValue($qualifiedAttendance),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue($gateCheck)
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Gate Parameter",
+                            "Qualified Attendance",
+                            "",
+                            $totalQualifiedLimit,
+                            $qualifiedAttendance,
+                            "",
+                            "",
+                            "",
+                            $gateCheck
                         ];
 
                         //Fifth Row - Max Points Total
                         $arrDataHolder[] = [
-                            cleanCSVValue($month),
-                            cleanCSVValue($district),
-                            cleanCSVValue($branch),
-                            cleanCSVValue($region),
-                            cleanCSVValue($showCircle),
-                            cleanCSVValue($showSection),
-                            cleanCSVValue($wd_code),
-                            cleanCSVValue($wd_firm_name),
-                            cleanCSVValue($wd_pop_group),
-                            cleanCSVValue($wd_market),
-                            cleanCSVValue($team_id),
-                            cleanCSVValue($team_name),
-                            cleanCSVValue($activeTeam),
-                            cleanCSVValue("Max Points Total"),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue(""),
-                            cleanCSVValue($totalMax),
-                            cleanCSVValue($totalEarned),
-                            cleanCSVValue("")
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Max Points Total",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $totalMax,
+                            $totalEarned,
+                            ""
                         ];
 
                         $assignTarget = array();
@@ -645,8 +645,46 @@ class TargetReport
             }
         }
 
-        $arrResult = formatDownloadData("Target_Report", $header, $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        // $arrResult = formatDownloadData("Target_Report", $header, $arrDataHolder);
+        // $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+
+        $fileName = "Target_Report_$currentDateTime.csv";
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 

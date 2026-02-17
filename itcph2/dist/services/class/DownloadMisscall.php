@@ -175,24 +175,55 @@ class DownloadMisscall
                 }
 
                 $arrDataHolder[] = [
-                    cleanCSVValue($row['rec_id']),
-                    cleanCSVValue($row['token']),
-                    cleanCSVValue($row['rec_who']),
-                    cleanCSVValue($showVerified),
-                    cleanCSVValue($row['processed_on']),
-                    cleanCSVValue($row['rcd']),
-                    cleanCSVValue($row['rdt'])
+                    $row['rec_id'],
+                    $row['token'],
+                    $row['rec_who'],
+                    $showVerified,
+                    $row['processed_on'],
+                    $row['rcd'],
+                    $row['rdt'],
                 ];
             }
         }
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "Miss_Call_Report_$currentDateTime.csv";
 
-        if (!empty($arrDataHolder)) {
-            $arrResult = formatDownloadData("Miss_Call_Report", $header, $arrDataHolder);
-            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
-        } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
         }
 
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 

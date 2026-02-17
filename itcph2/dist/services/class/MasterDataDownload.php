@@ -897,54 +897,86 @@ class MasterDataDownload
                 }
 
                 $rowData = array(
-                    cleanCSVValue($row["rec_id"]),
-                    cleanCSVValue($row["team_id"]),
-                    cleanCSVValue($row["team_name"]),
-                    cleanCSVValue($row["district"]),
-                    cleanCSVValue($row["main_branch"]),
-                    cleanCSVValue($row["branch_name"]),
-                    cleanCSVValue($row["circle"]),
-                    cleanCSVValue($row["section"]),
-                    cleanCSVValue($row["wd_code"]),
-                    cleanCSVValue($row["wd_town"]),
-                    cleanCSVValue($row["state"]),
-                    cleanCSVValue($row["district"]),
-                    cleanCSVValue($row["sub_district_goi"]),
-                    cleanCSVValue($dayName),
-                    cleanCSVValue($route_name),
-                    cleanCSVValue($row["market_name"]),
-                    cleanCSVValue($row["goi_market_id"]),
-                    cleanCSVValue($row["outlet_name"]),
-                    cleanCSVValue($row["outlet_mobile"]),
-                    cleanCSVValue($row["goi_pop_group"]),
-                    cleanCSVValue($row["ds_sify_id"]),
-                    cleanCSVValue($row["ds_mobile"]),
-                    cleanCSVValue($row["outlet_type"]),
-                    cleanCSVValue($row["shop_type"]),
-                    cleanCSVValue($row["shop_uniq_code"]),
-                    cleanCSVValue($kyc),
-                    cleanCSVValue($row["lt"]),
-                    cleanCSVValue($row["lg"]),
-                    cleanCSVValue(isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : ""),
-                    cleanCSVValue($billingStatus)
+                    $row["rec_id"],
+                    $row["team_id"],
+                    $row["team_name"],
+                    $row["district"],
+                    $row["main_branch"],
+                    $row["branch_name"],
+                    $row["circle"],
+                    $row["section"],
+                    $row["wd_code"],
+                    $row["wd_town"],
+                    $row["state"],
+                    $row["district"],
+                    $row["sub_district_goi"],
+                    $dayName,
+                    $route_name,
+                    $row["market_name"],
+                    $row["goi_market_id"],
+                    $row["outlet_name"],
+                    $row["outlet_mobile"],
+                    $row["goi_pop_group"],
+                    $row["ds_sify_id"],
+                    $row["ds_mobile"],
+                    $row["outlet_type"],
+                    $row["shop_type"],
+                    $row["shop_uniq_code"],
+                    $kyc,
+                    $row["lt"],
+                    $row["lg"],
+                    isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : "",
+                    $billingStatus
                 );
 
                 if ($captureDateCondition) {
-                    $rowData[] = cleanCSVValue($noOfTimesVisited);
-                    $rowData[] = cleanCSVValue($billingStatus);
+                    $rowData[] = $noOfTimesVisited;
+                    $rowData[] = $billingStatus;
                 }
 
                 $arrDataHolder[] = $rowData;
             }
         }
 
-        if (!empty($arrDataHolder)) {
-            $arrResult = formatDownloadData("Route_Report", $header, $arrDataHolder);
-            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
-        } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "Route_Report_$currentDateTime.csv";
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
         }
 
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 }
