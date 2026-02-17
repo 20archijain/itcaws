@@ -53,18 +53,7 @@ class ProductivityReport
 
         // Create header
         $header = [];
-        $header[] = [
-            "District",
-            "Branch",
-            "No of DS registered",
-            "No of DS Using the App",
-            "% of P1 DS",
-            "Avg Route per Ds",
-            "% of DS having >6 routes",
-            "% of DS marking attendance (>=15 days)",
-            "% of DS with qualified attendance (>=15 days)",
-            "Total Outlet Mapped"
-        ];
+        $header[] = ["District", "Branch", "No of DS registered", " No of DS Using the App", "% of P1 DS", "Avg Route per Ds", "% of DS having >6 routes", "% of DS marking attendance (>=15 days)", "% of DS with qualified attendance (>=15 days)", "Total Outlet Mapped"];
 
         $arrDataHolder = [];
 
@@ -133,23 +122,44 @@ class ProductivityReport
 
                 $ttlOutletMapped = getRowColumn($this->_dbConn, "$routeTable", "Count(Distinct shop_uniq_code)", "dstatus = 0 AND team_id IN (SELECT team_id FROM $projectTeamTable WHERE branch_id = $branchId)");
 
-                $arrDataHolder[] = [
-                    cleanCSVValue($district),
-                    cleanCSVValue($branchName),
-                    cleanCSVValue($noOfDsRegistered),
-                    cleanCSVValue($noOfDsActive),
-                    cleanCSVValue(""),
-                    cleanCSVValue($avgRoutePerDs),
-                    cleanCSVValue($percentDsMoreThan6Routes),
-                    cleanCSVValue($percentDsWithAttendanceGreaterthen15days),
-                    cleanCSVValue(""),
-                    cleanCSVValue($ttlOutletMapped)
-                ];
+                $arrDataHolder[] = [$district, $branchName, $noOfDsRegistered, $noOfDsActive, "", $avgRoutePerDs, $percentDsMoreThan6Routes, $percentDsWithAttendanceGreaterthen15days, "", $ttlOutletMapped];
             }
         }
+        $fileName = "Productivity_Report_$currentDateTime.csv";
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
 
-        $arrResult = formatDownloadData("Productivity_Report", array($header), $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 }

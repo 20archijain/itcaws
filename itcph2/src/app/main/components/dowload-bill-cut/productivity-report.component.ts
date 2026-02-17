@@ -8,8 +8,7 @@ import { environment } from 'src/environments/environment';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { DropdownList, GetProductiveReportDataResponse } from 'src/app/core/interfaces/http-response.interface';
-import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
+import { DropdownList, GetProductiveReportDataResponse, GetDownloadFileDetails  } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
@@ -62,7 +61,7 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
       this.isDisabled = true;
       this.loaderService.startLoader();
       this.subscription.push(
-        this.formService.customActionCall<CsvDataFormat>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
+        this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
           null, environment.downloadAttendanceUrl)
           .pipe(
             finalize(() => {
@@ -72,7 +71,7 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.createCSV(resp.data);
+               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
       );
