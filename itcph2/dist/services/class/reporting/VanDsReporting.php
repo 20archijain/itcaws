@@ -527,7 +527,9 @@ class VanDsReporting
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
-            "binderReportDownloadDays" => 5
+            "binderReportDownloadDays" => 5,
+            "transactionReportDownloadDays" => 20,
+            "summaryReportDownloadDays" => 30,
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -936,7 +938,7 @@ class VanDsReporting
                 $i++;
             }
 
-            // Sort by capture_datetime descending 
+            // Sort by capture_datetime descending
             usort($arrData, function ($a, $b) {
                 return $b['_timestamp'] - $a['_timestamp'];
             });
@@ -1078,85 +1080,6 @@ class VanDsReporting
         return $mdoCache;
     }
 
-    /**
-     * Batch load call_time and outlet counts for getDownloadSummary.
-     * Returns: ['callTime' => [teamId|date => [totalSeconds, totalMinutes]], 'orderShop' => [...], 'addShop' => [...]]
-     */
-    private function getBatchSummaryAuxData($respTable, $teamDatePairs)
-    {
-        $result = ['callTime' => [], 'orderShop' => [], 'addShop' => []];
-        if (empty($teamDatePairs)) {
-            return $result;
-        }
-
-        $conditions = [];
-        foreach ($teamDatePairs as $pair) {
-            $teamId = (int) $pair['team_id'];
-            $date = $pair['date'];
-            $conditions[] = "(capture_date = '$date' AND team_id = $teamId)";
-        }
-        $whereBase = implode(' OR ', $conditions);
-
-        // Batch call_time (Outlet Order + Add Outlet)
-        $rs = null;
-        $n = 0;
-        $q = "SELECT team_id, capture_date, call_time FROM $respTable WHERE dstatus = '0' AND ques_0 IN ('Outlet Order', 'Add Outlet') AND ($whereBase)";
-        $this->_dbConn->ExecuteSelectQuery($q, $rs, $n);
-        $callSums = [];
-        if ($n > 0) {
-            while ($r = $this->_dbConn->GetData($rs)) {
-                $key = $r['team_id'] . '|' . $r['capture_date'];
-                if (!isset($callSums[$key])) {
-                    $callSums[$key] = 0;
-                }
-                $callSums[$key] += floatval($r['call_time']);
-            }
-        }
-        foreach ($teamDatePairs as $pair) {
-            $key = $pair['team_id'] . '|' . $pair['date'];
-            $totalMs = isset($callSums[$key]) ? $callSums[$key] : 0;
-            $totalSec = $totalMs / 1000;
-            $result['callTime'][$key] = [$totalSec, floor($totalSec / 60)];
-        }
-
-        // Batch order shop count
-        $rs = null;
-        $n = 0;
-        $q = "SELECT team_id, capture_date, COUNT(DISTINCT ques_3) AS cnt FROM $respTable WHERE dstatus = '0' AND ques_0 = 'Outlet Order' AND ($whereBase) GROUP BY team_id, capture_date";
-        $this->_dbConn->ExecuteSelectQuery($q, $rs, $n);
-        if ($n > 0) {
-            while ($r = $this->_dbConn->GetData($rs)) {
-                $key = $r['team_id'] . '|' . $r['capture_date'];
-                $result['orderShop'][$key] = (int) $r['cnt'];
-            }
-        }
-        foreach ($teamDatePairs as $pair) {
-            $key = $pair['team_id'] . '|' . $pair['date'];
-            if (!isset($result['orderShop'][$key])) {
-                $result['orderShop'][$key] = 0;
-            }
-        }
-
-        // Batch add shop count
-        $rs = null;
-        $n = 0;
-        $q = "SELECT team_id, capture_date, COUNT(DISTINCT ques_3) AS cnt FROM $respTable WHERE dstatus = '0' AND ques_0 = 'Add Outlet' AND ($whereBase) GROUP BY team_id, capture_date";
-        $this->_dbConn->ExecuteSelectQuery($q, $rs, $n);
-        if ($n > 0) {
-            while ($r = $this->_dbConn->GetData($rs)) {
-                $key = $r['team_id'] . '|' . $r['capture_date'];
-                $result['addShop'][$key] = (int) $r['cnt'];
-            }
-        }
-        foreach ($teamDatePairs as $pair) {
-            $key = $pair['team_id'] . '|' . $pair['date'];
-            if (!isset($result['addShop'][$key])) {
-                $result['addShop'][$key] = 0;
-            }
-        }
-
-        return $result;
-    }
 
     final public function getDownloadData()
     {
@@ -1581,6 +1504,7 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
         // $respTable = getRespTable(1, $this->_projectId);
+        // Recommended indexes for speed: response (dstatus, ques_0, team_id, capture_date); stock_summary (dstatus, stock_type, team_id, capture_date); vands_summary (dstatus, team_id, activity_date).
         $where = "";
         $where2 = "";
         // filter query
@@ -1723,27 +1647,8 @@ class VanDsReporting
                 }
             }
 
-            // get stock for each team
+            // get sales first; stock loaded only for (team_id, capture_date) in result (fast: chunked IN)
             $arrTeamWiseStock = array();
-            $sStockAction = null;
-            $iStockRows = 0;
-            $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0) $stockWhere";
-            $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
-
-            if ($iStockRows > 0) {
-                while ($rowStock = $this->_dbConn->GetData($sStockAction)) {
-                    $teamId = $rowStock["team_id"];
-                    $captureDate = $rowStock["capture_date"];
-                    $stockType = $rowStock["stock_type"];
-
-                    $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
-                    foreach ($arrStockProducts as $product) {
-                        $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
-                    }
-                }
-            }
-
-            // get sales
             // Don't use b.dstatus = 0
             // $where .= getFilterResult(
             //     $this->_data['searchbar'],
@@ -1771,8 +1676,37 @@ class VanDsReporting
                     $mdoFilters[] = ['ds_id' => $row["team_id"], 'capture_date' => $row["activity_date"]];
                 }
 
-                $auxData = $this->getBatchSummaryAuxData($respTable, $teamDatePairs);
                 $mdoCache = $this->getBatchMDODetails($mdoFilters);
+
+                // Fast: Load stock only for (team_id, capture_date) pairs in this branch result (chunked IN)
+                if ($arrStockProducts && isNonEmptyArray($arrStockProducts) && isNonEmptyArray($teamDatePairs)) {
+                    $stockChunkSize = 200;
+                    $stockChunks = array_chunk($teamDatePairs, $stockChunkSize);
+                    foreach ($stockChunks as $chunk) {
+                        $inList = array();
+                        foreach ($chunk as $p) {
+                            $tid = (int) $p['team_id'];
+                            $d = addslashes($p['date']);
+                            $inList[] = "($tid, '$d')";
+                        }
+                        $inClause = implode(",", $inList);
+                        $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0) AND (team_id, capture_date) IN ($inClause)";
+                        $sStockAction = null;
+                        $iStockRows = 0;
+                        $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
+                        if ($iStockRows > 0) {
+                            while ($rowStock = $this->_dbConn->GetData($sStockAction)) {
+                                $teamId = $rowStock["team_id"];
+                                $captureDate = $rowStock["capture_date"];
+                                $stockType = $rowStock["stock_type"];
+                                $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
+                                foreach ($arrStockProducts as $product) {
+                                    $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
+                                }
+                            }
+                        }
+                    }
+                }
 
                 foreach ($allRows as $row) {
                     $index = count($arrSummary["sale"]);
@@ -1781,10 +1715,16 @@ class VanDsReporting
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
-                    $auxKey = $teamId . '|' . $date;
+                    $dateEsc = addslashes($date);
 
-                    list($time, $totalMinutes) = isset($auxData['callTime'][$auxKey]) ? $auxData['callTime'][$auxKey] : [0, 0];
+                    // getRowColumn for call time and outlet counts (per team/date)
+                    $totalCallMs = (float) getRowColumn($this->_dbConn, $respTable, "COALESCE(SUM(call_time), 0)", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
+                    $time = $totalCallMs / 1000;
                     $totalTimeSpent = $time > 0 ? gmdate("H:i:s", (int) round($time)) : "";
+                    $totalMinutes = $time > 0 ? floor($time / 60) : "";
+
+                    $orderShop = (int) getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
+                    $addShop = (int) getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
 
                     $totalSale = 0;
                     if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
@@ -1862,8 +1802,6 @@ class VanDsReporting
                         $district = $arrBranchDetails[$branchIndex][3];
                     }
 
-                    $orderShop = isset($auxData['orderShop'][$auxKey]) ? $auxData['orderShop'][$auxKey] : 0;
-                    $addShop = isset($auxData['addShop'][$auxKey]) ? $auxData['addShop'][$auxKey] : 0;
                     $totalShops = $orderShop + $addShop;
 
                     // Divide by total shops
