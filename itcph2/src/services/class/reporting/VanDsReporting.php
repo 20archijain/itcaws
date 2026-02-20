@@ -898,7 +898,7 @@ class VanDsReporting
                 }
                 $shopType = $shopDetails[0] ?? "";
                 $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
-                $mobileNumber = $shopDetails[2] ??"";
+                $mobileNumber = $shopDetails[2] ?? "";
                 $sellIinOrder = $row["ques_4"];
                 $shopFrontPicture = $row["ques_6"];
                 $reasonForNoSale = $sellIinOrder == "Yes" ? $row["ques_5"] : "";
@@ -1866,7 +1866,7 @@ class VanDsReporting
 
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
-                            $arrSummary["sale"][$index][$iProductIndex] = round(floatval($iSale), 2);
+                            $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
                         }
                     }
 
@@ -1874,7 +1874,7 @@ class VanDsReporting
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
-                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? round($arrStock[0][$stockProduct[1]], 2) : 0;
+                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
 
                         // Accumulate the ready stock pickup
                         $totalReadyStockPickup += $iStockQty;
