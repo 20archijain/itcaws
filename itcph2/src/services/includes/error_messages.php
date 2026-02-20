@@ -99,6 +99,11 @@ $TEAM_EXISTS = "Team already exists";
 $USERNAME_EXISTS = "Username already exists";
 $NO_TEAM_FOUND = "No team found";
 
+
+// Product
+$PRODUCT_ADDED = "Product added";
+$PRODUCT_NOT_ADDED = "Product not added";
+
 // LISTING
 $FILE_DOWNLOADING = "Downloading file. Please wait...";
 $FILE_NOT_DOWNLOADING = "Downloading failed";

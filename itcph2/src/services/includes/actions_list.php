@@ -54,4 +54,5 @@ $ACTION_LIST = array(
     'GET_TABLE_COLUMNS' => 'get_tables_column',
     "GET_DOWNLOAD_CSV" => 'get_download_csv',
     'GET_DELIVERY_DATA' => 'get_delivery_data',
+    'SUBMIT_DATA' => 'submit_data',
 );
