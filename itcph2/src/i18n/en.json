@@ -166,6 +166,8 @@
         "type": "Surveyor Type",
         "branch": "Branch",
         "district": "District",
+        "region": "Region",
+        "teamType": "Team Type",
         "category": "Brand Family",
         "product": "Variant",
         "circle": "Circle",

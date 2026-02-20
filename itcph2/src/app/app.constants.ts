@@ -132,6 +132,7 @@ export const STATIC_MODULES = {
     getTables: 'get_tables',
     getTableColumns: 'get_tables_column',
     getDownloadCSV : 'get_download_csv',
+    submitSelectedProducts : 'submit_data',
   },
   forgot: {
     action: 'forgot',

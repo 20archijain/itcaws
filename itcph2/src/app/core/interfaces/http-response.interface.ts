@@ -403,6 +403,8 @@ export interface MdoListing {
 }
 
 export interface DashboardData {
+  teamTypeList: DropdownList[];
+  regionList: DropdownList[];
   districtList: DropdownList[];
   wdPopGroupList: DropdownList[];
   wdMarketList: DropdownList[];
@@ -566,5 +568,47 @@ export interface teams {
   tlName: DropdownList<string, string>[];
   teamList: DropdownList<string, string>[];
   routeList: DropdownList<string, string>[];
+}
+
+export interface GetProductSelectorDataResponse {
+  submittedList: any[];
+  statusFlag: boolean;
+  mainBranchList: DropdownList[];
+  productList: any;
+  isSelectable: boolean;
+  viewBody: string[];
+  viewHeader: string[];
+  status: string;
+  data: {
+    productList: DropdownList[];         // all available products from backend
+    viewHeader: string[];
+    viewBody: string[];
+    isSelectable: boolean;
+  };
+}
+
+export interface ProductItem {
+  id: number;
+  name: string;
+  category: string;
+  price?: number;
+  sku?: string;
+}
+
+// Each item in the submit payload — includes checkbox flags
+export interface ProductItemWithFlags extends ProductItem {
+  dspmBrand: boolean;   // firstCheckbox  — max 2 across all selected products
+  isFocusBrand:   boolean;   // secondCheckbox — unlimited, any/all can be checked
+}
+
+export interface SubmitSelectedProductsResponse {
+  status: string;
+  data?: any;
+  message?: string;
+}
+
+export interface ProductSelectorPayload {
+  selectedProducts: ProductItemWithFlags[];
+  formData: [];
 }
 
