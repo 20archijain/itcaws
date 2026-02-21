@@ -15,37 +15,57 @@ $color-text:            #e8eaf0;
 $color-text-muted:      #8b92a8;
 $color-text-faint:      #555f75;
 $color-card:            #1a2030;
-$color-card-hover:      #202840;
+$color-card-hover:      #aaafbe;
 $radius-lg:             12px;
 $radius-sm:             8px;
 $transition:            0.18s ease;
-$font-mono:             'DM Mono', monospace;
+// $font-mono:             'DM Mono', monospace;
+$font-mono:             "Mada", sans-serif;
 $font-display:          'Syne', sans-serif;
 
 // ── Page wrapper ───────────────────────────────────────────────────────────────
 .prd-selector-page {
   font-family: $font-display;
-  background: $color-bg;
+  // background: $color-bg;
   min-height: 100vh;
-  padding: 2.5rem 2rem 4rem;
+  padding-bottom: 2.5rem;
   color: $color-text;
 }
 
 // ── Page header ────────────────────────────────────────────────────────────────
 .prd-selector-page__header {
-  text-align: center;
-  margin-bottom: 2rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
 .prd-selector-page__title {
-  font-size: 2.2rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 700;
   letter-spacing: -0.03em;
-  background: linear-gradient(130deg, #e8eaf0 0%, $color-accent 100%);
+  background: linear-gradient(130deg, #8099e4 0%, #45a0ff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-bottom: 0.35rem;
+}
+
+.prd-selector-page__filters[_ngcontent-ng-c3379978321] {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
+    backdrop-filter: blur(16px) saturate(180%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -o-border-radius: 12px;
 }
 
 .prd-selector-page__subtitle {
@@ -66,8 +86,8 @@ $font-display:          'Syne', sans-serif;
 
 .filter-row {
   display: flex;
-  align-items: flex-end;
-  gap: 1.25rem;
+  align-items: center;
+  gap: 1rem;
   flex-wrap: wrap;
 }
 
@@ -115,9 +135,9 @@ $font-display:          'Syne', sans-serif;
 .btn {
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   letter-spacing: 0.02em;
-  padding: 0.55rem 1.25rem;
+  padding: 0.5rem;
   border-radius: $radius-sm;
   border: none;
   cursor: pointer;
@@ -137,14 +157,14 @@ $font-display:          'Syne', sans-serif;
   }
 
   &--secondary {
-    background: transparent;
-    color: $color-text-muted;
-    border: 1.5px solid $color-border;
+    background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
+    color: #ffffff;
+    border: none;
     &:hover:not(:disabled) { border-color: $color-text-muted; color: $color-text; }
   }
 
   &--submit {
-    background: $color-accent;
+    background: linear-gradient(135deg, #4680ff 0, #7a9ce7 100%);
     color: #fff;
     display: flex;
     align-items: center;
@@ -171,7 +191,7 @@ $font-display:          'Syne', sans-serif;
 .dnd-board {
   display: grid;
   grid-template-columns: 1fr 56px 1fr;
-  max-width: 1100px;
+  max-width: 1200px;
   margin: 0 auto;
   min-height: 520px;
   align-items: stretch;
@@ -179,11 +199,13 @@ $font-display:          'Syne', sans-serif;
 
 // ── Panel ──────────────────────────────────────────────────────────────────────
 .dnd-panel {
-  background: $color-surface;
-  border: 1.5px solid $color-border;
+  background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
+  backdrop-filter: blur(16px) saturate(180%);
+  border: none;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
   transition: border-color $transition, box-shadow $transition;
 
   &--available {
@@ -206,26 +228,26 @@ $font-display:          'Syne', sans-serif;
 
 // ── Panel Header ───────────────────────────────────────────────────────────────
 .dnd-panel__header {
-  padding: 1.2rem 1.4rem 0.9rem;
+  padding: 1rem;
   border-bottom: 1px solid $color-border;
   flex-shrink: 0;
 }
 
 .dnd-panel__title-row {
   display: flex;
-  align-items: center;
-  gap: 0.55rem;
+  align-items: end;
+  gap: 0.25rem;
   margin-bottom: 0.3rem;
 
   &--sub { margin-top: 0.15rem; }
 }
 
-.dnd-panel__icon { font-size: 1.05rem; }
+.dnd-panel__icon { font-size: 1.25rem; }
 
 .dnd-panel__title {
   font-size: 0.95rem;
   font-weight: 700;
-  color: $color-text;
+  color: #50576e;
   flex: 1;
 }
 
@@ -234,24 +256,38 @@ $font-display:          'Syne', sans-serif;
   font-size: 0.72rem;
   color: $color-text-faint;
   flex: 1;
+  margin-bottom: 0;
+}
+
+.dnd-accordion__trigger{
+    width: 100%;
+    max-width: 800px;
+    border-radius: 8px;
+    padding: 0.4rem;
+    text-align: left;
+    border: none;
+    background: #99b6f6;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
 }
 
 .dnd-badge {
-  font-family: $font-mono;
-  font-size: 0.72rem;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 20px;
-  background: #2a3245;
-  color: $color-text-muted;
-  border: 1px solid $color-border;
-  min-width: 28px;
-  text-align: center;
+      font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
+    color: #ffffff;
+    border: 1px solid #fff;
+    min-width: 28px;
+    text-align: center;
 
   &--active {
-    background: #1a3a2a;
-    color: $color-green;
-    border-color: rgba(62, 207, 142, 0.28);
+    background: #317553;
+    // border-color: rgba(62, 207, 142, 0.28);
   }
 }
 
@@ -312,13 +348,18 @@ $font-display:          'Syne', sans-serif;
 }
 
 // ── Cards ──────────────────────────────────────────────────────────────────────
+.dnd-accordion__body{
+margin-top: 0.55rem;
+}
+
 .dnd-card {
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  padding: 0.7rem 0.8rem;
-  background: $color-card;
-  border: 1px solid $color-border;
+  margin-bottom: 0.25rem;
+  padding: 5px;
+  background: #fff;
+  border: none;
   border-radius: $radius-sm;
   cursor: grab;
   user-select: none;
@@ -332,6 +373,7 @@ $font-display:          'Syne', sans-serif;
   &:hover {
     background: $color-card-hover;
     border-color: #3a4560;
+    color: #fff;
     box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     transform: translateY(-1px);
   }
@@ -369,7 +411,7 @@ $font-display:          'Syne', sans-serif;
 
   // ── Sub-elements ──────────────────────────────────────────────────────────
   &__handle {
-    color: $color-text-faint;
+    color: #00ff49;
     font-size: 1rem;
     line-height: 1;
     letter-spacing: -1px;
@@ -380,15 +422,15 @@ $font-display:          'Syne', sans-serif;
   &__info {
     flex: 1;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 0.18rem;
     min-width: 0;
   }
 
   &__name {
     font-size: 0.88rem;
-    font-weight: 600;
-    color: $color-text;
+    font-weight: 400;
+    color: #434449;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -411,8 +453,8 @@ $font-display:          'Syne', sans-serif;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    color: $color-accent;
-    background: rgba(74, 144, 217, 0.12);
+    color: #4680ff;
+    background:  rgb(224 237 252);
     padding: 1px 5px;
     border-radius: 4px;
   }
@@ -428,19 +470,19 @@ $font-display:          'Syne', sans-serif;
     width: 24px;
     height: 24px;
     border-radius: 6px;
-    border: 1px solid $color-border;
+    border: 1px solid #fff;
     background: transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    font-size: 1rem;
+    font-size: 1.25rem;
     line-height: 1;
     transition: background $transition, border-color $transition;
 
     &--add {
-      color: $color-green;
+      color: #00ff8d;
       &:hover { background: rgba(62, 207, 142, 0.14); border-color: $color-green; }
     }
 
@@ -524,12 +566,11 @@ $font-display:          'Syne', sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: $color-surface-alt;
-  border-top: 1.5px solid $color-border;
-  border-bottom: 1.5px solid $color-border;
-
+  background: #9ebaf9;
+  border-top: 2px solid #869fdb;
+  border-bottom: 2px solid #869fdb;
   &__icon {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
     color: $color-text-faint;
   }
 }
@@ -537,8 +578,8 @@ $font-display:          'Syne', sans-serif;
 // ── Panel Footer ───────────────────────────────────────────────────────────────
 .dnd-panel__footer {
   padding: 0.9rem 1.25rem;
-  border-top: 1px solid $color-border;
-  background: rgba(0,0,0,0.18);
+  // border-top: 1px solid $color-border;
+  background: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -604,14 +645,14 @@ $font-display:          'Syne', sans-serif;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.07em;
-    color: $color-text-muted;
+    color: #000000;
   }
 
   &__counter {
     font-family: $font-mono;
     font-size: 0.6rem;
     color: $color-text-faint;
-    background: $color-surface-alt;
+    background: #fff;
     border: 1px solid $color-border;
     padding: 0 5px;
     border-radius: 8px;
@@ -625,9 +666,9 @@ $font-display:          'Syne', sans-serif;
     }
     // turns red when both slots are used
     &--full-other {
-      color: $color-blue;
-      border-color: rgba(42, 5, 231, 0.4);
-      background: rgba(224, 82, 82, 0.08);
+    color: #081c2c;
+    border-color: rgba(42, 5, 231, 0.4);
+    background: rgb(25 86 255 / 21%);
     }
   }
 }
@@ -675,8 +716,8 @@ $font-display:          'Syne', sans-serif;
     width: 18px;
     height: 18px;
     border-radius: 5px;
-    border: 1.5px solid $color-border;
-    background: $color-surface-alt;
+    border: 1.5px solid #000000;
+    background: transparent;
     display: flex;
     align-items: center;
     justify-content: center;

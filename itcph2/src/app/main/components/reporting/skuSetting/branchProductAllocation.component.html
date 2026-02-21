@@ -3,7 +3,7 @@
   <!-- ── Page Header ─────────────────────────────────────────────────────── -->
   <div class="prd-selector-page__header">
     <h2 class="prd-selector-page__title">Product Allocation</h2>
-    <p class="prd-selector-page__subtitle">Drag products to your selection, then submit.</p>
+    <p class="prd-selector-page__subtitle">(Drag/Click products to your selection, then submit.)</p>
   </div>
 
   <form [formGroup]="form" class="prd-selector-page__filters">
@@ -54,7 +54,7 @@
           <!-- All products selected -->
           <div class="dnd-empty" *ngIf="categoryGroups.length === 0">
             <span class="dnd-empty__icon">✅</span>
-            <p>All products selected</p>
+            <p>Select Product For Allocation</p>
           </div>
 
           <!-- ── One accordion row per category ────────────────────────── -->
@@ -87,7 +87,7 @@
 
               <!-- All from this category selected -->
               <div class="dnd-empty dnd-empty--sm" *ngIf="group.products.length === 0">
-                <p>All from this category selected</p>
+                <p>All products from this category is selected</p>
               </div>
 
               <div class="dnd-card" *ngFor="let product of group.products; trackBy: trackById" draggable="true"
@@ -201,7 +201,10 @@
           <span class="dnd-panel__footer-summary">
             {{ selectedProducts.length }} product{{ selectedProducts.length !== 1 ? 's' : '' }} selected
             <ng-container *ngIf="dspmBrandCount > 0">
-              &middot; {{ dspmBrandCount }} dspm brand
+              &middot; {{ dspmBrandCount }} DSPM brand
+            </ng-container>
+            <ng-container *ngIf="isFocusBrandCount > 0">
+              &middot; {{ isFocusBrandCount }} Focus brand
             </ng-container>
           </span>
           <button type="button" class="btn btn--submit" [disabled]="isDisabled || selectedProducts.length === 0"
