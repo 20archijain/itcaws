@@ -571,6 +571,10 @@ export interface teams {
 }
 
 export interface GetProductSelectorDataResponse {
+  isFocusList: [];
+  isDspmList: [];
+  selectedDataList: ProductItem[];
+  selectedProductsList: [];
   submittedList: any[];
   statusFlag: boolean;
   mainBranchList: DropdownList[];
