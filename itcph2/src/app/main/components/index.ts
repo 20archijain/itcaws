@@ -62,6 +62,7 @@ import { PDFAccessReportComponent } from './pdf-access-report/pdf-access-report.
 import { LineCutReportComponent } from './line-cut/line-cut-report.component';
 import { OrderListingComponent } from './reporting/order-report/order-listing.component';
 import { BranchProductAllocationComponent } from './reporting/skuSetting/branchProductAllocation.component';
+import { DistrictProductAllocationComponent } from './reporting/skuSetting/districtProductAllocation.component';
 
 
 export const MAIN_COMPONENTS = [
@@ -127,6 +128,7 @@ export const MAIN_COMPONENTS = [
   LineCutReportComponent,
   OrderListingComponent,
   BranchProductAllocationComponent,
+  DistrictProductAllocationComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -192,4 +194,5 @@ export const MAP_MAIN_COMPONENTS = {
   LineCutReportComponent,
   OrderListingComponent,
   BranchProductAllocationComponent,
+  DistrictProductAllocationComponent,
 };

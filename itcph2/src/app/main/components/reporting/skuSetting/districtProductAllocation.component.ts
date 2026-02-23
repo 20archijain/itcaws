@@ -27,7 +27,8 @@ export interface CategoryGroup {
   templateUrl: './branchProductAllocation.component.html',
   styleUrls: ['./branchProductAllocation.component.scss']
 })
-export class BranchProductAllocationComponent implements AfterViewInit, OnInit, OnDestroy {
+
+export class DistrictProductAllocationComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private subscription: Subscription[] = [];
 
@@ -124,14 +125,16 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
               this.statusFlagCond = resp.data.statusFlag;
-              // if (this.statusFlagCond == true) {
-              //   this.toastrService.toastr({
-              //     msg: 'Already Submitted',
-              //     type: 'error'
-              //   });
-              // }
               this.submittedDataList = resp.data.submittedList;
-              // console.log(resp.data.submittedList);
+
+              this.selectedProducts = resp.data.selectedDataList;
+              //Check In data already submitted by
+              if (resp.data.selectedDataList.length > 0) {
+                const existingIds = new Set(resp.data.selectedDataList.map(p => p.id));
+
+                // filter
+                resp.data.productList = resp.data.productList.filter(p => !existingIds.has(p.value));
+              }
 
 
               this.availableProducts = resp.data.productList.map(p => ({
@@ -139,9 +142,8 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
                 name: p.label,
                 category: p.category,
               }));
-              this.selectedProducts = [];
-              this.dspmBrandMap = {};
-              this.isFocusBrandMap = {};
+              this.dspmBrandMap = resp.data.isDspmList;
+              this.isFocusBrandMap = resp.data.isFocusList;
               this.openCategories = new Set();
               this.buildCategoryGroups(); // derive accordion from flat list
             }
@@ -293,7 +295,6 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
       formSubmissionCond = hasValueFocusBrand;
     }
     if (formSubmissionCond) {
-
       if (!this.isDisabled && this.selectedProducts.length > 0 && this.form.valid) {
         this.isDisabled = true;
         this.loaderService.startLoader();
@@ -330,7 +331,6 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
             })
         );
       }
-
     } else {
       if (type === '5') {
         this.toastrService.toastr({
