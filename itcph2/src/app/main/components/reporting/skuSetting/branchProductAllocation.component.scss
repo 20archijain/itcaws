@@ -1,0 +1,803 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap');
+
+// ── Variables ──────────────────────────────────────────────────────────────────
+$color-bg:              #0f1117;
+$color-surface:         #161b27;
+$color-surface-alt:     #1e2535;
+$color-border:          #2a3245;
+$color-border-active:   #4a90d9;
+$color-accent:          #4a90d9;
+$color-accent-hover:    #5ba3ef;
+$color-green:           #3ecf8e;
+$color-red:             #e05252;
+$color-blue:             #1e9aff;
+$color-text:            #e8eaf0;
+$color-text-muted:      #8b92a8;
+$color-text-faint:      #555f75;
+$color-card:            #1a2030;
+$color-card-hover:      #aaafbe;
+$radius-lg:             12px;
+$radius-sm:             8px;
+$transition:            0.18s ease;
+// $font-mono:             'DM Mono', monospace;
+$font-mono:             "Mada", sans-serif;
+$font-display:          'Syne', sans-serif;
+
+// ── Page wrapper ───────────────────────────────────────────────────────────────
+.prd-selector-page {
+  font-family: $font-display;
+  // background: $color-bg;
+  min-height: 100vh;
+  padding-bottom: 2.5rem;
+  color: $color-text;
+}
+
+// ── Page header ────────────────────────────────────────────────────────────────
+.prd-selector-page__header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.prd-selector-page__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  background: linear-gradient(130deg, #8099e4 0%, #45a0ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 0.35rem;
+}
+
+.prd-selector-page__filters[_ngcontent-ng-c3379978321] {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
+    backdrop-filter: blur(16px) saturate(180%);
+    border: none;
+    border-radius: 12px;
+    padding: 0.5rem;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    -webkit-border-radius: 12px;
+    -moz-border-radius: 12px;
+    -ms-border-radius: 12px;
+    -o-border-radius: 12px;
+}
+
+.prd-selector-page__subtitle {
+  font-family: $font-mono;
+  font-size: 0.875rem;
+  color: $color-text-muted;
+}
+
+// ── Filter form ────────────────────────────────────────────────────────────────
+.prd-selector-page__filters {
+  max-width: 1100px;
+  margin: 0 auto 1.75rem;
+  background: $color-surface;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-lg;
+  padding: 1.25rem 1.5rem;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1 1 160px;
+}
+
+.filter-label {
+  font-family: $font-mono;
+  font-size: 0.72rem;
+  color: $color-text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.filter-select {
+  background: $color-surface-alt;
+  border: 1.5px solid $color-border;
+  border-radius: $radius-sm;
+  color: $color-text;
+  font-family: $font-mono;
+  font-size: 0.85rem;
+  padding: 0.55rem 0.875rem;
+  outline: none;
+  cursor: pointer;
+  transition: border-color $transition;
+  appearance: none;
+  -webkit-appearance: none;
+
+  &:focus { border-color: $color-border-active; }
+
+  option { background: $color-surface-alt; }
+}
+
+.filter-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-shrink: 0;
+}
+
+// ── Shared button styles ───────────────────────────────────────────────────────
+.btn {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  padding: 0.5rem;
+  border-radius: $radius-sm;
+  border: none;
+  cursor: pointer;
+  transition: background $transition, transform $transition, box-shadow $transition, opacity $transition;
+
+  &:active:not(:disabled) { transform: translateY(1px); }
+  &:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  &--primary {
+    background: $color-accent;
+    color: #fff;
+    &:hover:not(:disabled) {
+      background: $color-accent-hover;
+      box-shadow: 0 4px 16px rgba(74, 144, 217, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+
+  &--secondary {
+    background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
+    color: #ffffff;
+    border: none;
+    &:hover:not(:disabled) { border-color: $color-text-muted; color: $color-text; }
+  }
+
+  &--submit {
+    background: linear-gradient(135deg, #4680ff 0, #7a9ce7 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    &:hover:not(:disabled) {
+      background: $color-accent-hover;
+      box-shadow: 0 4px 16px rgba(74, 144, 217, 0.35);
+      transform: translateY(-1px);
+    }
+  }
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+// ── DnD Board layout ───────────────────────────────────────────────────────────
+.dnd-board {
+  display: grid;
+  grid-template-columns: 1fr 56px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 520px;
+  align-items: stretch;
+}
+
+// ── Panel ──────────────────────────────────────────────────────────────────────
+.dnd-panel {
+  background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
+  backdrop-filter: blur(16px) saturate(180%);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  transition: border-color $transition, box-shadow $transition;
+
+  &--available {
+    border-radius: $radius-lg 0 0 $radius-lg;
+    border-right: none;
+  }
+
+  &--selected {
+    border-radius: 0 $radius-lg $radius-lg 0;
+    border-left: none;
+  }
+
+  &--drag-over {
+    border-color: $color-border-active;
+    box-shadow: inset 0 0 0 2px rgba(74, 144, 217, 0.12), 0 0 28px rgba(74, 144, 217, 0.07);
+
+    .dnd-panel__body { background: rgba(74, 144, 217, 0.035); }
+  }
+}
+
+// ── Panel Header ───────────────────────────────────────────────────────────────
+.dnd-panel__header {
+  padding: 1rem;
+  border-bottom: 1px solid $color-border;
+  flex-shrink: 0;
+}
+
+.dnd-panel__title-row {
+  display: flex;
+  align-items: end;
+  gap: 0.25rem;
+  margin-bottom: 0.3rem;
+
+  &--sub { margin-top: 0.15rem; }
+}
+
+.dnd-panel__icon { font-size: 1.25rem; }
+
+.dnd-panel__title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #50576e;
+  flex: 1;
+}
+
+.dnd-panel__hint {
+  font-family: $font-mono;
+  font-size: 0.72rem;
+  color: $color-text-faint;
+  flex: 1;
+  margin-bottom: 0;
+}
+
+.dnd-accordion__trigger{
+    width: 100%;
+    max-width: 800px;
+    border-radius: 8px;
+    padding: 0.4rem;
+    text-align: left;
+    border: none;
+    background: #99b6f6;
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+}
+
+.dnd-badge {
+      font-family: "DM Mono", monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
+    color: #ffffff;
+    border: 1px solid #fff;
+    min-width: 28px;
+    text-align: center;
+
+  &--active {
+    background: #317553;
+    // border-color: rgba(62, 207, 142, 0.28);
+  }
+}
+
+// ── Panel Body ─────────────────────────────────────────────────────────────────
+.dnd-panel__body {
+  flex: 1;
+  padding: 0.7rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  transition: background $transition;
+
+  &::-webkit-scrollbar { width: 4px; }
+  &::-webkit-scrollbar-thumb { background: $color-border; border-radius: 2px; }
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+.dnd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 2.5rem 1rem;
+  color: $color-text-faint;
+  font-family: $font-mono;
+  font-size: 0.82rem;
+  flex: 1;
+
+  &__icon { font-size: 1.7rem; }
+}
+
+// ── Drop Hint ──────────────────────────────────────────────────────────────────
+.dnd-drop-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 2.5rem 1rem;
+  border: 2px dashed $color-border;
+  border-radius: $radius-sm;
+  color: $color-text-faint;
+  font-family: $font-mono;
+  font-size: 0.82rem;
+  opacity: 0;
+  pointer-events: none;
+  flex: 1;
+  transition: opacity $transition;
+
+  &__icon { font-size: 1.7rem; }
+
+  &--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+// ── Cards ──────────────────────────────────────────────────────────────────────
+.dnd-accordion__body{
+margin-top: 0.55rem;
+}
+
+.dnd-card {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.25rem;
+  padding: 5px;
+  background: #fff;
+  border: none;
+  border-radius: $radius-sm;
+  cursor: grab;
+  user-select: none;
+  transition:
+    background $transition,
+    border-color $transition,
+    transform $transition,
+    box-shadow $transition,
+    opacity $transition;
+
+  &:hover {
+    background: $color-card-hover;
+    border-color: #3a4560;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transform: translateY(-1px);
+  }
+
+  &:active { cursor: grabbing; }
+
+  // Dragging ghost state
+  &.dragging {
+    opacity: 0.35;
+    transform: scale(0.97) rotate(0.5deg);
+    border-color: $color-border-active;
+  }
+
+  // Selected panel variant — green left stripe
+  // Uses same column structure as .dnd-col-headers for perfect checkbox alignment
+  // handle(auto) | info(1fr) | cb-first(44px) | cb-second(44px) | remove(auto)
+  &--selected {
+    border-left: 3px solid $color-green;
+    display: grid;
+    grid-template-columns: auto 1fr 44px 44px auto;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  // Pinned selected variant (shown at top of LEFT panel)
+  &--pinned {
+    border-left: 3px solid $color-green;
+    background: rgba(62, 207, 142, 0.05);
+
+    &:hover {
+      background: rgba(62, 207, 142, 0.10);
+      border-color: rgba(62, 207, 142, 0.5);
+    }
+  }
+
+  // ── Sub-elements ──────────────────────────────────────────────────────────
+  &__handle {
+    color: #00ff49;
+    font-size: 1rem;
+    line-height: 1;
+    letter-spacing: -1px;
+    flex-shrink: 0;
+    cursor: grab;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.18rem;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 0.88rem;
+    font-weight: 400;
+    color: #434449;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+  }
+
+  &__sku {
+    font-family: $font-mono;
+    font-size: 0.68rem;
+    color: $color-text-faint;
+  }
+
+  &__cat {
+    font-size: 0.67rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #4680ff;
+    background:  rgb(224 237 252);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  &__price {
+    font-family: $font-mono;
+    font-size: 0.82rem;
+    color: $color-text-muted;
+    flex-shrink: 0;
+  }
+
+  &__btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    border: 1px solid #fff;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: background $transition, border-color $transition;
+
+    &--add {
+      color: #00ff8d;
+      &:hover { background: rgba(62, 207, 142, 0.14); border-color: $color-green; }
+    }
+
+    &--remove {
+      color: $color-red;
+      font-size: 1.25rem;
+      &:hover { background: rgba(224, 82, 82, 0.14); border-color: $color-red; }
+    }
+  }
+}
+
+// ── Section label (above pinned selected cards in left panel) ─────────────────
+.dnd-section-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.2rem 0.25rem 0.4rem;
+
+  &__text {
+    font-family: $font-mono;
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $color-green;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  &__count {
+    background: rgba(62, 207, 142, 0.15);
+    color: $color-green;
+    border: 1px solid rgba(62, 207, 142, 0.28);
+    font-size: 0.65rem;
+    padding: 0px 6px;
+    border-radius: 10px;
+  }
+}
+
+// ── Separator between selected and available in left panel ─────────────────────
+.dnd-separator {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0.5rem 0 0.35rem;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: $color-border;
+  }
+
+  &__label {
+    font-family: $font-mono;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $color-text-faint;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+  }
+
+  &__count {
+    background: $color-surface-alt;
+    color: $color-text-muted;
+    border: 1px solid $color-border;
+    font-size: 0.65rem;
+    padding: 0px 6px;
+    border-radius: 10px;
+  }
+}
+
+// ── Divider ────────────────────────────────────────────────────────────────────
+.dnd-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #9ebaf9;
+  border-top: 2px solid #869fdb;
+  border-bottom: 2px solid #869fdb;
+  &__icon {
+    font-size: 1.3rem;
+    color: $color-text-faint;
+  }
+}
+
+// ── Panel Footer ───────────────────────────────────────────────────────────────
+.dnd-panel__footer {
+  padding: 0.9rem 1.25rem;
+  // border-top: 1px solid $color-border;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-shrink: 0;
+
+  &-summary {
+    font-family: $font-mono;
+    font-size: 0.78rem;
+    color: $color-text-muted;
+  }
+}
+
+// ── Link style clear button ────────────────────────────────────────────────────
+.dnd-link-btn {
+  background: transparent;
+  border: none;
+  font-family: $font-mono;
+  font-size: 0.7rem;
+  color: $color-text-faint;
+  cursor: pointer;
+  padding: 2px 0;
+  text-decoration: underline;
+  transition: color $transition;
+
+  &:hover { color: $color-red; }
+}
+
+// ── Animations ─────────────────────────────────────────────────────────────────
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+// ── Column headers (Focus Brand / Active labels above checkbox columns) ───────────
+.dnd-col-headers {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0.8rem 0.3rem;
+  border-top: 1px solid $color-border;
+  margin-top: 0.4rem;
+}
+
+.set_margin {
+  margin-left: 3%;
+}
+
+.dnd-col-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  width: 44px;
+  flex-shrink: 0;
+  text-align: center;
+
+  // spacer takes remaining space (the product-name column)
+  &--spacer { flex: 1; width: auto; }
+
+  &__label {
+    font-family: $font-mono;
+    font-size: 0.65rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #000000;
+  }
+
+  &__counter {
+    font-family: $font-mono;
+    font-size: 0.6rem;
+    color: $color-text-faint;
+    background: #fff;
+    border: 1px solid $color-border;
+    padding: 0 5px;
+    border-radius: 8px;
+    line-height: 1.5;
+
+    // turns red when both slots are used
+    &--full {
+      color: $color-red;
+      border-color: rgba(224, 82, 82, 0.4);
+      background: rgba(224, 82, 82, 0.08);
+    }
+    // turns red when both slots are used
+    &--full-other {
+    color: #081c2c;
+    border-color: rgba(42, 5, 231, 0.4);
+    background: rgb(25 86 255 / 21%);
+    }
+  }
+}
+
+.custom-table-parent{
+  width: 100%;
+    max-width: 1200px;
+    border-radius: 8px;
+    padding-top: 0.75rem;
+    text-align: center;
+}
+// ── Checkbox column cell inside each card ──────────────────────────────────────
+.dnd-checkbox-col {
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+// ── Custom checkbox ────────────────────────────────────────────────────────────
+.dnd-checkbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+
+  // Hide native input but keep it accessible
+  input[type='checkbox'] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+  }
+
+  // Disabled state on the label wrapper
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  // ── Custom box ────────────────────────────────────────────────────────────
+  &__box {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid #000000;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background $transition,
+      border-color $transition,
+      box-shadow $transition;
+    flex-shrink: 0;
+
+    // Checkmark via pseudo-element
+    &::after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 9px;
+      border: 2px solid transparent;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: border-color $transition;
+    }
+  }
+
+  // ── Focus Brand checkbox: amber/orange accent ────────────────────────────────────
+  &__box--first {
+    &:hover { border-color: #e0963a; }
+  }
+
+  input:checked + &__box--first {
+    background: #e0963a;
+    border-color: #e0963a;
+    box-shadow: 0 0 0 3px rgba(224, 150, 58, 0.18);
+
+    &::after { border-color: #fff; }
+  }
+
+  // ── Active checkbox: blue accent ───────────────────────────────────────────
+  &__box--second {
+    &:hover { border-color: $color-accent; }
+  }
+
+  input:checked + &__box--second {
+    background: $color-accent;
+    border-color: $color-accent;
+    box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.18);
+
+    &::after { border-color: #fff; }
+  }
+
+  // Focus ring for keyboard nav
+  input:focus-visible + &__box {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+// ── Responsive ─────────────────────────────────────────────────────────────────
+@media (max-width: 720px) {
+  .dnd-board {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 44px auto;
+  }
+
+  .dnd-panel--available {
+    border-radius: $radius-lg $radius-lg 0 0;
+    border-right: 1.5px solid $color-border;
+    border-bottom: none;
+  }
+
+  .dnd-panel--selected {
+    border-radius: 0 0 $radius-lg $radius-lg;
+    border-left: 1.5px solid $color-border;
+    border-top: none;
+  }
+
+  .dnd-divider {
+    border-left: 1.5px solid $color-border;
+    border-right: 1.5px solid $color-border;
+    height: 44px;
+
+    &__icon { transform: rotate(90deg); }
+  }
+}
