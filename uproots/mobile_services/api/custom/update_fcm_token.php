@@ -27,6 +27,13 @@ class UpdateFCMToken extends Utilities
         $rawInput = file_get_contents("php://input");
         $postData = json_decode($rawInput, true);
         $fcmToken = isset($postData['fcm_token']) ? trim($postData['fcm_token']) : '';
+        $appVersion = isset($postData['appVersion']) ? trim($postData['appVersion']) : '';
+        $versionCode = isset($postData['versionCode']) ? trim($postData['versionCode']) : '';
+        $appType = isset($postData['appType']) ? trim($postData['appType']) : '';
+        $deviceInfo = isset($postData['deviceInfo']) ? trim($postData['deviceInfo']) : '';
+        $lastLogout = isset($postData['lastLogout']) ? trim($postData['lastLogout']) : '';
+        $suspesiousScore = isset($postData['suspesiousScore']) ? trim($postData['suspesiousScore']) : '';
+
         $dbName = $this->arrUserDetails["db_name"];
         $teamId = $this->arrUserDetails["team_id"];
 
@@ -47,8 +54,10 @@ class UpdateFCMToken extends Utilities
             }
         }
 
-        // Step 2: Update token only if different
-        $iStatus = $this->tableUtil->updateRecord("{$dbName}.tblproject_team", "fcm_token = '$fcmToken'", "team_id = $teamId AND dstatus = 0");
+        // Step 2: Update data only if different
+        $vals = "fcm_token = ?, app_version = ?, version_code = ?, app_type = ?, device_info = ?, last_logout = ?, suspesious_score = ?";
+        $arrParams = array($fcmToken, $appVersion, $versionCode, $appType, $deviceInfo, $lastLogout, $suspesiousScore);
+        $iStatus = $this->tableUtil->updateRecord("{$dbName}.tblproject_team", $vals, "team_id = $teamId AND dstatus = 0", $arrParams);
 
         if ($iStatus) {
             $response = $this->response->sendResponse(["message" => "FCM token updated successfully"], 1);

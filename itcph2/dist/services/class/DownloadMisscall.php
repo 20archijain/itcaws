@@ -120,6 +120,7 @@ class DownloadMisscall
 
         $sQuery = "SHOW TABLES IN $database LIKE '$tableName'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+        $arrResult = array();
         if ($iRows > 0) {
             $arrData = array();
             while ($row = $this->_dbConn->GetData($rsAction)) {
