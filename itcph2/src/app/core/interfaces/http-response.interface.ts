@@ -571,6 +571,7 @@ export interface teams {
 }
 
 export interface GetProductSelectorDataResponse {
+  tableData: any[];
   isFocusList: [];
   isDspmList: [];
   selectedDataList: ProductItem[];
