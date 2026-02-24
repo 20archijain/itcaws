@@ -74,8 +74,8 @@ class DistrictSkuAllocation
         $arrData = array();
         $region = $this->_data['region'];
         $teamType = $this->_data['teamType'];
-        $year = currentDate("", 'Y');
-        $month = currentDate("", 'm');
+        $year  = date('Y', strtotime('+1 month'));
+        $month = date('m', strtotime('+1 month'));
 
 
         $foundRecord = false;
@@ -108,8 +108,8 @@ class DistrictSkuAllocation
     {
         $region = $this->_data['region'];
         $teamType = $this->_data['teamType'];
-        $year = currentDate("", 'Y');
-        $month = currentDate("", 'm');
+        $year  = date('Y', strtotime('+1 month'));
+        $month = date('m', strtotime('+1 month'));
 
         $arrDspm = array();
         $arrIsFocus = array();
@@ -434,8 +434,8 @@ class DistrictSkuAllocation
         $formData = getFormData($this->_data, "formData");
         $region = $formData['region'];
         $teamType = $formData['teamType'];
-        $year = currentDate("", 'Y');
-        $month = currentDate("", 'm');
+        $year  = date('Y', strtotime('+1 month'));
+        $month = date('m', strtotime('+1 month'));
         $rcd = currentDate();
         $rdt = currentDateTime();
 
