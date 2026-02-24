@@ -1,0 +1,26 @@
+<div class=" bg-white container custom-table-parent">
+  <div class="table-responsive  mb-3">
+    <table class="table align-middle mb-0 table-hover">
+      <thead class="table-light">
+
+        <tr>
+          <th scope="col">District</th>
+          <th scope="col">Branch</th>
+          <th scope="col">SKU Allocated</th>
+          <th scope="col">DSPM Brand</th>
+          <th scope="col">Focus Brand</th>
+        </tr>
+      </thead>
+      <tbody *ngFor="let data of tableData">
+        <tr class="bg-white">
+          <td>{{data[0]}}</td>
+          <td>{{data[1]}}</td>
+          <td>{{data[2]}}</td>
+          <td>{{data[3]}}</td>
+          <td>{{data[4]}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- end table -->
+  </div>
+</div><!-- /board -->
