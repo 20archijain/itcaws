@@ -1,8 +1,7 @@
-<div class=" bg-white container custom-table-parent">
-  <div class="table-responsive  mb-3">
-    <table class="table align-middle mb-0 table-hover">
+<div class="bg-white container custom-table-parent">
+  <div class="table-responsive mb-3">
+    <table class="table align-middle mb-0 table-hover text-center">
       <thead class="table-light">
-
         <tr>
           <th scope="col">District</th>
           <th scope="col">Branch</th>
@@ -12,8 +11,8 @@
           <th scope="col">Target Allocation</th>
         </tr>
       </thead>
-      <tbody *ngFor="let data of tableData">
-        <tr class="bg-white">
+      <tbody>
+        <tr class="bg-white" *ngFor="let data of tableData">
           <td>{{data[0]}}</td>
           <td>{{data[1]}}</td>
           <td>{{data[2]}}</td>
@@ -23,6 +22,5 @@
         </tr>
       </tbody>
     </table>
-    <!-- end table -->
   </div>
-</div><!-- /board -->
+</div>
