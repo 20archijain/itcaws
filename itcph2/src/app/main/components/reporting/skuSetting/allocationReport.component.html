@@ -6,9 +6,10 @@
         <tr>
           <th scope="col">District</th>
           <th scope="col">Branch</th>
-          <th scope="col">SKU Allocated</th>
-          <th scope="col">DSPM Brand</th>
           <th scope="col">Focus Brand</th>
+          <th scope="col">DSPM Brand</th>
+          <th scope="col">SKU Allocated</th>
+          <th scope="col">Target Allocation</th>
         </tr>
       </thead>
       <tbody *ngFor="let data of tableData">
@@ -18,6 +19,7 @@
           <td>{{data[2]}}</td>
           <td>{{data[3]}}</td>
           <td>{{data[4]}}</td>
+          <td>{{data[5]}}</td>
         </tr>
       </tbody>
     </table>

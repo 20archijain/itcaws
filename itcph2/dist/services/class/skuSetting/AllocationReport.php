@@ -114,10 +114,19 @@ class AllocationReport
                 }
 
 
+                $dataFromAssignTarget = getRowColumn($this->_dbConn, "tblassign_target as a, tblproject_team as b", "a.prod_id", "a.team_id = b.team_id AND a.month = '$month' AND a.year = '$year' AND b.branch_id = '$branch_id' ");
+
+                if (isset($dataFromAssignTarget) && $dataFromAssignTarget) {
+                    $setValueTarget = 1;
+                } else {
+                    $setValueTarget = 0;
+                }
+
                 $arrDistrictWiseData[$district][$main_branch][$branch_id] = array(
                     $setValue,
                     $setValueDspm,
-                    $setValueFocus
+                    $setValueFocus,
+                    $setValueTarget
                 );
             }
         }
@@ -126,30 +135,37 @@ class AllocationReport
         foreach ($arrDistrictWiseData as $district => $arrDistrict) {
             foreach ($arrDistrict as $branch => $arrBranch) {
                 $countOfRegion =  count($arrBranch);
-                $sum1 = 0;
-                $sum2 = 0;
-                $sum3 = 0;
+                $sumOverAll = 0;
+                $sumDspm = 0;
+                $sumFocus = 0;
+                $sumTarget = 0;
                 foreach ($arrBranch as $regionID => $arrRegion) {
-                    $sum1 += $arrRegion[0];
-                    $sum2 += $arrRegion[1];
-                    $sum3 += $arrRegion[2];
+                    $sumOverAll += $arrRegion[0];//Overall
+                    $sumDspm += $arrRegion[1];//DSPM
+                    $sumFocus += $arrRegion[2];//Focus
+                    $sumTarget += $arrRegion[3];//Target
                 }
-                if ($sum1 == $countOfRegion) {
-                    $r1 = "Yes";
+                if ($sumOverAll == $countOfRegion) {
+                    $rOver= "Yes";
                 } else {
-                    $r1 = "No";
+                    $rOver= "No";
                 }
-                if ($sum2 == $countOfRegion) {
-                    $r2 = "Yes";
+                if ($sumDspm == $countOfRegion) {
+                    $rDspm = "Yes";
                 } else {
-                    $r2 = "No";
+                    $rDspm = "No";
                 }
-                if ($sum3 == $countOfRegion) {
-                    $r3 = "Yes";
+                if ($sumFocus == $countOfRegion) {
+                    $rFocus = "Yes";
                 } else {
-                    $r3 = "No";
+                    $rFocus = "No";
                 }
-                $arrSet[] = array($district, $branch, $r1, $r2, $r3);
+                if ($sumTarget == $countOfRegion) {
+                    $rTarget = "Yes";
+                } else {
+                    $rTarget = "No";
+                }
+                $arrSet[] = array($district, $branch, $rFocus, $rDspm, $rOver, $rTarget);
             }
         }
 
