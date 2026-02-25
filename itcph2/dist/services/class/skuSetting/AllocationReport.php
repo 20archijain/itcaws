@@ -165,7 +165,7 @@ class AllocationReport
                 } else {
                     $rTarget = "No";
                 }
-                $arrSet[] = array($district, $branch, $rFocus, $rDspm, $rOver, $rTarget);
+                $arrSet[] = array($district, $branch, $rOver, $rFocus, $rDspm, $rTarget);
             }
         }
 
