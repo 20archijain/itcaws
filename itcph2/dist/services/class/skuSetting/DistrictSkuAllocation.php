@@ -445,8 +445,8 @@ class DistrictSkuAllocation
             $categoryName = $record['category'];
             $product_name = $record['name'];
             $summary_column_name = $record['id'];
-            $dspm_focus = $record['dspmBrand'];
-            $is_focusbrand = $record['isFocusBrand'];
+            $dspm_focus = isset($record['dspmBrand']) && $record['dspmBrand'] ? 1 : 0;
+            $is_focusbrand = isset($record['isFocusBrand']) && $record['isFocusBrand'] ? 1 : 0;
             $rec_id = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_allocation", "rec_id", " year = '$year' AND month = '$month' AND summary_column_name = '$summary_column_name' AND category_name = '$categoryName' AND product_name = '$product_name'");
 
             if ($rec_id > 0) {
