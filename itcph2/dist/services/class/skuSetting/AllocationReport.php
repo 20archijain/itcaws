@@ -97,13 +97,13 @@ class AllocationReport
                 $hoStatus = isset($dataStatus[2]) && $dataStatus[2] ? 1 : 0;
 
                 if ($hoStatus == 1 && $districtStatus == 1 && $branchStatus == 1) {
-                    $showStatus = "HO Level";
+                    $showStatus = "Allocation Completed";
                 } elseif($hoStatus == 0 && $districtStatus == 1 && $branchStatus == 1){
-                    $showStatus = "District Level";
+                    $showStatus = "Pending at HO Level";
                 } elseif($hoStatus == 0 && $districtStatus == 0 && $branchStatus == 1){
-                    $showStatus = "Branch Level";
+                    $showStatus = "Pending at District Level";
                 }else{
-                    $showStatus = "Allocation Not Set yet";
+                    $showStatus = "Allocation not set yet by Branch";
                 }
 
 
