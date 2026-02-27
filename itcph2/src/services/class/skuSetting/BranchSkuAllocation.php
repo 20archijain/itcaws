@@ -45,29 +45,73 @@ class BranchSkuAllocation
     final public function getViewSKUData()
     {
         $submittedData = $this->getSubmittedData();
+        $selectedData = $this->getSelectedRecord();
         if (isset($submittedData[0]) && $submittedData[0]) {
             $arrResult = array(
                 "productList" => array(),
                 "statusFlag" => true,
-                "submittedList" => $submittedData[1]
+                "submittedList" => $submittedData[1],
+                "isDspmList" => array(),
+                "isFocusList" => array(),
+                "selectedDataList" => array(),
             );
         } else {
             $arrResult = array(
                 "productList" => $this->getBranchProduct(),
                 "statusFlag" => false,
-                "submittedList" => array()
+                "submittedList" => array(),
+                "isDspmList" => $selectedData[0],
+                "isFocusList" => $selectedData[1],
+                "selectedDataList" => $selectedData[2],
             );
         }
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
-    final public function getSubmittedData(){
-        $arrData = array();
+    final public function getSelectedRecord()
+    {
         $region = $this->_data['region'];
         $teamType = $this->_data['teamType'];
         $year = currentDate("", 'Y');
         $month = currentDate("", 'm');
+
+        $arrDspm = array();
+        $arrIsFocus = array();
+        $arrData = array();
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select category_name, product_name, dspm_focus, is_focusbrand, summary_column_name from tblbranch_pickupstock_products_allocation where dstatus = 0 AND month = '$month' AND year = '$year' AND branch_id = '$region' AND team_type = '$teamType' AND filled_by_branch = 1";
+        // echo $query;die;
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                if (isset($row['dspm_focus']) && $row['dspm_focus']) {
+                    $arrDspm[$row['summary_column_name']] = true;
+                }
+                if (isset($row['is_focusbrand']) && $row['is_focusbrand']) {
+                    $arrIsFocus[$row['summary_column_name']] = true;
+                }
+                $arrData[] = array(
+                    "category" => $row['category_name'],
+                    "name" => $row['product_name'],
+                    "id" => $row['summary_column_name'],
+                );
+            }
+        }
+
+        return array($arrDspm, $arrIsFocus, $arrData);
+    }
+
+    final public function getSubmittedData(){
+        $arrData = array();
+        $region = $this->_data['region'];
+        $teamType = $this->_data['teamType'];
+        // $year = currentDate("", 'Y');
+        // $month = currentDate("", 'm');
+        $year  = date('Y', strtotime('+1 month'));
+        $month = date('m', strtotime('+1 month'));
 
 
         $foundRecord = false;
@@ -392,8 +436,10 @@ class BranchSkuAllocation
         $formData = getFormData($this->_data, "formData");
         $region = $formData['region'];
         $teamType = $formData['teamType'];
-        $year = currentDate("", 'Y');
-        $month = currentDate("", 'm');
+        // $year = currentDate("", 'Y');
+        // $month = currentDate("", 'm');
+        $year  = date('Y', strtotime('+1 month'));
+        $month = date('m', strtotime('+1 month'));
         $rcd = currentDate();
         $rdt = currentDateTime();
 
