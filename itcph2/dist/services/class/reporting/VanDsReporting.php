@@ -898,7 +898,7 @@ class VanDsReporting
                 }
                 $shopType = $shopDetails[0] ?? "";
                 $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
-                $mobileNumber = $shopDetails[2] ??"";
+                $mobileNumber = $shopDetails[2] ?? "";
                 $sellIinOrder = $row["ques_4"];
                 $shopFrontPicture = $row["ques_6"];
                 $reasonForNoSale = $sellIinOrder == "Yes" ? $row["ques_5"] : "";
@@ -1866,7 +1866,7 @@ class VanDsReporting
 
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
-                            $arrSummary["sale"][$index][$iProductIndex] = round(floatval($iSale), 2);
+                            $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
                         }
                     }
 
@@ -1874,7 +1874,7 @@ class VanDsReporting
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
-                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? round($arrStock[0][$stockProduct[1]], 2) : 0;
+                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
 
                         // Accumulate the ready stock pickup
                         $totalReadyStockPickup += $iStockQty;
@@ -1893,8 +1893,15 @@ class VanDsReporting
             $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
             $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
 
-            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
-            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+            // $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            // $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+
+            if (is_array($dateFrom)) {
+                $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            }
+            if (is_array($dateTo)) {
+                $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+            }
 
             // Convert date strings to DateTime objects
             $startDate = new DateTime($dateFrom);
