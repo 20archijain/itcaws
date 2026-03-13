@@ -449,8 +449,8 @@ class BranchSkuAllocation
             $categoryName = $record['category'];
             $product_name = $record['name'];
             $summary_column_name = $record['id'];
-            $dspm_focus = $record['dspmBrand'];
-            $is_focusbrand = $record['isFocusBrand'];
+            $dspm_focus = isset($record['dspmBrand']) && $record['dspmBrand'] ? 1 : 0;
+            $is_focusbrand = isset($record['isFocusBrand']) && $record['isFocusBrand'] ? 1 : 0;
             $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_branch, rcd, rdt";
             $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
             $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt);
