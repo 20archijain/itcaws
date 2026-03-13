@@ -1,0 +1,221 @@
+.custom-margin {
+  width: 19rem;
+  margin: 3px;
+}
+
+.data-cards {
+  display: flex;
+  margin-left: -7px;
+}
+
+.card-shadow {
+  box-shadow: 0 4px 20px rgba(249, 21, 21, 0.2);
+  /* You can adjust the values for different shadow effects */
+}
+
+/* General Container for Cards */
+.dashboard-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+/* Card Styling */
+.card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* Icon Styling */
+.icon {
+  font-size: 2rem;
+  color: #555;
+}
+
+.icon .fa {
+  font-size: 3rem;
+  color: #5a5ad0;
+}
+
+@media (max-width: 768px) {
+  .card {
+    flex: 1 1 100%;
+  }
+}
+
+/* Info Section */
+.info h6 {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info h2 {
+  font-size: 2rem;
+  color: #333;
+  margin: 0;
+}
+
+.info p {
+  font-size: 0.85rem;
+  color: #aaa;
+  margin: 5px 0 0;
+}
+
+/* Change Percentage Styling */
+.change {
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-align: right;
+}
+
+.change.positive span {
+  color: #4caf50;
+}
+
+.change.negative span {
+  color: #f44336;
+}
+
+/* Sidebar styling */
+.sidebar {
+  position: fixed;
+  top: 58px;
+  right: -300px;
+  /* Hidden by default */
+  width: 300px;
+  height: 100%;
+  background-color: #f8f9fa;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
+  transition: right 0.3s ease;
+  z-index: 1050;
+}
+
+.sidebar.active {
+  right: 0;
+  /* Show sidebar */
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.footer-buttons {
+  margin-top: 5px;
+}
+
+/* Ensuring each element fits in a row */
+.sidebar .row .col-lg-2 {
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 100%;
+    /* Full width on smaller screens */
+  }
+}
+
+
+.floating-button {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.footer-buttons {
+  // margin-top: auto;
+  align-items: center;
+  display: flex;
+  // justify-content: space-between;
+  padding-top: 10px;
+  padding-bottom: 20px;
+}
+
+.floating-button {
+  position: fixed;
+  top: 80px;
+  right: 25px;
+  background-color: #457dd2;
+  color: white;
+  border: none;
+  border-radius: 0.3rem;
+  margin-top: -0.3rem;
+  margin-right: 1rem;
+  height: 2.3rem;
+  width: 5rem;
+  padding: 8px;
+  font-size: 17px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  z-index: 1000;
+  transition: background-color 0.3s;
+}
+
+.floating-button:hover {
+  background-color: #114ca4;
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: #fff;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+}
+
+.sidebar.active {
+  right: 0;
+}
+
+.filter-container .w-2 {
+  width: 200px !important;
+  /* Adjust width as needed */
+  min-height: 40px;
+  /* Ensures a consistent height */
+}
+
+.filter-container app-select,
+.filter-container app-date {
+  width: 100% !important;
+}
+
+.filter-container .col-sm-1 {
+  width: auto;
+}
