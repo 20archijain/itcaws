@@ -1,0 +1,315 @@
+$white: #fff;
+$blue1: #002d62;
+$blue2: #0066b2;
+$blue3: #b8d9f1;
+$black: #000;
+$color0: #8dcaef;
+// $colorWeek: #bedcef;
+$color1: #217cb5;
+$color2: #5f70b6;
+$color3: #725ca5;
+$color4: #ba58a5;
+$color5: #f06197;
+$color6: #fe8d25;
+$color7: #fbd707;
+$color8: #f973e2;
+
+.white-bg {
+  background-color: $white !important;
+}
+
+i {
+  font-weight: bold;
+}
+
+.district {
+  background: $color0;
+  color: $white;
+}
+
+.district-cell {
+  background: rgba($color0, 0.75);
+  color: $white;
+}
+
+.branch {
+  background: $color1;
+  color: $white;
+}
+
+.branch-cell {
+  background: rgba($color1, 0.75);
+  color: $white;
+}
+
+.circle {
+  background: $color2;
+  color: $white;
+}
+
+.circle-cell {
+  background: rgba($color2, 0.75);
+  color: $white;
+}
+
+.section {
+  background: $color3;
+  color: $white;
+}
+
+.section-cell {
+  background: rgba($color3, 0.75);
+  color: $white;
+}
+
+.wdCode {
+  background: $color4;
+  color: $white;
+}
+
+.wdCode-cell {
+  background: rgba($color4, 0.75);
+  color: $white;
+}
+
+.teamType {
+  background: $color5;
+  color: $white;
+}
+
+.teamType-cell {
+  background: rgba($color5, 0.75);
+  color: $white;
+}
+
+.team {
+  background: $color8;
+  color: $white;
+}
+
+.team-cell {
+  background: rgba($color8, 0.75);
+  color: $white;
+}
+
+.route {
+  background: $color6;
+  color: $white;
+}
+
+.route-cell {
+  background: rgba($color6, 0.75);
+  color: $white;
+}
+
+.outlet {
+  background: $color7;
+  color: $white;
+}
+
+.outlet-cell {
+  background: rgba($color7, 0.75);
+  color: $white;
+}
+
+.table-data {
+  background-color: $blue2;
+  color: $white;
+}
+
+.expanded-table {
+  background-color: $blue1;
+  color: $white;
+}
+
+.nested-table {
+  background-color: $blue2;
+  color: $white;
+}
+
+.wd-td {
+  background-color: $blue3;
+}
+
+.size-10 {
+  font-size: 12px;
+  padding: 0;
+}
+
+.size-13 {
+  font-size: 14px;
+  padding: 0;
+}
+
+.second-nested {
+  border-bottom: 1px solid $black;
+  padding: 0 !important;
+}
+
+.section-row>td {
+  padding: 0;
+}
+
+th,
+td {
+  border: 1px solid $black;
+}
+
+/* Ensure container is centered */
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  max-width: 95vw;
+}
+
+/* Responsive Table Wrapper */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+/* Base Table Styling */
+.table-custom {
+  min-width: 1400px;
+  width: max-content;
+  border-collapse: collapse;
+}
+
+.table-custom th,
+.table-custom td {
+  white-space: nowrap;
+  vertical-align: middle;
+  // text-align: center;
+  padding: 4px 8px;
+}
+
+// /* Fixed Column Widths */
+// .branch,
+// .branch-cell,
+// .circle-cell,
+// .section-cell,
+// .wdCode-cell,
+// .team-cell,
+// .route-cell {
+//   width: 180px;
+//   max-width: 180px;
+//   white-space: nowrap;
+// }
+
+/* Fixed Column Widths */
+.district,
+.district-cell,
+.branch,
+.branch-cell,
+.circle,
+.circle-cell,
+.section,
+.section-cell,
+.wdCode,
+.wdCode-cell,
+.team,
+.team-cell,
+.route,
+.route-cell,
+.outlet,
+.outlet-cell,
+.teamType,
+.teamType-cell {
+  width: 270px;
+  max-width: 270px;
+  white-space: nowrap;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+
+  .table-custom th,
+  .table-custom td {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .district,
+  .district-cell,
+  .branch-cell,
+  .circle-cell,
+  .section-cell,
+  .wdCode-cell,
+  .team-cell,
+  .route-cell {
+    width: 120px;
+    max-width: 140px;
+  }
+}
+
+
+.download-popup {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+  background-color: #fff;
+  border-radius: 10px;
+  width: 300px;
+  z-index: 1050;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+  padding: 1rem;
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.popup-header h5 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.popup-body {
+  margin-top: 1rem;
+}
+
+.radio-option {
+  display: block;
+  padding: 6px 0;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1040;
+}
+
+.fixed-table-header {
+  .table {
+    th {
+      &.highlight {
+        background-color: $color0 !important;
+        color: #fff;
+        text-decoration: none;
+        z-index: 900;
+      }
+    }
+  }
+}

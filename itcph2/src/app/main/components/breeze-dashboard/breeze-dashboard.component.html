@@ -1,0 +1,109 @@
+<app-card [options]="false">
+
+  <form (ngSubmit)="getCardData(true)" [formGroup]="group" novalidate class="form-content">
+    <!-- Superadmin and Admin Login -->
+    <div *ngIf="branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="month" [options]="monthOptions"
+          placeholder="{{ 'app.team.add.month' | translate }}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="branch" [options]="branchOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+        </app-select>
+      </div>
+      <div *ngIf="branchFilter" class="w-2 m-1">
+        <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdMarket" [options]="wdMarketOptions"
+          placeholder="{{ 'app.wdMapping.wd_market' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdPopGroup" [options]="wdPopGroupOptions"
+          placeholder="{{ 'app.wdMapping.wd_pop_group' | translate}}" [multiple]="true">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" [multiple]="true" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+    <!-- Regional Login -->
+    <div *ngIf="!branchFilter" class="row ml-1 filter-container">
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+          placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+        </app-select>
+      </div>
+      <div class="w-2 m-1">
+        <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+          placeholder="{{ 'app.team.add.dsName' | translate }}">
+        </app-select>
+      </div>
+      <div class="col-auto m-1">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [showIconInButton]="true" text="Search"
+          colorClass="btn-info" btnTitle="button.search"></app-button>
+        <app-button type="button" text="button.clear" btnTitle="button.clear" btnClass="m-l-5" colorClass="btn-danger"
+          (onClick)="clearForm()">
+        </app-button>
+      </div>
+    </div>
+
+  </form>
+</app-card>
+
+
+
+<app-breeze-accordion [monthlySalesData]="monthlySalesData" (mapClicked)="onMapClicked($event)"></app-breeze-accordion>
+
+<ng-container *ngIf="markers && markers.length > 0">
+  <app-card [options]="false">
+    <div class="row">
+      <div *ngFor="let index of noOfMaps" class="mb-m col-lg-{{ columnSize }}">
+        <app-dynamic-marker-map [markers]="markers"
+          [showMapStyleDropdown]="showMapStyleDropdown"></app-dynamic-marker-map>
+      </div>
+    </div>
+  </app-card>
+</ng-container>
+
+
