@@ -21,6 +21,7 @@ import { AccordionOutletVisitComponent } from './accordion/outlet-visit-accordio
 import { NpsrAccordionComponent } from './npsr-accordion/npsr-accordion.component';
 import { ProductiveAccordionComponent } from './productive-accordion/productive-accordion.component';
 import { ColorAccordionComponent } from './color-accordion/color-accordion.component';
+import { BreezeAccordionComponent } from './breeze-accordion/breeze-accordion.component';
 
 export const SHARED_COMPONENTS = [
   AlertComponent,
@@ -46,4 +47,5 @@ export const SHARED_COMPONENTS = [
   NpsrAccordionComponent,
   ProductiveAccordionComponent,
   ColorAccordionComponent,
+  BreezeAccordionComponent,
 ];

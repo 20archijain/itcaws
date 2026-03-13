@@ -1566,33 +1566,36 @@ class MdoReporting
                                 $arrDayEndOtherDetails = json_decode($endDetails[2], true);
                             }
                             $arrAttenOtherDetails = json_decode($rowTeam["other_details"], true);
-                            $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
+                            $dsDetails = (is_array($arrAttenOtherDetails) && isset($arrAttenOtherDetails['selectRouteYouAreGoingOn'])) ? $arrAttenOtherDetails['selectRouteYouAreGoingOn'] : [];
+                            if (!is_array($dsDetails)) {
+                                $dsDetails = [];
+                            }
                             if ($workWith == 0) {
                                 $typeOfWork = "Market work with DS";
-                                $wdCode = $dsDetails[0];
-                                $attDsName = $dsDetails[1];
+                                $wdCode = isset($dsDetails[0]) ? $dsDetails[0] : "";
+                                $attDsName = isset($dsDetails[1]) ? $dsDetails[1] : "";
                                 $parts = explode(" - ", $attDsName, 2);
-                                $attDsNameOnly = $parts[0];
-                                $attDsType = $parts[1];
+                                $attDsNameOnly = isset($parts[0]) ? $parts[0] : "";
+                                $attDsType = isset($parts[1]) ? $parts[1] : "";
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
-                                $routeName = $dsDetails[2];
+                                $routeName = isset($dsDetails[2]) ? $dsDetails[2] : "";
                             } elseif ($workWith == 1) {
                                 $typeOfWork = "Market work with AE";
-                                $wdCode = $dsDetails[1];
+                                $wdCode = isset($dsDetails[1]) ? $dsDetails[1] : "";
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";
                                 $routeName = "";
                             } elseif ($workWith == 2) {
                                 $typeOfWork = "Market work with GT TL";
-                                $wdCode = $dsDetails[1];
+                                $wdCode = isset($dsDetails[1]) ? $dsDetails[1] : "";
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";
                                 $routeName = "";
                             } elseif ($workWith == 3) {
                                 $typeOfWork = "Independent market work";
-                                $wdCode = $dsDetails[1];
+                                $wdCode = isset($dsDetails[1]) ? $dsDetails[1] : "";
                                 $attDsNameOnly = "";
                                 $attDsType = "";
                                 $dsId = "";

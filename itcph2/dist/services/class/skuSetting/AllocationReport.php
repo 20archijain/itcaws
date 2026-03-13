@@ -82,12 +82,30 @@ class AllocationReport
 
         $sQuery = "SELECT district, main_branch, branch_id from tblbranch" .
             " Where dstatus = 0 order by main_branch";
+            // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $district = $row['district'];
                 $main_branch = $row['main_branch'];
                 $branch_id = $row['branch_id'];
+
+                $dataStatus = getRowColumns($this->_dbConn, "tblbranch_pickupstock_products_allocation", "filled_by_branch, filled_by_district, filled_by_ho", " month = '$month' AND year = '$year' AND branch_id = '$branch_id'");
+
+                $branchStatus = isset($dataStatus[0]) && $dataStatus[0] ? 1 : 0;
+                $districtStatus = isset($dataStatus[1]) && $dataStatus[1] ? 1 : 0;
+                $hoStatus = isset($dataStatus[2]) && $dataStatus[2] ? 1 : 0;
+
+                if ($hoStatus == 1 && $districtStatus == 1 && $branchStatus == 1) {
+                    $showStatus = "Allocation Completed";
+                } elseif($hoStatus == 0 && $districtStatus == 1 && $branchStatus == 1){
+                    $showStatus = "Pending at HO Level";
+                } elseif($hoStatus == 0 && $districtStatus == 0 && $branchStatus == 1){
+                    $showStatus = "Pending at District Level";
+                }else{
+                    $showStatus = "Allocation not set yet by Branch";
+                }
+
 
                 $dataSubmitted = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_allocation", "rec_id", " month = '$month' AND year = '$year' AND branch_id = '$branch_id' AND filled_by_ho = 1");
 
@@ -126,7 +144,8 @@ class AllocationReport
                     $setValue,
                     $setValueDspm,
                     $setValueFocus,
-                    $setValueTarget
+                    $setValueTarget,
+                    $showStatus
                 );
             }
         }
@@ -140,15 +159,15 @@ class AllocationReport
                 $sumFocus = 0;
                 $sumTarget = 0;
                 foreach ($arrBranch as $regionID => $arrRegion) {
-                    $sumOverAll += $arrRegion[0];//Overall
-                    $sumDspm += $arrRegion[1];//DSPM
-                    $sumFocus += $arrRegion[2];//Focus
-                    $sumTarget += $arrRegion[3];//Target
+                    $sumOverAll += $arrRegion[0]; //Overall
+                    $sumDspm += $arrRegion[1]; //DSPM
+                    $sumFocus += $arrRegion[2]; //Focus
+                    $sumTarget += $arrRegion[3]; //Target
                 }
                 if ($sumOverAll == $countOfRegion) {
-                    $rOver= "Yes";
+                    $rOver = "Yes";
                 } else {
-                    $rOver= "No";
+                    $rOver = "No";
                 }
                 if ($sumDspm == $countOfRegion) {
                     $rDspm = "Yes";
@@ -165,7 +184,9 @@ class AllocationReport
                 } else {
                     $rTarget = "No";
                 }
-                $arrSet[] = array($district, $branch, $rOver, $rFocus, $rDspm, $rTarget);
+
+                $percentage = round(($sumOverAll / $countOfRegion) * 100, 2);
+                $arrSet[] = array($district, $branch, $rOver, $rFocus, $rDspm, $rTarget, $percentage, $arrRegion[4]);
             }
         }
 

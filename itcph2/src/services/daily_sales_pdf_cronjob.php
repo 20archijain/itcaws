@@ -46,19 +46,27 @@ class generatePDFCronjob
         $this->logFilename = $logFilename ? $logFilename : "log_GeneratePDFData";
     }
 
-    private function getWeekNumber($date)
+    private function getWeekDateRange($date)
     {
-        $day = (int)date('j', strtotime($date)); // Get day of the month
+        $day = (int)date('j', strtotime($date));
+        $month = date('m', strtotime($date));
+        $year = date('Y', strtotime($date));
 
         if ($day >= 1 && $day <= 7) {
-            return "Week 1";
+            $start = "$year-$month-01";
+            $end   = "$year-$month-07";
         } elseif ($day >= 8 && $day <= 14) {
-            return "Week 2";
+            $start = "$year-$month-08";
+            $end   = "$year-$month-14";
         } elseif ($day >= 15 && $day <= 21) {
-            return "Week 3";
+            $start = "$year-$month-15";
+            $end   = "$year-$month-21";
         } else {
-            return "Week 4";
+            $start = "$year-$month-22";
+            $end   = date("Y-m-t", strtotime($date));
         }
+
+        return [$start, $end];
     }
 
     private function generatePDFForTeam($teamId, $startDatetime, $endDatetime, $summaryId)
@@ -93,12 +101,22 @@ class generatePDFCronjob
         $wdCode = $teamInfo[5];
 
         // Get branch information
-        // $branchInfo = getRowColumns(
-        //     $this->_dbConn,
-        //     $branchTable,
-        //     "branch_name, main_branch",
-        //     "branch_id = $branchId AND dstatus = 0"
-        // );
+        $branchInfo = getRowColumns( $this->_dbConn, $branchTable, "branch_name, main_branch", "branch_id = $branchId AND dstatus = 0" );
+
+        $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
+
+        $variants = [];
+        $varAction = null;
+        $varRows = 0;
+
+        $this->_dbConn->ExecuteSelectQuery($ProductQueryVarient, $varAction, $varRows);
+
+        while ($rowVar = $this->_dbConn->GetData($varAction)) {
+            $variants[] = [
+                'name' => $rowVar['product_name'],
+                'col'  => $rowVar['summary_column_name']
+            ];
+        }
 
         // if (!isNonEmptyArray($branchInfo)) {
         //     // debug_log(
@@ -137,6 +155,7 @@ class generatePDFCronjob
         $sProductSaleColumns = implode(",", $summaryColName);
         $isTypeMap = [0 => "Van DS", 1 => "Niches", 5 => "NPSR"];
         $dsType = isset($isTypeMap[$isType]) ? $isTypeMap[$isType] : "";
+        // $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
 
         // Fetch sales data for this team within datetime range
         $sQuery = "SELECT a.capture_datetime, a.capture_date, a.ques_0, a.ques_1, a.ques_3, $sProductSaleColumns" .
@@ -161,14 +180,13 @@ class generatePDFCronjob
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $outletId = $row['ques_3'];
                 $date = $row['capture_date'];
-                $week = $this->getWeekNumber($date);
                 $routeData = json_decode($row["ques_1"], true);
                 $route = is_array($routeData) && isset($routeData[0]) ? htmlspecialchars_decode($routeData[0]) : "";
 
                 // Set common values (use first record's values)
                 if (empty($commonDate)) {
                     $commonDate = $date;
-                    $commonWeek = $week;
+                    // $commonWeek = $week;
                     $commonRoute = $route;
 
                     // Check for MDO
@@ -179,6 +197,7 @@ class generatePDFCronjob
                         $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
                     }
                 }
+                list($weekStart, $weekEnd) = $this->getWeekDateRange($commonDate);
 
                 $outletData = getRowColumns(
                     $this->_dbConn,
@@ -427,6 +446,93 @@ class generatePDFCronjob
             $pdf->SetTextColor(150, 150, 150);
             $pdf->SetFont('Arial', 'I', 9);
             $pdf->Cell(0, 5, 'No Survey data found.', 0, 1, 'C');
+        }
+
+        $ProductQueryVarient = " SELECT DISTINCT product_name, summary_column_name  FROM $branchProductsTable  WHERE dstatus = 0  AND branch_id = $branchId  AND team_type = $isType ORDER BY product_name";
+
+        $varAction = null;
+        $varRows = 0;
+        $this->_dbConn->ExecuteSelectQuery($ProductQueryVarient, $varAction, $varRows);
+
+        if ($varRows > 0) {
+
+            $pdf->AddPage();
+
+            $pdf->SetFont('Arial', 'B', 9);
+            $pdf->SetFillColor(155, 89, 182);
+            $pdf->SetTextColor(255, 255, 255);
+            $pdf->Cell(0, 6, 'VARIANT PORTFOLIO SUMMARY', 0, 1, 'L', true);
+            $pdf->Ln(2);
+
+            $pdf->SetFont('Arial', 'B', 7);
+            $pdf->SetFillColor(220, 220, 220);
+            $pdf->SetTextColor(0, 0, 0);
+
+            $pdf->Cell(30, 6, 'Variant', 1, 0, 'C', true);
+            $pdf->Cell(25, 6, 'Planned UO', 1, 0, 'C', true);
+            $pdf->Cell(20, 6, 'UOB Today', 1, 0, 'C', true);
+            $pdf->Cell(25, 6, 'Vol Today', 1, 0, 'C', true);
+            $pdf->Cell(20, 6, 'PDO Daily', 1, 0, 'C', true);
+            $pdf->Cell(20, 6, 'UOB Week', 1, 0, 'C', true);
+            $pdf->Cell(25, 6, 'Vol Week', 1, 0, 'C', true);
+            $pdf->Cell(20, 6, 'PDO Weekly', 1, 1, 'C', true);
+
+            $pdf->SetFont('Arial', '', 7);
+
+            while ($rowVar = $this->_dbConn->GetData($varAction)) {
+
+                $variantName = $rowVar['product_name'];
+                $col = $rowVar['summary_column_name'];
+
+                /* TODAY */
+                $todayQuery = " SELECT COUNT(DISTINCT ques_3) as uob_today, SUM($col) as vol_today FROM $respTable WHERE team_id = $teamId AND capture_date = '$commonDate'
+                                 AND dstatus = 0  AND $col > 0";
+
+                $todayAction = null;
+                $tmp = null;
+                $this->_dbConn->ExecuteSelectQuery($todayQuery, $todayAction, $tmp);
+                $todayData = $this->_dbConn->GetData($todayAction);
+
+                $uob_today = (int)($todayData['uob_today'] ?? 0);
+                $vol_today = (float)($todayData['vol_today'] ?? 0);
+
+                /* WEEK */
+                $weekQuery = " SELECT COUNT(DISTINCT ques_3) as uob_week, SUM($col) as vol_week FROM $respTable WHERE team_id = $teamId
+                                 AND capture_date BETWEEN '$weekStart' AND '$weekEnd' AND dstatus = 0 AND $col > 0";
+
+                $weekAction = null;
+                $tmp2 = null;
+                $this->_dbConn->ExecuteSelectQuery($weekQuery, $weekAction, $tmp2);
+                $weekData = $this->_dbConn->GetData($weekAction);
+
+                $uob_week = (int)($weekData['uob_week'] ?? 0);
+                $vol_week = (float)($weekData['vol_week'] ?? 0);
+
+                /* PDO */
+                $pdo_daily  = ($uob_today > 0) ? round($vol_today / $uob_today, 2) : 0;
+                $pdo_weekly = ($uob_week > 0) ? round($vol_week / $uob_week, 2) : 0;
+
+                /* Planned Outlet */
+                $plannedQuery = "SELECT COUNT(DISTINCT shop_uniq_code) as planned_uo FROM $routeTable WHERE team_id = $teamId AND dstatus = 0";
+
+                $planAction = null;
+                $tmp3 = null;
+                $this->_dbConn->ExecuteSelectQuery($plannedQuery, $planAction, $tmp3);
+                $planData = $this->_dbConn->GetData($planAction);
+                $plannedUO = (int)($planData['planned_uo'] ?? 0);
+
+                /* Print Row */
+                $pdf->Cell(30, 6, $variantName, 1);
+                $pdf->Cell(25, 6, $plannedUO, 1, 0, 'R');
+                $pdf->Cell(20, 6, $uob_today, 1, 0, 'R');
+                $pdf->Cell(25, 6, number_format($vol_today, 2), 1, 0, 'R');
+                $pdf->Cell(20, 6, $pdo_daily, 1, 0, 'R');
+                $pdf->Cell(20, 6, $uob_week, 1, 0, 'R');
+                $pdf->Cell(25, 6, number_format($vol_week, 2), 1, 0, 'R');
+                $pdf->Cell(20, 6, $pdo_weekly, 1, 1, 'R');
+            }
+
+            $pdf->Ln(3);
         }
 
         // Save PDF
