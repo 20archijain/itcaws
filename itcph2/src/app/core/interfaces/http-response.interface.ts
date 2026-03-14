@@ -460,6 +460,7 @@ export interface DashboardTableData {
 }
 
 export interface SalesDashboardData {
+  monthlySalesGraphData: any;
   wdMarketList: DropdownList[];
   wdPopGroupList: DropdownList[];
   districtList: DropdownList[];
