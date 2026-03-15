@@ -67,10 +67,18 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
   branchFilter = false;
   showMapStyleDropdown = false;
   dashboardData: any;
-  ytdlytdVisitDataBarChartData: any[] = [];
+  monthlySalesBarChartData: any[] = [];
   graph1: any;
   isDataLoaded: boolean;
   searchbarForm: UntypedFormGroup;
+  graphLevelOptions = [
+    { label: "District", value: "district" },
+    { label: "Branch", value: "branch" },
+    { label: "Circle", value: "circle" },
+    { label: "Section", value: "section" },
+    { label: "WD Code", value: "wdCode" },
+  ];
+  selectedGraphLevel = "district";
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -99,6 +107,7 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
       product: [""],
       wdMarket: [],
       wdPopGroup: [],
+      graphLevel: ["district"],
     });
 
     this.initialData();
@@ -160,8 +169,14 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
               this.tillDateFocusSaleDone = resp.data.tillDateFocusSaleDone;
               this.tillDateFocusSaleAmount = resp.data.tillDateFocusSaleAmount;
               this.monthlySalesData = resp.data.monthlySalesData;
-              // this.outletVisitedTableData = resp.data.outletVisitedTableData;
-              // this.chartData = resp.data.chartsData;
+
+              const graphResp = resp.data.monthlySalesGraphData;
+              if (graphResp?.salesGraphData?.seriesData) {
+                this.prepareMonthlySalesBarChartData(
+                  graphResp.salesGraphData.seriesData,
+                  graphResp.salesGraphData.xAxisLabels,
+                );
+              }
             }
           }),
       );
@@ -171,6 +186,50 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
         type: "error",
       });
     }
+  }
+
+  refreshGraph() {
+    this.loaderService.startLoader();
+    // Send graphLevel + month1 to backend so it knows what to compute
+    const payload = {
+      ...this.group.getRawValue(),
+      graphLevel: this.group.get("graphLevel").value || "district",
+    };
+    this.subscription.push(
+      this.formService
+        .getList<SalesDashboardData>(this.url, payload)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe((resp) => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            this.monthlySalesData = resp.data.monthlySalesData;
+            const respData = resp.data as any;
+            const graphResp = respData?.monthlySalesGraphData;
+            if (graphResp?.salesGraphData?.seriesData) {
+              this.prepareMonthlySalesBarChartData(
+                graphResp.salesGraphData.seriesData,
+                graphResp.salesGraphData.xAxisLabels,
+              );
+            }
+          }
+        }),
+    );
+  }
+
+  prepareMonthlySalesBarChartData(seriesData: any[], xAxisLabels: any[]): void {
+    const plannedData = seriesData[0]?.data || [];
+    const revisitData = seriesData[1]?.data || [];
+    const salesData = seriesData[2]?.data || [];
+
+    this.monthlySalesBarChartData = xAxisLabels.map(
+      (label: string, index: number) => ({
+        name: label.toString(),
+        series: [
+          { name: "Planned Outlets", value: plannedData[index] || 0 },
+          { name: "Outlets ReVisit", value: revisitData[index] || 0 },
+          { name: "Total Sales", value: salesData[index] || 0 },
+        ],
+      }),
+    );
   }
 
   getBranch() {
@@ -454,6 +513,4 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
         }),
     );
   }
-
-
 }
