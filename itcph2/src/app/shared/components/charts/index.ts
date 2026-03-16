@@ -21,6 +21,7 @@ import {
 export const CHARTS_COMPONENTS = [
   ApexChartComponent,
   ApexPieChartComponent,
+  ApexGroupedBarChartComponent,
   AdvancePieChartComponent,
   AreaChartComponent,
   ColumnChartComponent,
