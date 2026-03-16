@@ -134,15 +134,23 @@
           </app-select>
         </div>
       </div>
-      <!-- Chart -->
-      <div class="flex-grow-1 d-flex justify-content-center align-items-center">
-        <app-grouped-vertical-column-chart
+      <!-- Chart: horizontal scroll for Section/WD level so all data is visible -->
+      <div class="flex-grow-1 w-100" style="overflow-x: auto; overflow-y: hidden;">
+        <!-- <app-grouped-vertical-column-chart
           [transformedChartData]="monthlySalesBarChartData"
           [xAxisLabel]="'Level'"
           [yAxisLabel]="'Value'"
           [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'"
           style="margin-bottom: 3rem; width: 100%;">
-        </app-grouped-vertical-column-chart>
+        </app-grouped-vertical-column-chart> -->
+        <app-apex-grouped-bar-chart
+        [transformedChartData]="monthlySalesBarChartData"
+        [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'"
+        [xAxisLabel]="'Level'"
+        [yAxisLabel]="'Value'"
+        [height]="400"
+        [pxPerCategory]="50">
+      </app-apex-grouped-bar-chart>
       </div>
     </app-card>
   </div>
