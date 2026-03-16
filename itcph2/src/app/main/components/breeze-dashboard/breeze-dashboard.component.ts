@@ -79,6 +79,12 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
     { label: "WD Code", value: "wdCode" },
   ];
   selectedGraphLevel = "district";
+  chartTypeOptions = [
+    { label: "Grouped Bar", value: "grouped" },
+    { label: "Bar", value: "bar" },
+    { label: "Line", value: "line" },
+  ];
+  monthlySalesLineChartData: any = null;
 
   constructor(
     private fb: UntypedFormBuilder,
@@ -108,6 +114,7 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
       wdMarket: [],
       wdPopGroup: [],
       graphLevel: ["district"],
+      chartType: ["grouped"],
     });
 
     this.initialData();
@@ -188,9 +195,12 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
     }
   }
 
+  get selectedChartType(): string {
+    return this.group.get("chartType")?.value || "grouped";
+  }
+
   refreshGraph() {
     this.loaderService.startLoader();
-    // Send graphLevel + month1 to backend so it knows what to compute
     const payload = {
       ...this.group.getRawValue(),
       graphLevel: this.group.get("graphLevel").value || "district",
@@ -215,22 +225,116 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
     );
   }
 
-  prepareMonthlySalesBarChartData(seriesData: any[], xAxisLabels: any[]): void {
-    const plannedData = seriesData[0]?.data || [];
-    const revisitData = seriesData[1]?.data || [];
-    const salesData = seriesData[2]?.data || [];
-
-    this.monthlySalesBarChartData = xAxisLabels.map(
-      (label: string, index: number) => ({
-        name: label.toString(),
-        series: [
-          { name: "Planned Outlets", value: plannedData[index] || 0 },
-          { name: "Outlets ReVisit", value: revisitData[index] || 0 },
-          { name: "Total Sales", value: salesData[index] || 0 },
-        ],
-      }),
-    );
+  onChartTypeChange(): void {
+    // No API call needed — just re-prepare labels with current data
+    // Data is already loaded, selectedChartType getter handles the switch reactively
   }
+
+  // prepareMonthlySalesBarChartData(seriesData: any[], xAxisLabels: any[]): void {
+  //   const plannedData = seriesData[0]?.data || [];
+  //   const revisitData = seriesData[1]?.data || [];
+  //   const salesData = seriesData[2]?.data || [];
+
+  //   this.monthlySalesBarChartData = xAxisLabels.map(
+  //     (label: string, index: number) => ({
+  //       name: label.toString(),
+  //       series: [
+  //         { name: "Planned Outlets", value: plannedData[index] || 0 },
+  //         { name: "Outlets ReVisit", value: revisitData[index] || 0 },
+  //         { name: "Total Sales", value: salesData[index] || 0 },
+  //       ],
+  //     }),
+  //   );
+  // }
+
+  // prepareMonthlySalesBarChartData(seriesData: any[], xAxisLabels: any[]): void {
+  //   const plannedData = seriesData[0]?.data || [];
+  //   const revisitData = seriesData[1]?.data || [];
+  //   const salesData = seriesData[2]?.data || [];
+
+  //   // Build month label string like "(Mar 26, Apr 26)"
+  //   const selectedMonths: string[] = this.group.get("month")?.value || [];
+  //   // const monthSuffix = selectedMonths.length
+  //   //   ? ` (${selectedMonths
+  //   //       .map((m) => {
+  //   //         const d = new Date(m);
+  //   //         return d.toLocaleDateString("en-GB", {
+  //   //           month: "short",
+  //   //           year: "2-digit",
+  //   //         });
+  //   //       })
+  //   //       .join(", ")})`
+  //   //   : "";
+  //   const monthSuffix = selectedMonths.length
+  //     ? ` (${selectedMonths
+  //         .map((m: string) => {
+  //           const parts = m.split(" ");
+  //           const monthAbbr = parts[0].slice(0, 3);
+  //           const yearShort = parts[1]?.slice(2) || "";
+  //           return `${monthAbbr} ${yearShort}`;
+  //         })
+  //         .join(", ")})`
+  //     : "";
+
+  //   this.monthlySalesBarChartData = xAxisLabels.map(
+  //     (label: string, index: number) => ({
+  //       name: label.toString(),
+  //       series: [
+  //         {
+  //           name: `Planned Outlets${monthSuffix}`,
+  //           value: plannedData[index] || 0,
+  //         },
+  //         {
+  //           name: `Outlets ReVisit${monthSuffix}`,
+  //           value: revisitData[index] || 0,
+  //         },
+  //         { name: `Total Sales${monthSuffix}`, value: salesData[index] || 0 },
+  //       ],
+  //     }),
+  //   );
+  // }
+
+  prepareMonthlySalesBarChartData(seriesData: any[], xAxisLabels: any[]): void {
+  const plannedData = seriesData[0]?.data || [];
+  const revisitData = seriesData[1]?.data || [];
+  const salesData   = seriesData[2]?.data || [];
+
+  const selectedMonths: string[] = this.group.get("month")?.value || [];
+  const monthSuffix = selectedMonths.length
+    ? ` (${selectedMonths
+        .map((m: string) => {
+          const parts = m.split(" ");
+          const monthAbbr = parts[0].slice(0, 3);
+          const yearShort = parts[1]?.slice(2) || "";
+          return `${monthAbbr} ${yearShort}`;
+        })
+        .join(", ")})`
+    : "";
+
+  // For grouped/stacked bar chart (transformedChartData format)
+  this.monthlySalesBarChartData = xAxisLabels.map(
+    (label: string, index: number) => ({
+      name: label.toString(),
+      series: [
+        { name: `Planned Outlets${monthSuffix}`, value: plannedData[index] || 0 },
+        { name: `Outlets ReVisit${monthSuffix}`, value: revisitData[index] || 0 },
+        { name: `Total Sales${monthSuffix}`,     value: salesData[index]   || 0 },
+      ],
+    }),
+  );
+
+  // For line chart (chartData format — same as Bankit uses)
+  this.monthlySalesLineChartData = {
+    chartData: [
+      { name: `Planned Outlets${monthSuffix}`, data: plannedData },
+      { name: `Outlets ReVisit${monthSuffix}`, data: revisitData },
+      { name: `Total Sales${monthSuffix}`,     data: salesData   },
+    ],
+    title: "Planned Outlets vs Outlets ReVisit vs Total Sales",
+    xAxisLabel1: xAxisLabels,
+    xAxisLabel2: { height: 400 },
+  };
+}
 
   getBranch() {
     this.branchValue = null;
