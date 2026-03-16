@@ -178,7 +178,7 @@ class VanDsMailer
                     }
 
                     $subject = "$branchName - Van DS Summary report for " . currentDate($currentDate, "d-m-Y");
-                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, $arrTo, $arrCc);
+                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, $arrTo, $arrCc, true);
                 }
             }
         }

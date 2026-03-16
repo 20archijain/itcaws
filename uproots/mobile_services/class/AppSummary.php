@@ -206,7 +206,7 @@ class AppSummary extends Utilities
 
     private function getAttendanceSummary($appType, $dbName, $clientId, $projectId, $teamId, $date, $month, $respTable)
     {
-        global $TBL_ATTENDANCE, $DELHI_DB, $ITC_DB, $SNPL_DB, $SOUTH_DB;
+        global $TBL_ATTENDANCE, $DELHI_DB;
 
         $arrAttendanceSummary = array();
 
@@ -314,171 +314,120 @@ class AppSummary extends Utilities
             // Store Attendance summary
             $arrAttendanceLabelList = array();
 
-            // SNPL DB attendance summary
-            if ($dbName === $SNPL_DB) {
-                if ($showAttendanceSummary) {
-                    $arrAttendanceLabelList[] = array(
-                        "label" => "आजको हाजिरी",
-                        "value" => $isPresentToday ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                    );
-                }
+            //  DB's attendance summary
+            // Show attendance
+            if ($showAttendanceSummary) {
+                $arrAttendanceLabelList[] = array(
+                    "label" => $this->arrSummaryLabels["TODAYS_ATTENDANCE"],
+                    "value" => $isPresentToday ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
+                );
+            }
+
+            // Show dayend
+            if ($showDayendSummary) {
+                $isDayendToday = isset($todayDayend) && $todayDayend ? true : false;
 
                 $arrAttendanceLabelList[] = array(
-                    "label" => "यस महिनाको कुल हाजिरी",
-                    "value" => $mtdPresents,
+                    "label" => $this->arrSummaryLabels["TODAYS_DAYEND"],
+                    "value" => $isDayendToday ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
                 );
-            } else {
-                // Other DB's attendance summary
+            }
 
-                // Show attendance
-                if ($showAttendanceSummary) {
-                    $arrAttendanceLabelList[] = array(
-                        "label" => $this->arrSummaryLabels["TODAYS_ATTENDANCE"],
-                        "value" => $isPresentToday ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                    );
-                }
+            // Show if employee/promoter in on week off today or not
+            if ($showLeaveWeekOffSummary && $respTable && $respTable != "tblsurvey_response_details") {
+                $leaveType = $this->tableUtil->getRowColumn(
+                    "$dbName.$respTable",
+                    "ques_1",
+                    "ques_0 = 'Leave Report' AND dstatus = 0 AND team_id = $teamId AND capture_date = '$date'"
+                );
 
-                // Show dayend
-                if ($showDayendSummary) {
-                    $isDayendToday = isset($todayDayend) && $todayDayend ? true : false;
-
-                    $arrAttendanceLabelList[] = array(
-                        "label" => $this->arrSummaryLabels["TODAYS_DAYEND"],
-                        "value" => $isDayendToday ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                    );
-                }
-
-                // Show if employee/promoter in on week off today or not
-                if ($showLeaveWeekOffSummary && $respTable && $respTable != "tblsurvey_response_details") {
-                    $leaveType = $this->tableUtil->getRowColumn(
-                        "$dbName.$respTable",
-                        "ques_1",
-                        "ques_0 = 'Leave Report' AND dstatus = 0 AND team_id = $teamId AND capture_date = '$date'"
-                    );
-
-                    $arrAttendanceLabelList[] = array(
-                        "label" => $this->arrSummaryLabels["TODAYS_LEAVE_WEEKEND"],
-                        "value" => $leaveType && $leaveType == 'Week OFF' ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                    );
-                }
-
-                // Show no of days in a month along with no of days present in a month
-                if ($attendanceShowNoDaysInAMonth) {
-                    $noOfDays = $this->commonFunctions->getCountOfDaysExcluding($attendanceExcludeWeekDay);
-                    $mtdPresents = "$mtdPresents/$noOfDays";
-                }
-                // Show mtd attendance
                 $arrAttendanceLabelList[] = array(
-                    "label" => $attendanceMtdLabel ?
-                        (isset($this->arrSummaryLabels[$attendanceMtdLabel]) ?
-                            $this->arrSummaryLabels[$attendanceMtdLabel] :
-                            $attendanceMtdLabel) : $this->arrSummaryLabels["MTD_ATTENDANCE"],
-                    "value" => $mtdPresents,
+                    "label" => $this->arrSummaryLabels["TODAYS_LEAVE_WEEKEND"],
+                    "value" => $leaveType && $leaveType == 'Week OFF' ? $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
                 );
+            }
 
-                // Show attendance time
-                if ($attendanceShowLoginTime) {
-                    $todayLoginDatetime = isset($todayAttendance) && $todayAttendance ? $todayAttendance : "";
-                    $todayLoginTime = $todayLoginDatetime ?
-                        $this->commonFunctions->currentDateTime("h:i:s A", $todayLoginDatetime) :
-                        $this->arrSummaryLabels["NA"];
+            // Show no of days in a month along with no of days present in a month
+            if ($attendanceShowNoDaysInAMonth) {
+                $noOfDays = $this->commonFunctions->getCountOfDaysExcluding($attendanceExcludeWeekDay);
+                $mtdPresents = "$mtdPresents/$noOfDays";
+            }
+            // Show mtd attendance
+            $arrAttendanceLabelList[] = array(
+                "label" => $attendanceMtdLabel ?
+                    (isset($this->arrSummaryLabels[$attendanceMtdLabel]) ?
+                        $this->arrSummaryLabels[$attendanceMtdLabel] :
+                        $attendanceMtdLabel) : $this->arrSummaryLabels["MTD_ATTENDANCE"],
+                "value" => $mtdPresents,
+            );
 
+            // Show attendance time
+            if ($attendanceShowLoginTime) {
+                $todayLoginDatetime = isset($todayAttendance) && $todayAttendance ? $todayAttendance : "";
+                $todayLoginTime = $todayLoginDatetime ?
+                    $this->commonFunctions->currentDateTime("h:i:s A", $todayLoginDatetime) :
+                    $this->arrSummaryLabels["NA"];
+
+                $arrAttendanceLabelList[] = array(
+                    "label" => $this->arrSummaryLabels["LOGIN_TIME"],
+                    "value" => $todayLoginTime,
+                );
+            }
+
+            // Show logout time
+            if ($attendanceShowLogoutTime) {
+                $todayLogoutDatetime = isset($todayDayend) && $todayDayend ? $todayDayend : "";
+                $todayLogoutTime = $todayLogoutDatetime ?
+                    $this->commonFunctions->currentDateTime("h:i:s A", $todayLogoutDatetime) :
+                    $this->arrSummaryLabels["NA"];
+
+                $arrAttendanceLabelList[] = array(
+                    "label" => $this->arrSummaryLabels["LOGOUT_TIME"],
+                    "value" => $todayLogoutTime,
+                );
+            }
+
+            // Show Qualified attendance summary in delhi DB
+            if ($dbName === $DELHI_DB) {
+                $teamType = $this->tableUtil->getRowColumn(
+                    "$dbName.tblproject_team",
+                    "is_ISS",
+                    "dstatus = 0 AND team_id = $teamId"
+                );
+                $teamTypeCondition = ($teamType == 5) || ($teamType == 4) ? "team_type = '5'" : "team_type = '1'";
+                if ($teamType == 7) {
                     $arrAttendanceLabelList[] = array(
-                        "label" => $this->arrSummaryLabels["LOGIN_TIME"],
-                        "value" => $todayLoginTime,
+                        "label" => $this->arrSummaryLabels["MTD_ATTENDANCE"],
+                        "value" => "$mtdPresents",
                     );
-                }
-
-                // Show logout time
-                if ($attendanceShowLogoutTime) {
-                    $todayLogoutDatetime = isset($todayDayend) && $todayDayend ? $todayDayend : "";
-                    $todayLogoutTime = $todayLogoutDatetime ?
-                        $this->commonFunctions->currentDateTime("h:i:s A", $todayLogoutDatetime) :
-                        $this->arrSummaryLabels["NA"];
-
-                    $arrAttendanceLabelList[] = array(
-                        "label" => $this->arrSummaryLabels["LOGOUT_TIME"],
-                        "value" => $todayLogoutTime,
-                    );
-                }
-
-                // Show Qualified attendance summary in delhi DB
-                if ($dbName === $DELHI_DB) {
-                    $teamType = $this->tableUtil->getRowColumn(
-                        "$dbName.tblproject_team",
-                        "is_ISS",
-                        "dstatus = 0 AND team_id = $teamId"
-                    );
-                    $teamTypeCondition = ($teamType == 5) || ($teamType == 4) ? "team_type = '5'" : "team_type = '1'";
-                    if ($teamType == 7) {
-                        $arrAttendanceLabelList[] = array(
-                            "label" => $this->arrSummaryLabels["MTD_ATTENDANCE"],
-                            "value" => "$mtdPresents",
-                        );
-                    } else {
-                        $minBillsShops = $this->tableUtil->getRowColumn(
-                            "$dbName.tblconstants",
-                            "con_value",
-                            "dstatus = 0 AND con_name = 'minTotalShops' AND $teamTypeCondition"
-                        );
-                        $minWorkingTimeInMin = $this->tableUtil->getRowColumn(
-                            "$dbName.tblconstants",
-                            "con_value",
-                            "dstatus = 0 AND con_name = 'minWorkingTimeInMin' AND $teamTypeCondition"
-                        );
-
-                        $arrQualifiedAttendance = $this->tableUtil->getRowsColumns(
-                            "$dbName.tblvands_summary",
-                            "SUM(total_sellin_shops + total_other_shops) AS totalShops",
-                            "dstatus = 0 AND team_id = $teamId AND activity_date LIKE '$month'" .
-                                " AND TIMESTAMPDIFF(MINUTE, start_datetime, end_datetime) >= $minWorkingTimeInMin" .
-                                " AND DAYOFWEEK(activity_date) != 1 GROUP BY activity_date HAVING totalShops >= $minBillsShops"
-                        );
-
-                        $noOfQualifiedAttendance = count($arrQualifiedAttendance);
-
-                        $arrAttendanceLabelList[] = array(
-                            "label" => $this->arrSummaryLabels["QUALIFIED_MARKET_WORKING_DAYS"],
-                            "value" => "$noOfQualifiedAttendance/" . ($noOfDays ? $noOfDays : date("t")),
-                        );
-                    }
-                } elseif ($dbName === $ITC_DB || $dbName === $SOUTH_DB) {
-                    // Show Qualified attendance summary in Itc and South DB
-
-                    $minTotalShops = $this->tableUtil->getRowColumn(
+                } else {
+                    $minBillsShops = $this->tableUtil->getRowColumn(
                         "$dbName.tblconstants",
                         "con_value",
-                        "dstatus = 0 AND con_name = 'minTotalShops'"
+                        "dstatus = 0 AND con_name = 'minTotalShops' AND $teamTypeCondition"
                     );
                     $minWorkingTimeInMin = $this->tableUtil->getRowColumn(
                         "$dbName.tblconstants",
                         "con_value",
-                        "dstatus = 0 AND con_name = 'minWorkingTimeInMin'"
+                        "dstatus = 0 AND con_name = 'minWorkingTimeInMin' AND $teamTypeCondition"
                     );
 
                     $arrQualifiedAttendance = $this->tableUtil->getRowsColumns(
                         "$dbName.tblvands_summary",
-                        $dbName === $ITC_DB ? "SUM(total_roc_deliveries + total_other_shops) AS totalShops" :
-                            "SUM(total_deliveries) AS totalShops",
+                        "SUM(total_sellin_shops + total_other_shops) AS totalShops",
                         "dstatus = 0 AND team_id = $teamId AND activity_date LIKE '$month'" .
                             " AND TIMESTAMPDIFF(MINUTE, start_datetime, end_datetime) >= $minWorkingTimeInMin" .
-                            " GROUP BY activity_date HAVING totalShops >= $minTotalShops"
+                            " AND DAYOFWEEK(activity_date) != 1 GROUP BY activity_date HAVING totalShops >= $minBillsShops"
                     );
+
                     $noOfQualifiedAttendance = count($arrQualifiedAttendance);
 
                     $arrAttendanceLabelList[] = array(
                         "label" => $this->arrSummaryLabels["QUALIFIED_MARKET_WORKING_DAYS"],
-                        "value" => (string) $noOfQualifiedAttendance,
+                        "value" => "$noOfQualifiedAttendance/" . ($noOfDays ? $noOfDays : date("t")),
                     );
                 }
             }
-
-            // Output summary
-            $arrAttendanceSummary[] = $this->getFormattedSummary(
-                $appType,
-                $dbName == $SNPL_DB ? "हाजिरीको सारांश" : $this->arrSummaryLabels["ATTENDANCE_SUMMARY"],
-                $arrAttendanceLabelList
-            );
         }
 
         return $arrAttendanceSummary;
@@ -627,8 +576,7 @@ class AppSummary extends Utilities
         $month,
         $respTable
     ) {
-        global $DELHI_DB, $ITC_DB, $ITCNEW_DB, $ITCPH2_DB, $JAIPUR_DB, $SNPL_DB, $SOUTH_DB,
-            $IMPACT_DB, $NOVICEMARCOM_DB, $WONDER_DB, $ZX_DB;
+        global $DELHI_DB, $ITCPH2_DB;
 
         $arrOtherSummary = array();
 
@@ -653,30 +601,6 @@ class AppSummary extends Utilities
                     $month,
                     $respTable
                 );
-            } elseif ($dbName === $ITC_DB || $dbName === $JAIPUR_DB) {
-                $arrOtherSummary = $this->getItcAndJaipurSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $ITCNEW_DB) {
-                $arrOtherSummary = $this->getItcnewSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
             } elseif ($dbName === $ITCPH2_DB) {
                 $arrOtherSummary = $this->getItcph2Summary(
                     $appType,
@@ -685,79 +609,6 @@ class AppSummary extends Utilities
                     $projectId,
                     $teamId,
                     $jsonId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $SNPL_DB) {
-                $arrOtherSummary = $this->getSnplSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $jsonId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $SOUTH_DB) {
-                $arrOtherSummary = $this->getSouthSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $IMPACT_DB) {
-                $arrOtherSummary = $this->getImpactSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $NOVICEMARCOM_DB) {
-                $arrOtherSummary = $this->getNovicemarcomSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $WONDER_DB) {
-                $arrOtherSummary = $this->getWonderSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
-                    $otherSummaryCond,
-                    $date,
-                    $month,
-                    $respTable
-                );
-            } elseif ($dbName === $ZX_DB) {
-                $arrOtherSummary = $this->getZxSummary(
-                    $appType,
-                    $dbName,
-                    $clientId,
-                    $projectId,
-                    $teamId,
                     $otherSummaryCond,
                     $date,
                     $month,
@@ -1200,447 +1051,6 @@ class AppSummary extends Utilities
         return $arrOtherSummary;
     }
 
-    private function getItcAndJaipurSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        global $ITC_DB, $TBL_MOBILE_SUMMARY;
-
-        $arrOtherSummary = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        $arrTeamSummary = $this->tableUtil->getRowColumns(
-            "$dbName.$TBL_MOBILE_SUMMARY",
-            "time_spent_today, grocery_count_today, retail_count_today, wholesale_count_today" .
-                ", roc_sell_in_shops_count_today, other_covered_today, other_covered_mtd" .
-                ", roc_total_shops_count, roc_covered_today, roc_covered_mtd",
-            "dstatus = 0 AND team_id = $teamId"
-        );
-
-        $timeSpentToday = isset($arrTeamSummary, $arrTeamSummary[0]) ? $arrTeamSummary[0] : "0s";
-        $todayOtherOutletGroceryCount = isset($arrTeamSummary, $arrTeamSummary[1]) ? $arrTeamSummary[1] : 0;
-        $todayOtherOutletRetailCount = isset($arrTeamSummary, $arrTeamSummary[2]) ? $arrTeamSummary[2] : 0;
-        $todayOtherOutletWholesaleCount = isset($arrTeamSummary, $arrTeamSummary[3]) ?
-            $arrTeamSummary[3] : 0;
-        $todayROCSellinShopsCount = isset($arrTeamSummary, $arrTeamSummary[4]) ? $arrTeamSummary[4] : 0;
-        $otherCoveredShopsTodayCount = isset($arrTeamSummary, $arrTeamSummary[5]) ? $arrTeamSummary[5] : 0;
-        $otherCoveredShopsMtdCount = isset($arrTeamSummary, $arrTeamSummary[6]) ? $arrTeamSummary[6] : 0;
-        $assignedROCShopsCount = isset($arrTeamSummary, $arrTeamSummary[7]) ? $arrTeamSummary[7] : 0;
-        $rocCoveredShopsTodayCount = isset($arrTeamSummary, $arrTeamSummary[8]) ? $arrTeamSummary[8] : 0;
-        $rocCoveredShopsMtdCount = isset($arrTeamSummary, $arrTeamSummary[9]) ? $arrTeamSummary[9] : 0;
-
-        $arrOtherLabelList1 = array(
-            array(
-                "label" => $this->arrSummaryLabels["TOTAL_TIME_SPENT"],
-                "value" => $timeSpentToday,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["OTHER_OUTLET_GROCERY"],
-                "value" => (string) $todayOtherOutletGroceryCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["OTHER_OUTLET_RETAIL"],
-                "value" => (string) $todayOtherOutletRetailCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["OTHER_OUTLET_WHOLESALE"],
-                "value" => (string) $todayOtherOutletWholesaleCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["ROC_SELLIN_SHOPS"],
-                "value" => (string) $todayROCSellinShopsCount,
-            ),
-        );
-
-        // Output summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-            $arrOtherLabelList1
-        );
-
-        $arrOtherLabelList2 = array(
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_TODAY"],
-                "value" => (string) $otherCoveredShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_MTD"],
-                "value" => (string) $otherCoveredShopsMtdCount,
-            ),
-        );
-
-        // Output summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            $this->arrSummaryLabels["FEEDER_MARKET_SUMMARY"],
-            $arrOtherLabelList2
-        );
-
-        $arrOtherLabelList3 = array(
-            array(
-                "label" => $this->arrSummaryLabels["TOTAL_SHOPS"],
-                "value" => (string) $assignedROCShopsCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_TODAY"],
-                "value" => (string) $rocCoveredShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_MTD"],
-                "value" => (string) $rocCoveredShopsMtdCount,
-            ),
-        );
-
-        // Output summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            $this->arrSummaryLabels["ROC_DELIVERY"],
-            $arrOtherLabelList3
-        );
-
-        // Output leaderboard for E-Cal branch
-        $branchId = $this->getTeamBranch($dbName, $teamId);
-        if ($dbName === $ITC_DB && $branchId == 13) {
-            // Get the current month and year
-            $currentMonth = date('m');
-            $currentYear = date('Y');
-
-            $arrTeamLeaderBoard = $this->tableUtil->getRowsColumns(
-                "$dbName.tblleaderboard AS lb",
-                "AVG(para1_score) AS avg_para1, AVG(para2_score) AS avg_para2, AVG(para3_score) AS avg_para3, AVG(para4_score) AS avg_para4, AVG(total_score) AS avg_percentage, team_id, branch_id, (SELECT team_name FROM $dbName.tblproject_team WHERE team_id = lb.team_id) AS team_name",
-                "lb.dstatus = 0 AND lb.branch_id = $branchId AND MONTH(lb.capture_date) = $currentMonth AND YEAR(lb.capture_date) = $currentYear GROUP BY lb.team_id ORDER BY avg_percentage DESC"
-            );
-
-            $arrLeaderboardList = array();
-            $arrLoggedinUserRankDetail = array();
-
-            // Get requested team leaderboard details
-            foreach ($arrTeamLeaderBoard as $key => $leaderboardDetail) {
-                if ($leaderboardDetail[5] == $teamId) {
-                    $loggedInUserRank = $key + 1; // Adding 1 to convert from array index to rank
-                    $formattedPercentage = sprintf("%.2f", $leaderboardDetail[4]);
-
-                    $arrLoggedinUserRankDetail = array(
-                        "rank" => "#$loggedInUserRank",
-                        "dsName" => $leaderboardDetail[7],
-                        "totalScore" => $formattedPercentage,
-                        "scoreParameters" => array(
-                            array(
-                                "para1Label" => "QAtt",
-                                "para1Value" => sprintf("%.1f", $leaderboardDetail[0]),
-                                "para2Label" => "DAtt",
-                                "para2Value" => sprintf("%.1f", $leaderboardDetail[1]),
-                                "para3Label" => "UOB",
-                                "para3Value" => sprintf("%.1f", $leaderboardDetail[2]),
-                                "para4Label" => "B-Adh",
-                                "para4Value" => sprintf("%.1f", $leaderboardDetail[3])
-                            )
-                        )
-                    );
-                    break;
-                }
-            }
-
-            // Get Top 10 on leaderboard
-            for ($i = 0; $i < min(10, count($arrTeamLeaderBoard)); $i++) {
-                $leaderboardDetail = $arrTeamLeaderBoard[$i];
-                $formattedPercentage = sprintf("%.2f", $leaderboardDetail[4]);
-
-                $arrLeaderboardList[] = array(
-                    "rank" => "#" . ($i + 1), // Adding 1 to convert from array index to rank
-                    "dsName" => $leaderboardDetail[7],
-                    "totalScore" => $formattedPercentage,
-                    "scoreParameters" => array(
-                        array(
-                            "para1Label" => "QAtt",
-                            "para1Value" => sprintf("%.1f", $leaderboardDetail[0]),
-                            "para2Label" => "DAtt",
-                            "para2Value" => sprintf("%.1f", $leaderboardDetail[1]),
-                            "para3Label" => "UOB",
-                            "para3Value" => sprintf("%.1f", $leaderboardDetail[2]),
-                            "para4Label" => "B-Adh",
-                            "para4Value" => sprintf("%.1f", $leaderboardDetail[3])
-                        )
-                    )
-                );
-            }
-
-            // Add loggedin team rank
-            if ($arrLoggedinUserRankDetail) {
-                $arrLeaderboardList[] = $arrLoggedinUserRankDetail;
-            }
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                "🏆LEADERBOARD🏆",
-                $arrLeaderboardList
-            );
-        }
-
-        return $arrOtherSummary;
-    }
-
-    private function getItcnewSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        $arrOtherSummary = $arrOtherLabelList = $arrOtherCardList = array();
-
-        if ($projectId == 59 || $projectId == 66 || $projectId == 67) {
-            $iVisited = 0;
-            $iBought = 0;
-
-            $arrVisitedVsBought = $this->tableUtil->getRowsColumns(
-                "$dbName.$respTable",
-                "ques_4, COUNT(pro_id) AS total",
-                "dstatus = 0 AND project_id = $projectId AND team_id = $teamId" .
-                    " AND capture_date = '$date' AND ques_0 = 'Consumer Sales Details'" .
-                    " GROUP BY ques_4"
-            );
-
-            foreach ($arrVisitedVsBought as $arrCall) {
-                if ($arrCall[0] == "Yes") {
-                    $iBought = (int) $arrCall[1];
-                }
-                $iVisited += (int) $arrCall[1];
-            }
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CALLS"],
-                    "value" => (string) $iVisited,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["PRODUCTIVE_CALLS"],
-                    "value" => (string) $iBought,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                $arrOtherLabelList
-            );
-        } elseif ($projectId == 118) {
-            $iVisited = 0;
-            $iBought = 0;
-            $iNotBought = 0;
-            $count1 = 0;
-            $count2 = 0;
-            $count3 = 0;
-            $brand1 = "Sunfeast Marielite 225 gm @ 30 MRP.";
-            $brand2 = "Moms Magic Cashew 200 gm @ 35 MRP";
-            $brand3 = "Dark Fantasy 75gm @ 40 MRP";
-
-            // Get Product bought or not count
-            $arrVisitedVsBought = $this->tableUtil->getRowsColumns(
-                "$dbName.tblresponse_sunfeastmarielite_d2d",
-                "ques_7, COUNT(pro_id) AS total",
-                "dstatus = 0 AND project_id = $projectId AND team_id = $teamId" .
-                    " AND capture_date = '$date' AND ques_0 = 'Consumer Sales Details'" .
-                    " GROUP BY ques_7"
-            );
-
-            foreach ($arrVisitedVsBought as $arrCall) {
-                $call = $arrCall[0];
-                if ($call == "ହଁ") {
-                    $call = "Yes";
-                } elseif ($call == "ନା") {
-                    $call = "No";
-                }
-
-                if ($call == "Yes") {
-                    $iBought = (int) $arrCall[1];
-                } elseif ($call == "No") {
-                    $iNotBought = (int) $arrCall[1];
-                }
-                $iVisited += (int) $arrCall[1];
-            }
-
-            // Get Sales qty for each product
-            $arrSalesQty = $this->tableUtil->getRowsColumns(
-                "$dbName.tblresponse_sunfeastmarielite_d2d",
-                "ques_10, COUNT(pro_id) AS total",
-                "dstatus = 0 AND project_id = $projectId AND team_id = $teamId" .
-                    " AND capture_date = '$date' AND ques_0 = 'Consumer Sales Details'" .
-                    " AND ques_7 = 'ହଁ' GROUP BY ques_10"
-            );
-
-            foreach ($arrSalesQty as $arrSales) {
-                $brand = $arrSales[0];
-                $count = $arrSales[1];
-
-                if (strstr($brand, $brand1) !== false) {
-                    $count1 = $count;
-                } elseif (strstr($brand, $brand2) !== false) {
-                    $count2 = $count;
-                } elseif (strstr($brand, $brand3) !== false) {
-                    $count3 = $count;
-                }
-            }
-
-            $arrOtherCardList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CALLS"],
-                    "value" => (string) $iVisited,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["PRODUCTIVE_CALLS"],
-                    "value" => (string) $iBought,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["NON_PRODUCTIVE_CALLS"],
-                    "value" => (string) $iNotBought,
-                ),
-                array(
-                    "label" => $brand1,
-                    "value" => (string) $count1,
-                ),
-                array(
-                    "label" => $brand2,
-                    "value" => (string) $count2,
-                ),
-                array(
-                    "label" => $brand3,
-                    "value" => (string) $count3,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                array(),
-                $arrOtherCardList
-            );
-        } elseif (
-            $respTable && $respTable != "tblsurvey_response_details" &&
-            ($projectId == 111 || $projectId == 114 || $projectId == 115 ||
-                $projectId == 116 || $projectId == 117 || $projectId == 123 ||
-                $projectId == 124 || $projectId == 125 || $projectId == 126 ||
-                $projectId == 127 || $projectId == 128 || $projectId == 129 ||
-                $projectId == 139 || $projectId == 140 || $projectId == 157)
-        ) {
-            $currentDateTime = $this->commonFunctions->currentDateTime();
-            // get if user has uploaded Opening Stock, Closing Stock, Sales Details data or not
-            $arrOpeningClosingSalesDetails = $this->tableUtil->getRowColumns(
-                "$dbName.$respTable",
-                "MAX(CASE WHEN ques_0 = 'Opening Stock' THEN 'Yes' ELSE 'No' END)" .
-                    " AS opening_stock_filled, MAX(CASE WHEN ques_0 = 'Closing Stock' THEN 'Yes'" .
-                    " ELSE 'No' END) AS closing_stock_filled, MAX(CASE WHEN ques_0 = 'Sales Details'" .
-                    " THEN 'Yes' ELSE 'No' END) AS sales_details_filled",
-                "dstatus = 0 AND project_id = $projectId AND team_id = $teamId AND capture_date = '$date'"
-            );
-
-            // get leader board data
-            $arrLeaderBoardDetails = $this->tableUtil->getRowsColumns(
-                "$dbName.tbltimesheet AS ts",
-                "AVG(ts.total_percentage) AS avg_percentage, team_id, (SELECT team_name FROM" .
-                    " $dbName.tblproject_team WHERE team_id = ts.team_id) AS team_name",
-                "ts.dstatus = 0 AND ts.project_id = $projectId GROUP BY ts.team_id" .
-                    " ORDER BY avg_percentage DESC"
-            );
-
-            // Find requested team score
-            $loggedInScoreAndRank = null;
-            foreach ($arrLeaderBoardDetails as $key => $leaderboardDetail) {
-                if ($leaderboardDetail[1] == $teamId) {
-                    $loggedInUserRank = $key + 1; // Adding 1 to convert from array index to rank
-                    $formattedPercentage = sprintf("%.2f", $leaderboardDetail[0]);
-                    $loggedInScoreAndRank = "(" . $formattedPercentage . ") #" . $loggedInUserRank;
-                    break;
-                }
-            }
-
-            $arrLeaderboardCardList = array();
-            // Loop through the top 5 teams
-            for ($i = 0; $i < min(5, count($arrLeaderBoardDetails)); $i++) {
-                $leaderboardDetail = $arrLeaderBoardDetails[$i];
-                $formattedPercentage = sprintf("%.2f", $leaderboardDetail[0]);
-
-                $rankLabel = "";
-                // Assign emojis for ranks 1 through 5
-                switch ($i) {
-                    case 0:
-                        $rankLabel = "🥇"; // Gold for Rank 1
-                        break;
-                    case 1:
-                        $rankLabel = "🥈"; // Silver for Rank 2
-                        break;
-                    case 2:
-                        $rankLabel = "🥉"; // Bronze for Rank 3
-                        break;
-                    case 3:
-                        $rankLabel = "🎖️";
-                        break;
-                    case 4:
-                        $rankLabel = "🎖️";
-                        break;
-                }
-
-                $arrLeaderboardCardList[] = array(
-                    // Adding 1 to convert from array index to rank
-                    "label" => $rankLabel . " Rank-" . ($i + 1),
-                    "value" => "(" . $formattedPercentage . ") " . $leaderboardDetail[2]
-                );
-            }
-
-            // Include the rank of the requested user
-            $arrLeaderboardCardList[] = array(
-                "label" => "⭐ YOUR RANK",
-                "value" => isset($loggedInScoreAndRank) && $loggedInScoreAndRank ? $loggedInScoreAndRank : "N/A"
-            );
-
-            $arrOtherCardList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["OPENING_STOCK_FILLED"],
-                    "value" => isset($arrOpeningClosingSalesDetails, $arrOpeningClosingSalesDetails[0]) ? $arrOpeningClosingSalesDetails[0] : "0",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["CLOSING_STOCK_FILLED"],
-                    "value" => isset($arrOpeningClosingSalesDetails, $arrOpeningClosingSalesDetails[1]) ? $arrOpeningClosingSalesDetails[1] : "0",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["SALES_DETAILS"],
-                    "value" => isset($arrOpeningClosingSalesDetails, $arrOpeningClosingSalesDetails[2]) ? $arrOpeningClosingSalesDetails[2] : "0",
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"] . ", " . $currentDateTime,
-                array(),
-                $arrOtherCardList
-            );
-
-            // Output leaderboard summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                "🏆LEADERBOARD🏆",
-                array(),
-                $arrLeaderboardCardList
-            );
-        }
-
-        return $arrOtherSummary;
-    }
 
     private function getItcph2Summary(
         $appType,
@@ -1771,7 +1181,8 @@ class AppSummary extends Utilities
                     "value" => (string)$product[1], // column name
                 ];
             }
-            if ($jsonId == 101) {
+            $arrWdList = [];
+            if ($jsonId == 101 || $jsonId == 100) {
                 // Define wd list for dropdown
                 foreach ($arrWdDetails as $wd) {
                     $arrWdList[] = [
@@ -2082,23 +1493,25 @@ class AppSummary extends Utilities
             $productiveOutlets = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_5 > 0");
             $surveyQty = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "SUM(ques_5)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
             $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-            $arrOtherDetails = !empty($attendanceDetails) ? json_decode($attendanceDetails, true) : [];
-            $workingWith = isset($arrOtherDetails['workingWith']) ? $arrOtherDetails['workingWith'] : "";
-            if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
-                $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
-                $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-            } else {
-                $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                if ($this->commonFunctions->isNonEmptyArray($min_max_time) && (!empty($min_max_time[0]) || !empty($min_max_time[1]))) {
-                    $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
-                    $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
-                } else {
+            if (!empty($attendanceDetails)) {
+                $arrOtherDetails = json_decode($attendanceDetails, true);
+                $workingWith = $arrOtherDetails['workingWith'];
+                if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
                     $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
                     $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                    $timeSpent = $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true);
+                    $timeSpent = $endTime ? $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true) : 0;
                     $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                } else {
+                    $min_max_time = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    if ($this->commonFunctions->isNonEmptyArray($min_max_time) && (!empty($min_max_time[0]) || !empty($min_max_time[1]))) {
+                        $timeSpent = $this->commonFunctions->getTimeDifference($min_max_time[0], $min_max_time[1], false, false, true);
+                        $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                    } else {
+                        $startTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                        $endTime = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                        $timeSpent = $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true);
+                        $distanceInKm = $this->tableUtil->getRowColumn("$dbName.tblattendance", "distance", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                    }
                 }
             }
 
@@ -2439,18 +1852,11 @@ class AppSummary extends Utilities
 
                         $columnExpression = implode(" + ", $productCols);
 
-                        // $sumColumns = "SUM($columnExpression) AS total";
+                        $sumColumns = "SUM($columnExpression) AS total";
 
-                        $sumColumns = !empty($columnExpression) ? "SUM($columnExpression) AS total" : "SUM(0) AS total";
-
-                        $focusBrand1 = 0;
-                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[0]) && !empty($arrFocusProduct[0])) {
-                            $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        }
-                        $focusBrand2 = 0;
-                        if (is_array($arrFocusProduct) && isset($arrFocusProduct[1]) && !empty($arrFocusProduct[1])) {
-                            $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
-                        }
+                        $focusBrand1 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[0])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $focusBrand2 = $this->tableUtil->getRowsColumn("$dbName.tblvands_summary", "SUM($arrFocusProduct[1])", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
+                        $overAllValue = $this->tableUtil->getRowColumn("$dbName.tblvands_summary", $sumColumns, "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(activity_date, '%Y-%m') = '$month'");
                         // print_r($sumColumns);die;
 
                         $qualifiedAttendanceCount = 0;
@@ -2551,7 +1957,7 @@ class AppSummary extends Utilities
 
                             // Default progress item
                             $progressItem = [
-                                "earnedMoney" => isset($earnedMoney) && $earnedMoney !== null ? round($earnedMoney, 0) : 0,
+                                "earnedMoney" => round($earnedMoney, 0),
                                 "rewardMoney" => $rewardMoney,
                                 "title" => $title,
                                 "color" => $color,
@@ -2699,1137 +2105,6 @@ class AppSummary extends Utilities
                 }
             }
         }
-        return $arrOtherSummary;
-    }
-
-    private function getSnplSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $jsonId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        global $TBL_ROUTE_DETAILS, $TBL_MOBILE_SUMMARY, $TBL_SURVEY_RESPONSE;
-
-        $arrOtherSummary = array();
-
-        $arrTeamSummary = $this->tableUtil->getRowColumns(
-            "$dbName.$TBL_MOBILE_SUMMARY",
-            "time_spent_today, grocery_count_today, retail_count_today, wholesale_count_today" .
-                ", roc_sell_in_shops_count_today, other_covered_today, other_covered_mtd" .
-                ", roc_total_shops_count, roc_covered_today, roc_covered_mtd",
-            "dstatus = 0 AND team_id = $teamId"
-        );
-
-        $timeSpentToday = isset($arrTeamSummary[0]) && $arrTeamSummary[0] ? $arrTeamSummary[0] : "0s";
-        $iMadiraPasalCount = isset($arrTeamSummary[1]) && $arrTeamSummary[1] ? $arrTeamSummary[1] : 0;
-        $iKhudraVikretaCount = isset($arrTeamSummary[2]) && $arrTeamSummary[2] ? $arrTeamSummary[2] : 0;
-        $iThokVikretaCount = isset($arrTeamSummary[3]) && $arrTeamSummary[3] ? $arrTeamSummary[3] : 0;
-        $rocCount = isset($arrTeamSummary[4]) && $arrTeamSummary[4] ? $arrTeamSummary[4] : 0;
-        $otherCoveredShopsTodayCount = isset($arrTeamSummary[5]) && $arrTeamSummary[5] ? $arrTeamSummary[5] : 0;
-        $otherCoveredShopsMtdCount = isset($arrTeamSummary[6]) && $arrTeamSummary[6] ? $arrTeamSummary[6] : 0;
-        $assignedROCShopsCount = isset($arrTeamSummary[7]) && $arrTeamSummary[7] ? $arrTeamSummary[7] : 0;
-        $rocCoveredShopsTodayCount = isset($arrTeamSummary[8]) && $arrTeamSummary[8] ? $arrTeamSummary[8] : 0;
-        $rocCoveredShopsMtdCount = isset($arrTeamSummary[9]) && $arrTeamSummary[9] ? $arrTeamSummary[9] : 0;
-
-        $arrOtherLabelList1 = array(
-            array(
-                "label" => "कुल समय बिताया",
-                "value" => (string) $timeSpentToday,
-            ),
-            array(
-                "label" => "मदिरा पसल",
-                "value" => (string) $iMadiraPasalCount,
-            ),
-            array(
-                "label" => "खुद्रा बिक्रेता पसल",
-                "value" => (string) $iKhudraVikretaCount,
-            ),
-            array(
-                "label" => "थोक बिक्रेता पसल",
-                "value" => (string) $iThokVikretaCount,
-            ),
-            array(
-                "label" => "रुटमा बिक्री गरिएका पसलहरु",
-                "value" => (string) $rocCount,
-            ),
-        );
-
-        // Output today's summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            "आजको सारांश",
-            $arrOtherLabelList1
-        );
-
-        $arrOtherLabelList2 = array(
-            array(
-                "label" => "आजको कभरेज",
-                "value" => (string) $otherCoveredShopsTodayCount,
-            ),
-            array(
-                "label" => "यस महिना हालसम्मको कभरेज",
-                "value" => (string) $otherCoveredShopsMtdCount,
-            ),
-        );
-
-        // Output "Other Outlet" summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            "नयाँ पसलहरुको सारांश",
-            $arrOtherLabelList2
-        );
-
-        $arrOtherLabelList3 = array(
-            array(
-                "label" => "कुल पसल संख्या",
-                "value" => (string) $assignedROCShopsCount,
-            ),
-            array(
-                "label" => "आज कभर गरिएका पसलहरु",
-                "value" => (string) $rocCoveredShopsTodayCount,
-            ),
-            array(
-                "label" => "यस महिना हालसम्म कभर गरिएका पसलहरु",
-                "value" => (string) $rocCoveredShopsMtdCount,
-            ),
-        );
-
-        // Output "ROC Delivery" summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            "रुटको बिक्री",
-            $arrOtherLabelList3
-        );
-
-        // Outut absent cycle DSS names
-        if ($jsonId == 2) {
-            $rsAbsentCycleDssAction = null;
-            $iAbsentCycleDssActionRows = 0;
-            $sAbsentCycleDssQuery = "SELECT outlet_name_eng FROM $dbName.$TBL_ROUTE_DETAILS" .
-                " WHERE team_id = $teamId and cycle_dss = '1' AND dstatus = 0 AND rec_id NOT IN" .
-                " (SELECT DISTINCT shop_id FROM $dbName.$TBL_SURVEY_RESPONSE WHERE" .
-                " capture_date = '$date' and ques_0 = 'रुटको बिक्री' AND ques_5 = 'हाजिरी' AND dstatus = 0);";
-            $this->dbConn->ExecuteSelectQuery(
-                $sAbsentCycleDssQuery,
-                $rsAbsentCycleDssAction,
-                $iAbsentCycleDssActionRows
-            );
-
-            if ($iAbsentCycleDssActionRows > 0) {
-                $arrDSSNamesLabelList = array();
-                while ($rowAbsentCycleDss = $this->dbConn->GetData($rsAbsentCycleDssAction)) {
-                    $arrDSSNamesLabelList[] = array(
-                        "label" => $rowAbsentCycleDss["outlet_name_eng"],
-                        "value" => "",
-                    );
-                }
-
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    $this->arrSummaryLabels["ABSENT_CYCLE_DSS"],
-                    $arrDSSNamesLabelList
-                );
-            }
-        }
-
-        return $arrOtherSummary;
-    }
-
-    private function getSouthSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        global $TBL_VANDS_SUMMARY;
-
-        $arrOtherSummary = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        // Get today's count
-        $arrTeamTodaySummary = $this->tableUtil->getRowColumns(
-            "$dbName.$TBL_VANDS_SUMMARY",
-            "start_datetime, end_datetime, total_deliveries, total_sellin_shops" .
-                ", total_town_shops, total_rural_shops, total_village_shops, total_planned_shops",
-            "dstatus = 0 AND team_id = $teamId AND activity_date = '$date'"
-        );
-
-        // Get Month count
-        $arrTeamMonthSummary = $this->tableUtil->getRowColumns(
-            "$dbName.$TBL_VANDS_SUMMARY",
-            "SUM(total_deliveries) AS totalCalls, SUM(total_sellin_shops) AS productiveCalls",
-            "dstatus = 0 AND team_id = $teamId AND activity_date LIKE '$month'"
-        );
-
-        $timeSpentToday = isset($arrTeamTodaySummary, $arrTeamTodaySummary[0]) ?
-            $this->commonFunctions->getTimeDifference(
-                $arrTeamTodaySummary[0],
-                $arrTeamTodaySummary[1],
-                false,
-                false,
-                true
-            ) : "0s";
-        $coveredShopsTodayCount = isset($arrTeamTodaySummary, $arrTeamTodaySummary[2]) ?
-            $arrTeamTodaySummary[2] : 0;
-        $productiveShopsTodayCount = isset($arrTeamTodaySummary, $arrTeamTodaySummary[3]) ?
-            $arrTeamTodaySummary[3] : 0;
-        $totalPlanned = isset($arrTeamTodaySummary, $arrTeamTodaySummary[7]) ?
-            $arrTeamTodaySummary[7] : 0;
-
-        $coveredTownShopsTodayCount = isset($arrTeamTodaySummary, $arrTeamTodaySummary[4]) ?
-            $arrTeamTodaySummary[4] : 0;
-        $coveredRuralShopsTodayCount = isset($arrTeamTodaySummary, $arrTeamTodaySummary[5]) ?
-            $arrTeamTodaySummary[5] : 0;
-        $coveredVillageShopsTodayCount = isset($arrTeamTodaySummary, $arrTeamTodaySummary[6]) ?
-            $arrTeamTodaySummary[6] : 0;
-
-        $coveredShopsMtdCount = isset($arrTeamMonthSummary, $arrTeamMonthSummary[0]) ?
-            $arrTeamMonthSummary[0] : 0;
-        $productiveShopsMtdCount = isset($arrTeamMonthSummary, $arrTeamMonthSummary[1]) ?
-            $arrTeamMonthSummary[1] : 0;
-
-        $arrOtherTodayLabelList = array(
-            array(
-                "label" => $this->arrSummaryLabels["TOTAL_TIME_SPENT"],
-                "value" => $timeSpentToday,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_TODAY"],
-                "value" => (string) $coveredShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_TOWN_SHOPS"],
-                "value" => (string) $coveredTownShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_RURAL_SHOPS"],
-                "value" => (string) $coveredRuralShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED_VILLAGE_SHOPS"],
-                "value" => (string) $coveredVillageShopsTodayCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["PRODUCTIVE_TODAY"],
-                "value" => (string) $productiveShopsTodayCount,
-            ),
-        );
-
-        // Output today's summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-            $arrOtherTodayLabelList
-        );
-
-        $arrOtherMonthlyLabelList = array(
-            array(
-                "label" => $this->arrSummaryLabels["TOTAL_PLANNED"],
-                "value" => (string) (isset($totalPlanned) ? $totalPlanned : 0),
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["COVERED"],
-                "value" => (string)  $coveredShopsMtdCount,
-            ),
-            array(
-                "label" => $this->arrSummaryLabels["PRODUCTIVE"],
-                "value" => (string) $productiveShopsMtdCount,
-            ),
-        );
-
-        // Output monthly summary
-        $arrOtherSummary[] = $this->getFormattedSummary(
-            $appType,
-            $this->arrSummaryLabels["MONTHLY_SUMMARY"],
-            $arrOtherMonthlyLabelList
-        );
-
-        return $arrOtherSummary;
-    }
-
-    private function getImpactSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        $arrOtherSummary = $arrOtherLabelList = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        if ($projectId == 53) {
-            $totalCustomerConverted = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'Sales Details'"
-            );
-            $arrAttendance = $this->tableUtil->getRowColumns(
-                "$dbName.$respTable",
-                "pro_id, ques_7",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_1 = 'Attendance'"
-            );
-            $isReturnStockAcknowledgementPhoto = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'DayEnd Report'"
-            );
-
-            $isStockAcknowledgementPhoto = isset($arrAttendance, $arrAttendance[0]) && $arrAttendance[0] ?
-                true : false;
-            $competitorStockDetails = isset($arrAttendance, $arrAttendance[1]) &&
-                $arrAttendance[1] ? json_decode($arrAttendance[1], true) : array();
-            $iCompetitorStockDetailsFilled = array_sum(
-                $this->commonFunctions->getGridDataAsArray($competitorStockDetails, 1, 7, true, true)[0]
-            );
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CUSTOMER_CONVERTED"],
-                    "value" => (string) $totalCustomerConverted,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["PIC_TAKEN_RECEIVING_STOCK"],
-                    "value" => $isStockAcknowledgementPhoto ?
-                        $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["PIC_TAKEN_RETURN_STOCK"],
-                    "value" => $isReturnStockAcknowledgementPhoto ?
-                        $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["COMPETITOR_BRAND_DETAILS"],
-                    "value" => $iCompetitorStockDetailsFilled > 0 ?
-                        $this->arrSummaryLabels["YES"] : $this->arrSummaryLabels["NO"],
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-                $arrOtherLabelList
-            );
-        } elseif ($projectId == 65) {
-            $totalConnect = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS totalConnect",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 IN ('D2D Visit','No Response') AND dup_processed = 1 AND dup_status = 5"
-            );
-
-            $totalInteration = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS totalInteration",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'D2D Visit' AND dup_processed = 1 AND dup_status = 5"
-            );
-
-            $arrTotalConversionAndSales = $this->tableUtil->getRowColumns(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS totalConversion, SUM(ques_12) AS totalSales",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'D2D Visit' AND ques_9 = 'Yes'" .
-                    " AND dup_processed = 1 AND dup_status = 5"
-            );
-            $totalConversion = isset($arrTotalConversionAndSales[0]) && $arrTotalConversionAndSales[0] ?
-                $arrTotalConversionAndSales[0] : 0;
-            $totalSales = isset($arrTotalConversionAndSales[1]) && $arrTotalConversionAndSales[1] ?
-                $arrTotalConversionAndSales[1] : 0;
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CONNECT"],
-                    "value" => (string) $totalConnect,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_INTERACTION"],
-                    "value" => (string) $totalInteration,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CONVERSION"],
-                    "value" => (string) $totalConversion,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_SALES"],
-                    "value" => (string) $totalSales
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                $arrOtherLabelList
-            );
-        } elseif ($projectId == 80) {
-            // Get summary
-            $arrMobileSummary = $this->getPreDefinedSummary($dbName, $teamId, $date);
-
-            if ($arrMobileSummary) {
-                $arrOtherSummary[] = $arrMobileSummary;
-            }
-        }
-
-        return $arrOtherSummary;
-    }
-
-    private function getNovicemarcomSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        $arrOtherSummary = $arrOtherLabelList = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        if ($projectId == 23) {
-            $totalInteration = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS totalInteration",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'D2D Visit'"
-            );
-
-            $arrTotalConversionAndSales = $this->tableUtil->getRowColumns(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS totalConversion, SUM(ques_12) AS totalSales",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND ques_1 = 'D2D Visit' AND ques_9 = 'Yes'"
-            );
-            $totalConversion = isset($arrTotalConversionAndSales[0]) && $arrTotalConversionAndSales[0] ?
-                $arrTotalConversionAndSales[0] : 0;
-            $totalSales = isset($arrTotalConversionAndSales[1]) && $arrTotalConversionAndSales[1] ?
-                $arrTotalConversionAndSales[1] : 0;
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_INTERACTION"],
-                    "value" => (string) $totalInteration,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_CONVERSION"],
-                    "value" => (string) $totalConversion,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_SALES"],
-                    "value" => (string) $totalSales
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-                $arrOtherLabelList
-            );
-        } elseif ($projectId == 26) {
-            $totalMechanicsEnrolled = 0;
-            $totalAppInstalled = 0;
-            $totalRepeatVisit = 0;
-
-            $rsSummaryAction = null;
-            $iSummaryActionRows = 0;
-            $sSummaryQuery = "SELECT ques_3, ques_11, COUNT(pro_id) AS total FROM $dbName.$respTable" .
-                " WHERE pid = $projectId AND team_id = $teamId AND capture_date = '$date'" .
-                " AND ques_1 = 'Mechanic Visit Report' GROUP BY ques_3, ques_11";
-            $this->dbConn->ExecuteSelectQuery($sSummaryQuery, $rsSummaryAction, $iSummaryActionRows);
-
-            if ($iSummaryActionRows > 0) {
-                while ($rowSummary = $this->dbConn->GetData($rsSummaryAction)) {
-                    $ques_3 = $rowSummary['ques_3'];
-                    $ques_11 = $rowSummary['ques_11'];
-                    $total = $rowSummary['total'];
-
-                    if ($ques_3 == 'New Enrollment') {
-                        $totalMechanicsEnrolled += $total;
-
-                        if ($ques_11 == 'Yes') {
-                            $totalAppInstalled += $total;
-                        }
-                    } elseif ($ques_3 == 'Repeat Visit') {
-                        $totalRepeatVisit += $total;
-                    }
-                }
-            }
-
-            $arrOtherLabelList1 = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TODAYS_SCAN"],
-                    "value" => "",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_NEW_GARAGES_VISITED"],
-                    "value" => (string) $totalMechanicsEnrolled,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_NEW_APP_INSTALLED"],
-                    "value" => (string) $totalAppInstalled,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_REPEAT_VISIT"],
-                    "value" => (string) $totalRepeatVisit
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                $arrOtherLabelList1
-            );
-
-            $arrOtherLabelList2 = array(
-                array(
-                    "label" => $this->arrSummaryLabels["SCAN_MTD"],
-                    "value" => "",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["REGISTRATIONS_MTD"],
-                    "value" => "",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["REPEAT_VISIT_MTD"],
-                    "value" => "",
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["MECHANIC_MEETS"],
-                    "value" => ""
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["MTD_SUMMARY"],
-                $arrOtherLabelList2
-            );
-        }
-
-        return $arrOtherSummary;
-    }
-
-    private function getWonderSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        $arrOtherSummary = $arrOtherLabelList = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        if ($clientId != 27) {
-            $totalReccee = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable AS a, $dbName.tblshops AS b",
-                "COUNT(a.pro_id) AS total",
-                "a.dstatus = 0 AND b.cancel = 0 AND b.dstatus = 0 AND a.team_id = $teamId" .
-                    " AND a.capture_date = '$date' AND a.ques_1 = '1'" .
-                    " AND a.ques_14 = b.id AND a.ques_17 = '1' $otherSummaryCond"
-            );
-
-            $totalInstallation = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable AS a, $dbName.tblshops AS b",
-                "COUNT(a.pro_id) AS total",
-                "a.dstatus = 0 AND b.cancel = 0 AND b.dstatus = 0 AND a.team_id = $teamId" .
-                    " AND a.capture_date = '$date' AND a.ques_1 = '2'" .
-                    " AND a.ques_18 = b.id AND a.ques_20 = '1' $otherSummaryCond"
-            );
-
-            $totalDirectInstallation = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable AS a, $dbName.tblshops AS b",
-                "COUNT(a.pro_id) AS total",
-                "a.dstatus = 0 AND b.cancel = 0 AND b.dstatus = 0 AND a.team_id = $teamId" .
-                    " AND a.capture_date = '$date' AND a.ques_1 = '3'" .
-                    " AND a.ques_21 = b.id AND a.ques_24 = '1' $otherSummaryCond"
-            );
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_RECCEE"],
-                    "value" => (string) $totalReccee
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_INSTALLATION"],
-                    "value" => (string) $totalInstallation
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_DIRECT_INSTALLATION"],
-                    "value" => (string) $totalDirectInstallation
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-                $arrOtherLabelList
-            );
-        }
-
-        return $arrOtherSummary;
-    }
-
-    private function getZxSummary(
-        $appType,
-        $dbName,
-        $clientId,
-        $projectId,
-        $teamId,
-        $otherSummaryCond,
-        $date,
-        $month,
-        $respTable
-    ) {
-        global $TBL_ROUTE_DETAILS, $TBL_HAWKER_MOBILE_SUMMARY;
-
-        $arrOtherSummary = $arrOtherLabelList = array();
-        $currentDateTime = $this->commonFunctions->currentDateTime();
-        if ($projectId == 39) {
-            $target = $this->tableUtil->getRowColumn(
-                "$dbName.$TBL_ROUTE_DETAILS",
-                "COUNT(rec_id) AS total",
-                "dstatus = 0 AND team_id = $teamId"
-            );
-            $completed = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(DISTINCT ques_2) AS total",
-                "dstatus = 0 AND team_id = $teamId" .
-                    " AND capture_date LIKE '$month' $otherSummaryCond"
-            );
-            $completed = $completed ? $completed : 0;
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TARGET"],
-                    "value" => (string) $target,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["COMPLETED"],
-                    "value" => (string) $completed,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["MTD_SUMMARY"],
-                $arrOtherLabelList
-            );
-        } elseif ($projectId == 46) {
-            $completedFirstCall = 0;
-            $completedSecondCall = 0;
-
-            $target = $this->tableUtil->getRowColumn(
-                "$dbName.$TBL_ROUTE_DETAILS",
-                "COUNT(rec_id) AS total",
-                "dstatus = 0 AND team_id = $teamId"
-            );
-
-            $arrCompleted = $this->tableUtil->getRowsColumns(
-                "$dbName.$respTable",
-                "ques_1, COUNT(DISTINCT ques_2) AS total",
-                "dstatus = 0 AND team_id = $teamId AND ques_1 in ('First Call', 'Second Call')" .
-                    " AND capture_date LIKE '$month' $otherSummaryCond GROUP BY ques_1"
-            );
-
-            if ($this->commonFunctions->isNonEmptyArray($arrCompleted)) {
-                foreach ($arrCompleted as $arrCall) {
-                    if ($arrCall[0] == 'First Call') {
-                        $completedFirstCall = (int) $arrCall[1];
-                    } elseif ($arrCall[0] == 'Second Call') {
-                        $completedSecondCall = (int) $arrCall[1];
-                    }
-                }
-            }
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TARGET"],
-                    "value" => (string) $target,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["FIRST_CALL_COMPLETED"],
-                    "value" => (string) $completedFirstCall,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["SECOND_CALL_COMPLETED"],
-                    "value" => (string) $completedSecondCall,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["MTD_SUMMARY"],
-                $arrOtherLabelList
-            );
-
-            // Show Static text on top
-            $this->arrTopSummary[] = $this->getFormattedSummary(
-                $appType,
-                "Attention: Cycle Plan 2080: Month Ashwin\r\n\r\nObjective 1:\r\n\r\n100% Availability In TM Outlet." .
-                    "\r\nA) S Arctic Burst\r\nB) SLB\r\nC) S Dual Burst\r\nD) Naulo\r\n\r\nObjective 2:\r\n\r\n" .
-                    "90% Availability of any 1 TSM(PSU) in TM Outlet.\r\nA) CTD- Counter Top Dispenser.\r\n" .
-                    "B) GFD- Gravity Fed Dispenser.\r\nC) SLD- Slider",
-                array(),
-                array(),
-                array(),
-                array(),
-                true
-            );
-        } elseif ($projectId == 67) {
-            $iVisited = 0;
-            $iSampled = 0;
-
-            $arrVisitedVsSampled = $this->tableUtil->getRowsColumns(
-                "$dbName.$respTable",
-                "ques_8, COUNT(pro_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'" .
-                    " AND dup_processed = 1 AND dup_status = 5 GROUP BY ques_8"
-            );
-
-            foreach ($arrVisitedVsSampled as $arrCall) {
-                if ($arrCall[0] == "Yes") {
-                    $iSampled = (int) $arrCall[1];
-                }
-                $iVisited += (int) $arrCall[1];
-            }
-
-            $arrOtherLabelList = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_HOUSE_VISITED"],
-                    "value" => (string) $iVisited,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_SAMPLED_HOUSE"],
-                    "value" => (string) $iSampled,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"] . ":" . $currentDateTime,
-                $arrOtherLabelList
-            );
-        } elseif (
-            $projectId == 74 || $projectId == 76 || $projectId == 77 ||
-            $projectId == 78 || $projectId == 79
-        ) {
-            // Get summary
-            $arrMobileSummary = $this->getPreDefinedSummary($dbName, $teamId, $date, $TBL_HAWKER_MOBILE_SUMMARY);
-
-            if ($arrMobileSummary) {
-                $arrOtherSummary[] = $arrMobileSummary;
-            }
-        } elseif ($projectId == 84) {
-            // Get summary
-            $arrMobileSummary = $this->getPreDefinedSummary($dbName, $teamId, $date);
-
-            if ($arrMobileSummary) {
-                $arrOtherSummary[] = $arrMobileSummary;
-            }
-        } elseif ($projectId == 100) {
-            $todayTotalReccee = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(DISTINCT shop_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND rcd = '$date'"
-            );
-            $todayTotalInstallation = $this->tableUtil->getRowColumn(
-                "$dbName.tblresponse_retail_merchandising_installation",
-                "COUNT(DISTINCT shop_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND rcd = '$date'"
-            );
-            $overallTotalReccee = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(DISTINCT shop_id) AS total",
-                "dstatus = 0 AND team_id = $teamId"
-            );
-            $overallTotalInstallation = $this->tableUtil->getRowColumn(
-                "$dbName.tblresponse_retail_merchandising_installation",
-                "COUNT(DISTINCT shop_id) AS total",
-                "dstatus = 0 AND team_id = $teamId"
-            );
-
-            $arrOtherLabelList1 = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_RECCEE"],
-                    "value" => (string) $todayTotalReccee,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_INSTALLATION"],
-                    "value" => (string) $todayTotalInstallation,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                $arrOtherLabelList1
-            );
-
-            $arrOtherLabelList2 = array(
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_RECCEE"],
-                    "value" => (string) $overallTotalReccee,
-                ),
-                array(
-                    "label" => $this->arrSummaryLabels["TOTAL_INSTALLATION"],
-                    "value" => (string) $overallTotalInstallation,
-                ),
-            );
-
-            // Output summary
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                $this->arrSummaryLabels["OVERALL_SUMMARY"],
-                $arrOtherLabelList2
-            );
-        } elseif ($projectId == 110) {
-            $currentStartDate = date("Y-m-01"); // First day of the current month
-            $currentEndDate = date("Y-m-d"); // Current date
-            $totalOutlet = $this->tableUtil->getRowColumn("$dbName.tblroute_details", "COUNT(DISTINCT village) AS totalOutlet", "dstatus = 0 AND team_id = $teamId");
-            $todayCount = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "COUNT(state) AS total", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-            $mtdCount = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "COUNT(state) AS total", "dstatus = 0 AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'");
-            $stockCountComapToday1 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_15) AS sum", "dstatus = 0 AND ques_9 = 'Ok' AND team_id = $teamId AND capture_date = '$date'");
-            $stockCountComapMtd1 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_15) AS sum1", "dstatus = 0 AND ques_9 = 'Ok' AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'");
-            $stockCountVistaToday1 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_16) AS sum2", "dstatus = 0 AND ques_9 = 'Ok' AND team_id = $teamId AND capture_date = '$date'");
-            $stockCountVistaMtd1 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_16) AS sum3", "dstatus = 0 AND ques_9 = 'Ok' AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'");
-
-            $stockCountComapToday2 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_16) AS sum", "dstatus = 0 AND ques_9 = 'Need Repair' AND team_id = $teamId AND capture_date = '$date'");
-            $stockCountComapMtd2 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_16) AS sum1", "dstatus = 0 AND ques_9 = 'Need Repair' AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'");
-            $stockCountVistaToday2 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_17) AS sum2", "dstatus = 0 AND ques_9 = 'Need Repair' AND team_id = $teamId AND capture_date = '$date'");
-            $stockCountVistaMtd2 = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_merchantdisingph3", "SUM(ques_17) AS sum3", "dstatus = 0 AND ques_9 = 'Need Repair' AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'");
-            $stockCountComapToday = $stockCountComapToday1 + $stockCountComapToday2;
-            $stockCountComapMtd = $stockCountComapMtd1 + $stockCountComapMtd2;
-            $stockCountVistaToday = $stockCountVistaToday1 + $stockCountVistaToday2;
-            $stockCountVistaMtd = $stockCountVistaMtd1 + $stockCountVistaMtd2;
-            // $arrTableList = array(
-            //     "header" => [
-            //         "Visit Today",
-            //         "MTD"
-            //     ],
-            //     "body" => [
-            //         [
-            //             "$todayCount",
-            //             "$mtdCount"
-            //         ],
-            //     ],
-            // );
-            $arrResponse1 = array(
-                array(
-                    "progressType" => "linearProgress",
-                    "toplabel" => "Unique Outlet Visit MTD",
-                    // "bottomlabel" => "bottom label",
-                    "value1" => "$mtdCount",
-                    "value2" => "$totalOutlet",
-                    "color1" => "#148f77",
-                    "color2" => "#d35400",
-                    // "bottomCardList" => array(
-                    //     array(
-                    //         "label" => "card1",
-                    //         "value1" => "1",
-                    //         "value2" => "3",
-                    //     ),
-                    //     array(
-                    //         "label" => "card2",
-                    //         "value1" => "1",
-                    //         "value2" => "3"
-                    //     )
-                    // )
-                ),
-            );
-            $arrResponse2 = array(
-                array(
-                    "progressType" => "circleProgress",
-                    "toplabel" => "MLC's Summary",
-                    // "bottomlabel" => "Sales this week",
-                    "bottomCardList" => array(
-                        array(
-                            "label" => "Compact Stock Today / MTD",
-                            "value1" => "$stockCountComapToday",
-                            "value2" => "$stockCountComapMtd",
-                            "icon" => "0xf05c0",
-                            "iconcolor" => "#0000ff",
-                            "color1" => "#ff0000",
-                            "color2" => "#ffa500",
-                        ),
-                        array(
-                            "label" => "Vista Stock Today / MTD",
-                            "value1" => "$stockCountVistaToday",
-                            "value2" => "$stockCountVistaMtd",
-                            "icon" => "0xf05c0",
-                            "iconcolor" => "#8e44ad",
-                            "color1" => "#d35400",
-                            "color2" => "#148f77",
-                        ),
-                    )
-                ),
-
-            );
-            // $arrOtherLabelList = array(
-            //     array(
-            //         "label" => "Visit Today",
-            //         "value" => (string) $todayCount,
-            //     ),
-            //     array(
-            //         "label" => "MTD",
-            //         "value" => (string) $mtdCount,
-            //     ),
-            // );
-            // $arrTableList2 = array(
-            //     "header" => [
-            //         "Compact stock picked",
-            //         "qty"
-            //     ],
-            //     "body" => [
-            //         [
-            //             "Today",
-            //             "$stockCountComapToday"
-            //         ],
-            //         [
-            //             "MTD",
-            //             "$stockCountComapMtd"
-            //         ],
-            //     ],
-            // );
-            $arrOtherLabelList1 = array(
-                array(
-                    "label" => "Compact Stock Picked (Today)",
-                    "value" => (string) $stockCountComapToday,
-                ),
-                array(
-                    "label" => "Compact Stock Picked (MTD)",
-                    "value" => (string) $stockCountComapMtd,
-                ),
-                array(
-                    "label" => "Vista Double Stock Picked (Today)",
-                    "value" => (string) $stockCountVistaToday,
-                ),
-                array(
-                    "label" => "Vista Double Stock Picked (MTD)",
-                    "value" => (string) $stockCountVistaMtd,
-                ),
-            );
-            // $arrTableList3 = array(
-            //     "header" => [
-            //         "Vista Double stock picked",
-            //         "qty"
-            //     ],
-            //     "body" => [
-            //         [
-            //             "Today",
-            //             "$stockCountVistaToday"
-            //         ],
-            //         [
-            //             "MTD",
-            //             "$stockCountVistaMtd"
-            //         ],
-            //     ],
-            // );
-            $arrOtherLabelList2 = array(
-                array(
-                    "label" => "Today",
-                    "value" => (string) $stockCountVistaToday,
-                ),
-                array(
-                    "label" => "MTD",
-                    "value" => (string) $stockCountVistaMtd,
-                ),
-            );
-
-            // Initialize variables
-            $rsAction = null;
-            $iRows = 0;
-            $skuValuesToday = [];
-            $skuValuesMTD = [];
-
-            // Mapping of row numbers to SKU names
-            $skuMapping = [
-                1 => "AC LIT",
-                2 => "AC Code",
-                3 => "Verve",
-                4 => "Icon",
-                5 => "Social Redline",
-                6 => "Social 2Pod"
-            ];
-
-            // Query to fetch today's records
-            $queryToday = "SELECT ques_2 FROM $dbName.tblsurvey_response_details_merchantdisingph3 
-               WHERE dstatus = 0 AND team_id = $teamId AND capture_date = '$date'";
-            $this->dbConn->ExecuteSelectQuery($queryToday, $rsAction, $iRows);
-
-            // Process today's sales
-            if ($iRows > 0) {
-                while ($row = $this->dbConn->GetData($rsAction)) {
-                    $ques_2 = $row['ques_2'];
-
-                    // Decode JSON response in ques_2
-                    $decodedResponse = json_decode($ques_2, true);
-
-                    // Process the decoded response
-                    foreach ($decodedResponse as $entry) {
-                        $rowNo = $entry['rowNo'];
-                        $ans = $entry['ans'];
-
-                        // Map the ans to the corresponding SKU name
-                        if (isset($skuMapping[$rowNo])) {
-                            $skuName = $skuMapping[$rowNo];
-                            $skuValuesToday[$skuName] += ($ans && is_numeric($ans) ? $ans : 0);
-                        }
-                    }
-                }
-            }
-
-            // Reset variables for MTD query
-            $rsAction = null;
-            $iRows = 0;
-            // Query to fetch MTD records
-            $queryMTD = "SELECT ques_2 FROM $dbName.tblsurvey_response_details_merchantdisingph3 
-             WHERE dstatus = 0 AND team_id = $teamId AND capture_date BETWEEN '$currentStartDate' AND '$currentEndDate'";
-            $this->dbConn->ExecuteSelectQuery($queryMTD, $rsAction, $iRows);
-
-            // Process MTD sales
-            if ($iRows > 0) {
-                while ($row = $this->dbConn->GetData($rsAction)) {
-                    $ques_2 = $row['ques_2'];
-
-                    // Decode JSON response in ques_2
-                    $decodedResponse = json_decode($ques_2, true);
-
-                    // Process the decoded response
-                    foreach ($decodedResponse as $entry) {
-                        $rowNo = $entry['rowNo'];
-                        $ans = $entry['ans'];
-
-                        // Map the ans to the corresponding SKU name
-                        if (isset($skuMapping[$rowNo])) {
-                            $skuName = $skuMapping[$rowNo];
-                            $skuValuesMTD[$skuName] += floatval($ans);
-                        }
-                    }
-                }
-            }
-
-            // Prepare the table list with today's and MTD sales
-            $arrTableList4 = [
-                "header" => [
-                    "Sku",
-                    "Today Sales",
-                    "MTD Sales",
-                ],
-                "body" => []
-            ];
-
-            // Populate the body with SKU values
-            foreach ($skuMapping as $rowNo => $sku) {
-                $todaySales = isset($skuValuesToday[$sku]) ? (string)$skuValuesToday[$sku] : "0";
-                $mtdSales = isset($skuValuesMTD[$sku]) ? (string)$skuValuesMTD[$sku] : "0";
-
-                $arrTableList4['body'][] = [$sku, $todaySales, $mtdSales];
-            }
-
-            // Output summary
-            if ($appType == 1) {
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    $this->arrSummaryLabels["TODAYS_SUMMARY"],
-                    $arrOtherLabelList
-                );
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    "MLCS Summary",
-                    $arrOtherLabelList1
-                );
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    "",
-                    $arrOtherLabelList2
-                );
-            } else {
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    "Progress bar",
-                    array(),
-                    array(),
-                    array(),
-                    $arrResponse1
-                );
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    "MLCs Summary",
-                    array(),
-                    array(),
-                    array(),
-                    $arrResponse2
-                );
-                $arrOtherSummary[] = $this->getFormattedSummary(
-                    $appType,
-                    "Sale Details",
-                    array(),
-                    array(),
-                    $arrTableList4
-                );
-            }
-        } elseif ($projectId == 103) {
-            $installation = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS total",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_1 = 'Installation'"
-            );
-
-            $monitoring = $this->tableUtil->getRowColumn(
-                "$dbName.$respTable",
-                "COUNT(pro_id) AS total1",
-                "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_1 = 'Monitoring'"
-            );
-
-            $arrTableList = array(
-                "header" => [
-                    "Insatalltion",
-                    "Monitoring"
-                ],
-                "body" => [
-                    [
-                        "$installation",
-                        "$monitoring"
-                    ],
-                ],
-            );
-
-            $arrOtherSummary[] = $this->getFormattedSummary(
-                $appType,
-                "Today's Summary",
-                array(),
-                array(),
-                $arrTableList
-            );
-        }
-
         return $arrOtherSummary;
     }
 

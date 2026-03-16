@@ -61,7 +61,10 @@ import { NpsrDashboardComponent2 } from './npsr-dashboard/npsr-dashboard.compone
 import { PDFAccessReportComponent } from './pdf-access-report/pdf-access-report.component';
 import { LineCutReportComponent } from './line-cut/line-cut-report.component';
 import { OrderListingComponent } from './reporting/order-report/order-listing.component';
-
+import { BranchProductAllocationComponent } from './reporting/skuSetting/branchProductAllocation.component';
+import { DistrictProductAllocationComponent } from './reporting/skuSetting/districtProductAllocation.component';
+import { AllocationReportComponent } from './reporting/skuSetting/allocationReport.component';
+import { BreezeDashboardComponent } from './breeze-dashboard/breeze-dashboard.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -125,6 +128,10 @@ export const MAIN_COMPONENTS = [
   PDFAccessReportComponent,
   LineCutReportComponent,
   OrderListingComponent,
+  BranchProductAllocationComponent,
+  DistrictProductAllocationComponent,
+  AllocationReportComponent,
+  BreezeDashboardComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -189,4 +196,8 @@ export const MAP_MAIN_COMPONENTS = {
   PDFAccessReportComponent,
   LineCutReportComponent,
   OrderListingComponent,
+  BranchProductAllocationComponent,
+  DistrictProductAllocationComponent,
+  AllocationReportComponent,
+  BreezeDashboardComponent,
 };

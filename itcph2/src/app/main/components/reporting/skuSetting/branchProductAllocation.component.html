@@ -1,0 +1,256 @@
+<div class="prd-selector-page">
+
+  <!-- ── Page Header ─────────────────────────────────────────────────────── -->
+  <div class="prd-selector-page__header">
+    <h2 class="prd-selector-page__title">Product Allocation</h2>
+    <p class="prd-selector-page__subtitle">(Drag/Click products to your selection, then submit.)</p>
+  </div>
+
+  <form [formGroup]="form" class="prd-selector-page__filters">
+    <div class="filter-row">
+      <div class="filter-field">
+        <app-select [group]="form" controlName="main_branch" groupClassName="filter-select" sizeClass="col-sm-12"
+          [options]="mainBranchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+          [errorMessages]="errorMessages.main_branch" (onChange)="getRegionList()">
+        </app-select>
+      </div>
+      <div class="filter-field">
+        <app-select [group]="form" controlName="region" groupClassName="filter-select" sizeClass="col-sm-12"
+          [options]="regionOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.region' | translate }}"
+          (onChange)="getTeamTypeList()" [errorMessages]="errorMessages.region">
+        </app-select>
+      </div>
+      <div class="filter-field">
+        <app-select [group]="form" controlName="teamType" groupClassName="filter-select" sizeClass="col-sm-12"
+          [options]="teamTypeOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.teamType' | translate }}"
+          [errorMessages]="errorMessages.teamType" (onChange)="getInitialData()">
+        </app-select>
+      </div>
+      <div class="filter-actions">
+        <button type="button" class="btn btn--secondary" (click)="clearForm()">Reset</button>
+        <!-- <button type="button" class="btn btn--primary" (click)="getInitialData()">Search</button> -->
+      </div>
+    </div>
+  </form>
+
+  <!-- ── Drag & Drop Board ────────────────────────────────────────────────── -->
+  <ng-container *ngIf="!statusFlagCond">
+    <div class="dnd-board">
+      <div class="dnd-panel dnd-panel--available" [class.dnd-panel--drag-over]="isDragOverAvailable"
+        (dragover)="onDragOverAvailable($event)" (dragleave)="onDragLeaveAvailable($event)"
+        (drop)="onDropAvailable($event)">
+        <div class="dnd-panel__header">
+          <div class="dnd-panel__title-row">
+            <span class="dnd-panel__icon">📦</span>
+            <h3 class="dnd-panel__title">Available Products</h3>
+            <span class="dnd-badge">{{ availableProducts.length }}</span>
+          </div>
+          <p class="dnd-panel__hint">Expand a category, then drag items right &rarr;</p>
+        </div>
+
+        <!-- Accordion body -->
+        <div class="dnd-panel__body dnd-panel__body--accordion">
+
+          <!-- All products selected -->
+          <div class="dnd-empty" *ngIf="categoryGroups.length === 0">
+            <span class="dnd-empty__icon">✅</span>
+            <p>Select Product For Allocation</p>
+          </div>
+
+          <!-- ── One accordion row per category ────────────────────────── -->
+          <div class="dnd-accordion" *ngFor="let group of categoryGroups; trackBy: trackByCategory"
+            [class.dnd-accordion--open]="isCategoryOpen(group.category)">
+
+            <!-- Category trigger row -->
+            <button type="button" class="dnd-accordion__trigger" (click)="toggleCategory(group.category)">
+              <span class="dnd-accordion__chevron">
+                {{ isCategoryOpen(group.category) ? '▾' : '▸' }}
+              </span>
+
+              <span class="dnd-accordion__name">{{ group.category }}</span>
+              &nbsp;
+
+              <span class="dnd-accordion__counts">
+                <!-- Available count -->
+                <span class="dnd-accordion__badge dnd-accordion__badge--avail"
+                  *ngIf="availableCountFor(group.category) > 0">{{ availableCountFor(group.category) }}</span>
+
+                <!-- Selected count (green) — shows even when category is collapsed -->
+                <span class="dnd-accordion__badge dnd-accordion__badge--sel"
+                  *ngIf="selectedCountFor(group.category) > 0">&nbsp; &#10003; {{ selectedCountFor(group.category)
+                  }}</span>
+              </span>
+            </button>
+
+            <!-- Collapsible product list -->
+            <div class="dnd-accordion__body" *ngIf="isCategoryOpen(group.category)">
+
+              <!-- All from this category selected -->
+              <div class="dnd-empty dnd-empty--sm" *ngIf="group.products.length === 0">
+                <p>All products from this category is selected</p>
+              </div>
+
+              <div class="dnd-card" *ngFor="let product of group.products; trackBy: trackById" draggable="true"
+                (dragstart)="onDragStart($event, product, 'available')" (dragend)="onDragEnd($event)">
+                <span class="dnd-card__handle">⠿</span>
+                <div class="dnd-card__info">
+                  <span class="dnd-card__name">{{ product.name }}</span>
+                </div>
+                <button type="button" class="dnd-card__btn dnd-card__btn--add" title="Add to selection"
+                  (click)="addProduct(product)">+</button>
+              </div>
+
+            </div><!-- /accordion body -->
+          </div><!-- /accordion item -->
+
+        </div><!-- /panel body -->
+      </div><!-- /LEFT PANEL -->
+
+
+      <!-- CENTRE DIVIDER -->
+      <div class="dnd-divider">
+        <span class="dnd-divider__icon">&#8644;</span>
+      </div>
+
+
+      <!-- Right Side -->
+      <div class="dnd-panel dnd-panel--selected" [class.dnd-panel--drag-over]="isDragOverSelected"
+        (dragover)="onDragOverSelected($event)" (dragleave)="onDragLeaveSelected($event)"
+        (drop)="onDropSelected($event)">
+        <div class="dnd-panel__header">
+          <div class="dnd-panel__title-row">
+            <span class="dnd-panel__icon">🗂️</span>
+            <h3 class="dnd-panel__title">Selected Products</h3>
+            <span class="dnd-badge dnd-badge--active">{{ selectedProducts.length }}</span>
+          </div>
+          <div class="dnd-panel__title-row dnd-panel__title-row--sub">
+            <p class="dnd-panel__hint">&larr; Drag back to remove</p>
+            <button type="button" class="dnd-link-btn" *ngIf="selectedProducts.length > 0"
+              (click)="clearSelected()">Clear
+              all</button>
+          </div>
+
+          <!-- Checkbox column headers -->
+          <div class="dnd-col-headers" *ngIf="selectedProducts.length > 0">
+            <div class="dnd-col-header dnd-col-header--spacer"></div>
+            <div class="dnd-col-header" *ngIf="defaultDspm">
+              <span class="dnd-col-header__label">DSPM Brand</span>
+              <span class="dnd-col-header__counter" [class.dnd-col-header__counter--full]="dspmBrandLimitReached">{{
+                dspmBrandCount }}&thinsp;/&thinsp;{{ DSPM_BRAND_MAX }}</span>
+            </div>
+            <div class="dnd-col-header">
+              <span class="dnd-col-header__label">Focus Brand</span>
+              <span class="dnd-col-header__counter" [class.dnd-col-header__counter--full-other]="true">{{
+                isFocusBrandCount }}</span>
+            </div>
+            <div class="set_margin"></div>
+          </div>
+        </div>
+
+        <div class="dnd-panel__body dnd-panel__body--drop-zone">
+
+          <div class="dnd-drop-hint" *ngIf="selectedProducts.length === 0"
+            [class.dnd-drop-hint--visible]="selectedProducts.length === 0">
+            <span class="dnd-drop-hint__icon">🎯</span>
+            <p>Drop products here</p>
+          </div>
+
+          <div class="dnd-card dnd-card--selected" *ngFor="let product of selectedProducts; trackBy: trackById"
+            draggable="true" (dragstart)="onDragStart($event, product, 'selected')" (dragend)="onDragEnd($event)"
+            (dragover)="$event.preventDefault()" (drop)="onDropOnItem($event, product)">
+            <span class="dnd-card__handle">⠿</span>
+
+            <div class="dnd-card__info">
+              <span class="dnd-card__name">{{ product.name }}</span>
+              <span class="dnd-card__meta">
+                <span class="dnd-card__cat">{{ product.category }}</span>
+              </span>
+            </div>
+
+            <!-- Dspm Brand checkbox (max 2) -->
+            <ng-container *ngIf="defaultDspm">
+              <div class="dnd-checkbox-col">
+                <label class="dnd-checkbox"
+                  [class.dnd-checkbox--disabled]="!dspmBrandMap[product.id] && dspmBrandLimitReached" [title]="!dspmBrandMap[product.id] && dspmBrandLimitReached
+                ? 'Maximum ' + DSPM_BRAND_MAX + ' dspm brand products allowed'
+                : 'Set as Dspm Brand'">
+                  <input type="checkbox" [checked]="!!dspmBrandMap[product.id]"
+                    [disabled]="!dspmBrandMap[product.id] && dspmBrandLimitReached"
+                    (change)="toggleDspmBrand(product.id)" />
+                  <span class="dnd-checkbox__box dnd-checkbox__box--first"></span>
+                </label>
+              </div>
+            </ng-container>
+
+            <!-- Focus Brand checkbox (unlimited) -->
+            <div class="dnd-checkbox-col">
+              <label class="dnd-checkbox" title="Mark as Focus Brand">
+                <input type="checkbox" [checked]="!!isFocusBrandMap[product.id]"
+                  (change)="toggleIsFocusBrand(product.id)" />
+                <span class="dnd-checkbox__box dnd-checkbox__box--second"></span>
+              </label>
+            </div>
+
+            <button type="button" class="dnd-card__btn dnd-card__btn--remove" title="Remove"
+              (click)="removeProduct(product)">&times;</button>
+          </div>
+
+        </div>
+
+        <div class="dnd-panel__footer" *ngIf="selectedProducts.length > 0">
+          <span class="dnd-panel__footer-summary">
+            {{ selectedProducts.length }} Product{{ selectedProducts.length !== 1 ? 's' : '' }} selected
+            <ng-container *ngIf="dspmBrandCount > 0">
+              &middot; {{ dspmBrandCount }} DSPM brand
+            </ng-container>
+            <ng-container *ngIf="isFocusBrandCount > 0">
+              &middot; {{ isFocusBrandCount }} Focus brand
+            </ng-container>
+          </span>
+          <button type="button" class="btn btn--submit" [disabled]="isDisabled || selectedProducts.length === 0"
+            (click)="submit()">
+            <span *ngIf="!isDisabled">Submit &rarr;</span>
+            <span *ngIf="isDisabled" class="btn-spinner"></span>
+          </button>
+        </div>
+
+      </div><!-- /right panel -->
+    </div><!-- /board -->
+  </ng-container>
+
+
+  <ng-container *ngIf="statusFlagCond">
+    <div class=" bg-white container custom-table-parent">
+      <div class="table-responsive  mb-3">
+        <table class="table align-middle mb-0 table-hover">
+          <thead class="table-light">
+            <!-- <tr >
+              <th colspan="4">Submitted Data <i
+                  class="ri-file-excel-2-line" style="cursor: pointer; color:green"></i></th>
+            </tr> -->
+            <tr >
+              <th scope="col">Branch</th>
+              <th scope="col">Region</th>
+              <th scope="col">Category</th>
+              <th scope="col">Product Name</th>
+              <th scope="col">DSPM Brand</th>
+              <th scope="col">Focus Brand</th>
+            </tr>
+          </thead>
+          <tbody *ngFor="let data of submittedDataList">
+            <tr class="bg-white">
+              <td>{{data.branch}}</td>
+              <td>{{data.region}}</td>
+              <td>{{data.category_name}}</td>
+              <td>{{data.product_name}}</td>
+              <td>{{data.dspm_focus}}</td>
+              <td>{{data.is_focusbrand}}</td>
+            </tr>
+          </tbody>
+        </table>
+        <!-- end table -->
+      </div>
+      </div><!-- /board -->
+  </ng-container>
+
+</div>

@@ -1,0 +1,17 @@
+# API - Redirecting Rules
+# Breeze API: only .../custom/send-data is allowed (not .../custom/fetch_breeze_data.php)
+
+RewriteEngine On
+
+# Preserve Authorization header (required for Basic Auth)
+RewriteCond %{HTTP:Authorization} .
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Block only when the *original* request was for fetch_breeze_data.php (not after send-data rewrite)
+RewriteCond %{THE_REQUEST} fetch_breeze_data\.php [NC]
+RewriteRule ^ - [F,L]
+
+# send-data → fetch_breeze_data.php (only when not requesting an existing file)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^send-data$ fetch_breeze_data.php [L,QSA]
+

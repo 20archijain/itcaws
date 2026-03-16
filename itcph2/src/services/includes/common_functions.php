@@ -424,14 +424,13 @@ function getMonthList()
     );
 }
 
-// escape comma for csv data
-function escapeCommaCsv($data)
+//for clean csv data
+function cleanCSVValue($value)
 {
-    if (strpos($data, ",") !== false) {
-        return '"' . str_replace('"', '""', $data) . '"';
-    }
-
-    return $data;
+    $value = trim((string)($value ?? ''));
+    $value = str_replace(["\n", "\r"], " ", $value);
+    $value = str_replace('"', '""', $value);
+    return '"' . $value . '"';
 }
 
 function calculateDistanceBwCoordinates($latitudeFrom, $longitudeFrom, $latitudeTo, $longitudeTo, $getDistanceInM = true)
@@ -593,7 +592,7 @@ function getCurrentWeekDates()
 }
 
 // Send mail with CSV Or Xlsx attached
-function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, $sSubject, $arrTo, $arrCC = array())
+function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, $sSubject, $arrTo, $arrCC = array(), $shareLink = false)
 {
     global $SAVE_SPREADSHEET_PATH;
 
@@ -642,7 +641,24 @@ function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, 
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
     }
-
+    $fileLink = "";
+    if ($shareLink) {
+        $storeFolder = $GLOBALS["SAVE_CUMMULATIVE_SPREADSHEET_PATH"];
+        $baseUrl = $GLOBALS["SITE_URL"];
+        if (!file_exists($storeFolder)) {
+            mkdir($storeFolder, 0777, true);
+        }
+        foreach (glob($storeFolder . "/Cumulative_*") as $oldFile) {
+            if (is_file($oldFile)) {
+                unlink($oldFile);
+            }
+        }
+        $extension = $isCSV ? "csv" : "xlsx";
+        $cumulativeFileName = "Cumulative_$filename" . $extension;
+        $newPath = $storeFolder . "/" . $cumulativeFileName;
+        copy($filename, $newPath);
+        $fileLink = $baseUrl . "/email_xls/" . $cumulativeFileName;
+    }
     $email = new PHPMailer(true);
     $mailFrom = constant("MAIL_FROM");
     $mailRegards = constant("MAIL_REGARDS");
@@ -663,8 +679,12 @@ function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, 
 
         $email->Subject = $sSubject;
         $email->Body = $sSubject;
+        if($shareLink){
+         $email->Body.= "<a href='$fileLink' target='_blank'>$fileLink</a>";
+        }else{
+            $email->addAttachment($filename, $fileName);
+        }
 
-        $email->addAttachment($filename, $fileName);
         $isMailSend = $email->send();
 
         if ($isMailSend) {

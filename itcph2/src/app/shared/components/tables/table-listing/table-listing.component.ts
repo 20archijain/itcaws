@@ -72,6 +72,14 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() getListingOnInit = true;
   @Input() extraButtons: ListingExtraButtons[] = [];
   @Input() deleteCondition: [string, number];
+
+  /**
+   * NEW FLAG: Enable delete with form data
+   * When true, sends complete searchbar form data along with IDs to backend
+   * Use this when backend needs additional context (like database, project, etc.)
+   */
+  @Input() deleteWithFormData = false;
+
   clickedIndex = -1;
   actions: ListingActions[] = [];
   singleActions: ListingActions[] = [];
@@ -359,15 +367,33 @@ export class TableListingComponent implements OnInit, OnDestroy {
 
   // delete record
   onDeleteConfirm() {
-    this.subscription.push(
-      this.formService.deleteData(this.url, this.actionData)
-        .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.onSearch();
-            this.actionData = null;
-          }
-        })
-    );
+    if (this.deleteWithFormData) {
+      const searchbar = this.group.get('searchbar');
+      const deleteData = {
+        id: this.actionData,
+        ...searchbar?.value
+      };
+      // delete records with other form data
+      this.subscription.push(
+        this.formService.deleteWithFormData(this.url, deleteData)
+          .subscribe(resp => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              this.onSearch();
+              this.actionData = null;
+            }
+          })
+      );
+    } else {
+      this.subscription.push(
+        this.formService.deleteData(this.url, this.actionData)
+          .subscribe(resp => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              this.onSearch();
+              this.actionData = null;
+            }
+          })
+      );
+    }
   }
 
   // restore record

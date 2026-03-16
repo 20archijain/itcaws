@@ -25,23 +25,22 @@ class DownloadMisscall
         $this->_iUserId = $iUserId;
     }
 
-
     final public function getData()
     {
         $arrResult = array(
             "dataBaseList" => $this->getDatabaseName(),
             "viewHeader" => array(
-                // "Id",
+                "Id",
                 "OTP",
                 "Mobile Number",
                 "Is Verified",
                 "Processed On",
                 "RCD",
-                "RDT",
+                "RDT"
 
             ),
             "viewBody" => array(
-                // "id",
+                "id",
                 "token",
                 "rec_who",
                 "showVerified",
@@ -81,7 +80,8 @@ class DownloadMisscall
         //     $to   = sprintf('%04d-%02d-%02d', $toArr['year'], $toArr['month'], $toArr['day']);
         //     $where .= "AND  rcd BETWEEN '$from' AND '$to'";
         // }
-        $phoneNumber = getFormData($this->_data['searchbar'], "phoneNumber");
+        // $phoneNumber = getFormData($this->_data['searchbar'], "phoneNumber");
+        $phoneNumber = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "phoneNumber");
         if (isset($phoneNumber) && !empty($phoneNumber)) {
             $where .= " AND rec_who = $phoneNumber";
         }
@@ -120,6 +120,7 @@ class DownloadMisscall
 
         $sQuery = "SHOW TABLES IN $database LIKE '$tableName'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+        $arrResult = array();
         if ($iRows > 0) {
             $arrData = array();
             while ($row = $this->_dbConn->GetData($rsAction)) {
@@ -141,29 +142,31 @@ class DownloadMisscall
 
     final public function getDownloadMissCallReport()
     {
-
         $database = getFormData($this->_data, 'database');
         $project = getFormData($this->_data, 'project');
         $where = $this->getCondition();
-        $arrExcelData = array();
+
         $rsAction = null;
         $iRows = 0;
 
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  $where";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project WHERE dstatus = 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-        if ($iRows > 0) {
-            $arrExcelData = array(array(
-                'ID',
-                'OTP',
-                'Phone',
-                'Processed',
-                'Processed On',
-                'rcd',
-                'rdt'
-            ));
-            $excelTitle = "Miss_Call_Report_";
 
-            $showVerified = "";
+        // Create header
+        $header = [];
+        $header[] = [
+            'ID',
+            'OTP',
+            'Phone',
+            'Processed',
+            'Processed On',
+            'rcd',
+            'rdt'
+        ];
+
+        $arrDataHolder = [];
+
+        if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $process = $row['process'];
                 if ($process == 1) {
@@ -171,7 +174,8 @@ class DownloadMisscall
                 } else {
                     $showVerified = "Not Verified";
                 }
-                $arrExcelData[] = array(
+
+                $arrDataHolder[] = [
                     $row['rec_id'],
                     $row['token'],
                     $row['rec_who'],
@@ -179,31 +183,48 @@ class DownloadMisscall
                     $row['processed_on'],
                     $row['rcd'],
                     $row['rdt'],
-                );
+                ];
             }
         }
+        $currentDateTime = currentDateTime();
+        $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
+        $fileName = "Miss_Call_Report_$currentDateTime.csv";
 
-
-        if (!empty($arrExcelData)) {
-            $currentDateTime = currentDateTime();
-            $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-            $fileName = "$excelTitle$currentDateTime.xlsx";
-            $spreadsheet = new Spreadsheet();
-            $sheet = $spreadsheet->getActiveSheet();
-
-            $sheet->fromArray($arrExcelData);
-            $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-            $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
-                "filePath" => $downloadFileLocation,
-                "fileName" => $fileName,
-            );
-            $writer = new Xlsx($spreadsheet);
-            $writer->save($filename);
-            $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
-        } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
         }
+
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
+            "filePath" => $downloadFileLocation,
+            "fileName" => $fileName,
+        );
+
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
@@ -215,7 +236,7 @@ class DownloadMisscall
         $project = getFormData($this->_data['searchbar'], 'project');
         $arrData = array();
         $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
-        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
+        $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt, dstatus FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
         // print_r($sQuery);
@@ -233,7 +254,7 @@ class DownloadMisscall
                     $showVerified = "Not Verified";
                 }
                 $arrData[] = array(
-                    //    "id" => $row['rec_id'],
+                    "id" => $row['rec_id'],
                     "token" => $row["token"],
                     "rec_who" => $row["rec_who"],
                     "showVerified" => $showVerified,
@@ -248,6 +269,46 @@ class DownloadMisscall
         );
 
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrData), true);
+        echo json_encode($arrMessage);
+    }
+
+    final public function deleteData($data, $iUserId)
+    {
+        $assign_id = $iUserId;
+        $where = "";
+        $istatus = [];
+        $database = getFormData($data, 'database');
+        $project = getFormData($data, 'project');
+
+        if (isset($data['id']) && !empty($data['id'])) {
+            $recIds = getStringFromArray($data['id']);
+            $where = "rec_id = $recIds";
+        }
+        // else {
+        //     $conditionWhere = $this->getCondition();
+        //     $where = ltrim($conditionWhere, " AND");
+
+        //     if (empty($where)) {
+        //         $arrMessage = responseMessage(['No filter conditions provided for bulk deletion'], 0);
+        //         echo json_encode($arrMessage);
+        //         return;
+        //     }
+        // }
+
+        $statusRoute = updateRecord(
+            $this->_dbConn,
+            "$database.$project",
+            "dstatus = 1, modif_id = $assign_id",
+            $where
+        );
+        $istatus[] = $statusRoute;
+
+        if (in_array(1, $istatus, true)) {
+            $arrMessage = responseMessage([$GLOBALS['DATA_DELETED_SUCCESSFULL']], 1);
+        } else {
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_DELETED']], 2);
+        }
+
         echo json_encode($arrMessage);
     }
 }

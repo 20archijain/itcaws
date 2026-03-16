@@ -6,9 +6,11 @@ import { finalize } from 'rxjs/operators';
 import { FormService } from 'src/app/core/services/form.service';
 import { DropdownList, GetAddTeamDataResponse, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
+import { CONTROL_CONFIG, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { environment } from 'src/environments/environment';
+import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
+import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
   templateUrl: './MasterData.component.html'
@@ -23,6 +25,8 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
   wdOptions: DropdownList[] = [];
   dsTypeOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
+  focusTypeOptions: DropdownList[] = [];
+  editConfig: EditConfig[] = [];
   form: UntypedFormGroup;
   isDisabled = false;
   showDownloadDataBtn = false;
@@ -60,6 +64,17 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
             this.isSelectable = resp.data.isSelectable;
+
+            this.editConfig = [
+              {
+                controlName: 'recId', label: '', type: CONTROL_CONFIG.REC_ID,
+              },
+              {
+                controlName: 'focusBrand', errorMessages: COMMON_VALIDATORS.messages.requiredOnly('Chnage Focus Brand'),
+                label: 'app.reporting.activeUSers.changeFocus', type: CONTROL_CONFIG.SELECT_BOX, required: true,
+                validators: COMMON_VALIDATORS.validators.requiredOnly, options: resp.data.focusTypeList,
+              },
+            ];
           }
         })
     );
@@ -79,7 +94,7 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
       );

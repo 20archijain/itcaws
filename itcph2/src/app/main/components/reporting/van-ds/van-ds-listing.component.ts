@@ -11,6 +11,7 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { LISTING, REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { DashboardData, DropdownList, GetDownloadFileDetails, VanDsListing, VanDsListingData } from 'src/app/core/interfaces/http-response.interface';
 import { environment } from 'src/environments/environment';
+import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { ListingBulkActionOutput } from 'src/app/core/interfaces/helpers.interface';
 import { ListingService } from 'src/app/core/services/listing.service';
@@ -42,6 +43,8 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   isMapAllowed = false;
   branchFilter = false;
   binderReportDownloadDays: number = null;
+  transactionReportDownloadDays: number = null;
+  summaryReportDownloadDays: number = null;
   skeletonArray = Array(5);
   cgConfig: CustomGalleryConfig = {
     showThumbnailText: false,
@@ -114,6 +117,8 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
             this.showSummaryDownloadBtn = resp.data.showSummaryDownloadBtn;
             this.branchFilter = resp.data.branchFilter;
             this.binderReportDownloadDays = resp.data.binderReportDownloadDays;
+            this.transactionReportDownloadDays = resp.data.transactionReportDownloadDays;
+            this.summaryReportDownloadDays = resp.data.summaryReportDownloadDays;
             if (resp.data.userBranch) {
               this.group.get('searchbar').get('branch').setValue(resp.data.userBranch);
             }
@@ -153,6 +158,23 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   }
 
   downloadData() {
+    const { dateFrom, dateTo } = this.group.getRawValue().searchbar || {};
+    if (dateFrom && dateTo) {
+      const fromDate = new Date(dateFrom.year, dateFrom.month - 1, dateFrom.day);
+      const toDate = new Date(dateTo.year, dateTo.month - 1, dateTo.day);
+      // Calculate difference in days
+      const diffTime = toDate.getTime() - fromDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays + 1 > this.transactionReportDownloadDays) {
+        this.toastr.toastr({
+          type: 'error',
+          msg: `You can only download this report for maximum ${this.transactionReportDownloadDays} days range`
+        });
+        return; //  stop execution
+      }
+    }
+
     if (this.branchValue && this.branchValue.length) {
       this.isDownloading = true;
       this.loaderService.startLoader();
@@ -178,6 +200,23 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
   }
 
   downloadSummary() {
+        const { dateFrom, dateTo } = this.group.getRawValue().searchbar || {};
+    if (dateFrom && dateTo) {
+      const fromDate = new Date(dateFrom.year, dateFrom.month - 1, dateFrom.day);
+      const toDate = new Date(dateTo.year, dateTo.month - 1, dateTo.day);
+      // Calculate difference in days
+      const diffTime = toDate.getTime() - fromDate.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays + 1 > this.summaryReportDownloadDays) {
+        this.toastr.toastr({
+          type: 'error',
+          msg: `You can only download this report for maximum ${this.summaryReportDownloadDays} days range`
+        });
+        return; //  stop execution
+      }
+    }
+
     if (this.branchValue && this.branchValue.length) {
       this.isDownloading = true;
       this.loaderService.startLoader();
@@ -227,7 +266,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
       this.loaderService.startLoader();
 
       this.subscription.push(
-        this.formService.customActionCall<GetDownloadFileDetails>(
+        this.formService.customActionCall<CsvDataFormat>(
           STATIC_MODULES.custom.getDownloadBinderReport,
           this.group.getRawValue(),
           null,
@@ -241,7 +280,7 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
           )
           .subscribe(response => {
             if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              Functions.downloadFile(response.data.filePath, response.data.fileName);
+              Functions.createCSV(response.data);
             }
           })
       );
@@ -250,9 +289,9 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
     }
   }
 
- downloadPDF() {
-   const hasBranch = this.branchValue && this.branchValue.length;
-   const hasDsType = this.dsTypeValue && this.dsTypeValue.length;
+  downloadPDF() {
+    const hasBranch = this.branchValue && this.branchValue.length;
+    const hasDsType = this.dsTypeValue && this.dsTypeValue.length;
     if (hasBranch && hasDsType) {
       this.isDownloading = true;
       this.loaderService.startLoader();
@@ -273,8 +312,8 @@ export class VanDsListingComponent implements OnDestroy, OnInit {
           })
       );
     } else {
-       if (!hasBranch) {
-      this.displayBranchError();
+      if (!hasBranch) {
+        this.displayBranchError();
       }
       if (!hasDsType) {
         this.displayDSError();

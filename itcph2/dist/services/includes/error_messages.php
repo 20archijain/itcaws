@@ -45,6 +45,9 @@ $CHOOSE_DIFFERENT_PASSWORD = "Please enter different New Password";
 $PROFILE_UPDATED_SUCCESSFULL = "Profile updated succesfully";
 $PROFILE_NOT_UPDATED = "Profile not updated";
 
+$DATA_UPDATED_SUCCESSFULL = "Data updated succesfully";
+$DATA_NOT_UPDATED = "Data not updated";
+
 // USER
 $USER_ADDED = "User added";
 $USER_NOT_ADDED = "User not added";
@@ -95,6 +98,11 @@ $TEAM_NOT_ADDED = "Team not added";
 $TEAM_EXISTS = "Team already exists";
 $USERNAME_EXISTS = "Username already exists";
 $NO_TEAM_FOUND = "No team found";
+
+
+// Product
+$PRODUCT_ADDED = "Product added";
+$PRODUCT_NOT_ADDED = "Product not added";
 
 // LISTING
 $FILE_DOWNLOADING = "Downloading file. Please wait...";

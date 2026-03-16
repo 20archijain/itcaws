@@ -180,6 +180,11 @@ class BillCutReport
         return $where;
     }
 
+    private function getBranches()
+    {
+        return getBranchList($this->_dbConn, false, "", "", 0, true);
+    }
+
 
 
     final public function getData()
@@ -238,6 +243,9 @@ class BillCutReport
         $where = $this->getCondition();
         $whereFilter = $this->getConditionFilter();
         $branch = getFormData($this->_data, "branch");
+        if (checkIfAllSelected($branch)) {
+            $branch = $this->getBranches();
+        }
         $product = getFormData($this->_data, "product");
         $teamTypeFilter = getFormData($this->_data, "dsType");
 
@@ -273,10 +281,24 @@ class BillCutReport
 
         $arrExcelData = [];
         $arrExcelData[] = [
-            "District", "Branch", "Region", "Circle", "Section", "WD Code",
-            "WD Name", "WD Pop Group", "DS Type", "DS Id", "DS Name",
-            "Brand Family", "Variant", "Focus Variant",
-            "Total Outlets Mapped", "Variant UOB", "Variant UOB%", 'Overall UOB'
+            "District",
+            "Branch",
+            "Region",
+            "Circle",
+            "Section",
+            "WD Code",
+            "WD Name",
+            "WD Pop Group",
+            "DS Type",
+            "DS Id",
+            "DS Name",
+            "Brand Family",
+            "Variant",
+            "Focus Variant",
+            "Total Outlets Mapped",
+            "Variant UOB",
+            "Variant UOB%",
+            'Overall UOB'
         ];
 
         foreach ($branch as $branchId) {
@@ -464,22 +486,50 @@ class BillCutReport
         }
 
         // ✅ Excel output
-        $fileName = "Bill_Cut_Report_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
+        // ✅ CSV output (instead of XLSX)
+        $fileName = "Bill_Cut_Report_$currentDateTime.csv";
+
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
+
+        // Make sure array is pure rows (numeric arrays). If some rows are associative, normalize:
+        $headerRow = $arrExcelData[0]; // first row is header (numeric array)
+        $normalized = [];
+        $normalized[] = $headerRow;
+
+        for ($i = 1; $i < count($arrExcelData); $i++) {
+            $row = $arrExcelData[$i];
+
+            // If associative row, place values in header order
+            if (array_keys($row) !== range(0, count($row) - 1)) {
+                $tmp = [];
+                foreach ($headerRow as $colName) {
+                    $tmp[] = $row[$colName] ?? "";
+                }
+                $row = $tmp;
+            }
+
+            $normalized[] = $row;
+        }
+
+        $sheet->fromArray($normalized, null, 'A1');
 
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+        $writer->setDelimiter(',');
+        $writer->setEnclosure('"');
+        $writer->setLineEnding("\r\n");
+        $writer->setUseBOM(true); // good for Excel UTF-8
+        $writer->save($filename);
+
         $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
         ];
 
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
         $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
-
         echo json_encode($arrMessage);
     }
 
@@ -735,10 +785,10 @@ class BillCutReport
     final public function getBranchList($cond = "")
     {
         $arrData = array();
-        // $arrData[] = array(
-        //     "label" => "All",
-        //     "value" => "all",
-        // );
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all",
+        );
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";

@@ -140,6 +140,13 @@ export class FormService implements OnDestroy {
       .request<T>(url, { action: STATIC_MODULES.listing.deleteData, data: { id }, moduleName, staticModule });
   }
 
+  // deleting data with form details
+   deleteWithFormData<T = any>(url: string, formData: any,
+    { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
+    return this.httpService
+      .request<T>(url, { action: STATIC_MODULES.listing.deleteWithFormData, data: formData, moduleName, staticModule });
+  }
+
   deleteImage<T = any>(url: string, data: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService

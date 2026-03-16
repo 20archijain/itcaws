@@ -527,7 +527,9 @@ class VanDsReporting
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
-            "binderReportDownloadDays" => 5
+            "binderReportDownloadDays" => 5,
+            "transactionReportDownloadDays" => 20,
+            "summaryReportDownloadDays" => 30,
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -879,7 +881,7 @@ class VanDsReporting
         $sQuery = "SELECT a.pro_id $partialQuery AND a.pro_id > 0";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
 
-        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, b.team_id, b.team_name,b.circle,b.section,b.branch_id, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
+        $sQuery = "SELECT a.uni_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, b.team_id, b.team_name,b.circle,b.section,b.branch_id, b.wd_code, c.branch_name $partialQuery";
         $sQuery .= " " . $limit["limit"];
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -894,9 +896,9 @@ class VanDsReporting
                     // Don't use dstatus = 0
                     $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
                 }
-                $shopType = $shopDetails[0];
+                $shopType = $shopDetails[0] ?? "";
                 $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
-                $mobileNumber = $shopDetails[2];
+                $mobileNumber = $shopDetails[2] ?? "";
                 $sellIinOrder = $row["ques_4"];
                 $shopFrontPicture = $row["ques_6"];
                 $reasonForNoSale = $sellIinOrder == "Yes" ? $row["ques_5"] : "";
@@ -909,6 +911,9 @@ class VanDsReporting
                         $shopFrontPicture => "Outlet front Picture Lt: {$row["lt"]} Lg: {$row["lg"]}",
                     )
                 );
+
+                // PRE-COMPUTE TIMESTAMP FOR SORTING (convert once, sort faster)
+                $row['_timestamp'] = strtotime($row["capture_datetime"]);
 
                 $arrData[$i] = array(
                     "reportingType" => $row["ques_0"],
@@ -927,10 +932,22 @@ class VanDsReporting
                     "lt" => $row["lt"],
                     "lg" => $row["lg"],
                     "images" => $arrImages,
+                    "_timestamp" => $row['_timestamp'],
                 );
 
                 $i++;
             }
+
+            // Sort by capture_datetime descending
+            usort($arrData, function ($a, $b) {
+                return $b['_timestamp'] - $a['_timestamp'];
+            });
+
+            // Remove sort key from response
+            foreach ($arrData as &$item) {
+                unset($item['_timestamp']);
+            }
+            unset($item);
         }
 
         $arrResponse = array(
@@ -1062,6 +1079,7 @@ class VanDsReporting
 
         return $mdoCache;
     }
+
 
     final public function getDownloadData()
     {
@@ -1486,6 +1504,7 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
         // $respTable = getRespTable(1, $this->_projectId);
+        // Recommended indexes for speed: response (dstatus, ques_0, team_id, capture_date); stock_summary (dstatus, stock_type, team_id, capture_date); vands_summary (dstatus, team_id, activity_date).
         $where = "";
         $where2 = "";
         // filter query
@@ -1514,9 +1533,9 @@ class VanDsReporting
         if (checkIfAllSelected($branch)) {
             $branch = $this->getBranches();
         }
-        $minTotalShops =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
-        $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
-        $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
+        // $minTotalShops =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
+        // $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
+        // $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
         // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
         $arrSummary = array(
@@ -1628,27 +1647,8 @@ class VanDsReporting
                 }
             }
 
-            // get stock for each team
+            // get sales first; stock loaded only for (team_id, capture_date) in result (fast: chunked IN)
             $arrTeamWiseStock = array();
-            $sStockAction = null;
-            $iStockRows = 0;
-            $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0) $stockWhere";
-            $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
-
-            if ($iStockRows > 0) {
-                while ($rowStock = $this->_dbConn->GetData($sStockAction)) {
-                    $teamId = $rowStock["team_id"];
-                    $captureDate = $rowStock["capture_date"];
-                    $stockType = $rowStock["stock_type"];
-
-                    $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
-                    foreach ($arrStockProducts as $product) {
-                        $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
-                    }
-                }
-            }
-
-            // get sales
             // Don't use b.dstatus = 0
             // $where .= getFilterResult(
             //     $this->_data['searchbar'],
@@ -1665,27 +1665,68 @@ class VanDsReporting
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
-                $index = count($arrSummary["sale"]);
-
                 $arrBranchDetails = getRowsColumns($this->_dbConn, $branchTable, "branch_id, branch_name, main_branch, district");
 
+                $allRows = [];
+                $teamDatePairs = [];
+                $mdoFilters = [];
                 while ($row = $this->_dbConn->GetData($rsAction)) {
+                    $allRows[] = $row;
+                    $teamDatePairs[] = ['team_id' => $row["team_id"], 'date' => $row["activity_date"]];
+                    $mdoFilters[] = ['ds_id' => $row["team_id"], 'capture_date' => $row["activity_date"]];
+                }
+
+                $mdoCache = $this->getBatchMDODetails($mdoFilters);
+
+                // Fast: Load stock only for (team_id, capture_date) pairs in this branch result (chunked IN)
+                if ($arrStockProducts && isNonEmptyArray($arrStockProducts) && isNonEmptyArray($teamDatePairs)) {
+                    $stockChunkSize = 200;
+                    $stockChunks = array_chunk($teamDatePairs, $stockChunkSize);
+                    foreach ($stockChunks as $chunk) {
+                        $inList = array();
+                        foreach ($chunk as $p) {
+                            $tid = (int) $p['team_id'];
+                            $d = addslashes($p['date']);
+                            $inList[] = "($tid, '$d')";
+                        }
+                        $inClause = implode(",", $inList);
+                        $sStockQuery = "SELECT team_id, capture_date, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND stock_type IN (0) AND (team_id, capture_date) IN ($inClause)";
+                        $sStockAction = null;
+                        $iStockRows = 0;
+                        $this->_dbConn->ExecuteSelectQuery($sStockQuery, $sStockAction, $iStockRows);
+                        if ($iStockRows > 0) {
+                            while ($rowStock = $this->_dbConn->GetData($sStockAction)) {
+                                $teamId = $rowStock["team_id"];
+                                $captureDate = $rowStock["capture_date"];
+                                $stockType = $rowStock["stock_type"];
+                                $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
+                                foreach ($arrStockProducts as $product) {
+                                    $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach ($allRows as $row) {
+                    $index = count($arrSummary["sale"]);
                     $routeName = $row["route"];
                     $date = $row["activity_date"];
                     $week = $this->getWeekNumber($date);
                     $dayOfWeek = date('D', strtotime($date));
                     $teamId = $row["team_id"];
-                    $callTime = getRowsColumn($this->_dbConn, $respTable, "call_time", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
-                    $totalTimeSpent = "";
-                    $totalMinutes = "";
-                    if (!empty($callTime)) {
-                        $totalTime = array_sum($callTime); // Sum all time values
-                        $time = $totalTime / 1000;
-                        // Convert time to H:i:s format
-                        $totalTimeSpent = gmdate("H:i:s", (int) round($time));
-                        $totalMinutes = floor($time / 60);
-                    }
-                    $totalSale = 0; // Initialize total product sale
+                    $dateEsc = addslashes($date);
+
+                    // getRowColumn for call time and outlet counts (per team/date)
+                    $totalCallMs = (float) getRowColumn($this->_dbConn, $respTable, "COALESCE(SUM(call_time), 0)", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
+                    $time = $totalCallMs / 1000;
+                    $totalTimeSpent = $time > 0 ? gmdate("H:i:s", (int) round($time)) : "";
+                    $totalMinutes = $time > 0 ? floor($time / 60) : "";
+
+                    $orderShop = (int) getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
+                    $addShop = (int) getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$dateEsc' AND team_id = '$teamId'");
+
+                    $totalSale = 0;
                     if ($arrProductBought && isNonEmptyArray($arrProductBought)) {
                         foreach ($arrProductBought as $productIndex => $arrProduct) {
                             $productName = strtoupper($arrProduct[0]);
@@ -1693,16 +1734,18 @@ class VanDsReporting
                             $totalSale += $iSale;
                         }
                     }
-                    $isMdoWorks = getRowColumns($this->_dbConn, "tblmdo_summary", "mdo_id, mdo_name", "ds_id = $teamId AND capture_date = '$date'");
-                    if (isNonEmptyArray($isMdoWorks)) {
+
+                    $mdoKey = $teamId . "|" . $date;
+                    if (isset($mdoCache[$mdoKey])) {
                         $isMdo = "1";
-                        $mdoId = isset($isMdoWorks[0]) ? $isMdoWorks[0] : "";
-                        $mdoName = isset($isMdoWorks[1]) ? $isMdoWorks[1] : "";
+                        $mdoId = $mdoCache[$mdoKey][0];
+                        $mdoName = $mdoCache[$mdoKey][1];
                     } else {
                         $isMdo = "0";
                         $mdoId = "";
                         $mdoName = "";
                     }
+
                     $arrPlannedOutlet = $row["planned_outlets"];
                     $branchId = $row["branch_id"];
                     if ($row["is_beat_adherence"] == "Yes") {
@@ -1758,9 +1801,6 @@ class VanDsReporting
                         $mainBranch = $arrBranchDetails[$branchIndex][2];
                         $district = $arrBranchDetails[$branchIndex][3];
                     }
-
-                    $orderShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
-                    $addShop = getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
 
                     $totalShops = $orderShop + $addShop;
 
@@ -1826,7 +1866,7 @@ class VanDsReporting
 
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
-                            $arrSummary["sale"][$index][$iProductIndex] = round(floatval($iSale), 2);
+                            $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
                         }
                     }
 
@@ -1834,7 +1874,7 @@ class VanDsReporting
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
                         $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
-                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? round($arrStock[0][$stockProduct[1]], 2) : 0;
+                        $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
 
                         // Accumulate the ready stock pickup
                         $totalReadyStockPickup += $iStockQty;
@@ -1845,7 +1885,7 @@ class VanDsReporting
                         $arrSummary["stock"][$index][$iStockIndex] = floatval($iStockQty);
                     }
                     $arrSummary["sale"][$index][$outletAddedIndex + 1] = $totalReadyStockPickup;
-                    $arrSummary["sale"][$index][$outletAddedIndex + 2] = round($totalProductSale, 2);
+                    $arrSummary["sale"][$index][$outletAddedIndex + 2] = $totalProductSale;
                     $index++;
                 }
             }
@@ -1853,8 +1893,15 @@ class VanDsReporting
             $dateFrom = isset($this->_data["searchbar"]['dateFrom']) ? $this->_data["searchbar"]['dateFrom'] : $this->_data['dateFrom'];
             $dateTo = isset($this->_data["searchbar"]['dateTo']) ? $this->_data["searchbar"]['dateTo'] : $this->_data['dateTo'];
 
-            $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
-            $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+            // $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            // $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+
+            if (is_array($dateFrom)) {
+                $dateFrom = sprintf('%04d-%02d-%02d', $dateFrom['year'], $dateFrom['month'], $dateFrom['day']);
+            }
+            if (is_array($dateTo)) {
+                $dateTo = sprintf('%04d-%02d-%02d', $dateTo['year'], $dateTo['month'], $dateTo['day']);
+            }
 
             // Convert date strings to DateTime objects
             $startDate = new DateTime($dateFrom);
@@ -1910,17 +1957,27 @@ class VanDsReporting
             }
         }
 
-        $fileName = "VanDs_Summary_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
+        $fileName = "VanDs_Summary_$currentDateTime.csv";
         $iNofOfProductsColumn = count($arrSummary["sale"][0]) - $iStartofProductsColumn;
         $iNofOfStockColumn = count($arrSummary["stock"][0]);
 
-        // Prepare excel data to download
-        $arrExcelData = array();
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
+        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
+        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
+
+        $fp = fopen($filename, 'w');
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        // UTF-8 BOM for Excel compatibility
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
         foreach ($arrSummary["sale"] as $index => $arrBody) {
-            // header
             if ($index === 0) {
                 $arrValues = array();
                 foreach ($arrBody as $body) {
@@ -1929,68 +1986,30 @@ class VanDsReporting
                 foreach ($arrSummary["stock"][$index] as $stock) {
                     $arrValues[] = $stock;
                 }
-
-                // Style header
-                $endColumnName = $sheet->getCell([count($arrValues), 1])->getCoordinate();
-                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER); // center align text
-                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setVertical(Alignment::VERTICAL_CENTER); // center align text
-                $sheet->getStyle("A1:$endColumnName")->getFill()->setFillType(Fill::FILL_SOLID);  // fill style
-                $sheet->getStyle("A1:$endColumnName")->getFont()->getColor()->setARGB("FF000000"); // font color
-                $sheet->getStyle("A1:$endColumnName")->getFont()->setBold(true);   // bold text
-                $sheet->getStyle("A1:$endColumnName")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);   // set border
-                $sheet->getStyle("A1:$endColumnName")->getAlignment()->setWrapText(true);   // wrap text
-
-                // Backgroud color
-                $endColumnName = $sheet->getCell([$iStartofProductsColumn, 1])->getCoordinate();
-                $sheet->getStyle("A1:$endColumnName")->getFill()->getStartColor()->setARGB("FFFFC000"); // background color
-                $productStartColumnName = $sheet->getCell([$iStartofProductsColumn + 1, 1])->getCoordinate();
-                $productEndColumnName = $sheet->getCell([$iStartofProductsColumn + $iNofOfProductsColumn, 1])->getCoordinate();
-                $sheet->getStyle("$productStartColumnName:$productEndColumnName")->getFill()->getStartColor()->setARGB("FFFF5E00"); // background color
-                $stockStartColumnName = $sheet->getCell([$iStartofProductsColumn + $iNofOfProductsColumn + 1, 1])->getCoordinate();
-                $stockEndColumnName = $sheet->getCell([count($arrValues), 1])->getCoordinate();
-                $sheet->getStyle("$stockStartColumnName:$stockEndColumnName")->getFill()->getStartColor()->setARGB("FF88FF00"); // background color
             } else {
-                // Body
-
-                // Sort array by index since some values were added explicity using index
                 ksort($arrBody);
-
-                // Take first $iStartofProductsColumn values
                 $arrValues = array_slice($arrBody, 0, $iStartofProductsColumn);
-
-                // insert each product sale
                 for ($productIndex = 0; $productIndex < $iNofOfProductsColumn; $productIndex++) {
-                    $arrValues[] = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : 0;
+                    $val = isset($arrBody[$iStartofProductsColumn + $productIndex]) ? $arrBody[$iStartofProductsColumn + $productIndex] : 0;
+                    $arrValues[] = ($val === 0 || $val === 0.0 || (is_numeric($val) && floatval($val) == 0)) ? '' : $val;
                 }
-
-                // insert each stock
                 if (isNonEmptyArray($arrSummary["stock"][$index])) {
                     for ($stockIndex = 0; $stockIndex < $iNofOfStockColumn; $stockIndex++) {
-                        $arrValues[] = isset($arrSummary["stock"][$index][$stockIndex]) ? $arrSummary["stock"][$index][$stockIndex] : 0;
+                        $val = isset($arrSummary["stock"][$index][$stockIndex]) ? $arrSummary["stock"][$index][$stockIndex] : 0;
+                        $arrValues[] = ($val === 0 || $val === 0.0 || (is_numeric($val) && floatval($val) == 0)) ? '' : $val;
                     }
                 }
             }
-
-            $arrExcelData[] = $arrValues;
+            $this->writeCsvRow($fp, $arrValues);
         }
 
-        // Pass complete data
-        $sheet->fromArray($arrExcelData);
+        fclose($fp);
 
-        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
-            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
-        }
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
         $fileDetails = array(
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
         );
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-
         $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
-
         echo json_encode($arrMessage);
     }
 
@@ -1999,7 +2018,6 @@ class VanDsReporting
         $where = "";
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-
 
         // Filter query
         $where .= getFilterResult(
@@ -2018,6 +2036,11 @@ class VanDsReporting
         $dsType = getFormData($this->_data['searchbar'], "dsType");
         $dsName = getFormData($this->_data['searchbar'], "dsName");
 
+        // ADD THIS: Convert "all" to actual branch IDs
+        if (checkIfAllSelected($branch)) {
+            $branch = $this->getBranches();
+        }
+
         $respTable = getRespTable(1, $this->_projectId);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
@@ -2025,6 +2048,7 @@ class VanDsReporting
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
+
         if ($dsType) {
             $matchAll = checkIfAllSelected($dsType);
             if (!$matchAll) {
@@ -2038,8 +2062,7 @@ class VanDsReporting
                 }
             }
         }
-        // print_r($district);
-        // die;
+
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
@@ -2109,8 +2132,33 @@ class VanDsReporting
             $allCond .= " AND a.team_id IN (SELECT team_id FROM $projectTeamTable WHERE dstatus = 0  $Cond)";
         }
 
-        $arrExcelData = [];
-        $arrExcelData[] = ["Branch", "Region", "Circle", "Section", "WD Code", "DS Type", "DS ID", "DS Name", "Accompanied by MDO", "MDO ID", "MDO Name", "Date", "Week", "Route", "Outlet Name", "Owner Moblie Number", "Outlet ID", "Outlet Type", "Category", "Variant", "Sales Qty (M)"];
+        // Create header
+        $header = [];
+        $header[] = [
+            "Branch",
+            "Region",
+            "Circle",
+            "Section",
+            "WD Code",
+            "DS Type",
+            "DS ID",
+            "DS Name",
+            "Accompanied by MDO",
+            "MDO ID",
+            "MDO Name",
+            "Date",
+            "Week",
+            "Route",
+            "Outlet Name",
+            "Owner Moblie Number",
+            "Outlet ID",
+            "Outlet Type",
+            "Category",
+            "Variant",
+            "Sales Qty (M)"
+        ];
+
+        $arrDataHolder = [];
 
         foreach ($branch as $branchId) {
             $sProductQuery = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId $teamTypeCond ORDER BY product_name";
@@ -2172,7 +2220,7 @@ class VanDsReporting
                             $mdoName = "";
                         }
 
-                        $outletName  = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
+                        $outletName = isset($outletData[0]) ? htmlentities($outletData[0]) : "";
                         $shopUniqueCode = $outletData[1] ?? "";
                         $outletType = $outletData[2] ?? "";
                         $mobileNo = $outletData[3] ?? "";
@@ -2182,28 +2230,28 @@ class VanDsReporting
                             $salesQty = $row[$colName] ?? 0;
 
                             if ($salesQty > 0) {
-                                $arrExcelData[] = [
-                                    'Branch' => $mainBranchName,
-                                    'Region' => $branchName,
-                                    'Circle' => $circle,
-                                    'Section' => $section,
-                                    'WD Code' => $wdCode,
-                                    'DS Type' => $dsType,
-                                    'DS ID' => $teamId,
-                                    'DS Name' => $teamName,
-                                    'Accompanied by MDO' => $isMdo,
-                                    'MDO ID' => $mdoId,
-                                    'MDO Name' => $mdoName,
-                                    'Date' => $date,
-                                    'Week' => $week,
-                                    'Route' => $route,
-                                    'Outlet Name' => $outletName,
-                                    'Owner Moblie Number' => $mobileNo,
-                                    'Outlet ID' => $shopUniqueCode,
-                                    'Outlet Type' => $outletType,
-                                    'Category' => $category_name[$colName] ?? '',
-                                    'Variant' => $productNames[array_search($colName, $summaryColName)],
-                                    'Sales Qty (M)' => $salesQty,
+                                $arrDataHolder[] = [
+                                    cleanCSVValue($mainBranchName),
+                                    cleanCSVValue($branchName),
+                                    cleanCSVValue($circle),
+                                    cleanCSVValue($section),
+                                    cleanCSVValue($wdCode),
+                                    cleanCSVValue($dsType),
+                                    cleanCSVValue($teamId),
+                                    cleanCSVValue($teamName),
+                                    cleanCSVValue($isMdo),
+                                    cleanCSVValue($mdoId),
+                                    cleanCSVValue($mdoName),
+                                    cleanCSVValue($date),
+                                    cleanCSVValue($week),
+                                    cleanCSVValue($route),
+                                    cleanCSVValue($outletName),
+                                    cleanCSVValue($mobileNo),
+                                    cleanCSVValue($shopUniqueCode),
+                                    cleanCSVValue($outletType),
+                                    cleanCSVValue($category_name[$colName] ?? ''),
+                                    cleanCSVValue($productNames[array_search($colName, $summaryColName)]),
+                                    cleanCSVValue($salesQty)
                                 ];
                             }
                         }
@@ -2212,42 +2260,9 @@ class VanDsReporting
             }
         }
 
-        $fileName = "BINDER_REPORT_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
-
-        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
-            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
-        }
-        $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
-        $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = [
-            "filePath" => $downloadFileLocation,
-            "fileName" => $fileName,
-        ];
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
-
+        $arrResult = formatDownloadData("BINDER_REPORT", $header, $arrDataHolder);
+        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
         echo json_encode($arrMessage);
-    }
-
-    // Haversine formula function
-    private function haversineDistance($lat1, $lon1, $lat2, $lon2)
-    {
-        $earthRadius = 6371; // Earth radius in km
-
-        $dLat = deg2rad($lat2 - $lat1);
-        $dLon = deg2rad($lon2 - $lon1);
-
-        $a = sin($dLat / 2) * sin($dLat / 2) +
-            cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
-            sin($dLon / 2) * sin($dLon / 2);
-
-        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
-        return $earthRadius * $c; // Distance in km
     }
 
     //Download PDF

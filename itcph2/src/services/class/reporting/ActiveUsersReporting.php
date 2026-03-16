@@ -646,6 +646,7 @@ class ActiveUsersReporting
                 "app.reporting.activeUSers.section",
                 "app.reporting.activeUSers.wdCode",
                 "app.reporting.activeUSers.dsType",
+                "app.team.add.status",
                 "app.reporting.activeUSers.creationDate"
             ),
             "viewBody" => array(
@@ -657,7 +658,8 @@ class ActiveUsersReporting
                 "section",
                 "wdCode",
                 "dsType",
-                "creationDate"
+                "status",
+                "creationDate",
             ),
         );
 
@@ -690,6 +692,12 @@ class ActiveUsersReporting
             $where .= " AND a.team_id IN $teamList";
         }
 
+        // Calculate date range: from first day of 2 months ago to last day of previous month
+        // Example: If current month is February, range is Dec 1 to Jan 31
+        // Example: If current month is March, range is Jan 1 to Feb 28/29
+        $firstDateLastToLastMonth = date('Y-m-01', strtotime('first day of -2 month'));
+        $lastDatePreviousMonth = date('Y-m-t', strtotime('last day of -1 month'));
+
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
@@ -701,12 +709,30 @@ class ActiveUsersReporting
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
+        // Initialize result array
+        $arrResult = array();
+
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $teamId = $arrData["team_id"];
                 $teamType = $arrData["is_type"];
                 $mainBranch = $arrData["main_branch"];
                 $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
+                $istatus = "";
+
+                $isQualified = getRowColumn(
+                    $this->_dbConn,
+                    "tblvands_summary",
+                    "summary_id",
+                    "dstatus = 0 AND team_id = '$teamId' AND is_qualified = 1 AND activity_date BETWEEN '$firstDateLastToLastMonth' AND '$lastDatePreviousMonth'"
+                );
+            //    print_r($isQualified);die;
+
+                if ($isQualified > 0) {
+                    $istatus = "Qualified";
+                } else {
+                    $istatus = "Not Qualified";
+                }
 
                 $arrResult[] = array(
                     "id" => $teamId,
@@ -718,7 +744,8 @@ class ActiveUsersReporting
                     "wdCode" => $arrData["wd_code"] . ' - ' . $arrData['wd_market'] . ' - ' . $arrData['wd_firm_name'],
                     "dsType" =>  $types[$teamType],
                     "dsNum" =>  $arrData["ds_number"],
-                    "creationDate" => $creationDate
+                    "status" => $istatus,
+                    "creationDate" => $creationDate,
                 );
             }
         }

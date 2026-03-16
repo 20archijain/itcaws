@@ -544,7 +544,7 @@ class TeamManagement
                 "json" => array("c.c_init_xml", 1),
                 // "password" => array("c.password", 1),
                 "dsName" => array("a.team_name", 1),
-                "dsType" => array("a.is_type", 1),
+                "dsType" => array("a.is_type", -1),
                 "wdCode" => array("a.wd_code", 1),
                 "teamStatus" => array("a.dstatus", 1),
                 "phone" => array("c.mobile", 1),

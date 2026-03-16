@@ -156,8 +156,6 @@ class TargetReport
         return $where;
     }
 
-
-
     final public function getData()
     {
         $arrResult = array(
@@ -278,25 +276,36 @@ class TargetReport
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $Cond = "";
         $teamTypeCond = "";
-        // if ($teamType) {
-        //     $teamTypeCond .= " AND b.is_type = $teamType";
-        //     // $Cond .= " AND b.is_type = $teamType";
-        // }
 
-        // $productCond = "";
-        // if ($product) {
-        //     if (isNonEmptyArray($product)) {
-        //         $products = "'" .  implode("','", $product)  . "'";
-        //         $productCond = " AND product_name IN ($products)";
-        //     } else {
-        //         $productCond = " AND product_name = '$product'";
-        //     }
-        // }
+        // Create header
+        $header = [];
+        $header[] = [
+            "Month",
+            "District",
+            "Branch",
+            "Region",
+            "Circle",
+            "Section",
+            "WD Code",
+            "WD Name",
+            "WD Pop Group",
+            "WD Market",
+            "NPSR Id",
+            "NPSR Name",
+            "Is Team Active",
+            "Parameter Type",
+            "Parameter Name",
+            "Focus Variant",
+            "Target",
+            "Achievement",
+            "Ach%",
+            "Max Points",
+            "Earned Points",
+            "Gate Achieved"
+        ];
 
-        $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "NPSR Id", "NPSR Name", "Parameter Type", "Parameter Name", "Focus Variant", "Target", "Achievement", "Ach%", 'Max Points', 'Earned Points', "Gate Achieved"];
+        $arrDataHolder = [];
 
-        // $branchCond = "";
         if ($branch) {
             $matchAll = checkIfAllSelected($branch);
             if (!$matchAll) {
@@ -312,7 +321,6 @@ class TargetReport
             $iRows3 = 0;
             $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
                 " AND a.team_type = 5 AND a.branch_id = $branchId $teamTypeCond $whereFilter ORDER BY a.category_name, a.product_name";
-            // echo $sQuery3;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
             $arrProductColumnsAllProduct = array();
@@ -330,18 +338,12 @@ class TargetReport
                 }, $arrColumnsAllProduct));
             }
 
-
-            // echo "<pre>";
-            // print_r($skuColumnAllProduct);die;
-            // $skuColumnAllProduct = implode(" + ", $skuColumn);
-            // $dateCond = ""
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
-            $sQuery4 = "SELECT b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
+            $sQuery4 = "SELECT b.rcd, b.team_name, b.team_id, c.main_branch, c.branch_name, a.wd_code, a.wd_firm_name, a.wd_market, a.wd_pop_group, a.district, a.branch, a.circle_name, a.circle, a.section_name, a.section" .
                 " FROM tblmapping_wd as a, tblproject_team AS b, tblbranch as c WHERE a.wd_code = b.wd_code AND b.branch_id = c.branch_id AND a.dstatus = 0 AND c.dstatus = 0 AND b.dstatus = 0" .
                 " AND b.is_type = 5 AND b.branch_id = $branchId $teamTypeCond $whereFilter";
-            // echo $sQuery4;die;
             $this->_dbConn->ExecuteSelectQuery($sQuery4, $sAction4, $iRows4);
 
             if ($iRows4 > 0) {
@@ -352,6 +354,7 @@ class TargetReport
                     $wd_firm_name = $row4["wd_firm_name"];
                     $team_name = $row4["team_name"];
                     $team_id = $row4["team_id"];
+                    $rcd = $row4["rcd"];
                     $district = $row4["district"];
                     $branch = $row4["main_branch"];
                     $region = $row4["branch_name"];
@@ -359,8 +362,8 @@ class TargetReport
                     $circle = $row4["circle"];
                     $section_name = $row4["section_name"];
                     $section = $row4["section"];
-                    $showSection = $section . ' - ' . $section_name;
-                    $showCircle = $circle . ' - ' . $circle_name;
+                    $showSection = $section;
+                    $showCircle = $circle;
 
                     $assignFocus1 = 0;
                     $assignFocus2 = 0;
@@ -376,12 +379,25 @@ class TargetReport
                         $numericMonth = $date->format('m');
                         $numericYear  = $date->format('Y');
 
+                        $creationDate = new DateTime($rcd);
+
+                        $creationMonth = $creationDate->format("m");
+                        $creationYear  = $creationDate->format("Y");
+
+                        $current = ($numericYear * 100) + $numericMonth;
+                        $creation = ($creationYear * 100) + $creationMonth;
+
+                        if ($creation <= $current) {
+                            $activeTeam = "Active";
+                        } else {
+                            $activeTeam = "Inactive";
+                        }
+
                         //Focus Brand Query
                         $sAction = null;
                         $iRows = 0;
                         $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
                             " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.branch_id = $branchId $teamTypeCond $whereFilter AND a.month = '$numericMonth' AND a.year = '$numericYear' ORDER BY a.is_focusbrand limit 3";
-                        // echo $sQuery;die;
                         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
                         $arrProductColumns = array();
@@ -407,11 +423,9 @@ class TargetReport
                             return "SUM($v) AS $v";
                         }, $arrColumns));
 
-
-
                         $qualifiedAttendanceArr = $this->getResult("tblvands_summary", "count(is_qualified)", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
 
-                        $qualifiedAttendance = $qualifiedAttendanceArr[0] ?  $qualifiedAttendanceArr[0] : 0;
+                        $qualifiedAttendance = $qualifiedAttendanceArr[0] ? $qualifiedAttendanceArr[0] : 0;
                         $totalQualifiedLimit = 20;
 
                         $gateCheck = 'N';
@@ -433,7 +447,6 @@ class TargetReport
                         $achieveFocus1 = $achieveTarget[0] ?? 0;
                         $achieveFocus2 = $achieveTarget[1] ?? 0;
 
-                        // print_r($skuColumnAllProduct);die;
                         $achieveTargetOverall = $this->getResult("tblvands_summary", $skuColumnAllProduct . " AS total", " AND team_id = '$team_id' AND activity_date BETWEEN '$firstDate' AND '$lastDate'");
 
                         $achieveOverall = $achieveTargetOverall[0];
@@ -449,7 +462,6 @@ class TargetReport
                         $focus2Max = 500;
                         $overAllMax = 1000;
                         $totalMax = 2000;
-
 
                         $focus1Earned = 0;
                         $focus2Earned = 0;
@@ -496,8 +508,8 @@ class TargetReport
                             $totalEarned = $focus1Earned + $focus2Earned + $overAllEarned;
                         }
 
-                        //First Column
-                        $arrExcelData[] = [
+                        //First Row - Focus Variant 1
+                        $arrDataHolder[] = [
                             $month,
                             $district,
                             $branch,
@@ -510,6 +522,7 @@ class TargetReport
                             $wd_market,
                             $team_id,
                             $team_name,
+                            $activeTeam,
                             "Business Parameter",
                             "Focus Variant 1 Survey",
                             $arrProducts[0] ?? "",
@@ -521,8 +534,8 @@ class TargetReport
                             ""
                         ];
 
-                        //Second Column
-                        $arrExcelData[] = [
+                        //Second Row - Focus Variant 2
+                        $arrDataHolder[] = [
                             $month,
                             $district,
                             $branch,
@@ -535,6 +548,7 @@ class TargetReport
                             $wd_market,
                             $team_id,
                             $team_name,
+                            $activeTeam,
                             "Business Parameter",
                             "Focus Variant 2 Survey",
                             $arrProducts[1] ?? "",
@@ -546,17 +560,83 @@ class TargetReport
                             ""
                         ];
 
-                        //Third Column
-                        $arrExcelData[] = [
-                            $month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name,
-                            "Business Parameter", "Overall Survey", "", $assignOverall, $achieveOverall, $showPerOverall, $overAllMax, $overAllEarned, ""
+                        //Third Row - Overall Survey
+                        $arrDataHolder[] = [
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Business Parameter",
+                            "Overall Survey",
+                            "",
+                            $assignOverall,
+                            $achieveOverall,
+                            $showPerOverall,
+                            $overAllMax,
+                            $overAllEarned,
+                            ""
                         ];
 
-                        //Forth Column
-                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Gate Parameter", "Qualified Attendance", "", $totalQualifiedLimit, $qualifiedAttendance, "", "", "", $gateCheck];
+                        //Fourth Row - Qualified Attendance
+                        $arrDataHolder[] = [
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Gate Parameter",
+                            "Qualified Attendance",
+                            "",
+                            $totalQualifiedLimit,
+                            $qualifiedAttendance,
+                            "",
+                            "",
+                            "",
+                            $gateCheck
+                        ];
 
-                        //Fifth Column
-                        $arrExcelData[] = [$month, $district, $branch, $region, $showCircle, $showSection, $wd_code, $wd_firm_name, $wd_pop_group, $wd_market, $team_id, $team_name, "Max Points Total", "", "", "", "", "", $totalMax, $totalEarned, ""];
+                        //Fifth Row - Max Points Total
+                        $arrDataHolder[] = [
+                            $month,
+                            $district,
+                            $branch,
+                            $region,
+                            $showCircle,
+                            $showSection,
+                            $wd_code,
+                            $wd_firm_name,
+                            $wd_pop_group,
+                            $wd_market,
+                            $team_id,
+                            $team_name,
+                            $activeTeam,
+                            "Max Points Total",
+                            "",
+                            "",
+                            "",
+                            "",
+                            "",
+                            $totalMax,
+                            $totalEarned,
+                            ""
+                        ];
 
                         $assignTarget = array();
                         $achieveTarget = array();
@@ -565,24 +645,48 @@ class TargetReport
             }
         }
 
-        $fileName = "Target_Report_$currentDateTime.xlsx";
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        $sheet->fromArray($arrExcelData);
+        // $arrResult = formatDownloadData("Target_Report", $header, $arrDataHolder);
+        // $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+
+        $fileName = "Target_Report_$currentDateTime.csv";
+
+        if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
+            mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
+        }
 
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = [
+
+        $fp = fopen($filename, 'w');
+
+        if ($fp === false) {
+            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            echo json_encode($arrMessage);
+            return;
+        }
+
+        fprintf($fp, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        foreach ($header as $headerRow) {
+            $cleanRow = array_map('cleanCSVValue', $headerRow);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        foreach ($arrDataHolder as $row) {
+            $cleanRow = array_map('cleanCSVValue', $row);
+            fputs($fp, implode(",", $cleanRow) . "\n");
+        }
+
+        fclose($fp);
+
+        $fileDetails = array(
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        ];
-        $writer = new Xlsx($spreadsheet);
-        $writer->save($filename);
-        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
+        );
 
+        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
         echo json_encode($arrMessage);
     }
-
 
     final public function getBranchListWithoutAll($cond = "")
     {
@@ -610,7 +714,6 @@ class TargetReport
 
         return $arrData;
     }
-
 
     final public function getResult($table, $products, $where)
     {

@@ -1,41 +1,131 @@
 <app-card cardTitle="Route Delete" [options]="false">
-  <!-- <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [sortOptions]="sortOptions"
-    [searchTemplate]="searchTemplate" [searchGroup]="form">
-  </app-table-listing> -->
   <app-table-listing [url]="url" [header]="header" [body]="body" [sortOptions]="sortOptions"
     [searchTemplate]="searchTemplate" [searchGroup]="form" [isSelectable]="isSelectable"
-    [deleteCondition]="deleteCondition" checkKey="id" deleteKey="id" editKey="id">
+    [deleteCondition]="deleteCondition" checkKey="id" deleteKey="id" editKey="id"
+    editLabel="app.user.user.view.editHeadingRoute" [editConfig]="editConfig" editModalSize="modal-xl">
   </app-table-listing>
 </app-card>
 
 <ng-template #searchTemplate>
   <div class="row">
-
     <div class="col-md-2">
       <app-select placeholder="Branch" [group]="form" controlName="branch" [options]="branchOptions"
         (onChange)="getTeamNames()">
       </app-select>
     </div>
     <div class="col-md-2">
-      <app-select placeholder="Team" [multiple]="true" [group]="form" controlName="team" [options]="teamOptions">
+      <app-select placeholder="Team" [multiple]="true" [group]="form" controlName="team" [options]="teamOptions"
+        (onChange)="getRouteNames()">
       </app-select>
     </div>
-    <div class="col-md-3">
-      <app-textarea rows="2" [group]="form" controlName="recIds"
-        placeholder="Enter Shop Ids ex:- 1234,3456,....">
+    <div class="col-md-2">
+      <app-select placeholder="Route" [multiple]="true" [group]="form" controlName="routeName" [options]="routeOptions">
+      </app-select>
+    </div>
+    <div class="col-md-2">
+      <app-textarea rows="1" [group]="form" controlName="recIds"
+        placeholder="Enter Shop Ids ex:- 1234,3456,...">
       </app-textarea>
     </div>
-    <div class="col-md-3">
-      <app-textarea rows="2" [group]="form" controlName="phoneNumber"
-        placeholder="Enter Mobile Number ex:- 8795678908,9876789876,....">
+    <div class="col-md-2">
+      <app-textarea rows="1" [group]="form" controlName="phoneNumber"
+        placeholder="Enter Number ex:- 8795678908,...">
       </app-textarea>
     </div>
     <div class="col-md-2">
       <div class="d-flex gap-2">
         <app-button type="submit" text="button.search"></app-button>
         <app-button text="button.clear" (onClick)="onClearFilters()"></app-button>
+        <app-button text="Edit" (onClick)="openEditRouteModal()"></app-button>
       </div>
     </div>
-
   </div>
+</ng-template>
 
+<!-- Edit Route Modal -->
+<div class="modal fade" [class.show]="showEditModal" [style.display]="showEditModal ? 'block' : 'none'"
+     tabindex="-1" role="dialog" aria-labelledby="editRouteModalLabel" aria-modal="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header border-bottom">
+        <h5 class="modal-title fw-semibold" id="editRouteModalLabel">
+          <i class="bi bi-pencil-square me-2"></i>Edit Route
+        </h5>
+        <button type="button" class="btn-close" (click)="closeEditRouteModal()" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-4">
+        <form [formGroup]="editRouteForm">
+          <div class="mb-4">
+            <label for="teamName" class="form-label fw-medium">
+              Team Name <span class="text-danger">*</span>
+            </label>
+            <app-select
+              [group]="editRouteForm"
+              controlName="teamName"
+              [options]="teamOptions"
+              placeholder="Select Team"
+              (onChange)="getRouteNamesForModal()">
+            </app-select>
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('teamName')?.touched && editRouteForm.get('teamName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>Team name is required
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="routeName" class="form-label fw-medium">
+              Route Name <span class="text-danger">*</span>
+            </label>
+            <app-select
+              [group]="editRouteForm"
+              controlName="routeName"
+              [options]="editRouteOptions"
+              placeholder="Select Route">
+            </app-select>
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('routeName')?.touched && editRouteForm.get('routeName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>Route name is required
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label for="newRouteName" class="form-label fw-medium">
+              New Route Name <span class="text-danger">*</span>
+            </label>
+            <input
+              type="text"
+              class="form-control"
+              formControlName="newRouteName"
+              placeholder="Enter new route name">
+            <div class="invalid-feedback d-block"
+                 *ngIf="editRouteForm.get('newRouteName')?.touched && editRouteForm.get('newRouteName')?.invalid">
+              <i class="bi bi-exclamation-circle me-1"></i>
+              <span *ngIf="editRouteForm.get('newRouteName')?.errors?.['required']">
+                New route name is required
+              </span>
+              <span *ngIf="editRouteForm.get('newRouteName')?.errors?.['minlength']">
+                New route name must be at least 3 characters
+              </span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer border-top bg-light">
+        <app-button
+          text="Cancel"
+          [class]="'btn btn-primary'"
+          (onClick)="closeEditRouteModal()">
+        </app-button>
+        <app-button
+          text="Save Changes"
+          type="submit"
+          [class]="'btn btn-primary'"
+          (onClick)="submitEditRoute()">
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Backdrop -->
+<div class="modal-backdrop fade show" *ngIf="showEditModal" (click)="closeEditRouteModal()"></div>

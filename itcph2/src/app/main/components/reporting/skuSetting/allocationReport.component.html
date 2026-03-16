@@ -1,0 +1,30 @@
+<div class="bg-white container custom-table-parent">
+  <div class="table-responsive mb-3">
+    <table class="table align-middle mb-0 table-hover text-center">
+      <thead class="table-light">
+        <tr>
+          <th scope="col">District</th>
+          <th scope="col">Branch</th>
+          <th scope="col">SKU Allocated</th>
+          <th scope="col">Focus Brand</th>
+          <th scope="col">DSPM Brand</th>
+          <th scope="col">Target Allocation</th>
+          <th scope="col">SKU Allocation %</th>
+          <th scope="col">Allocation Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="bg-white" *ngFor="let data of tableData">
+          <td>{{data[0]}}</td>
+          <td>{{data[1]}}</td>
+          <td>{{data[2]}}</td>
+          <td>{{data[3]}}</td>
+          <td>{{data[4]}}</td>
+          <td>{{data[5]}}</td>
+          <td>{{data[6]}}</td>
+          <td>{{data[7]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

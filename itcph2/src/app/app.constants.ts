@@ -97,6 +97,7 @@ export const STATIC_MODULES = {
     getDownloadSummary: 'get_download_summary',
     getProjectsList: 'get_projects',
     getTeamsList: 'get_teams',
+    getRouteList: 'get_route_list',
     getTeamsTypeList: 'get_teams_type',
     getWDList: 'get_wd_code',
     getHeader: 'get_header',
@@ -131,6 +132,7 @@ export const STATIC_MODULES = {
     getTables: 'get_tables',
     getTableColumns: 'get_tables_column',
     getDownloadCSV : 'get_download_csv',
+    submitSelectedProducts : 'submit_data',
   },
   forgot: {
     action: 'forgot',
@@ -148,6 +150,7 @@ export const STATIC_MODULES = {
   listing: {
     addData: 'add_data',
     deleteData: 'delete_data',
+    deleteWithFormData: 'delete_with_form_data',
     deleteImage: 'delete_image',
     editData: 'edit_data',
     getData: 'get_data',

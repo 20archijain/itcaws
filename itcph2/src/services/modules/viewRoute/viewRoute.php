@@ -15,8 +15,17 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_TEAM_LIST']:
             $route->getTeam();
             break;
+        case $ACTION_LIST['GET_ROUTE_LIST']:
+            $route->getRoute();
+            break;
         case $ACTION_LIST['DELETE_DATA']:
             $route->deleteData($requestData, $iUserId);
+            break;
+        case $ACTION_LIST['RESTORE_DATA']:
+            $route->restoredata($requestData, $iUserId);
+            break;
+        case $ACTION_LIST['EDIT_DATA']:
+            $route->editRoutedata($requestData, $iUserId);
             break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
