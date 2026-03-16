@@ -173,12 +173,12 @@
             [multiple]="false" (onChange)="refreshGraph()">
           </app-select>
         </div>
-        <div class="col-12 col-sm-6 col-lg-3">
+        <!-- <div class="col-12 col-sm-6 col-lg-3">
           <label class="form-label text-muted" style="font-size: 12px;">Compare Data With</label>
           <app-select [group]="group" controlName="chartType" [options]="chartTypeOptions" placeholder="Select Chart"
             [multiple]="false" (onChange)="onChartTypeChange()">
           </app-select>
-        </div>
+        </div> -->
       </div>
 
       <div class="flex-grow-1 w-100" style="overflow-x: auto; overflow-y: hidden;">
@@ -186,7 +186,7 @@
         <!-- Grouped Bar (default) -->
         <ng-container *ngIf="selectedChartType === 'grouped' || !selectedChartType">
           <app-apex-grouped-bar-chart [transformedChartData]="monthlySalesBarChartData"
-            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'" [xAxisLabel]="'Level'"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Survey (M)'" [xAxisLabel]="'Level'"
             [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50">
           </app-apex-grouped-bar-chart>
         </ng-container>
@@ -194,7 +194,7 @@
         <!-- Bar -->
         <ng-container *ngIf="selectedChartType === 'bar'">
           <app-apex-grouped-bar-chart [transformedChartData]="monthlySalesBarChartData"
-            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'" [xAxisLabel]="'Level'"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Survey (M)'" [xAxisLabel]="'Level'"
             [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50" [stacked]="true">
           </app-apex-grouped-bar-chart>
         </ng-container>

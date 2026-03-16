@@ -318,7 +318,7 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
       series: [
         { name: `Planned Outlets${monthSuffix}`, value: plannedData[index] || 0 },
         { name: `Outlets ReVisit${monthSuffix}`, value: revisitData[index] || 0 },
-        { name: `Total Sales${monthSuffix}`,     value: salesData[index]   || 0 },
+        { name: `Total Survey (M)${monthSuffix}`,     value: salesData[index]   || 0 },
       ],
     }),
   );
@@ -328,9 +328,9 @@ export class BreezeDashboardComponent implements OnDestroy, OnInit {
     chartData: [
       { name: `Planned Outlets${monthSuffix}`, data: plannedData },
       { name: `Outlets ReVisit${monthSuffix}`, data: revisitData },
-      { name: `Total Sales${monthSuffix}`,     data: salesData   },
+      { name: `Total Survey (M)${monthSuffix}`,     data: salesData   },
     ],
-    title: "Planned Outlets vs Outlets ReVisit vs Total Sales",
+    title: "Planned Outlets vs Outlets ReVisit vs Total Survey (M)",
     xAxisLabel1: xAxisLabels,
     xAxisLabel2: { height: 400 },
   };
