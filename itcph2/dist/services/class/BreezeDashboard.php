@@ -1302,7 +1302,7 @@ class BreezeDashboard
                         $arrBranchData['branchLevelSale']['Avg End Time'] = "$timeDisplay";
                     }
                     if (isset($arrBranchData['branchLevelSale']['Avg Time Spent'])) {
-                        $time = ($arrBranchData['branchLevelSale']['Avg Time Spent'] / $arrBranchData['branchLevelSale']['Total Transaction']) / $getDate;
+                        $time = ($arrBranchData['branchLevelSale']['Avg Time Spent'] / $arrBranchData['branchLevelSale']['Total Transaction']);
                         $timeDisplay = gmdate("H:i:s", $time);
                         $arrBranchData['branchLevelSale']['Avg Time Spent'] = "$timeDisplay";
                     }
