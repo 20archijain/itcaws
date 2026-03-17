@@ -36,7 +36,7 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblbreeze_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.district";
+        $query = "select Distinct d.district from tblbranch as d, tblbreeze_team as b where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by d.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -72,7 +72,7 @@ class BreezeDashboard
         // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblbreeze_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by a.branch_name";
+        $query = "select Distinct d.branch_name, d.main_branch, d.branch_id from tblbranch as d, tblbreeze_team as b where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by d.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -81,65 +81,6 @@ class BreezeDashboard
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getCategoryList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $where = "";
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.category_name from tblbranch as a, tblbranch_pickupstock_products as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where";
-        // echo $query;die;
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['category_name'],
-                    "value" => $row['category_name']
-                );
-            }
-        }
-
-        return $arrData;
-    }
-
-    final public function getProductList($cond = "")
-    {
-        $arrData = array();
-        $arrData[] = array(
-            "label" => "All",
-            "value" => "all"
-        );
-        $where = "";
-        if ($cond) {
-            $where .= $cond;
-        }
-
-        $rsAction = null;
-        $iActionRows = 0;
-        $query = "select Distinct b.product_name from tblbranch as a, tblbranch_pickupstock_products as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where";
-        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
-
-        if ($iActionRows > 0) {
-            while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
-                    "label" => $row['product_name'],
-                    "value" => $row['product_name']
                 );
             }
         }
@@ -166,8 +107,8 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.circle, c.circle_name from tblbranch as a, tblbreeze_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = c.wd_code" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.circle";
+        $query = "select Distinct e.circle, e.circle_name from tblbranch as d, tblbreeze_team as b, tblmapping_wd as e where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = e.wd_code" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND b.wd_code = e.wd_code AND b.s_id = 99 $where order by e.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -201,8 +142,8 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.section, c.section_name from tblbranch as a, tblbreeze_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = c.wd_code" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.section";
+        $query = "select Distinct e.section, e.section_name from tblbranch as d, tblbreeze_team as b, tblmapping_wd as e where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = e.wd_code" .
+            " AND b.section IS NOT NULL AND b.section != '' AND b.wd_code = e.wd_code AND b.s_id = 99 $where order by e.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -236,8 +177,8 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblbreeze_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by b.wd_code";
+        $query = "select Distinct b.wd_code, e.wd_firm_name, e.wd_market from tblbranch as d, tblbreeze_team as b, tblmapping_wd as e where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.wd_code IS NOT NULL AND b.wd_code != '' AND b.wd_code = e.wd_code AND b.s_id = 99 $where order by b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -271,8 +212,8 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblbreeze_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_market";
+        $query = "select Distinct e.wd_market, e.wd_market from tblbranch as d, tblbreeze_team as b, tblmapping_wd as e where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0" .
+            " AND e.wd_market IS NOT NULL AND e.wd_market != '' AND b.wd_code = e.wd_code AND b.s_id = 99 $where order by e.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -306,8 +247,8 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblbreeze_team as b, tblmapping_wd as c where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.wd_code = c.wd_code AND b.s_id = 99 $where order by c.wd_pop_group";
+        $query = "select Distinct e.wd_pop_group, e.wd_pop_group from tblbranch as d, tblbreeze_team as b, tblmapping_wd as e where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0" .
+            " AND e.wd_pop_group IS NOT NULL AND e.wd_pop_group != '' AND b.wd_code = e.wd_code AND b.s_id = 99 $where order by e.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -341,7 +282,7 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblbreeze_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
+        $query = "select Distinct b.is_type from tblbranch as d, tblbreeze_team as b where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -383,7 +324,7 @@ class BreezeDashboard
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblbreeze_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.team_name";
+        $query = "select Distinct b.team_name, b.team_id from tblbranch as d, tblbreeze_team as b where d.branch_id = b.branch_id AND d.dstatus = 0 AND b.dstatus = 0 AND b.s_id = 99 $where order by b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -400,28 +341,6 @@ class BreezeDashboard
 
     final public function getData()
     {
-        // $districtList = ;
-        // $authDetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
-        // $user_id = $this->_iUserId;
-        // $groupId = getRowColumn($this->_dbConn, $authDetailsTable, "group_id", " user_id = $user_id");
-        // if ($groupId == 1 || $groupId == 2) {
-        // $branchList = getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch");
-        //     $branchFilter = true;
-        // } elseif ($groupId == 4) {
-        //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
-        //     $branchFilter = true;
-        // } else {
-        //     $districtList = array();
-        //     $branchFilter = false;
-        // }
-        // $where = "";
-        // $teamList = $this->_arrAccessInfo["user_teams"];
-        // if ($teamList) {
-        //     $where .= " AND team_id IN $teamList";
-        // }
-
-        // echo "<pre>";
-        // print_r($branchList );die;
         $arrResult = array(
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -629,8 +548,6 @@ class BreezeDashboard
                 "wdCodeList" => $this->getWdCodeList($districtCond),
                 "teamType" => $this->getDsTypeList($districtCond),
                 "teamList" => $this->getTeamsList($districtCond),
-                "categoryList" => $this->getCategoryList($districtCond),
-                "productList" => $this->getProductList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
             );
@@ -691,7 +608,7 @@ class BreezeDashboard
                 $branchCond = ""; // No condition for 'all'
             } else {
                 $branch = "'" . implode("','", $branch) . "'";
-                $branchCond = " AND a.branch_id IN ($branch)";
+                $branchCond = " AND d.branch_id IN ($branch)";
             }
 
             $arrResult = array(
@@ -700,8 +617,6 @@ class BreezeDashboard
                 "wdCodeList" => $this->getWdCodeList($branchCond),
                 "teamType" => $this->getDsTypeList($branchCond),
                 "teamList" => $this->getTeamsList($branchCond),
-                "categoryList" => $this->getCategoryList($branchCond),
-                "productList" => $this->getProductList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
             );
