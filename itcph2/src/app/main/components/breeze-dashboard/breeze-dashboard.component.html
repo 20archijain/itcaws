@@ -195,7 +195,7 @@
         <ng-container *ngIf="selectedChartType === 'bar'">
           <app-apex-grouped-bar-chart [transformedChartData]="monthlySalesBarChartData"
             [heading]="'Planned Outlets vs Outlets ReVisit vs Total Survey (M)'" [xAxisLabel]="'Level'"
-            [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50" [stacked]="true">
+            [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50">
           </app-apex-grouped-bar-chart>
         </ng-container>
 
@@ -210,11 +210,11 @@
           </app-apexlinechart>
         </ng-container> -->
         <!-- Line -->
-        <ng-container *ngIf="selectedChartType === 'line'">
+        <!-- <ng-container *ngIf="selectedChartType === 'line'">
           <app-apexlinechart [chartData]="monthlySalesLineChartData"
             [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'" [height]="400">
           </app-apexlinechart>
-        </ng-container>
+        </ng-container> -->
 
       </div>
     </app-card>

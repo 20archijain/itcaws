@@ -1,7 +1,6 @@
 import { ApexChartComponent } from './apexcharts/apex/apex-chart.component';
 import { ApexPieChartComponent } from './apexcharts/apex-pie/apex-pie-chart.component';
 import { ApexGroupedBarChartComponent } from './apexcharts/apex-grouped-bar/apex-grouped-bar-chart.component';
-import { ApexlinechartComponent } from './apexcharts/apexlinechart/apexlinechart.component';
 import { AdvancePieChartComponent } from './ngx-charts/advanced-pie/advanced-pie-chart.component';
 import { AreaChartComponent } from './ngx-charts/area/area-chart.component';
 import { ColumnChartComponent } from './ngx-charts/column/column-chart.component';
@@ -17,6 +16,7 @@ import { PieGridChartComponent } from './ngx-charts/pie-grid/pie-grid-chart.comp
 import {
   StackedGroupedVerticalColumnChartComponent
 } from './highcharts/stacked-grouped-vertical-column/stacked-grouped-vertical-column-chart.component';
+import { BreezeAccordionComponent } from '../breeze-accordion/breeze-accordion.component';
 
 export const CHARTS_COMPONENTS = [
   ApexChartComponent,
@@ -36,5 +36,5 @@ export const CHARTS_COMPONENTS = [
   PieGridChartComponent,
   StackedGroupedVerticalColumnChartComponent,
   ApexGroupedBarChartComponent,
-  ApexlinechartComponent,
+  BreezeAccordionComponent,
 ];
