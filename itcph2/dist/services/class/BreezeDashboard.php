@@ -596,6 +596,35 @@ class BreezeDashboard
         echo json_encode($arrMessage);
     }
 
+      final public function getProductList($cond = "")
+    {
+        $arrData = array();
+        $arrData[] = array(
+            "label" => "All",
+            "value" => "all"
+        );
+        $where = "";
+        if ($cond) {
+            $where .= $cond;
+        }
+
+        $rsAction = null;
+        $iActionRows = 0;
+        $query = "select Distinct b.product_name from tblbranch as a, tblbranch_pickupstock_products as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 $where";
+        $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
+
+        if ($iActionRows > 0) {
+            while ($row = $this->_dbConn->GetData($rsAction)) {
+                $arrData[] = array(
+                    "label" => $row['product_name'],
+                    "value" => $row['product_name']
+                );
+            }
+        }
+
+        return $arrData;
+    }
+
     final public function getCircle($branch = "branch_id")
     {
         $branch = $this->_data['branch'];
