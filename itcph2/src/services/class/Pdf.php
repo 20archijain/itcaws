@@ -356,4 +356,103 @@ class Pdf extends FPDF
             return $fileDetails;
         }
     }
+
+      // for downloading image
+    public function downloadMultipleImagesToTemp(array $urlMap, int $batchSize = 35): array
+    {
+        $results = [];
+
+        if (empty($urlMap)) return $results;
+
+        $chunks = array_chunk($urlMap, $batchSize, true);
+
+        foreach ($chunks as $chunk) {
+
+            $mh = curl_multi_init();
+            $handles = [];
+
+            foreach ($chunk as $key => $url) {
+
+                $tmp = sys_get_temp_dir() . '/pdf_' . md5($url) . '.jpg';
+                $fp  = fopen($tmp, 'w');
+
+                $ch = curl_init($url);
+                curl_setopt_array($ch, [
+                    CURLOPT_FILE => $fp,
+                    CURLOPT_FOLLOWLOCATION => true,
+                    CURLOPT_TIMEOUT => 60,
+                    CURLOPT_CONNECTTIMEOUT => 15,
+                    CURLOPT_SSL_VERIFYPEER => false,
+                    CURLOPT_SSL_VERIFYHOST => false,
+                    CURLOPT_FAILONERROR => true,
+                ]);
+
+                curl_multi_add_handle($mh, $ch);
+                $handles[$key] = [$ch, $fp, $tmp, $url];
+            }
+
+            // run batch
+            do {
+                $status = curl_multi_exec($mh, $running);
+                curl_multi_select($mh, 1.0);
+            } while ($running && $status == CURLM_OK);
+
+            // validate + retry failed
+            foreach ($handles as $key => [$ch, $fp, $tmp, $url]) {
+
+                $error  = curl_errno($ch);
+                $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+                curl_multi_remove_handle($mh, $ch);
+                curl_close($ch);
+                fclose($fp);
+
+                if ($error === 0 && $status == 200 && is_file($tmp) && filesize($tmp) > 2048) {
+
+                    $data = file_get_contents($tmp);
+                    if (@getimagesizefromstring($data) !== false) {
+                        $results[$key] = $tmp;
+                        continue;
+                    }
+                }
+
+                @unlink($tmp);
+
+                // retry once (important)
+                $retry = $this->retryDownload($url);
+                if ($retry) {
+                    $results[$key] = $retry;
+                }
+            }
+
+            curl_multi_close($mh);
+        }
+
+        return $results;
+    }
+
+    private function retryDownload(string $url): ?string
+    {
+        $tmp = sys_get_temp_dir() . '/pdf_retry_' . md5($url) . '.jpg';
+
+        $ch = curl_init($url);
+        curl_setopt_array($ch, [
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_TIMEOUT => 40,
+            CURLOPT_CONNECTTIMEOUT => 10,
+            CURLOPT_SSL_VERIFYPEER => false,
+            CURLOPT_SSL_VERIFYHOST => false,
+        ]);
+
+        $data = curl_exec($ch);
+        curl_close($ch);
+
+        if ($data && strlen($data) > 2048 && @getimagesizefromstring($data) !== false) {
+            file_put_contents($tmp, $data);
+            return $tmp;
+        }
+
+        return null;
+    }
 }

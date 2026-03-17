@@ -2384,7 +2384,7 @@ class VanDsReporting
                     $allImages = array();
                     $rsAllImages = null;
                     $iAllRows = 0;
-                    $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id = '$shopFrontPicture' ORDER BY b.mob_img_id";
+                    $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath, b.file_domain FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id = '$shopFrontPicture' ORDER BY b.mob_img_id";
                     $this->_dbConn->ExecuteSelectQuery($sImageQuery, $rsAllImages, $iAllRows);
 
                     if ($iAllRows > 0) {
@@ -2481,20 +2481,67 @@ class VanDsReporting
                         }
                         return null;
                     };
+                    // $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
+                    // $images = array();
+                    // if (isset($shopFrontPicture) && $shopFrontPicture) {
+                    //     $storePhoto = $getCorrectImage($arrImages2, $shopFrontPicture);
+                    //     // print_r($storePhoto);die;
+                    //     if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
+                    //         $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                    //         // $destImage = $storePhoto['filedomain']
+                    //         //     . PRODS_ANY_FOLDER
+                    //         //     . $storePhoto['filepath']
+                    //         //     . $storePhoto['name'];
+                    //             // echo $destImage;die;
+                    //         if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                    //             $images[] = array(
+                    //                 'path' => $destImage,
+                    //                 'label' => "Outlet Visibility Picture"
+                    //             );
+                    //         }
+                    //     }
+                    // }
                     $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
                     $images = array();
+
                     if (isset($shopFrontPicture) && $shopFrontPicture) {
+
                         $storePhoto = $getCorrectImage($arrImages2, $shopFrontPicture);
+
                         if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
-                            $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
-                            if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
-                                $images[] = array(
-                                    'path' => $destImage,
-                                    'label' => "Outlet Visibility Picture"
-                                );
+
+                            if ($captureDate >= '2026-03-14') {
+                                $imageUrl = $storePhoto['file_domain']
+                                    . PRODS_ANY_FOLDER
+                                    . $storePhoto['filepath']
+                                    . $storePhoto['name'];
+
+                                $urlMap = [
+                                    $uniId . "_" . $shopFrontPicture => $imageUrl
+                                ];
+                                $downloadedImages = $pdf->downloadMultipleImagesToTemp($urlMap, 35);
+                                if (!empty($downloadedImages)) {
+                                    foreach ($downloadedImages as $tmpPath) {
+                                        if (file_exists($tmpPath)) {
+                                            $images[] = [
+                                                'path' => $tmpPath,
+                                                'label' => "Outlet Visibility Picture"
+                                            ];
+                                        }
+                                    }
+                                }
+                            } else {
+                                $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                                if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
+                                    $images[] = [
+                                        'path' => $destImage,
+                                        'label' => "Outlet Visibility Picture"
+                                    ];
+                                }
                             }
                         }
                     }
+
                     if (!empty($images)) {
                         $hasData = true;
                         $pdf->createPage();
