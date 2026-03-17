@@ -1,5 +1,4 @@
 <app-card [options]="false">
-
   <form (ngSubmit)="getCardData(true)" [formGroup]="group" novalidate class="form-content">
     <!-- Superadmin and Admin Login -->
     <div *ngIf="branchFilter" class="row ml-1 filter-container">
@@ -87,7 +86,6 @@
         </app-button>
       </div>
     </div>
-
   </form>
 </app-card>
 
@@ -107,7 +105,7 @@
 </ng-container>
 
 <!-- Monthly Sales Bar Chart -->
-<div class="row mt-3">
+<!-- <div class="row mt-3">
   <div class="col-12">
     <app-card class="d-flex flex-column">
       <div class="row mb-3 align-items-end">
@@ -133,16 +131,19 @@
             (onChange)="refreshGraph()">
           </app-select>
         </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <label class="form-label text-muted" style="font-size: 12px;">Compare Data With</label>
+          <app-select
+            [group]="group"
+            controlName="chartType"
+            [options]="chartTypeOptions"
+            placeholder="Select Chart"
+            [multiple]="false"
+            (onChange)="refreshGraph()">
+          </app-select>
+        </div>
       </div>
-      <!-- Chart: horizontal scroll for Section/WD level so all data is visible -->
       <div class="flex-grow-1 w-100" style="overflow-x: auto; overflow-y: hidden;">
-        <!-- <app-grouped-vertical-column-chart
-          [transformedChartData]="monthlySalesBarChartData"
-          [xAxisLabel]="'Level'"
-          [yAxisLabel]="'Value'"
-          [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'"
-          style="margin-bottom: 3rem; width: 100%;">
-        </app-grouped-vertical-column-chart> -->
         <app-apex-grouped-bar-chart
         [transformedChartData]="monthlySalesBarChartData"
         [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'"
@@ -154,6 +155,68 @@
       </div>
     </app-card>
   </div>
+</div> -->
+<!-- Monthly Sales Bar Chart -->
+<div class="row mt-3">
+  <div class="col-12">
+    <app-card class="d-flex flex-column">
+      <div class="row mb-3 align-items-end">
+        <div class="col-12 col-sm-6 col-lg-3">
+          <label class="form-label text-muted" style="font-size: 12px;">Select Month(s)</label>
+          <app-select [group]="group" controlName="month" [options]="monthOptions" placeholder="Select Month"
+            [multiple]="true" (onChange)="refreshGraph()">
+          </app-select>
+        </div>
+        <div class="col-12 col-sm-6 col-lg-3">
+          <label class="form-label text-muted" style="font-size: 12px;">View By Level</label>
+          <app-select [group]="group" controlName="graphLevel" [options]="graphLevelOptions" placeholder="Select Level"
+            [multiple]="false" (onChange)="refreshGraph()">
+          </app-select>
+        </div>
+        <!-- <div class="col-12 col-sm-6 col-lg-3">
+          <label class="form-label text-muted" style="font-size: 12px;">Compare Data With</label>
+          <app-select [group]="group" controlName="chartType" [options]="chartTypeOptions" placeholder="Select Chart"
+            [multiple]="false" (onChange)="onChartTypeChange()">
+          </app-select>
+        </div> -->
+      </div>
+
+      <div class="flex-grow-1 w-100" style="overflow-x: auto; overflow-y: hidden;">
+
+        <!-- Grouped Bar (default) -->
+        <ng-container *ngIf="selectedChartType === 'grouped' || !selectedChartType">
+          <app-apex-grouped-bar-chart [transformedChartData]="monthlySalesBarChartData"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Survey (M)'" [xAxisLabel]="'Level'"
+            [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50">
+          </app-apex-grouped-bar-chart>
+        </ng-container>
+
+        <!-- Bar -->
+        <ng-container *ngIf="selectedChartType === 'bar'">
+          <app-apex-grouped-bar-chart [transformedChartData]="monthlySalesBarChartData"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Survey (M)'" [xAxisLabel]="'Level'"
+            [yAxisLabel]="'Value'" [height]="400" [pxPerCategory]="50" [stacked]="true">
+          </app-apex-grouped-bar-chart>
+        </ng-container>
+
+        <!-- Line -->
+        <!-- <ng-container *ngIf="selectedChartType === 'line'">
+          <app-apexlinechart
+            [transformedChartData]="monthlySalesBarChartData"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'"
+            [xAxisLabel]="'Level'"
+            [yAxisLabel]="'Value'"
+            [height]="400">
+          </app-apexlinechart>
+        </ng-container> -->
+        <!-- Line -->
+        <ng-container *ngIf="selectedChartType === 'line'">
+          <app-apexlinechart [chartData]="monthlySalesLineChartData"
+            [heading]="'Planned Outlets vs Outlets ReVisit vs Total Sales'" [height]="400">
+          </app-apexlinechart>
+        </ng-container>
+
+      </div>
+    </app-card>
+  </div>
 </div>
-
-

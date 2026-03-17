@@ -575,11 +575,13 @@ class BreezeDashboard
 
             if (!empty($monthCondArray)) {
                 $condition = " AND (" . implode(" OR ", $monthCondArray) . ")";
+            } else {
+                $condition = '';
             }
         } else {
+            // No month selected: default to current month
             $firstDay = date('Y-m-01');
             $lastDay = date('Y-m-t');
-
             $condition = " AND $column Between '$firstDay' AND '$lastDay'";
         }
         return $condition;
@@ -889,7 +891,7 @@ class BreezeDashboard
             "Avg km Travelled" => 0,
             "Planned Outlets" => 0,
             "Outlets ReVisit" => 0,
-            "Total Sales" => 0,
+            "Total Survey (M)" => 0,
         ];
 
         $labelsToBePrint = [
@@ -899,7 +901,7 @@ class BreezeDashboard
             "Avg km Travelled",
             "Planned Outlets",
             "Outlets ReVisit",
-            "Total Sales",
+            "Total Survey (M)",
         ];
 
         $labels = [
@@ -909,8 +911,10 @@ class BreezeDashboard
             "Avg km Travelled",    // index = 3, $value = "Avg km Travelled"
             "Planned Outlets",     // index = 4, $value = "Planned Outlets"
             "Outlets ReVisit",     // index = 5, $value = "Outlets ReVisit"
-            "Total Sales",         // index = 6, $value = "Total Sales"
-            "Breeze Users",         // index = 7, $value = "Total Transaction"
+            "Total Survey (M)",    // index = 6, $value = "Total Survey (M)"
+            "Total Transaction",         // index = 7, $value = "Total Transaction"
+            "Breeze Users",         // index = 8, $value = "Breeze Users"
+            "Value M",         // index = 9, $value = "Value M"
         ];
 
         $query = "SELECT DISTINCT d.main_branch
@@ -1030,8 +1034,38 @@ class BreezeDashboard
                      GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code
                      ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
                     } elseif ($index == 7) {
-                        // Breeze Users
+                        // Total Transaction
                         $queryNew = "SELECT COUNT(a.sum_id) as totalSales,
+                        e.circle, e.section, b.wd_code, b.team_name, b.team_id, b.is_type, d.district, d.main_branch
+                     FROM tblbreeze_response_data AS a, tblbreeze_team AS b, tblbranch as d, tblmapping_wd as e
+                     WHERE a.ds_id = b.team_id
+                       AND b.branch_id = d.branch_id
+                       AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0
+                       AND b.s_id = 99 AND b.wd_code = e.wd_code
+                       AND e.circle IS NOT NULL
+                       AND e.circle != ''
+                       AND d.main_branch = '$main_branch' $where $yearAndMonthCond
+                     GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code
+                     ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                    } elseif ($index == 8) {
+                        // Breeze Users
+                        $queryNew = "SELECT COUNT(distinct a.ds_id) as totalSales,
+                        e.circle, e.section, b.wd_code, b.team_name, b.team_id, b.is_type, d.district, d.main_branch
+                     FROM tblbreeze_response_data AS a, tblbreeze_team AS b, tblbranch as d, tblmapping_wd as e
+                     WHERE a.ds_id = b.team_id
+                       AND b.branch_id = d.branch_id
+                       AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0
+                       AND b.s_id = 99 AND b.wd_code = e.wd_code
+                       AND e.circle IS NOT NULL
+                       AND e.circle != ''
+                       AND d.main_branch = '$main_branch' $where $yearAndMonthCond
+                     GROUP BY b.team_id, d.main_branch, e.circle, e.section, b.wd_code
+                     ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name";
+                        // echo $queryNew;
+                        // die;
+                    } elseif ($index == 9) {
+                        // Value M
+                        $queryNew = "SELECT DISTINCT a.value_m as totalSales,
                         e.circle, e.section, b.wd_code, b.team_name, b.team_id, b.is_type, d.district, d.main_branch
                      FROM tblbreeze_response_data AS a, tblbreeze_team AS b, tblbranch as d, tblmapping_wd as e
                      WHERE a.ds_id = b.team_id
@@ -1072,8 +1106,15 @@ class BreezeDashboard
                                 );
                                 $districtIndex = count($monthWiseSales) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["districtLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["districtLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            // Value M is a divisor (one per level), not summed
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['districtLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['districtLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["districtLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["districtLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             //Branch Level Sales
                             $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
@@ -1086,8 +1127,14 @@ class BreezeDashboard
                                 );
                                 $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['branchLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['branchLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             // Circle Level Sales
                             $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
@@ -1099,8 +1146,14 @@ class BreezeDashboard
                                 );
                                 $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['circleLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['circleLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             // Section Level Sales
                             $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
@@ -1112,8 +1165,14 @@ class BreezeDashboard
                                 );
                                 $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['sectionLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['sectionLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             // WD Level Sales
                             $WDIndex = array_search($wd_code, array_column(
@@ -1129,8 +1188,14 @@ class BreezeDashboard
                                 );
                                 $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['wdLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['wdLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             // Team Type Level
                             $teamTypeIndex = array_search($team_type, array_column(
@@ -1145,8 +1210,14 @@ class BreezeDashboard
                                 );
                                 $teamTypeIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamTypeLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamTypeLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['teamTypeData'][$teamTypeIndex]['teamTypeLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['teamTypeData'][$teamTypeIndex]['teamTypeLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamTypeLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamTypeLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
 
                             // Team Name Level
                             $teamIndex = array_search($team_name, array_column(
@@ -1162,43 +1233,46 @@ class BreezeDashboard
                                 );
                                 $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"]) - 1;
                             }
-                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][$teamIndex]["teamLevelSale"][$value] =
-                                round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][$teamIndex]["teamLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            if ($value === 'Value M') {
+                                if (!isset($monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['teamTypeData'][$teamTypeIndex]['teamData'][$teamIndex]['teamLevelSale'][$value])) {
+                                    $monthWiseSales[$districtIndex]['branchData'][$branchIndex]['circleData'][$circleIndex]['sectionData'][$sectionIndex]['wdData'][$WDIndex]['teamTypeData'][$teamTypeIndex]['teamData'][$teamIndex]['teamLevelSale'][$value] = $totalSales;
+                                }
+                            } else {
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][$teamIndex]["teamLevelSale"][$value] =
+                                    round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][$teamIndex]["teamLevelSale"][$value] ?? 0) + $totalSales, 2);
+                            }
                         }
                     }
                 }
             }
-            // echo "<pre>";
-            // print_r($monthWiseSales);die;
             foreach ($monthWiseSales as &$arrDistrictData) {
                 // Format Avg Start Time
                 if (isset($arrDistrictData['districtLevelSale']['Avg Start Time'])) {
                     $arrDistrictData['districtLevelSale']['ACT Start Time'] = $arrDistrictData['districtLevelSale']['Avg Start Time'];
-                    $time = ($arrDistrictData['districtLevelSale']['Avg Start Time'] / $arrDistrictData['districtLevelSale']['Breeze Users']) / $getDate;
-                    $hours = floor($time / 3600) ?? 00;
-                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                    $secs = floor($time % 60) ?? 00;
-                    $arrDistrictData['districtLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                    $time = ($arrDistrictData['districtLevelSale']['Avg Start Time'] / $arrDistrictData['districtLevelSale']['Total Transaction']);
+                    // echo $time;die;
+                    // $hours = floor($time / 3600) ?? 00;
+                    // $minutes = floor(($time % 3600) / 60) ?? 00;
+                    // $secs = floor($time % 60) ?? 00;
+                    $timeDisplay = gmdate("H:i:s", $time);
+                    $arrDistrictData['districtLevelSale']['Avg Start Time'] = $timeDisplay;
+                    // print_r($arrDistrictData);die;
                 }
 
                 // Format Avg End Time
                 if (isset($arrDistrictData['districtLevelSale']['Avg End Time'])) {
                     $arrDistrictData['districtLevelSale']['ACT End Time'] = $arrDistrictData['districtLevelSale']['Avg End Time'];
-                    $time = ($arrDistrictData['districtLevelSale']['Avg End Time'] / $arrDistrictData['districtLevelSale']['Breeze Users']) / $getDate;
-                    $hours = floor($time / 3600) ?? 00;
-                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                    $secs = floor($time % 60) ?? 00;
-                    $arrDistrictData['districtLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                    $time = ($arrDistrictData['districtLevelSale']['Avg End Time'] / $arrDistrictData['districtLevelSale']['Total Transaction']);
+                    $timeDisplay = gmdate("H:i:s", $time);
+                    $arrDistrictData['districtLevelSale']['Avg End Time'] = "$timeDisplay";
                 }
 
                 // Format Avg Time Spent
                 if (isset($arrDistrictData['districtLevelSale']['Avg Time Spent'])) {
                     $arrDistrictData['districtLevelSale']['ACT Time Spent'] = $arrDistrictData['districtLevelSale']['Avg Time Spent'];
-                    $time = ($arrDistrictData['districtLevelSale']['Avg Time Spent'] / $arrDistrictData['districtLevelSale']['Breeze Users']) / $getDate;
-                    $hours = floor($time / 3600) ?? 00;
-                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                    $secs = floor($time % 60) ?? 00;
-                    $arrDistrictData['districtLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                    $time = ($arrDistrictData['districtLevelSale']['Avg Time Spent'] / $arrDistrictData['districtLevelSale']['Total Transaction']);
+                    $timeDisplay = gmdate("H:i:s", $time);
+                    $arrDistrictData['districtLevelSale']['Avg Time Spent'] = "$timeDisplay";
                 }
 
                 // Avg km Travelled
@@ -1207,160 +1281,169 @@ class BreezeDashboard
                     $arrDistrictData['districtLevelSale']['Avg km Travelled'] = round(($arrDistrictData['districtLevelSale']['Avg km Travelled'] / $arrDistrictData['districtLevelSale']['Breeze Users']) / $getDate, 2);
                 }
 
+                // Total Survey (M) = ACT Total Sales / Value M (only when Value M is set and > 0)
+                if (isset($arrDistrictData['districtLevelSale']['Total Survey (M)'])) {
+                    $arrDistrictData['districtLevelSale']['ACT Total Sales'] = $arrDistrictData['districtLevelSale']['Total Survey (M)'];
+                    $valueM = $arrDistrictData['districtLevelSale']['Value M'] ?? 0;
+                    $arrDistrictData['districtLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                        ? round((float)$arrDistrictData['districtLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                        : 0;
+                }
+
                 foreach ($arrDistrictData['branchData'] as &$arrBranchData) {
                     if (isset($arrBranchData['branchLevelSale']['Avg Start Time'])) {
-                        $time = ($arrBranchData['branchLevelSale']['Avg Start Time'] / $arrBranchData['branchLevelSale']['Breeze Users']) / $getDate;
-                        $hours = floor($time / 3600) ?? 00;
-                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                        $secs = floor($time % 60) ?? 00;
-                        $arrBranchData['branchLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                        $time = ($arrBranchData['branchLevelSale']['Avg Start Time'] / $arrBranchData['branchLevelSale']['Total Transaction']);
+                        $timeDisplay = gmdate("H:i:s", $time);
+                        $arrBranchData['branchLevelSale']['Avg Start Time'] = "$timeDisplay";
                     }
                     if (isset($arrBranchData['branchLevelSale']['Avg End Time'])) {
-                        $time = ($arrBranchData['branchLevelSale']['Avg End Time'] / $arrBranchData['branchLevelSale']['Breeze Users']) / $getDate;
-                        $hours = floor($time / 3600) ?? 00;
-                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                        $secs = floor($time % 60) ?? 00;
-                        $arrBranchData['branchLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                        $time = ($arrBranchData['branchLevelSale']['Avg End Time'] / $arrBranchData['branchLevelSale']['Total Transaction']);
+                        $timeDisplay = gmdate("H:i:s", $time);
+                        $arrBranchData['branchLevelSale']['Avg End Time'] = "$timeDisplay";
                     }
                     if (isset($arrBranchData['branchLevelSale']['Avg Time Spent'])) {
-                        $time = ($arrBranchData['branchLevelSale']['Avg Time Spent'] / $arrBranchData['branchLevelSale']['Breeze Users']) / $getDate;
-                        $hours = floor($time / 3600) ?? 00;
-                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                        $secs = floor($time % 60) ?? 00;
-                        $arrBranchData['branchLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                        $time = ($arrBranchData['branchLevelSale']['Avg Time Spent'] / $arrBranchData['branchLevelSale']['Total Transaction']);
+                        $timeDisplay = gmdate("H:i:s", $time);
+                        $arrBranchData['branchLevelSale']['Avg Time Spent'] = "$timeDisplay";
                     }
                     if (isset($arrBranchData['branchLevelSale']['Avg km Travelled'])) {
                         $arrBranchData['branchLevelSale']['Avg km Travelled'] = round(($arrBranchData['branchLevelSale']['Avg km Travelled'] / $arrBranchData['branchLevelSale']['Breeze Users']) / $getDate, 2);
                     }
+                    if (isset($arrBranchData['branchLevelSale']['Total Survey (M)'])) {
+                        $valueM = $arrBranchData['branchLevelSale']['Value M'] ?? 0;
+                        $arrBranchData['branchLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                            ? round((float)$arrBranchData['branchLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                            : 0;
+                    }
 
                     foreach ($arrBranchData['circleData'] as &$arrCircleData) {
                         if (isset($arrCircleData['circleLevelSale']['Avg Start Time'])) {
-                            $time = ($arrCircleData['circleLevelSale']['Avg Start Time'] / $arrCircleData['circleLevelSale']['Breeze Users']) / $getDate;
-                            $hours = floor($time / 3600) ?? 00;
-                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                            $secs = floor($time % 60) ?? 00;
-                            $arrCircleData['circleLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                            $time = ($arrCircleData['circleLevelSale']['Avg Start Time'] / $arrCircleData['circleLevelSale']['Total Transaction']);
+                            $timeDisplay = gmdate("H:i:s", $time);
+                            $arrCircleData['circleLevelSale']['Avg Start Time'] = "$timeDisplay";
                         }
                         if (isset($arrCircleData['circleLevelSale']['Avg End Time'])) {
-                            $time = ($arrCircleData['circleLevelSale']['Avg End Time'] / $arrCircleData['circleLevelSale']['Breeze Users']) / $getDate;
-                            $hours = floor($time / 3600) ?? 00;
-                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                            $secs = floor($time % 60) ?? 00;
-                            $arrCircleData['circleLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                            $time = ($arrCircleData['circleLevelSale']['Avg End Time'] / $arrCircleData['circleLevelSale']['Total Transaction']);
+                            $timeDisplay = gmdate("H:i:s", $time);
+                            $arrCircleData['circleLevelSale']['Avg End Time'] = "$timeDisplay";
                         }
                         if (isset($arrCircleData['circleLevelSale']['Avg Time Spent'])) {
-                            $time = ($arrCircleData['circleLevelSale']['Avg Time Spent'] / $arrCircleData['circleLevelSale']['Breeze Users']) / $getDate;
-                            $hours = floor($time / 3600) ?? 00;
-                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                            $secs = floor($time % 60) ?? 00;
-                            $arrCircleData['circleLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                            $time = ($arrCircleData['circleLevelSale']['Avg Time Spent'] / $arrCircleData['circleLevelSale']['Total Transaction']);
+                            $timeDisplay = gmdate("H:i:s", $time);
+                            $arrCircleData['circleLevelSale']['Avg Time Spent'] = "$timeDisplay";
                         }
                         if (isset($arrCircleData['circleLevelSale']['Avg km Travelled'])) {
                             $arrCircleData['circleLevelSale']['Avg km Travelled'] = round(($arrCircleData['circleLevelSale']['Avg km Travelled'] / $arrCircleData['circleLevelSale']['Breeze Users']) / $getDate, 2);
                         }
+                        if (isset($arrCircleData['circleLevelSale']['Total Survey (M)'])) {
+                            $valueM = $arrCircleData['circleLevelSale']['Value M'] ?? 0;
+                            $arrCircleData['circleLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                                ? round((float)$arrCircleData['circleLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                                : 0;
+                        }
 
                         foreach ($arrCircleData['sectionData'] as &$arrSectionData) {
                             if (isset($arrSectionData['sectionLevelSale']['Avg Start Time'])) {
-                                $time = ($arrSectionData['sectionLevelSale']['Avg Start Time'] / $arrSectionData['sectionLevelSale']['Breeze Users']) / $getDate;
-                                $hours = floor($time / 3600) ?? 00;
-                                $minutes = floor(($time % 3600) / 60) ?? 00;
-                                $secs = floor($time % 60) ?? 00;
-                                $arrSectionData['sectionLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                $time = ($arrSectionData['sectionLevelSale']['Avg Start Time'] / $arrSectionData['sectionLevelSale']['Total Transaction']);
+                                $timeDisplay = gmdate("H:i:s", $time);
+                                $arrSectionData['sectionLevelSale']['Avg Start Time'] = "$timeDisplay";
                             }
                             if (isset($arrSectionData['sectionLevelSale']['Avg End Time'])) {
-                                $time = ($arrSectionData['sectionLevelSale']['Avg End Time'] / $arrSectionData['sectionLevelSale']['Breeze Users']) / $getDate;
-                                $hours = floor($time / 3600) ?? 00;
-                                $minutes = floor(($time % 3600) / 60) ?? 00;
-                                $secs = floor($time % 60) ?? 00;
-                                $arrSectionData['sectionLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                $time = ($arrSectionData['sectionLevelSale']['Avg End Time'] / $arrSectionData['sectionLevelSale']['Total Transaction']);
+                                $timeDisplay = gmdate("H:i:s", $time);
+                                $arrSectionData['sectionLevelSale']['Avg End Time'] = "$timeDisplay";
                             }
                             if (isset($arrSectionData['sectionLevelSale']['Avg Time Spent'])) {
-                                $time = ($arrSectionData['sectionLevelSale']['Avg Time Spent'] / $arrSectionData['sectionLevelSale']['Breeze Users']) / $getDate;
-                                $hours = floor($time / 3600) ?? 00;
-                                $minutes = floor(($time % 3600) / 60) ?? 00;
-                                $secs = floor($time % 60) ?? 00;
-                                $arrSectionData['sectionLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                                $time = ($arrSectionData['sectionLevelSale']['Avg Time Spent'] / $arrSectionData['sectionLevelSale']['Total Transaction']);
+                                $timeDisplay = gmdate("H:i:s", $time);
+                                $arrSectionData['sectionLevelSale']['Avg Time Spent'] = "$timeDisplay";
                             }
                             if (isset($arrSectionData['sectionLevelSale']['Avg km Travelled'])) {
                                 $arrSectionData['sectionLevelSale']['Avg km Travelled'] = round(($arrSectionData['sectionLevelSale']['Avg km Travelled'] / $arrSectionData['sectionLevelSale']['Breeze Users']) / $getDate, 2);
                             }
+                            if (isset($arrSectionData['sectionLevelSale']['Total Survey (M)'])) {
+                                $valueM = $arrSectionData['sectionLevelSale']['Value M'] ?? 0;
+                                $arrSectionData['sectionLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                                    ? round((float)$arrSectionData['sectionLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                                    : 0;
+                            }
 
                             foreach ($arrSectionData['wdData'] as &$arrWdCodeData) {
                                 if (isset($arrWdCodeData['wdLevelSale']['Avg Start Time'])) {
-                                    $time = ($arrWdCodeData['wdLevelSale']['Avg Start Time'] / $arrWdCodeData['wdLevelSale']['Breeze Users']) / $getDate;
-                                    $hours = floor($time / 3600) ?? 00;
-                                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                                    $secs = floor($time % 60) ?? 00;
-                                    $arrWdCodeData['wdLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                    $time = ($arrWdCodeData['wdLevelSale']['Avg Start Time'] / $arrWdCodeData['wdLevelSale']['Total Transaction']);
+                                    $timeDisplay = gmdate("H:i:s", $time);
+                                    $arrWdCodeData['wdLevelSale']['Avg Start Time'] = "$timeDisplay";
                                 }
                                 if (isset($arrWdCodeData['wdLevelSale']['Avg End Time'])) {
-                                    $time = ($arrWdCodeData['wdLevelSale']['Avg End Time'] / $arrWdCodeData['wdLevelSale']['Breeze Users']) / $getDate;
-                                    $hours = floor($time / 3600) ?? 00;
-                                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                                    $secs = floor($time % 60) ?? 00;
-                                    $arrWdCodeData['wdLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                    $time = ($arrWdCodeData['wdLevelSale']['Avg End Time'] / $arrWdCodeData['wdLevelSale']['Total Transaction']);
+                                    $timeDisplay = gmdate("H:i:s", $time);
+                                    $arrWdCodeData['wdLevelSale']['Avg End Time'] = "$timeDisplay";
                                 }
                                 if (isset($arrWdCodeData['wdLevelSale']['Avg Time Spent'])) {
-                                    $time = ($arrWdCodeData['wdLevelSale']['Avg Time Spent'] / $arrWdCodeData['wdLevelSale']['Breeze Users']) / $getDate;
-                                    $hours = floor($time / 3600) ?? 00;
-                                    $minutes = floor(($time % 3600) / 60) ?? 00;
-                                    $secs = floor($time % 60) ?? 00;
-                                    $arrWdCodeData['wdLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                                    $time = ($arrWdCodeData['wdLevelSale']['Avg Time Spent'] / $arrWdCodeData['wdLevelSale']['Total Transaction']);
+                                    $timeDisplay = gmdate("H:i:s", $time);
+                                    $arrWdCodeData['wdLevelSale']['Avg Time Spent'] = "$timeDisplay";
                                 }
                                 if (isset($arrWdCodeData['wdLevelSale']['Avg km Travelled'])) {
                                     $arrWdCodeData['wdLevelSale']['Avg km Travelled'] = round(($arrWdCodeData['wdLevelSale']['Avg km Travelled'] / $arrWdCodeData['wdLevelSale']['Breeze Users']) / $getDate, 2);
                                 }
+                                if (isset($arrWdCodeData['wdLevelSale']['Total Survey (M)'])) {
+                                    $valueM = $arrWdCodeData['wdLevelSale']['Value M'] ?? 0;
+                                    $arrWdCodeData['wdLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                                        ? round((float)$arrWdCodeData['wdLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                                        : 0;
+                                }
 
                                 foreach ($arrWdCodeData['teamTypeData'] as &$arrTeamTypeData) {
                                     if (isset($arrTeamTypeData['teamTypeLevelSale']['Avg Start Time'])) {
-                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg Start Time'] / $arrTeamTypeData['teamTypeLevelSale']['Breeze Users']) / $getDate;
-                                        $hours = floor($time / 3600) ?? 00;
-                                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                                        $secs = floor($time % 60) ?? 00;
-                                        $arrTeamTypeData['teamTypeLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg Start Time'] / $arrTeamTypeData['teamTypeLevelSale']['Total Transaction']);
+                                        $timeDisplay = gmdate("H:i:s", $time);
+                                        $arrTeamTypeData['teamTypeLevelSale']['Avg Start Time'] = "$timeDisplay";
                                     }
                                     if (isset($arrTeamTypeData['teamTypeLevelSale']['Avg End Time'])) {
-                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg End Time'] / $arrTeamTypeData['teamTypeLevelSale']['Breeze Users']) / $getDate;
-                                        $hours = floor($time / 3600) ?? 00;
-                                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                                        $secs = floor($time % 60) ?? 00;
-                                        $arrTeamTypeData['teamTypeLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg End Time'] / $arrTeamTypeData['teamTypeLevelSale']['Total Transaction']);
+                                        $timeDisplay = gmdate("H:i:s", $time);
+                                        $arrTeamTypeData['teamTypeLevelSale']['Avg End Time'] = "$timeDisplay";
                                     }
                                     if (isset($arrTeamTypeData['teamTypeLevelSale']['Avg Time Spent'])) {
-                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg Time Spent'] / $arrTeamTypeData['teamTypeLevelSale']['Breeze Users']) / $getDate;
-                                        $hours = floor($time / 3600) ?? 00;
-                                        $minutes = floor(($time % 3600) / 60) ?? 00;
-                                        $secs = floor($time % 60) ?? 00;
-                                        $arrTeamTypeData['teamTypeLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                                        $time = ($arrTeamTypeData['teamTypeLevelSale']['Avg Time Spent'] / $arrTeamTypeData['teamTypeLevelSale']['Total Transaction']);
+                                        $timeDisplay = gmdate("H:i:s", $time);
+                                        $arrTeamTypeData['teamTypeLevelSale']['Avg Time Spent'] = "$timeDisplay";
                                     }
                                     if (isset($arrTeamTypeData['teamTypeLevelSale']['Avg km Travelled'])) {
                                         $arrTeamTypeData['teamTypeLevelSale']['Avg km Travelled'] = round(($arrTeamTypeData['teamTypeLevelSale']['Avg km Travelled'] / $arrTeamTypeData['teamTypeLevelSale']['Breeze Users']) / $getDate, 2);
                                     }
+                                    if (isset($arrTeamTypeData['teamTypeLevelSale']['Total Survey (M)'])) {
+                                        $valueM = $arrTeamTypeData['teamTypeLevelSale']['Value M'] ?? 0;
+                                        $arrTeamTypeData['teamTypeLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                                            ? round((float)$arrTeamTypeData['teamTypeLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                                            : 0;
+                                    }
 
                                     foreach ($arrTeamTypeData['teamData'] as &$arrTeamData) {
                                         if (isset($arrTeamData['teamLevelSale']['Avg Start Time'])) {
-                                            $time = ($arrTeamData['teamLevelSale']['Avg Start Time'] / $arrTeamData['teamLevelSale']['Breeze Users']) / $getDate;
-                                            $hours = floor($time / 3600) ?? 00;
-                                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                                            $secs = floor($time % 60) ?? 00;
-                                            $arrTeamData['teamLevelSale']['Avg Start Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                            $time = ($arrTeamData['teamLevelSale']['Avg Start Time'] / $arrTeamData['teamLevelSale']['Total Transaction']);
+                                            $timeDisplay = gmdate("H:i:s", $time);
+                                            $arrTeamData['teamLevelSale']['Avg Start Time'] = "$timeDisplay";
                                         }
                                         if (isset($arrTeamData['teamLevelSale']['Avg End Time'])) {
-                                            $time = ($arrTeamData['teamLevelSale']['Avg End Time'] / $arrTeamData['teamLevelSale']['Breeze Users']) / $getDate;
-                                            $hours = floor($time / 3600) ?? 00;
-                                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                                            $secs = floor($time % 60) ?? 00;
-                                            $arrTeamData['teamLevelSale']['Avg End Time'] = "{$hours} h {$minutes} m {$secs} s";
+                                            $time = ($arrTeamData['teamLevelSale']['Avg End Time'] / $arrTeamData['teamLevelSale']['Total Transaction']);
+                                            $timeDisplay = gmdate("H:i:s", $time);
+                                            $arrTeamData['teamLevelSale']['Avg End Time'] = "$timeDisplay";
                                         }
                                         if (isset($arrTeamData['teamLevelSale']['Avg Time Spent'])) {
-                                            $time = ($arrTeamData['teamLevelSale']['Avg Time Spent'] / $arrTeamData['teamLevelSale']['Breeze Users']) / $getDate;
-                                            $hours = floor($time / 3600) ?? 00;
-                                            $minutes = floor(($time % 3600) / 60) ?? 00;
-                                            $secs = floor($time % 60) ?? 00;
-                                            $arrTeamData['teamLevelSale']['Avg Time Spent'] = "{$hours} h {$minutes} m {$secs} s";
+                                            $time = ($arrTeamData['teamLevelSale']['Avg Time Spent'] / $arrTeamData['teamLevelSale']['Total Transaction']);
+                                            $timeDisplay = gmdate("H:i:s", $time);
+                                            $arrTeamData['teamLevelSale']['Avg Time Spent'] = "$timeDisplay";
                                         }
                                         if (isset($arrTeamData['teamLevelSale']['Avg km Travelled'])) {
                                             $arrTeamData['teamLevelSale']['Avg km Travelled'] = round(($arrTeamData['teamLevelSale']['Avg km Travelled'] / $arrTeamData['teamLevelSale']['Breeze Users']) / $getDate, 2);
+                                        }
+                                        if (isset($arrTeamData['teamLevelSale']['Total Survey (M)'])) {
+                                            $valueM = $arrTeamData['teamLevelSale']['Value M'] ?? 0;
+                                            $arrTeamData['teamLevelSale']['Total Survey (M)'] = (!empty($valueM) && $valueM > 0)
+                                                ? round((float)$arrTeamData['teamLevelSale']['Total Survey (M)'] / (float)$valueM, 2)
+                                                : 0;
                                         }
                                     }
                                 }
@@ -1378,6 +1461,7 @@ class BreezeDashboard
             $sumPlanned   = 0;
             $sumRevisit   = 0;
             $sumTotalSales   = 0;
+            $sumValueM   = 0;
             $districtCount = count($monthWiseSales);
 
             foreach ($monthWiseSales as $districtRow) {
@@ -1388,29 +1472,31 @@ class BreezeDashboard
                 $sumActKmTravelled  += $districtRow["districtLevelSale"]["ACT km Travelled"] ?? 0;
                 $sumPlanned  += $districtRow["districtLevelSale"]["Planned Outlets"] ?? 0;
                 $sumRevisit  += $districtRow["districtLevelSale"]["Outlets ReVisit"] ?? 0;
-                $sumTotalSales  += $districtRow["districtLevelSale"]["Total Sales"] ?? 0;
+                $sumTotalSales  += $districtRow["districtLevelSale"]["ACT Total Sales"] ?? 0;
+                $sumValueM  += $districtRow["districtLevelSale"]["Value M"] ?? 0;
             }
             if ($sumStartTime > 0) {
-                $sumStartTime = round((int)($sumStartTime / $sumOfNoOfUsers) / $getDate, 0);
-                $tthours = round((int)$sumStartTime / 60);
-                $ttminutes = ((int)$sumStartTime) % 60;
-                $totalSumDistrictLevelSale['Avg Start Time'] = "{$tthours} h {$ttminutes} m";
+                $sumStartTime = round((int)($sumStartTime / $sumOfNoOfUsers), 0);
+                // echo $sumStartTime;die;
+                // $tthours = round((int)$sumStartTime / 60);
+                // $ttminutes = ((int)$sumStartTime) % 60;
+                $ttimeDisplay = gmdate("H:i:s", $sumStartTime);
+                $totalSumDistrictLevelSale['Avg Start Time'] = "$ttimeDisplay";
             }
             if ($sumEndTime > 0) {
-                $sumEndTime = round((int)($sumEndTime / $sumOfNoOfUsers) / $getDate, 0);
-                $tthours = round((int)$sumEndTime / 60);
-                $ttminutes = ((int)$sumEndTime) % 60;
-                $totalSumDistrictLevelSale['Avg End Time'] = "{$tthours} h {$ttminutes} m";
+                $sumEndTime = round((int)($sumEndTime / $sumOfNoOfUsers), 0);
+                $ttimeDisplay = gmdate("H:i:s", $sumEndTime);
+                $totalSumDistrictLevelSale['Avg End Time'] = "$ttimeDisplay";
             }
             if ($sumActKmTravelled > 0) {
                 $totalSumDistrictLevelSale['Avg km Travelled'] =
                     round((int)($sumActKmTravelled / $sumOfNoOfUsers) / $getDate, 0);
+                // $totalSumDistrictLevelSale['Avg km Travelled'] = $sumActKmTravelled;
             }
             if ($sumTimeSpent > 0) {
-                $sumTimeSpent = round((int)($sumTimeSpent / $sumOfNoOfUsers) / $getDate, 0);
-                $tthours = round((int)$sumTimeSpent / 60);
-                $ttminutes = ((int)$sumTimeSpent) % 60;
-                $totalSumDistrictLevelSale['Avg Time Spent'] = "{$tthours} h {$ttminutes} m";
+                $sumTimeSpent = round((int)($sumTimeSpent / $sumOfNoOfUsers), 0);
+                $ttimeDisplay = gmdate("H:i:s", $sumTimeSpent);
+                $totalSumDistrictLevelSale['Avg Time Spent'] = "$ttimeDisplay";
             }
             if ($sumPlanned > 0) {
                 $totalSumDistrictLevelSale['Planned Outlets'] = $sumPlanned;
@@ -1418,8 +1504,10 @@ class BreezeDashboard
             if ($sumRevisit > 0) {
                 $totalSumDistrictLevelSale['Outlets ReVisit'] = $sumRevisit;
             }
-            if ($sumTotalSales > 0) {
-                $totalSumDistrictLevelSale['Total Sales'] = $sumTotalSales;
+            if ($sumTotalSales > 0 && !empty($sumValueM) && $sumValueM > 0) {
+                $totalSumDistrictLevelSale['Total Survey (M)'] = round((float)$sumTotalSales / (float)$sumValueM, 2);
+            } elseif ($sumTotalSales > 0) {
+                $totalSumDistrictLevelSale['Total Survey (M)'] = 0;
             }
         }
 
@@ -1453,7 +1541,7 @@ class BreezeDashboard
                     'label'   => $districtRow['district'] ?? 'N/A',
                     'planned' => (float)($sale['Planned Outlets'] ?? 0),
                     'revisit' => (float)($sale['Outlets ReVisit'] ?? 0),
-                    'sales'   => (float)($sale['Total Sales']     ?? 0),
+                    'sales'   => (float)($sale['Total Survey (M)'] ?? 0),
                 ];
                 continue;
             }
@@ -1465,7 +1553,7 @@ class BreezeDashboard
                         'label'   => $branchRow['branch_name'] ?? 'N/A',
                         'planned' => (float)($sale['Planned Outlets'] ?? 0),
                         'revisit' => (float)($sale['Outlets ReVisit'] ?? 0),
-                        'sales'   => (float)($sale['Total Sales']     ?? 0),
+                        'sales'   => (float)($sale['Total Survey (M)'] ?? 0),
                     ];
                     continue;
                 }
@@ -1477,7 +1565,7 @@ class BreezeDashboard
                             'label'   => $circleRow['circle'] ?? 'N/A',
                             'planned' => (float)($sale['Planned Outlets'] ?? 0),
                             'revisit' => (float)($sale['Outlets ReVisit'] ?? 0),
-                            'sales'   => (float)($sale['Total Sales']     ?? 0),
+                            'sales'   => (float)($sale['Total Survey (M)'] ?? 0),
                         ];
                         continue;
                     }
@@ -1489,7 +1577,7 @@ class BreezeDashboard
                                 'label'   => $sectionRow['section'] ?? 'N/A',
                                 'planned' => (float)($sale['Planned Outlets'] ?? 0),
                                 'revisit' => (float)($sale['Outlets ReVisit'] ?? 0),
-                                'sales'   => (float)($sale['Total Sales']     ?? 0),
+                                'sales'   => (float)($sale['Total Survey (M)'] ?? 0),
                             ];
                             continue;
                         }
@@ -1501,7 +1589,7 @@ class BreezeDashboard
                                     'label'   => $wdRow['wd_code'] ?? 'N/A',
                                     'planned' => (float)($sale['Planned Outlets'] ?? 0),
                                     'revisit' => (float)($sale['Outlets ReVisit'] ?? 0),
-                                    'sales'   => (float)($sale['Total Sales']     ?? 0),
+                                    'sales'   => (float)($sale['Total Survey (M)'] ?? 0),
                                 ];
                             }
                         }
@@ -1528,8 +1616,8 @@ class BreezeDashboard
 
         foreach ($merged as $label => $vals) {
             $xAxisLabels[] = $label;
-            $plannedArr[]  = round($vals['planned'], 2);
-            $revisitArr[]  = round($vals['revisit'], 2);
+            $plannedArr[]  = (int)$vals['planned'];
+            $revisitArr[]  = (int)$vals['revisit'];
             $salesArr[]    = round($vals['sales'],   2);
         }
 
@@ -1537,7 +1625,7 @@ class BreezeDashboard
             'seriesData' => [
                 ['name' => 'Planned Outlets', 'data' => $plannedArr],
                 ['name' => 'Outlets ReVisit', 'data' => $revisitArr],
-                ['name' => 'Total Sales',     'data' => $salesArr],
+                ['name' => 'Total Survey (M)',     'data' => $salesArr],
             ],
             'xAxisLabels' => $xAxisLabels,
             'level'       => $level,
