@@ -141,16 +141,8 @@ class HoSkuAllocation
 
     final public function getDefaultData()
     {
-        $currentDate = currentDate("", "d");
-        if($currentDate > 21)
-        {
-            $skuDefaultAllocation = true;
-        }else{
-            $skuDefaultAllocation = false;
-        }
         $arrResult = array(
             "mainBranchList" => $this->getMainBranchList(),
-            "skuDefaultAllocation" => $skuDefaultAllocation,
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -446,7 +438,6 @@ class HoSkuAllocation
         $month = date('m', strtotime('+1 month'));
         $rcd = currentDate();
         $rdt = currentDateTime();
-        $user = $this->_iUserId;
 
 
         $this->_dbConn->BeginTransaction();
@@ -459,13 +450,13 @@ class HoSkuAllocation
             $rec_id = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_allocation", "rec_id", " year = '$year' AND month = '$month' AND summary_column_name = '$summary_column_name' AND category_name = '$categoryName' AND product_name = '$product_name'");
 
             if ($rec_id > 0) {
-                updateRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", "dspm_focus = ?, is_focusbrand = ?, filled_by_ho = ?, user_id = ?", "rec_id = $rec_id", array($dspm_focus, $is_focusbrand, 1, $user));
+                updateRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", "dspm_focus = ?, is_focusbrand = ?, filled_by_ho = ?", "rec_id = $rec_id", array($dspm_focus, $is_focusbrand, 1));
 
                  $arrStatus[] = 2;
             } else {
-                $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_ho, rcd, rdt, user_id";
-                $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt, $user);
+                $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_ho, rcd, rdt";
+                $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+                $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt);
 
                 $iStatus = addRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", $cols, $vals, $arrParams);
 
