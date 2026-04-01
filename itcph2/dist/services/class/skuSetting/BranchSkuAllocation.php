@@ -143,17 +143,8 @@ class BranchSkuAllocation
 
     final public function getDefaultData()
     {
-        $currentDate = currentDate("", "d");
-        if($currentDate > 21)
-        {
-            $skuDefaultAllocation = true;
-        }else{
-            $skuDefaultAllocation = false;
-        }
         $arrResult = array(
             "mainBranchList" => $this->getMainBranchList(),
-            "skuDefaultAllocation" => $skuDefaultAllocation,
-
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -451,7 +442,7 @@ class BranchSkuAllocation
         $month = date('m', strtotime('+1 month'));
         $rcd = currentDate();
         $rdt = currentDateTime();
-        $user = $this->_iUserId;
+
 
         $this->_dbConn->BeginTransaction();
         foreach ($selectedProducts as $record) {
@@ -460,9 +451,9 @@ class BranchSkuAllocation
             $summary_column_name = $record['id'];
             $dspm_focus = isset($record['dspmBrand']) && $record['dspmBrand'] ? 1 : 0;
             $is_focusbrand = isset($record['isFocusBrand']) && $record['isFocusBrand'] ? 1 : 0;
-            $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_branch, rcd, rdt, user_id";
-            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-            $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt ,$user);
+            $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_branch, rcd, rdt";
+            $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+            $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt);
 
             $iStatus = addRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", $cols, $vals, $arrParams);
             $arrStatus[] = $iStatus;
