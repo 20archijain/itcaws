@@ -56,6 +56,7 @@ export const environment = {
   viewClientsUrl: baseUrl,
   viewDashboardDataUrl: baseUrl,
   viewSalesDashboardDataUrl: baseUrl,
+    aiInsightsUrl: baseUrl,
   viewGroupUrl: baseUrl,
   viewModulesUrl: baseUrl,
   viewProjectsUrl: baseUrl,

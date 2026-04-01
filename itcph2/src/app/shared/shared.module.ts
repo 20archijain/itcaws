@@ -33,6 +33,7 @@ import { LocationOnMapModalService } from 'src/app/core/services/location-on-map
   exports: [
     NgScrollbarModule,
     NgClickOutsideDirective,
+    NgxChartsModule,
     ...CONTROLS_COMPONENTS,
     ...SHARED_COMPONENTS,
     ScrollToFirstInvalidInputDirective,

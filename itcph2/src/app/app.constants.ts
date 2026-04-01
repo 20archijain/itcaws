@@ -133,6 +133,8 @@ export const STATIC_MODULES = {
     getTableColumns: 'get_tables_column',
     getDownloadCSV : 'get_download_csv',
     submitSelectedProducts : 'submit_data',
+    getAiInsights: 'get_ai_insights',
+    getAiScopeOptions: 'get_ai_scope_options',
   },
   forgot: {
     action: 'forgot',

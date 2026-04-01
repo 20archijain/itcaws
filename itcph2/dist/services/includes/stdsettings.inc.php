@@ -62,6 +62,7 @@ define('CLIENTS_UPLOAD_IMAGE_FOLDER', "m_img");
 define('CLIENTS_JSON_FOLDER', "p_xml");
 define('CLIENTS_RES_FOLDER', "res/android/drawable");
 define("GOOGLE_MAP_API_KEY", "AIzaSyCQl11SJbdomqoqquBRoOzWpVbjcQ6Sroo");
+define("OPENAI_API_KEY", "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");
 
 // DB DETAILS
 // define("DB_HOSTNAME", "3.109.90.46");

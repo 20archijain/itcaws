@@ -1,0 +1,37 @@
+{
+  "status": 200,
+  "message": [],
+  "data": {
+    "query": "Analyse Gold Flake sales in South Delhi",
+    "dateRange": {
+      "startDate": "2026-02-01",
+      "endDate": "2026-02-07",
+      "days": 7
+    },
+    "filters": {
+      "district": "South Delhi",
+      "product": "Gold Flake"
+    },
+    "metrics": {
+      "totalSales": 1245.5,
+      "totalAmount": 382000.75,
+      "avgDailySales": 177.93
+    },
+    "topProducts": [
+      { "productName": "Gold Flake", "totalSales": 1245.5 },
+      { "productName": "Wills Classic", "totalSales": 842.2 },
+      { "productName": "Navy Cut", "totalSales": 602.8 }
+    ],
+    "topWdCodes": [
+      { "wdCode": "SDL01", "totalSales": 520.4 },
+      { "wdCode": "SDL02", "totalSales": 418.3 },
+      { "wdCode": "SDL03", "totalSales": 306.8 }
+    ],
+    "detectedFilters": [
+      "product: Gold Flake",
+      "district: South Delhi"
+    ],
+    "aiText": "• Gold Flake leads sales in South Delhi for the selected period, contributing the largest share of total sales.\n• WD code SDL01 is the top-performing pocket; consider reinforcing stock and visibility here.\n• Avg daily sales are steady; there may be upside by expanding distribution in SDL02 and SDL03.\n\nRecommended actions:\n1) Prioritize replenishment for Gold Flake across SDL01–SDL03.\n2) Increase call frequency in SDL02 to close the gap with SDL01.\n3) Validate outlet coverage in SDL03 to identify whitespace."
+  },
+  "hidePopup": true
+}
