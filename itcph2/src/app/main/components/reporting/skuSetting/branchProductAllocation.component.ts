@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
+import { Functions } from 'src/app/core/utils/functions.list';
 
 export interface CategoryGroup {
   category: string;
@@ -42,6 +43,8 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
   statusFlagCond = false;
   defaultDspm = false;
   submittedDataList = [];
+  currentDate = Functions.currentDate();
+  skuDefaultAllocation = false;
 
   availableProducts: ProductItem[] = [];   // left panel — from backend
   selectedProducts: ProductItem[] = [];    // right panel — temp array
@@ -103,6 +106,7 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.mainBranchOptions = resp.data.mainBranchList;
+            this.skuDefaultAllocation = resp.data.skuDefaultAllocation;
           }
         })
     );
