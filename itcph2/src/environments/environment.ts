@@ -59,6 +59,7 @@ export const environment = {
   viewClientsUrl: baseUrl + 'viewClients.json',
   viewDashboardDataUrl: baseUrl + 'viewDashboardData.json',
   viewSalesDashboardDataUrl: baseUrl + 'viewSalesDashboardData.json',
+  aiInsightsUrl: baseUrl + 'aiInsights.json',
   salesDataDataUrl: baseUrl + 'salesDashboard.json',
   viewGroupUrl: baseUrl + 'viewGroups.json',
   viewModulesUrl: baseUrl + 'viewModules.json',

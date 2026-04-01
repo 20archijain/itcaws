@@ -55,4 +55,6 @@ $ACTION_LIST = array(
     "GET_DOWNLOAD_CSV" => 'get_download_csv',
     'GET_DELIVERY_DATA' => 'get_delivery_data',
     'SUBMIT_DATA' => 'submit_data',
+    'GET_AI_INSIGHTS' => 'get_ai_insights',
+    'GET_AI_SCOPE_OPTIONS' => 'get_ai_scope_options',
 );

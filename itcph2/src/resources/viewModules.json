@@ -134,7 +134,20 @@
         "breadcrumb": 0
       },
       {
-        "total": 51
+        "id": "200",
+        "name": "AI Insights",
+        "modc": "AI01",
+        "pmodc": "ACN01",
+        "moduleComponent": "AiInsightsComponent",
+        "moduleActionCode": "VIEW",
+        "modulePos": "leftside",
+        "icon": "icon-activity",
+        "url": "ai-insights\/aiInsights.php",
+        "sort": "1",
+        "breadcrumb": 0
+      },
+      {
+        "total": 52
       }
     ]
   },

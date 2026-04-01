@@ -106,7 +106,21 @@
         "pmodc": "0",
         "fold": "actionable\/",
         "componentName": null,
-        "submodules": [],
+        "submodules": {
+          "AI01": {
+            "breadcrumbs": false,
+            "id": 200,
+            "name": "AI Insights",
+            "hidden": false,
+            "icon": "",
+            "modc": "AI01",
+            "pmodc": "ACN01",
+            "fold": "ai-insights\/aiInsights.php",
+            "componentName": "AiInsightsComponent",
+            "submodules": [],
+            "actions": []
+          }
+        },
         "actions": []
       },
       "ATN01": {

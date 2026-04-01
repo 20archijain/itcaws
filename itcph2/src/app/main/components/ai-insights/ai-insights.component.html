@@ -1,0 +1,2609 @@
+<div class="ai-insights-page">
+
+  <!-- ═══ ARIA BRAND HEADER ═══ -->
+  <div class="aria-brand-header">
+    <div class="aria-identity">
+      <div class="aria-avatar-wrap">
+        <div class="aria-avatar">
+          <i class="fa fa-brain"></i>
+        </div>
+        <div class="aria-avatar-ring"></div>
+      </div>
+      <div class="aria-brand-text">
+        <div class="aria-brand-name">ARIA <span class="aria-ai-badge">AI</span></div>
+        <div class="aria-brand-tagline">Advanced Retail Intelligence · Ask anything about your field force</div>
+      </div>
+    </div>
+    <div class="aria-live-status">
+      <span class="aria-status-dot"></span>
+      <span class="aria-status-label">Live · Powered by field data</span>
+    </div>
+  </div>
+
+  <!-- ═══ SEARCH BAR (animated gradient border) ═══ -->
+  <div class="aria-search-wrap mb-3" [class.is-querying]="isQuerying">
+    <div class="card mb-0">
+    <div class="card-body pb-2">
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <div class="form-group mb-2">
+          <div class="query-typeahead-wrap">
+            <textarea class="form-control query-input" rows="2" formControlName="query"
+              (focus)="onQueryFocus()" (blur)="onQueryBlur()" (keydown)="onQueryKeyDown($event)"
+              placeholder="Ask anything... e.g. &quot;Top products this month&quot; or &quot;Who is improving?&quot;"></textarea>
+
+            <div class="typeahead-dropdown" *ngIf="showTypeahead && typeaheadItems?.length">
+              <button
+                type="button"
+                class="typeahead-item"
+                *ngFor="let item of typeaheadItems; let i = index"
+                [class.active]="i === activeTypeaheadIndex"
+                (mousedown)="pickTypeahead(item.text, false)"
+              >
+                <span class="typeahead-text">{{ item.text }}</span>
+                <span class="typeahead-hint" *ngIf="item.hint">{{ item.hint }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="aria-form-controls">
+          <div class="aria-date-range">
+            <i class="fa fa-calendar-alt aria-date-icon"></i>
+            <input type="date" class="aria-date-input" formControlName="startDate" title="Start Date">
+            <span class="aria-date-sep">→</span>
+            <input type="date" class="aria-date-input" formControlName="endDate" title="End Date">
+          </div>
+          <button class="aria-ask-btn" type="submit" [disabled]="isQuerying">
+            <i class="fa fa-bolt"></i>
+            <span>{{ isQuerying ? 'Thinking...' : 'Ask ARIA' }}</span>
+            <i class="fa fa-arrow-right aria-ask-arrow" *ngIf="!isQuerying"></i>
+          </button>
+        </div>
+        <div *ngIf="errorMessage" class="text-danger mt-2 small">{{ errorMessage }}</div>
+      </form>
+
+      <!-- ── Context Filter Strip ── -->
+      <div class="context-strip">
+        <div class="context-strip-left">
+          <span class="context-strip-label">Scope to:</span>
+          <div class="context-type-btns">
+            <button *ngFor="let ct of contextFilterTypes" class="context-type-btn"
+              [class.active]="isContextFilterActive(ct.type)"
+              [class.pending]="pendingContextType === ct.type"
+              (click)="openContextAdder(ct.type)">
+              <i class="fa {{ ct.icon }}"></i> {{ ct.type }}
+            </button>
+          </div>
+        </div>
+        <!-- active badges -->
+        <div class="context-badges" *ngIf="contextFilters.length">
+          <span *ngFor="let f of contextFilters" class="context-badge">
+            <span class="context-badge-label">{{ f.type }}:</span>
+            <span class="context-badge-val">{{ f.value }}</span>
+            <i class="fa fa-times context-badge-remove" (click)="removeContextFilter(f.type)"></i>
+          </span>
+          <button class="context-clear-btn" (click)="clearAllContextFilters()">Clear all</button>
+        </div>
+      </div>
+
+      <!-- inline dropdown when adding a context filter -->
+      <div class="context-adder-row" *ngIf="pendingContextType">
+        <i class="fa fa-filter context-adder-icon"></i>
+        <span class="context-adder-label">{{ pendingContextType }}:</span>
+        <span class="scope-loading" *ngIf="scopeOptionsLoading">
+          <i class="fa fa-spinner fa-spin"></i> Loading…
+        </span>
+        <select class="context-adder-select" *ngIf="!scopeOptionsLoading"
+          [value]="pendingContextValue"
+          (change)="onScopeSelectChange($event)">
+          <option value="">— Select {{ pendingContextType }} —</option>
+          <option *ngFor="let opt of scopeOptions" [value]="opt">{{ opt }}</option>
+        </select>
+        <button class="context-adder-confirm" (click)="confirmContextFilter()" [disabled]="!pendingContextValue">
+          <i class="fa fa-check"></i> Apply
+        </button>
+        <button class="context-adder-cancel" (click)="cancelContextAdder()">
+          <i class="fa fa-times"></i>
+        </button>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Clarifying questions (ambiguous query) -->
+  <div *ngIf="clarifyingMessage && clarifyingSuggestions?.length" class="card mb-3">
+    <div class="card-body">
+      <p class="text-muted mb-2">{{ clarifyingMessage }}</p>
+      <div class="d-flex flex-wrap gap-2">
+        <button *ngFor="let q of clarifyingSuggestions" type="button" class="btn btn-outline-primary btn-sm" (click)="runFollowUp(q)">
+          {{ q }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Chips + Recent (combined compact panel) -->
+  <div class="chips-panel mb-3" *ngIf="!result">
+    <!-- Row 1: label + tabs + recent inline -->
+    <div class="chips-panel-header">
+      <div class="chips-panel-left">
+        <span class="section-label">Suggestions</span>
+        <div class="category-tabs">
+          <button *ngFor="let cat of queryCategories" class="cat-tab" [class.active]="activeCategory === cat.id" (click)="selectCategory(cat.id)">{{ cat.label }}</button>
+        </div>
+      </div>
+      <div class="chips-panel-right" *ngIf="recentQueries.length">
+        <span class="section-label me-2">Recent</span>
+        <div class="recent-list">
+          <div *ngFor="let q of recentQueries | slice:0:4" class="recent-item" (click)="runRecentQuery(q)">
+            <i class="fa fa-history recent-icon"></i><span class="recent-text">{{ q }}</span>
+            <i class="fa fa-times recent-remove" (click)="removeRecentQuery(q, $event)"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Chips grid — collapsed to 2 rows by default -->
+    <div class="chips-wrap" [class.chips-expanded]="chipsExpanded">
+      <div class="chips-grid">
+        <button *ngFor="let chip of filteredChips" class="chip-btn" (click)="selectChip(chip.query)">
+          <i class="fa {{ chip.icon }} chip-icon"></i><span>{{ chip.query }}</span>
+        </button>
+      </div>
+      <div class="chips-fade" *ngIf="!chipsExpanded && filteredChips.length > 6"></div>
+    </div>
+    <button class="chips-toggle-btn" *ngIf="filteredChips.length > 6" (click)="toggleChips()">
+      <i class="fa" [ngClass]="chipsExpanded ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+      {{ chipsExpanded ? 'Show less' : 'Show ' + (filteredChips.length - 6) + ' more suggestions' }}
+    </button>
+  </div>
+
+  <!-- ═══ ARIA THINKING STATE ═══ -->
+  <div class="aria-thinking-state" *ngIf="isQuerying && !result">
+    <div class="aria-thinking-card">
+      <div class="aria-thinking-avatar-wrap">
+        <div class="aria-thinking-avatar">
+          <i class="fa fa-brain"></i>
+        </div>
+        <div class="aria-pulse-ring r1"></div>
+        <div class="aria-pulse-ring r2"></div>
+        <div class="aria-pulse-ring r3"></div>
+      </div>
+      <div class="aria-thinking-body">
+        <div class="aria-thinking-title">
+          ARIA is thinking
+          <span class="aria-dot aria-dot-1">.</span><span class="aria-dot aria-dot-2">.</span><span class="aria-dot aria-dot-3">.</span>
+        </div>
+        <div class="aria-thinking-tip">{{ currentThinkingTip }}</div>
+      </div>
+    </div>
+    <div class="ai-skeleton mt-3">
+      <div class="skeleton-kpi-row">
+        <div class="skeleton-card" *ngFor="let i of [1,2,3,4]"></div>
+      </div>
+      <div class="skeleton-ai-block">
+        <div class="skeleton-line w-40"></div>
+        <div class="skeleton-line w-80 mt-2"></div>
+        <div class="skeleton-line w-90 mt-2"></div>
+        <div class="skeleton-line w-60 mt-2"></div>
+      </div>
+      <div class="skeleton-charts-row mt-3">
+        <div class="skeleton-chart"></div>
+        <div class="skeleton-chart"></div>
+      </div>
+    </div>
+  </div>
+
+  <ng-container *ngIf="result">
+
+    <!-- Export bar -->
+    <div class="export-bar mb-3">
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <span class="text-muted small">{{ result.query || 'Insights' }} · {{ result.dateRange?.startDate }} – {{ result.dateRange?.endDate }}</span>
+        <button type="button" class="btn btn-pdf-export" (click)="exportPDF()">
+          <i class="fa fa-file-pdf btn-pdf-icon"></i>
+          <span>Download PDF</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Content captured for PDF (includes metrics, charts, tables) -->
+    <div id="aiInsightsPdfContent" class="ai-insights-pdf-content">
+
+    <!-- ═══ COMPACT INSIGHT HEADER ═══ -->
+    <div class="insight-header-strip">
+      <div class="insight-header-main">
+        <div class="insight-query-text" *ngIf="result.query as q; else genericTitle">
+          {{ q }}
+        </div>
+        <ng-template #genericTitle>
+          <div class="insight-query-text">AI Insights</div>
+        </ng-template>
+        <div class="insight-query-sub">
+          <i class="fa fa-calendar me-1"></i>
+          <span>{{ result.dateRange?.startDate }} → {{ result.dateRange?.endDate }}</span>
+        </div>
+      </div>
+      <div class="insight-header-tags" *ngIf="result.detectedFilters?.length">
+        <span class="insight-tag" *ngFor="let f of result.detectedFilters">
+          <i class="fa fa-filter me-1"></i>{{ f }}
+        </span>
+      </div>
+    </div>
+
+    <!-- ═══ METRIC CARDS ═══ -->
+
+    <!-- Category Sales metrics -->
+    <div class="metrics-row" *ngIf="showCategorySales">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales (Units)</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">Categories</div><div class="metric-value">{{ result.metrics?.categoryCount | number }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Avg Daily</div><div class="metric-value">{{ result.metrics?.avgDailySales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Product Comparison metrics -->
+    <div class="metrics-row" *ngIf="showProductComparison">
+      <div class="metric-card accent-blue"><div class="metric-label">Current Period</div><div class="metric-value">{{ result.metrics?.currentTotal | number:'1.0-0' }} <small class="metric-sub">units</small></div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">Previous Period</div><div class="metric-value">{{ result.metrics?.previousTotal | number:'1.0-0' }} <small class="metric-sub">units</small></div></div>
+      <div class="metric-card" [ngClass]="{'accent-green': result.metrics?.changePercent >= 0, 'accent-red': result.metrics?.changePercent < 0}">
+        <div class="metric-label">Change</div>
+        <div class="metric-value" [ngClass]="{'text-success': result.metrics?.changePercent > 0, 'text-danger': result.metrics?.changePercent < 0}">{{ result.metrics?.changePercent | number:'1.0-1' }}%</div>
+      </div>
+      <div class="metric-card accent-slate"><div class="metric-label">{{ result.entityLabel || 'Product' }}</div><div class="metric-value" style="font-size:1rem">{{ result.period?.current?.start }} &rarr; {{ result.period?.current?.end }}</div></div>
+    </div>
+
+    <!-- Focus Brand metrics -->
+    <div class="metrics-row" *ngIf="showFocusBrand">
+      <div class="metric-card accent-amber"><div class="metric-label">Focus Brands</div><div class="metric-value">{{ result.metrics?.focusTotal | number:'1.0-0' }} <small class="metric-sub">{{ result.metrics?.focusShare | number:'1.0-1' }}%</small></div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Non-Focus</div><div class="metric-value">{{ result.metrics?.nonFocusTotal | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Focus SKUs</div><div class="metric-value">{{ result.metrics?.focusCount | number }}</div></div>
+    </div>
+
+    <!-- DS Scorecard compact -->
+    <div *ngIf="showDsScorecard && result.dsScorecard" class="ds-scorecard-strip">
+      <div class="sc-header">
+        <div class="sc-identity">
+          <span class="sc-name">{{ result.dsScorecard.dsName }}</span>
+          <span class="rate-badge" [ngClass]="{'good': result.metrics?.rating === 'Excellent' || result.metrics?.rating === 'Good', 'warn': result.metrics?.rating === 'Average' || result.metrics?.rating === 'Below Average', 'bad': result.metrics?.rating === 'Needs Improvement'}">{{ result.metrics?.rating }}</span>
+        </div>
+        <div class="sc-location">
+          <span *ngIf="result.dsScorecard.district">{{ result.dsScorecard.district }}</span>
+          <span *ngIf="result.dsScorecard.branch">{{ result.dsScorecard.branch }}</span>
+          <span *ngIf="result.dsScorecard.region">{{ result.dsScorecard.region }}</span>
+          <span *ngIf="result.dsScorecard.circle">{{ result.dsScorecard.circle }}</span>
+          <span *ngIf="result.dsScorecard.section">{{ result.dsScorecard.section }}</span>
+          <span *ngIf="result.dsScorecard.wdCode">{{ result.dsScorecard.wdCode }}</span>
+        </div>
+      </div>
+      <div class="sc-kpis">
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.dsScorecard.totalSales | number:'1.0-0' }}</div>
+          <div class="sc-kpi-lbl">Sales <span class="sc-kpi-sub">{{ result.dsScorecard.avgDailySales | number:'1.0-0' }}/d</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.dsScorecard.qualificationRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Qual <span class="sc-kpi-sub">{{ result.dsScorecard.qualifiedDays }}/{{ result.dsScorecard.totalDays }}d</span></div>
+        </div>
+        <div class="sc-kpi" [ngClass]="{'kpi-good': result.dsScorecard.salesVsPeer >= 100, 'kpi-bad': result.dsScorecard.salesVsPeer < 100}">
+          <div class="sc-kpi-val">{{ result.dsScorecard.salesVsPeer }}%</div>
+          <div class="sc-kpi-lbl">vs Peer <span class="sc-kpi-sub">avg {{ result.dsScorecard.peerAvgSales | number:'1.0-0' }}</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.dsScorecard.adherenceRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Route <span class="sc-kpi-sub">{{ result.dsScorecard.adherenceDays }}/{{ result.dsScorecard.totalDays }}</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.dsScorecard.coverageRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Coverage <span class="sc-kpi-sub">{{ result.dsScorecard.billedOutlets }}/{{ result.dsScorecard.plannedOutlets }}</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.dsScorecard.avgTimeInMarket }}<small>m</small></div>
+          <div class="sc-kpi-lbl">Time <span class="sc-kpi-sub">{{ result.dsScorecard.avgKm }}km</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hierarchy Scorecard compact -->
+    <div *ngIf="showHierarchyScorecard && result.hierarchyScorecard" class="ds-scorecard-strip">
+      <div class="sc-header">
+        <div class="sc-identity">
+          <span class="sc-name">{{ result.hierarchyScorecard.entityName }}</span>
+          <span class="rate-badge" [ngClass]="{'good': result.metrics?.rating === 'Excellent' || result.metrics?.rating === 'Good', 'warn': result.metrics?.rating === 'Average' || result.metrics?.rating === 'Below Average', 'bad': result.metrics?.rating === 'Needs Improvement'}">{{ result.metrics?.rating }}</span>
+          <span class="sc-level-tag">{{ result.hierarchyScorecard.levelLabel }}</span>
+        </div>
+        <div class="sc-location">
+          <span *ngIf="result.hierarchyScorecard.hierarchyInfo?.grandParent">{{ result.hierarchyScorecard.hierarchyInfo.grandParentLabel }}: {{ result.hierarchyScorecard.hierarchyInfo.grandParent }}</span>
+          <span *ngIf="result.hierarchyScorecard.hierarchyInfo?.parent">{{ result.hierarchyScorecard.hierarchyInfo.parentLabel }}: {{ result.hierarchyScorecard.hierarchyInfo.parent }}</span>
+          <span *ngIf="result.hierarchyScorecard.hierarchyInfo?.children?.length">{{ result.hierarchyScorecard.hierarchyInfo.childLabel }}: {{ result.hierarchyScorecard.hierarchyInfo.children.length }}</span>
+        </div>
+      </div>
+      <div class="sc-kpis">
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.totalSales | number:'1.0-0' }}</div>
+          <div class="sc-kpi-lbl">Sales <span class="sc-kpi-sub">{{ result.hierarchyScorecard.avgDailySales | number:'1.0-0' }}/d</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.totalDsCount }}</div>
+          <div class="sc-kpi-lbl">Total DS <span class="sc-kpi-sub">{{ result.hierarchyScorecard.activeDs }} active</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.qualificationRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Qual <span class="sc-kpi-sub">{{ result.hierarchyScorecard.qualifiedDays }}/{{ result.hierarchyScorecard.totalDays }}d</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.adherenceRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Route <span class="sc-kpi-sub">{{ result.hierarchyScorecard.adherenceDays }}/{{ result.hierarchyScorecard.totalDays }}</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.coverageRate | number:'1.0-1' }}%</div>
+          <div class="sc-kpi-lbl">Coverage <span class="sc-kpi-sub">{{ result.hierarchyScorecard.billedOutlets }}/{{ result.hierarchyScorecard.plannedOutlets }}</span></div>
+        </div>
+        <div class="sc-kpi">
+          <div class="sc-kpi-val">{{ result.hierarchyScorecard.avgTimeInMarket }}<small>m</small></div>
+          <div class="sc-kpi-lbl">Time <span class="sc-kpi-sub">{{ result.hierarchyScorecard.avgKm }}km</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Entity Comparison: X vs Y (e.g. Bihar vs UP East) -->
+    <!-- Multi-metric grouped bar chart -->
+    <div *ngIf="showEntityComparison && entityComparisonBarChart?.length" class="row mt-3 g-2">
+      <div class="col-12">
+        <div class="data-card">
+          <div class="data-card-header"><i class="fa fa-balance-scale me-1 text-primary"></i> Head-to-Head Comparison</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-vertical-2d
+                [results]="entityComparisonBarChart"
+                [scheme]="entityCompareScheme"
+                [xAxis]="true" [yAxis]="true"
+                [legend]="true"
+                [showDataLabel]="true"
+                [groupPadding]="16"
+                [barPadding]="4"
+                [animations]="true"
+                [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-bar-vertical-2d>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showEntityComparison && (result.comparisonLeft || result.comparisonRight)" class="comparison-two-cols mt-3">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="data-card h-100" *ngIf="result.comparisonLeft">
+            <div class="data-card-header bg-primary text-white">{{ result.comparisonLeft.entityName || 'Left' }}</div>
+            <div class="data-card-body">
+              <div class="comparison-metrics">
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Total Sales</span><strong>{{ result.comparisonLeft.totalSales | number:'1.0-0' }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Avg/day</span><strong>{{ result.comparisonLeft.avgDailySales | number:'1.0-0' }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>DS Count</span><strong>{{ result.comparisonLeft.totalDsCount }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Qualification</span><strong>{{ result.comparisonLeft.qualificationRate | number:'1.0-1' }}%</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Route Adherence</span><strong>{{ result.comparisonLeft.adherenceRate | number:'1.0-1' }}%</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Coverage</span><strong>{{ result.comparisonLeft.coverageRate | number:'1.0-1' }}%</strong></div>
+              </div>
+              <div class="mt-2"><span class="rate-badge" [ngClass]="{'good': result.comparisonLeft.rating === 'Excellent' || result.comparisonLeft.rating === 'Good', 'warn': result.comparisonLeft.rating === 'Average', 'bad': result.comparisonLeft.rating === 'Needs Improvement' || result.comparisonLeft.rating === 'Below Average'}">{{ result.comparisonLeft.rating }}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="data-card h-100" *ngIf="result.comparisonRight">
+            <div class="data-card-header bg-secondary text-white">{{ result.comparisonRight.entityName || 'Right' }}</div>
+            <div class="data-card-body">
+              <div class="comparison-metrics">
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Total Sales</span><strong>{{ result.comparisonRight.totalSales | number:'1.0-0' }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Avg/day</span><strong>{{ result.comparisonRight.avgDailySales | number:'1.0-0' }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>DS Count</span><strong>{{ result.comparisonRight.totalDsCount }}</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Qualification</span><strong>{{ result.comparisonRight.qualificationRate | number:'1.0-1' }}%</strong></div>
+                <div class="d-flex justify-content-between py-2 border-bottom"><span>Route Adherence</span><strong>{{ result.comparisonRight.adherenceRate | number:'1.0-1' }}%</strong></div>
+                <div class="d-flex justify-content-between py-2"><span>Coverage</span><strong>{{ result.comparisonRight.coverageRate | number:'1.0-1' }}%</strong></div>
+              </div>
+              <div class="mt-2"><span class="rate-badge" [ngClass]="{'good': result.comparisonRight.rating === 'Excellent' || result.comparisonRight.rating === 'Good', 'warn': result.comparisonRight.rating === 'Average', 'bad': result.comparisonRight.rating === 'Needs Improvement' || result.comparisonRight.rating === 'Below Average'}">{{ result.comparisonRight.rating }}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product/WD metrics -->
+    <div class="metrics-row" *ngIf="!showDsPerformance && !showDsCount && !showBranchQualified && !showComparative && !showExecutiveSummary && !showPeriodComparison && !showDayOfWeek && !showGrowthDecline && !showAnomalyDetection && !showWdCodePerformance && !showOutletCoverage && !showProductivity && !showInventory && !showRouteAdherence && !showCategorySales && !showProductComparison && !showFocusBrand && !showDsScorecard && !showHierarchyScorecard && !showEntityComparison && !showBreezeInsights && !showDsLeaderboard && !showOutletVisitFrequency">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales (Units)</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Avg Daily Sales</div><div class="metric-value">{{ result.metrics?.avgDailySales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Active DS Count -->
+    <div class="metrics-row" *ngIf="showDsCount">
+      <div class="metric-card accent-blue"><div class="metric-label">Active DS Count</div><div class="metric-value">{{ result.metrics?.totalDs | number }}</div></div>
+      <div class="metric-card accent-green" *ngIf="result.dsCountScope"><div class="metric-label">Scope</div><div class="metric-value">{{ result.dsCountScope }}</div></div>
+      <div class="metric-card accent-purple" *ngIf="result.dsCountBreakdownLabel"><div class="metric-label">Breakdown by</div><div class="metric-value">{{ result.dsCountBreakdownLabel }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+    <!-- DS Count Hierarchy Breakdown -->
+    <div class="row mt-3 g-2" *ngIf="showDsCount && dsCountChart?.length">
+      <div class="col-md-7">
+        <div class="card chart-card">
+          <h6 class="chart-title">DS Distribution by {{ result.dsCountBreakdownLabel }}</h6>
+          <ngx-charts-bar-horizontal
+            [results]="dsCountChart"
+            [xAxisLabel]="'DS Count'"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="false"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showDataLabel]="true"
+            [scheme]="colorScheme"
+            [view]="[undefined, Math.max(180, dsCountChart.length * 32)]"
+            (select)="onChartDrillDown($event, result.dsCountBreakdownLabel?.toLowerCase() || 'circle')">
+          </ngx-charts-bar-horizontal>
+          <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click any bar to explore</div>
+        </div>
+      </div>
+      <div class="col-md-5">
+        <div class="card chart-card">
+          <h6 class="chart-title">{{ result.dsCountBreakdownLabel }} Detail</h6>
+          <div class="table-responsive" style="max-height:340px;overflow-y:auto;">
+            <table class="data-table">
+              <thead><tr><th>{{ result.dsCountBreakdownLabel }}</th><th class="text-end">DS Count</th><th class="text-end">Share</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let item of result.dsCountBreakdown" (click)="onChartDrillDown(item.name, result.dsCountBreakdownLabel?.toLowerCase() || 'circle')" style="cursor:pointer;">
+                  <td class="fw-semibold">{{ item.name }}</td>
+                  <td class="text-end">{{ item.dsCount | number }}</td>
+                  <td class="text-end">{{ (item.dsCount / result.metrics?.totalDs * 100) | number:'1.0-1' }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DS Performance metrics -->
+    <div class="metrics-row" *ngIf="showDsPerformance">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales (Units)</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-purple">
+        <div class="metric-label">Total DS</div>
+        <div class="metric-value">{{ result.metrics?.totalDsAll | number }}
+          <small class="metric-sub">Showing {{ result.showWorst ? 'Bottom' : 'Top' }} {{ result.metrics?.totalDs }}</small>
+        </div>
+      </div>
+      <div class="metric-card accent-green"><div class="metric-label">Avg Qualification</div><div class="metric-value">{{ result.metrics?.avgQualificationRate | number:'1.0-1' }}%</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Qualified Attendance metrics -->
+    <div class="metrics-row" *ngIf="showBranchQualified">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">{{ result.dimLabel || 'Regions' }}</div><div class="metric-value">{{ result.metrics?.totalCount | number }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Avg Qualification</div><div class="metric-value">{{ result.metrics?.avgQualificationRate | number:'1.0-1' }}%</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Outlet / Productivity / Inventory / Route metrics -->
+    <div class="metrics-row" *ngIf="showOutletCoverage || showProductivity || showInventory || showRouteAdherence">
+      <div class="metric-card accent-blue"><div class="metric-label">DS Shown</div><div class="metric-value">{{ result.outletData?.length || result.productivityData?.length || result.inventoryData?.length || result.routeData?.length }}</div></div>
+      <div class="metric-card accent-green" *ngIf="showRouteAdherence"><div class="metric-label">Avg Adherence</div><div class="metric-value">{{ result.metrics?.avgAdherenceRate | number:'1.0-1' }}%</div></div>
+      <div class="metric-card accent-purple" *ngIf="!showRouteAdherence"><div class="metric-label">Query</div><div class="metric-value" style="font-size:1rem">{{ result.query }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Growth metrics -->
+    <div class="metrics-row" *ngIf="showGrowthDecline">
+      <div class="metric-card accent-green"><div class="metric-label">Growing</div><div class="metric-value text-success">{{ result.metrics?.growingCount | number }}</div></div>
+      <div class="metric-card accent-red"><div class="metric-label">Declining</div><div class="metric-value text-danger">{{ result.metrics?.decliningCount | number }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Stable</div><div class="metric-value">{{ result.metrics?.stableCount | number }}</div></div>
+      <div class="metric-card accent-blue"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Day of week metrics -->
+    <div class="metrics-row" *ngIf="showDayOfWeek">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- WD Code metrics -->
+    <div class="metrics-row" *ngIf="showWdCodePerformance">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">WD Codes</div><div class="metric-value">{{ result.metrics?.totalCount | number }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Date Range</div><div class="metric-value date-val">{{ result.dateRange?.startDate }} &rarr; {{ result.dateRange?.endDate }}</div></div>
+    </div>
+
+    <!-- Period Comparison metrics -->
+    <div class="metrics-row" *ngIf="showPeriodComparison">
+      <div class="metric-card accent-blue"><div class="metric-label">Current Period</div><div class="metric-value date-val">{{ result.period?.current?.start }} &rarr; {{ result.period?.current?.end }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">Previous Period</div><div class="metric-value date-val">{{ result.period?.previous?.start }} &rarr; {{ result.period?.previous?.end }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Current Sales</div><div class="metric-value">{{ result.metrics?.totalSales | number:'1.0-0' }}</div></div>
+    </div>
+
+    <!-- Anomaly metrics (sticky while scrolling) -->
+    <div class="metrics-row sticky-kpi" *ngIf="showAnomalyDetection">
+      <div class="metric-card accent-red"><div class="metric-label">Critical</div><div class="metric-value text-danger">{{ result.metrics?.criticalCount || 0 }}</div></div>
+      <div class="metric-card accent-amber"><div class="metric-label">Warning</div><div class="metric-value">{{ result.metrics?.warningCount || 0 }}</div></div>
+      <div class="metric-card accent-blue"><div class="metric-label">Watch</div><div class="metric-value">{{ result.metrics?.watchCount || 0 }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">Focus Brand Alerts</div><div class="metric-value">{{ result.metrics?.focusBrandAnomalyCount || 0 }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Streaks</div><div class="metric-value">{{ result.metrics?.streakCount || 0 }}</div></div>
+      <div class="metric-card accent-amber"><div class="metric-label">Regional Events</div><div class="metric-value">{{ result.metrics?.regionalEventCount || 0 }}</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Branches Analyzed</div><div class="metric-value">{{ result.metrics?.branchesAnalyzed || 0 }}</div></div>
+    </div>
+
+    <!-- Executive Summary metrics -->
+    <div class="metrics-row" *ngIf="showExecutiveSummary">
+      <div class="metric-card accent-blue"><div class="metric-label">Total Sales</div><div class="metric-value">{{ result.executiveSummary?.totalSales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-green"><div class="metric-label">Avg Daily</div><div class="metric-value">{{ result.executiveSummary?.avgDailySales | number:'1.0-0' }}</div></div>
+      <div class="metric-card accent-purple"><div class="metric-label">Total DS</div><div class="metric-value">{{ result.executiveSummary?.totalDs | number }}</div></div>
+      <div class="metric-card accent-amber"><div class="metric-label">Qualification</div><div class="metric-value">{{ result.executiveSummary?.avgQualificationRate | number:'1.0-1' }}%</div></div>
+      <div class="metric-card accent-slate"><div class="metric-label">Regions</div><div class="metric-value">{{ result.executiveSummary?.totalBranches | number }}</div></div>
+    </div>
+
+    <!-- ═══ ARIA CONTEXT NOTE (entity auto-resolution) ═══ -->
+    <div class="aria-context-note" *ngIf="result.contextNote">
+      <i class="fa fa-magic aria-context-icon"></i>
+      <span>{{ result.contextNote }}</span>
+    </div>
+
+    <!-- ═══ AI ANALYSIS ═══ -->
+    <div class="card mt-3 ai-summary-card">
+      <div class="card-header" (click)="toggleAiSummary()" style="cursor: pointer;">
+        <div class="d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center">
+            <i class="fa fa-lightbulb me-2"></i><strong>AI Analysis</strong>
+            <span class="badge bg-light text-dark ms-2" style="font-weight:400;font-size:0.75rem;" *ngIf="result.detectedFilters?.length">
+              <i class="fa fa-filter me-1"></i>{{ result.detectedFilters.join(', ') }}
+            </span>
+          </div>
+          <i class="fa" [ngClass]="aiSummaryExpanded ? 'fa-chevron-up' : 'fa-chevron-down'" style="font-size:0.8rem;opacity:0.8;"></i>
+        </div>
+      </div>
+      <div class="card-body" [ngClass]="{'ai-collapsed': !aiSummaryExpanded}">
+        <div class="ai-summary-content typewriter-content" *ngIf="!typewriterDone">{{ typewriterRaw }}<span class="typewriter-cursor">|</span></div>
+        <div class="ai-summary-content" *ngIf="typewriterDone" [innerHTML]="parsedAiText"></div>
+      </div>
+      <div class="card-footer ai-summary-footer" (click)="toggleAiSummary()" *ngIf="!aiSummaryExpanded">
+        <span>Show full analysis <i class="fa fa-chevron-down ms-1" style="font-size:0.65rem;"></i></span>
+      </div>
+    </div>
+
+    <!-- Follow-up Suggestions -->
+    <div class="followup-section mt-3" *ngIf="followUpSuggestions.length">
+      <span class="section-label me-2">Continue exploring</span>
+      <button *ngFor="let s of followUpSuggestions" class="followup-btn" (click)="runFollowUp(s)">
+        <i class="fa fa-arrow-right me-1"></i>{{ s }}
+      </button>
+    </div>
+
+    <!-- ═══ CHARTS & TABLES ═══ -->
+
+    <!-- Branch Qualified -->
+    <div *ngIf="showBranchQualified" class="row mt-3 g-2">
+      <div [ngClass]="branchQualTierChart?.length ? 'col-md-8' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ branchLabel }}</div>
+          <div class="data-card-body">
+            <div *ngIf="branchQualifiedChart?.length" class="chart-box">
+              <ngx-charts-bar-horizontal [results]="branchQualifiedChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'region')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint" *ngIf="branchQualifiedChart?.length"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click any bar to see scorecard</div>
+            <div class="table-responsive" *ngIf="result.topBranches?.length">
+              <table class="data-table">
+                <thead><tr><th>{{ result.dimLabel || 'Region' }}</th><th>District</th><th class="text-end">Qualified</th><th class="text-end">Total Days</th><th class="text-end">Rate</th><th class="text-end">DS</th><th class="text-end">Sales</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let b of result.topBranches">
+                    <td class="fw-semibold">{{ b.regionName || b.branchName }}</td><td>{{ b.district }}</td>
+                    <td class="text-end">{{ b.qualifiedDays }}</td><td class="text-end">{{ b.totalDays }}</td>
+                    <td class="text-end"><span class="rate-badge" [ngClass]="{'good': b.qualificationRate >= 80, 'warn': b.qualificationRate >= 50 && b.qualificationRate < 80, 'bad': b.qualificationRate < 50}">{{ b.qualificationRate | number:'1.0-1' }}%</span></td>
+                    <td class="text-end">{{ b.totalDs }}</td><td class="text-end">{{ b.totalSales | number:'1.0-0' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Qualification Tier Donut -->
+      <div class="col-md-4" *ngIf="branchQualTierChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-certificate me-1 text-success"></i> Qual Tier Split</div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="branchQualTierChart"
+              [scheme]="qualTierScheme"
+              [doughnut]="true"
+              [arcWidth]="0.42"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 230]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sales Trend -->
+    <div class="data-card mt-3" *ngIf="showTrendChart">
+      <div class="data-card-header">Sales Trend</div>
+      <div class="data-card-body">
+        <div class="chart-box chart-box-line">
+          <ngx-charts-line-chart [results]="trendChart" [scheme]="trendScheme" [xAxis]="true" [yAxis]="true"
+            [showXAxisLabel]="false" [showYAxisLabel]="false" [legend]="false" [autoScale]="true"
+            [gradient]="true" [animations]="true" [yAxisTickFormatting]="formatUnits">
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparative -->
+    <div *ngIf="showComparative" class="row mt-3 g-2">
+      <div [ngClass]="showComparisonHeatmap ? 'col-md-7' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ dataLabel }}</div>
+          <div class="data-card-body">
+            <div *ngIf="comparativeChart?.length" class="chart-box">
+              <ngx-charts-bar-horizontal [results]="comparativeChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, result.compareType || 'district')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint" *ngIf="comparativeChart?.length"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click any bar to see scorecard</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5" *ngIf="showComparisonHeatmap">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-map-marked-alt me-1"></i>Geographic Distribution
+            <span class="float-end" style="font-size:0.6rem;font-weight:400;opacity:0.7;">
+              <span style="display:inline-block;width:6px;height:6px;background:#ef4444;border-radius:50%;margin-right:2px;vertical-align:middle;"></span>High
+              <span style="display:inline-block;width:6px;height:6px;background:#f59e0b;border-radius:50%;margin:0 2px;vertical-align:middle;"></span>Mid
+              <span style="display:inline-block;width:6px;height:6px;background:#3b82f6;border-radius:50%;margin:0 2px;vertical-align:middle;"></span>Low
+            </span>
+          </div>
+          <div class="data-card-body p-0 map-wrap">
+            <div id="comparison-heatmap" style="height:260px;width:100%;z-index:1;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Comparative detail table -->
+    <div class="data-card mt-2" *ngIf="showComparative && result.comparativeData?.length">
+      <div class="data-card-body p-0" style="max-height:300px;overflow-y:auto;">
+        <table class="data-table">
+          <thead><tr><th>{{ result.compareType === 'wd_code' ? 'WD Code' : (result.compareType === 'ds' ? 'DS' : (result.compareType | titlecase)) }}</th><th class="text-end">Sales</th><th class="text-end">DS</th><th class="text-end">Qualification</th><th class="text-end">Adherence</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let item of result.comparativeData" (click)="onChartDrillDown(item.name, result.compareType || 'district')" style="cursor:pointer;">
+              <td class="fw-semibold">{{ item.name }}</td><td class="text-end">{{ item.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ item.dsCount }}</td>
+              <td class="text-end"><span class="rate-badge" [ngClass]="{'good': item.qualificationRate >= 80, 'warn': item.qualificationRate >= 50 && item.qualificationRate < 80, 'bad': item.qualificationRate < 50}">{{ item.qualificationRate | number:'1.0-1' }}%</span></td>
+              <td class="text-end"><span class="rate-badge" [ngClass]="{'good': item.adherenceRate >= 70, 'warn': item.adherenceRate >= 40 && item.adherenceRate < 70, 'bad': item.adherenceRate < 40}">{{ item.adherenceRate | number:'1.0-1' }}%</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Executive Summary Top/Bottom Regions -->
+    <div *ngIf="showExecutiveSummary" class="row mt-3 g-3">
+      <div class="col-md-6" *ngIf="result.topBranches?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header bg-emerald">Top 5 Regions</div>
+          <div class="data-card-body p-0">
+            <table class="data-table mb-0">
+              <thead><tr><th>Region</th><th class="text-end">Sales</th><th class="text-end">Qual %</th></tr></thead>
+              <tbody><tr *ngFor="let b of result.topBranches"><td class="fw-semibold">{{ b.branchName || b.regionName }}</td><td class="text-end">{{ b.totalSales | number:'1.0-0' }}</td><td class="text-end"><span class="rate-badge good">{{ b.qualificationRate | number:'1.0-1' }}%</span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="result.bottomBranches?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header bg-rose">Bottom 5 Regions</div>
+          <div class="data-card-body p-0">
+            <table class="data-table mb-0">
+              <thead><tr><th>Region</th><th class="text-end">Sales</th><th class="text-end">Qual %</th></tr></thead>
+              <tbody><tr *ngFor="let b of result.bottomBranches"><td class="fw-semibold">{{ b.branchName || b.regionName }}</td><td class="text-end">{{ b.totalSales | number:'1.0-0' }}</td><td class="text-end"><span class="rate-badge bad">{{ b.qualificationRate | number:'1.0-1' }}%</span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive Summary: Regions bar chart + Daily trend line -->
+    <div *ngIf="showExecutiveSummary && (briefingRegionsChart?.length || briefingTrendChart?.length)" class="row mt-3 g-3">
+      <div class="col-md-6" *ngIf="briefingRegionsChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Top regions by sales</div>
+          <div class="data-card-body">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal [results]="briefingRegionsChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'region')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint" *ngIf="briefingRegionsChart?.length"><span class="hint-dot"></span> Click any bar to see scorecard</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="briefingTrendChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Daily sales trend</div>
+          <div class="data-card-body">
+            <div class="chart-box chart-box-line">
+              <ngx-charts-line-chart [results]="briefingTrendChart" [scheme]="trendScheme" [xAxis]="true" [yAxis]="true"
+                [showXAxisLabel]="false" [showYAxisLabel]="false" [legend]="false" [autoScale]="true"
+                [gradient]="true" [animations]="true" [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-line-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive Summary: Top products + Top 5 DS -->
+    <div *ngIf="showExecutiveSummary && (briefingProductsChart?.length || result.executiveSummaryTopDs?.length)" class="row mt-3 g-3">
+      <div class="col-md-6" *ngIf="briefingProductsChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Top products (period)</div>
+          <div class="data-card-body">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal [results]="briefingProductsChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits">
+              </ngx-charts-bar-horizontal>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="result.executiveSummaryTopDs?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Top 5 DS (period)</div>
+          <div class="data-card-body p-0">
+            <table class="data-table mb-0">
+              <thead><tr><th>DS</th><th class="text-end">Sales</th><th class="text-end">Qual %</th></tr></thead>
+              <tbody><tr *ngFor="let ds of result.executiveSummaryTopDs"><td class="fw-semibold">{{ ds.dsName }}</td><td class="text-end">{{ ds.totalSales | number:'1.0-0' }}</td><td class="text-end"><span class="rate-badge good">{{ ds.qualificationRate | number:'1.0-1' }}%</span></td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Executive Summary / Morning Briefing: Geographic map -->
+    <div *ngIf="showExecutiveSummary && result.todayHeatmapPoints?.length" class="mt-3">
+      <div class="data-card">
+        <div class="data-card-header">{{ result.query === 'Morning Briefing' || result.is_today_summary ? 'Sales distribution' : 'Sales distribution (period)' }}{{ result.is_today_summary ? ' today' : '' }}</div>
+        <div class="data-card-body p-2">
+          <div id="today-summary-map" style="height:300px;width:100%;z-index:1;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Regional Contagion Alert + Table -->
+    <div class="regional-alert mt-3" *ngIf="showAnomalyDetection && result?.regionalEvents?.length">
+      <div class="regional-alert-icon"><i class="fa fa-globe"></i></div>
+      <div class="regional-alert-body">
+        <div class="regional-alert-title">{{ result.regionalEvents.length }} Regional Contagion Event{{ result.regionalEvents.length > 1 ? 's' : '' }} Detected</div>
+        <div class="regional-alert-sub">3+ branches in the same district dropped on the same day — this is likely an external market event, <b>not</b> individual branch failure. Investigate district-level causes before escalating to branch managers.</div>
+      </div>
+    </div>
+
+    <div class="data-card mt-2" *ngIf="showAnomalyDetection && result?.regionalEvents?.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span><i class="fa fa-globe text-warning me-1"></i> Regional Contagion Events <span class="text-muted small fw-normal ms-1">(district-wide drops · sorted by affected branches)</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('regional-events', $event)">
+          <i class="fa" [ngClass]="isSectionCollapsed('regional-events') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('regional-events')">
+        <div class="table-responsive table-scroll-md">
+          <table class="data-table mb-0">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>District</th>
+                <th class="text-center">Branches Affected</th>
+                <th>Branches</th>
+                <th class="text-center">Avg Z-Score</th>
+                <th class="text-center">Urgency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of result.regionalEvents">
+                <td>{{ r.date }}</td>
+                <td class="fw-semibold">{{ r.district }}</td>
+                <td class="text-center fw-bold text-danger">{{ r.branchCount }}</td>
+                <td class="small text-muted">{{ r.affectedBranches.join(', ') }}</td>
+                <td class="text-center">{{ r.avgZScore | number:'1.1-2' }}</td>
+                <td class="text-center">
+                  <span class="rate-badge"
+                    [ngClass]="{'bad': r.urgency === 'critical', 'warn': r.urgency === 'warning', 'good': r.urgency === 'watch'}">
+                    {{ r.urgency === 'critical' ? '🔴 Critical' : r.urgency === 'warning' ? '🟠 Warning' : '🟡 Watch' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ANOMALY ANALYTICS TRIO ═══ -->
+    <div class="row mt-3 g-2" *ngIf="showAnomalyDetection && anomalyDensityChart.length">
+
+      <!-- Density Timeline -->
+      <div class="col-md-4">
+        <div class="data-card h-100">
+          <div class="data-card-header">
+            <i class="fa fa-chart-bar me-1 text-danger"></i> Anomaly Timeline
+            <span class="text-muted small fw-normal ms-1">count per date</span>
+          </div>
+          <div class="data-card-body p-2">
+            <ngx-charts-bar-vertical
+              [results]="anomalyDensityChart"
+              [scheme]="colorScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [showDataLabel]="true"
+              [gradient]="true"
+              [roundEdges]="true"
+              [animations]="true"
+              [view]="[undefined, 168]">
+            </ngx-charts-bar-vertical>
+          </div>
+        </div>
+      </div>
+
+      <!-- Root Cause Donut -->
+      <div class="col-md-3">
+        <div class="data-card h-100">
+          <div class="data-card-header">
+            <i class="fa fa-circle-notch me-1 text-warning"></i> Root Cause Split
+          </div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="rootCauseChart"
+              [scheme]="causeColorScheme"
+              [doughnut]="true"
+              [arcWidth]="0.38"
+              [legend]="true"
+              [animations]="true"
+              [tooltipDisabled]="false"
+              [view]="[undefined, 200]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actual vs Expected Overlay -->
+      <div class="col-md-5">
+        <div class="data-card h-100">
+          <div class="data-card-header">
+            <i class="fa fa-chart-line me-1 text-primary"></i> Actual vs Expected
+            <span class="text-muted small fw-normal ms-1">on anomalous dates</span>
+          </div>
+          <div class="data-card-body p-2">
+            <ngx-charts-line-chart
+              [results]="actualVsExpectedChart"
+              [scheme]="twoSeriesScheme"
+              [xAxis]="true"
+              [yAxis]="true"
+              [legend]="true"
+              [autoScale]="true"
+              [gradient]="false"
+              [animations]="true"
+              [yAxisTickFormatting]="formatUnits"
+              [view]="[undefined, 200]">
+            </ngx-charts-line-chart>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══ ANOMALY HEATMAP CALENDAR ═══ -->
+    <div class="data-card mt-3" *ngIf="showAnomalyDetection && anomalyCalendarBranches.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span><i class="fa fa-th me-1 text-danger"></i> Branch × Date Heatmap <span class="text-muted small fw-normal ms-1">darker red = deeper drop · green = spike</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('anomaly-heatmap', $event)">
+          <i class="fa" [ngClass]="isSectionCollapsed('anomaly-heatmap') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body anomaly-heatmap-wrap" *ngIf="!isSectionCollapsed('anomaly-heatmap')">
+        <div class="anomaly-heatmap">
+          <!-- Date header row -->
+          <div class="heatmap-header-row">
+            <div class="heatmap-branch-col"></div>
+            <div class="heatmap-date-label" *ngFor="let d of anomalyCalendarDates">{{ shortDate(d) }}</div>
+          </div>
+          <!-- Branch rows -->
+          <div class="heatmap-branch-row" *ngFor="let row of anomalyCalendarBranches">
+            <div class="heatmap-branch-label" [title]="row.branch">{{ row.branch }}</div>
+            <div class="heatmap-cell"
+              *ngFor="let cell of row.cells"
+              [style.background]="getHeatmapColor(cell.deviation, cell.type)"
+              [style.color]="getHeatmapTextColor(cell.deviation, cell.type)"
+              [title]="cell.hasData ? (cell.type === 'drop' ? '▼ Drop ' : '▲ Spike ') + (cell.deviation | number:'1.0-1') + '%' : '—'">
+              <span *ngIf="cell.hasData" class="heatmap-cell-val">{{ cell.deviation | number:'1.0-0' }}%</span>
+            </div>
+          </div>
+        </div>
+        <!-- Legend outside scroll area -->
+        <div class="heatmap-legend">
+          <span class="heatmap-legend-label">Drops:</span>
+          <span class="heatmap-legend-swatch" style="background:#fecaca">-20%</span>
+          <span class="heatmap-legend-swatch" style="background:#f87171">-40%</span>
+          <span class="heatmap-legend-swatch" style="background:#dc2626;color:#fff">-60%</span>
+          <span class="heatmap-legend-swatch" style="background:#b91c1c;color:#fff">-80%</span>
+          <span class="heatmap-legend-swatch" style="background:#7f1d1d;color:#fff">-100%</span>
+          <span class="heatmap-legend-label ms-3">Spikes:</span>
+          <span class="heatmap-legend-swatch" style="background:#a7f3d0">+20%</span>
+          <span class="heatmap-legend-swatch" style="background:#6ee7b7">+40%</span>
+          <span class="heatmap-legend-swatch" style="background:#10b981;color:#fff">+60%</span>
+          <span class="heatmap-legend-swatch" style="background:#065f46;color:#fff">+100%+</span>
+          <span class="heatmap-legend-swatch" style="background:#f1f5f9;color:#9ca3af">Normal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Anomaly Branch Map -->
+    <div class="data-card mt-3" *ngIf="showAnomalyDetection && result?.anomalyMapPoints?.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span><i class="fa fa-map-marked-alt me-1 text-danger"></i> Anomaly Branch Map <span class="text-muted small fw-normal ms-1">(🔴 critical · 🟠 warning · 🟡 watch)</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('anomaly-map', $event)">
+          <i class="fa" [ngClass]="isSectionCollapsed('anomaly-map') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('anomaly-map')">
+        <div id="anomaly-branch-map" style="height:300px;width:100%;border-radius:0 0 8px 8px"></div>
+      </div>
+    </div>
+
+    <!-- Anomaly Table -->
+    <div class="data-card mt-3" *ngIf="showAnomalyDetection && result.anomalyData?.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span>Detected Anomalies <span class="text-muted small fw-normal ms-1">(click column header to sort)</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('anomaly-table', $event)" [title]="isSectionCollapsed('anomaly-table') ? 'Expand' : 'Collapse'">
+          <i class="fa" [ngClass]="isSectionCollapsed('anomaly-table') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('anomaly-table')">
+        <div class="table-responsive table-scroll-lg">
+          <table class="data-table mb-0">
+            <thead>
+              <tr>
+                <th class="sortable-th" (click)="sortAnomalies('branch')">Branch <i class="fa {{getSortIcon('branch')}} sort-icon"></i></th>
+                <th class="sortable-th" (click)="sortAnomalies('date')">Date <i class="fa {{getSortIcon('date')}} sort-icon"></i></th>
+                <th>Day</th>
+                <th class="text-end sortable-th" (click)="sortAnomalies('actualSales')">Actual <i class="fa {{getSortIcon('actualSales')}} sort-icon"></i></th>
+                <th class="text-end sortable-th" (click)="sortAnomalies('expectedSales')">Expected <i class="fa {{getSortIcon('expectedSales')}} sort-icon"></i></th>
+                <th class="text-end sortable-th" (click)="sortAnomalies('deviationPercent')">Deviation <i class="fa {{getSortIcon('deviationPercent')}} sort-icon"></i></th>
+                <th class="text-center">DS (Act / Exp)</th>
+                <th class="text-center sortable-th" (click)="sortAnomalies('type')">Type <i class="fa {{getSortIcon('type')}} sort-icon"></i></th>
+                <th class="text-center sortable-th" (click)="sortAnomalies('cause')">Root Cause <i class="fa {{getSortIcon('cause')}} sort-icon"></i></th>
+                <th class="text-center sortable-th" (click)="sortAnomalies('urgency')">Urgency <i class="fa {{getSortIcon('urgency')}} sort-icon"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let a of sortedAnomalies">
+                <tr class="anomaly-row" [class.expanded]="isAnomalyExpanded(a.branch, a.date)" (click)="toggleAnomalyDrillDown(a.branch, a.date)" title="Click to see DS breakdown">
+                  <td class="fw-semibold">
+                    <i class="fa fa-chevron-right expand-icon me-1" [class.rotated]="isAnomalyExpanded(a.branch, a.date)"></i>
+                    {{ a.branch }}
+                    <span *ngIf="a.isRegional" class="regional-badge ms-1" title="Part of a district-wide regional event">🌐</span>
+                  </td>
+                  <td>{{ a.date }}</td>
+                  <td class="text-muted small">{{ a.weekday }}</td>
+                  <td class="text-end">{{ a.actualSales | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ a.expectedSales | number:'1.0-0' }}</td>
+                  <td class="dev-cell">
+                    <div class="dev-bar-wrap">
+                      <div class="dev-bar" [ngClass]="a.type === 'spike' ? 'dev-bar-spike' : 'dev-bar-drop'" [style.width.%]="getDevBarWidth(a.deviationPercent)"></div>
+                      <span class="dev-val" [ngClass]="a.type === 'spike' ? 'text-success' : 'text-danger'">{{ a.deviationPercent | number:'1.0-1' }}%</span>
+                    </div>
+                  </td>
+                  <td class="text-center small">{{ a.activeDsCount }} / {{ a.expectedDsCount | number:'1.0-0' }}</td>
+                  <td class="text-center"><span class="rate-badge" [ngClass]="{'good': a.type === 'spike', 'bad': a.type === 'drop'}">{{ a.type === 'spike' ? 'Spike' : 'Drop' }}</span></td>
+                  <td class="text-center">
+                    <span class="rate-badge"
+                      [ngClass]="{
+                        'bad':  a.cause === 'no_ds_in_field',
+                        'warn': a.cause === 'attendance_issue' || a.cause === 'market_issue',
+                        'good': a.cause === 'demand_spike' || a.cause === 'extra_ds_deployed'
+                      }">
+                      {{ a.cause === 'no_ds_in_field'      ? 'No DS'       :
+                         a.cause === 'attendance_issue'    ? 'Attendance'  :
+                         a.cause === 'market_issue'        ? 'Market'      :
+                         a.cause === 'demand_spike'        ? 'Demand ↑'    :
+                         a.cause === 'extra_ds_deployed'   ? 'Extra DS'    : a.cause }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span class="rate-badge"
+                      [ngClass]="{
+                        'bad':  a.urgency === 'critical',
+                        'warn': a.urgency === 'warning',
+                        'good': a.urgency === 'watch'
+                      }">
+                      {{ a.urgency === 'critical' ? '🔴 Critical' : a.urgency === 'warning' ? '🟠 Warning' : '🟡 Watch' }}
+                    </span>
+                  </td>
+                </tr>
+                <tr *ngIf="isAnomalyExpanded(a.branch, a.date)" class="drill-down-row">
+                  <td colspan="10">
+                    <div class="ds-drill-down">
+                      <div class="ds-drill-title">DS Breakdown — <b>{{ a.branch }}</b> on {{ a.date }}</div>
+                      <ng-container *ngIf="a.dsBreakdown?.length; else noDsData">
+                        <div class="ds-bar-row" *ngFor="let ds of a.dsBreakdown">
+                          <span class="ds-name">{{ ds.dsName }}</span>
+                          <div class="ds-bar-wrap">
+                            <div class="ds-bar" [ngClass]="{'ds-bar-spike': a.type === 'spike', 'ds-bar-drop': a.type === 'drop'}" [style.width.%]="getDsBarWidth(a.dsBreakdown, ds.sales)"></div>
+                          </div>
+                          <span class="ds-val">{{ ds.sales | number:'1.0-0' }}</span>
+                        </div>
+                      </ng-container>
+                      <ng-template #noDsData><span class="text-muted small">No DS data available for this date.</span></ng-template>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Focus Brand Anomaly Table -->
+    <!-- Focus Brand Anomaly Charts -->
+    <div *ngIf="showAnomalyDetection && (focusBrandAnomalyChart?.length || focusBrandAnomalyDeviationChart?.length)" class="row mt-3 g-2">
+      <div class="col-md-7" *ngIf="focusBrandAnomalyChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-star text-warning me-1"></i> Focus Brand — Actual vs Expected</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-vertical-2d
+                [results]="focusBrandAnomalyChart"
+                [scheme]="twoSeriesScheme"
+                [xAxis]="true" [yAxis]="true"
+                [legend]="true" [legendPosition]="breezeLegendPos"
+                [showDataLabel]="false"
+                [groupPadding]="12" [barPadding]="2"
+                [animations]="true"
+                [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-bar-vertical-2d>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5" *ngIf="focusBrandAnomalyDeviationChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-exclamation-triangle text-danger me-1"></i> Worst Drop % by Product</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal
+                [results]="focusBrandAnomalyDeviationChart"
+                [scheme]="causeColorScheme"
+                [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true"
+                [gradient]="true" [roundEdges]="true"
+                [animations]="true"
+                [dataLabelFormatting]="formatPercent">
+              </ngx-charts-bar-horizontal>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="data-card mt-3" *ngIf="showAnomalyDetection && result.focusBrandAnomalies?.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span><i class="fa fa-star text-warning me-1"></i> Focus Brand Anomalies <span class="text-muted small fw-normal ms-1">({{ result.focusBrandAnomalies?.length }} detected)</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('focus-brand', $event)">
+          <i class="fa" [ngClass]="isSectionCollapsed('focus-brand') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('focus-brand')">
+        <div class="table-responsive">
+          <table class="data-table mb-0">
+            <thead>
+              <tr>
+                <th>Branch</th>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Date</th>
+                <th>Day</th>
+                <th class="text-end">Actual</th>
+                <th class="text-end">Expected</th>
+                <th class="text-end">Deviation</th>
+                <th class="text-center">DS (Act / Exp)</th>
+                <th class="text-center">Type</th>
+                <th class="text-center">Root Cause</th>
+                <th class="text-center">Urgency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let a of result.focusBrandAnomalies">
+                <td class="fw-semibold">{{ a.branch }}</td>
+                <td class="fw-semibold">{{ a.productName }}</td>
+                <td class="text-muted small">{{ a.categoryName }}</td>
+                <td>{{ a.date }}</td>
+                <td class="text-muted small">{{ a.weekday }}</td>
+                <td class="text-end">{{ a.actualSales | number:'1.0-0' }}</td>
+                <td class="text-end">{{ a.expectedSales | number:'1.0-0' }}</td>
+                <td class="text-end">{{ a.deviationPercent | number:'1.0-1' }}%</td>
+                <td class="text-center small">{{ a.activeDsCount }} / {{ a.expectedDsCount | number:'1.0-0' }}</td>
+                <td class="text-center"><span class="rate-badge" [ngClass]="{'good': a.type === 'spike', 'bad': a.type === 'drop'}">{{ a.type === 'spike' ? 'Spike' : 'Drop' }}</span></td>
+                <td class="text-center">
+                  <span class="rate-badge"
+                    [ngClass]="{
+                      'bad':  a.cause === 'no_ds_in_field',
+                      'warn': a.cause === 'attendance_issue' || a.cause === 'market_issue',
+                      'good': a.cause === 'demand_spike' || a.cause === 'extra_ds_deployed'
+                    }">
+                    {{ a.cause === 'no_ds_in_field'    ? 'No DS'      :
+                       a.cause === 'attendance_issue'  ? 'Attendance' :
+                       a.cause === 'market_issue'      ? 'Market'     :
+                       a.cause === 'demand_spike'      ? 'Demand ↑'   :
+                       a.cause === 'extra_ds_deployed' ? 'Extra DS'   : a.cause }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <span class="rate-badge"
+                    [ngClass]="{
+                      'bad':  a.urgency === 'critical',
+                      'warn': a.urgency === 'warning',
+                      'good': a.urgency === 'watch'
+                    }">
+                    {{ a.urgency === 'critical' ? '🔴 Critical' : a.urgency === 'warning' ? '🟠 Warning' : '🟡 Watch' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Streak Alerts Table -->
+    <div class="data-card mt-3" *ngIf="showAnomalyDetection && result.streaks?.length">
+      <div class="data-card-header d-flex align-items-center justify-content-between">
+        <span><i class="fa fa-fire text-danger me-1"></i> Streak Alerts <span class="text-muted small fw-normal ms-1">({{ result.streaks?.length }} branch{{ result.streaks?.length === 1 ? '' : 'es' }} · 3+ consecutive days)</span></span>
+        <button class="section-collapse-btn" (click)="toggleSection('streaks', $event)">
+          <i class="fa" [ngClass]="isSectionCollapsed('streaks') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+        </button>
+      </div>
+      <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('streaks')">
+        <div class="table-responsive">
+          <table class="data-table mb-0">
+            <thead>
+              <tr>
+                <th>Branch</th>
+                <th class="text-center">Consecutive Days</th>
+                <th class="text-center">Type</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th class="text-center">Avg Z-Score</th>
+                <th class="text-center">Urgency</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of result.streaks">
+                <td class="fw-semibold">{{ s.branch }}</td>
+                <td class="text-center fw-bold">{{ s.days }}</td>
+                <td class="text-center"><span class="rate-badge" [ngClass]="{'good': s.type === 'spike', 'bad': s.type === 'drop'}">{{ s.type === 'spike' ? 'Spike' : 'Drop' }}</span></td>
+                <td>{{ s.startDate }}</td>
+                <td>{{ s.endDate }}</td>
+                <td class="text-center">{{ s.avgZScore | number:'1.1-2' }}</td>
+                <td class="text-center">
+                  <span class="rate-badge"
+                    [ngClass]="{
+                      'bad':  s.urgency === 'critical',
+                      'warn': s.urgency === 'warning',
+                      'good': s.urgency === 'watch'
+                    }">
+                    {{ s.urgency === 'critical' ? '🔴 Critical' : s.urgency === 'warning' ? '🟠 Warning' : '🟡 Watch' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         Breeze Field Force Insights
+         ══════════════════════════════════════════════════════════ -->
+    <div *ngIf="showBreezeInsights">
+
+      <!-- Summary cards -->
+      <div class="metrics-row">
+        <div class="metric-card accent-blue">
+          <div class="metric-label">Total Present</div>
+          <div class="metric-value">{{ result.metrics?.totalPresent | number }}</div>
+        </div>
+        <div class="metric-card accent-green">
+          <div class="metric-label">Qualified %</div>
+          <div class="metric-value">{{ result.metrics?.qualRate | number:'1.0-1' }}%</div>
+        </div>
+        <div class="metric-card accent-amber">
+          <div class="metric-label">Total Sales (M)</div>
+          <div class="metric-value">{{ result.metrics?.totalSalesM | number:'1.2-2' }}</div>
+        </div>
+        <div class="metric-card accent-purple">
+          <div class="metric-label">Total RMD DS</div>
+          <div class="metric-value">{{ result.metrics?.rmdCount | number }}</div>
+        </div>
+        <div class="metric-card accent-slate">
+          <div class="metric-label">Total Stockist DS</div>
+          <div class="metric-value">{{ result.metrics?.stockistCount | number }}</div>
+        </div>
+        <div class="metric-card accent-red" *ngIf="result.metrics?.anomalyCount">
+          <div class="metric-label">Sales Anomalies</div>
+          <div class="metric-value">{{ result.metrics?.anomalyCount | number }}</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="row mt-3 g-3" *ngIf="breezeSalesChart.length || breezeTypeChart.length">
+        <div [ngClass]="breezeTypeChart.length ? 'col-md-8' : 'col-12'" *ngIf="breezeSalesChart.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-chart-bar me-1 text-primary"></i> Sales by Branch (M)</div>
+            <div class="data-card-body" style="height:280px;overflow-x:auto;overflow-y:hidden">
+              <ngx-charts-bar-vertical-stacked
+                [results]="breezeSalesChart"
+                [view]="[breezeSalesChart.length * 65, 260]"
+                [xAxis]="true" [yAxis]="true" [showDataLabel]="false"
+                [legend]="true" [legendPosition]="breezeLegendPos"
+                [scheme]="breezeStackedScheme"
+                [barPadding]="8"
+                style="display:block;min-width:100%">
+              </ngx-charts-bar-vertical-stacked>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="breezeTypeChart.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-chart-pie me-1 text-warning"></i> RMD vs Stockist DS</div>
+            <div class="data-card-body d-flex justify-content-center align-items-center" style="height:260px">
+              <ngx-charts-pie-chart
+                [results]="breezeTypeChart"
+                [labels]="true" [doughnut]="true"
+                [scheme]="colorScheme"
+                style="display:block;width:100%;height:100%">
+              </ngx-charts-pie-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daily trend -->
+      <div class="data-card mt-3" *ngIf="breezeTrendChart.length">
+        <div class="data-card-header"><i class="fa fa-chart-line me-1 text-success"></i> Daily Sales Trend (M)</div>
+        <div class="data-card-body" style="height:200px">
+          <ngx-charts-line-chart
+            [results]="breezeTrendChart"
+            [xAxis]="true" [yAxis]="true"
+            [scheme]="trendScheme"
+            style="display:block;height:100%">
+          </ngx-charts-line-chart>
+        </div>
+      </div>
+
+      <!-- Detail table -->
+      <div class="data-card mt-3" *ngIf="sortedBreezeData.length">
+        <div class="data-card-header d-flex align-items-center justify-content-between">
+          <span><i class="fa fa-table me-1"></i> Branch-Type Summary <span class="text-muted small fw-normal ms-1">(click header to sort)</span></span>
+          <button class="section-collapse-btn" (click)="toggleSection('breeze-table', $event)">
+            <i class="fa" [ngClass]="isSectionCollapsed('breeze-table') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+          </button>
+        </div>
+        <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('breeze-table')">
+          <div class="table-responsive table-scroll-lg">
+            <table class="data-table mb-0">
+              <thead>
+                <tr>
+                  <th class="sortable-th" (click)="sortBreezeData('branch')">Branch <i class="fa {{getBreezeSortIcon('branch')}} sort-icon"></i></th>
+                  <th>Type</th>
+                  <th>District</th>
+                  <th>Circle</th>
+                  <th class="text-center sortable-th" (click)="sortBreezeData('present')">Present <i class="fa {{getBreezeSortIcon('present')}} sort-icon"></i></th>
+                  <th class="text-center sortable-th" (click)="sortBreezeData('qualRate')">Qual % <i class="fa {{getBreezeSortIcon('qualRate')}} sort-icon"></i></th>
+                  <th class="text-end sortable-th" (click)="sortBreezeData('totalSalesM')">Total Sales M <i class="fa {{getBreezeSortIcon('totalSalesM')}} sort-icon"></i></th>
+                  <th class="text-end sortable-th" (click)="sortBreezeData('avgSalesM')">Avg Sales M <i class="fa {{getBreezeSortIcon('avgSalesM')}} sort-icon"></i></th>
+                  <th class="text-end sortable-th" (click)="sortBreezeData('avgTimeMin')">Avg Time (min) <i class="fa {{getBreezeSortIcon('avgTimeMin')}} sort-icon"></i></th>
+                  <th class="text-end sortable-th" (click)="sortBreezeData('totalOutlets')">Outlets <i class="fa {{getBreezeSortIcon('totalOutlets')}} sort-icon"></i></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of sortedBreezeData">
+                  <td class="fw-semibold">{{ r.branch }}</td>
+                  <td>
+                    <span class="rate-badge" [ngClass]="r.type === 'RMD' ? 'good' : 'warn'">{{ r.type }}</span>
+                  </td>
+                  <td class="text-muted small">{{ r.district || '—' }}</td>
+                  <td class="text-muted small">{{ r.circle || '—' }}</td>
+                  <td class="text-center">{{ r.present }}</td>
+                  <td class="text-center">
+                    <span class="rate-badge" [ngClass]="r.qualRate >= 80 ? 'good' : r.qualRate >= 50 ? 'warn' : 'bad'">
+                      {{ r.qualRate | number:'1.0-1' }}%
+                    </span>
+                  </td>
+                  <td class="text-end fw-semibold">{{ r.totalSalesM | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ r.avgSalesM | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ r.avgTimeMin | number:'1.0-1' }}</td>
+                  <td class="text-end">{{ r.totalOutlets | number }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Anomaly alerts -->
+      <div class="data-card mt-3" *ngIf="result.breezeAnomalies?.length">
+        <div class="data-card-header d-flex align-items-center justify-content-between">
+          <span><i class="fa fa-exclamation-triangle me-1 text-warning"></i> Sales Anomalies (Z-score &gt; 2)</span>
+          <button class="section-collapse-btn" (click)="toggleSection('breeze-anomalies', $event)">
+            <i class="fa" [ngClass]="isSectionCollapsed('breeze-anomalies') ? 'fa-chevron-down' : 'fa-chevron-up'"></i>
+          </button>
+        </div>
+        <div class="data-card-body p-0" *ngIf="!isSectionCollapsed('breeze-anomalies')">
+          <div class="table-responsive table-scroll-md">
+            <table class="data-table mb-0">
+              <thead>
+                <tr>
+                  <th>Branch</th>
+                  <th>Type</th>
+                  <th>Date</th>
+                  <th>Day</th>
+                  <th class="text-end">Actual (M)</th>
+                  <th class="text-end">Expected (M)</th>
+                  <th class="text-end">Deviation</th>
+                  <th class="text-center">Z-Score</th>
+                  <th class="text-center">Kind</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of result.breezeAnomalies">
+                  <td class="fw-semibold">{{ a.branch }}</td>
+                  <td><span class="rate-badge" [ngClass]="a.type === 'RMD' ? 'good' : 'warn'">{{ a.type }}</span></td>
+                  <td>{{ a.date }}</td>
+                  <td class="text-muted small">{{ a.weekday }}</td>
+                  <td class="text-end">{{ a.actualSales | number:'1.2-2' }}</td>
+                  <td class="text-end">{{ a.expectedSales | number:'1.2-2' }}</td>
+                  <td class="text-end">
+                    <span [ngClass]="a.deviationPercent < 0 ? 'text-danger' : 'text-success'" class="fw-semibold">
+                      {{ a.deviationPercent > 0 ? '+' : '' }}{{ a.deviationPercent | number:'1.0-1' }}%
+                    </span>
+                  </td>
+                  <td class="text-center fw-bold" [ngClass]="Math.abs(a.zScore) > 3 ? 'text-danger' : 'text-warning'">
+                    {{ a.zScore | number:'1.1-2' }}
+                  </td>
+                  <td class="text-center">
+                    <span class="rate-badge" [ngClass]="a.anomalyType === 'drop' ? 'bad' : 'good'">
+                      {{ a.anomalyType === 'drop' ? '▼ Drop' : '▲ Spike' }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /Breeze Field Force Insights -->
+
+    <!-- Period Comparison -->
+    <div *ngIf="showPeriodComparison" class="row mt-3 g-2">
+      <!-- % Change bar -->
+      <div [ngClass]="periodGroupedChart?.length ? 'col-md-5' : 'col-12'" *ngIf="periodComparisonChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-percent me-1 text-primary"></i> % Change by Entity</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-vertical
+                [results]="periodComparisonChart[0]?.series"
+                [scheme]="colorScheme"
+                [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [yAxisTickFormatting]="formatPercent" [dataLabelFormatting]="formatPercent">
+              </ngx-charts-bar-vertical>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Grouped: Current vs Previous -->
+      <div class="col-md-7" *ngIf="periodGroupedChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-layer-group me-1 text-info"></i> Current vs Previous</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-vertical-2d
+                [results]="periodGroupedChart"
+                [scheme]="periodGroupedScheme"
+                [xAxis]="true" [yAxis]="true"
+                [legend]="true"
+                [showDataLabel]="false"
+                [groupPadding]="8"
+                [barPadding]="2"
+                [animations]="true"
+                [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-bar-vertical-2d>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Detail table full width below -->
+      <div class="col-12" *ngIf="result.comparisonData?.length">
+        <div class="data-card">
+          <div class="data-card-body p-0">
+            <div class="table-responsive" style="max-height:260px;overflow-y:auto;">
+              <table class="data-table mb-0">
+                <thead><tr><th>Branch</th><th class="text-end">Current</th><th class="text-end">Previous</th><th class="text-end" style="min-width:100px">Change</th><th class="text-center">Trend</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let c of result.comparisonData">
+                    <td class="fw-semibold">{{ c.name }}</td>
+                    <td class="text-end">{{ c.currentSales | number:'1.0-0' }}</td>
+                    <td class="text-end">{{ c.previousSales | number:'1.0-0' }}</td>
+                    <td class="dev-cell">
+                      <div class="dev-bar-wrap">
+                        <div class="dev-bar" [ngClass]="c.direction === 'up' ? 'dev-bar-spike' : 'dev-bar-drop'" [style.width.%]="getDevBarWidth(c.changePercent)"></div>
+                        <span class="dev-val" [ngClass]="{'text-success': c.direction === 'up', 'text-danger': c.direction === 'down'}">{{ c.changePercent | number:'1.0-1' }}%</span>
+                      </div>
+                    </td>
+                    <td class="text-center"><span class="rate-badge" [ngClass]="{'good': c.direction === 'up', 'bad': c.direction === 'down'}">{{ c.direction === 'up' ? '▲ Up' : (c.direction === 'down' ? '▼ Down' : '→ Flat') }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Day of Week -->
+    <div class="data-card mt-3" *ngIf="showDayOfWeek && dayOfWeekChart?.length">
+      <div class="data-card-header">Avg Sales by Day of Week</div>
+      <div class="data-card-body">
+        <div class="chart-box">
+          <ngx-charts-bar-vertical [results]="dayOfWeekChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+            [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+            [yAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits">
+          </ngx-charts-bar-vertical>
+        </div>
+        <div class="table-responsive" *ngIf="result.dayOfWeekData?.length">
+          <table class="data-table">
+            <thead><tr><th>Day</th><th class="text-end">Total Sales</th><th class="text-end">Avg Sales</th><th class="text-end">Active DS</th><th class="text-end">Qualification</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let d of result.dayOfWeekData">
+                <td class="fw-semibold">{{ d.dayName }}</td><td class="text-end">{{ d.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ d.avgSales | number:'1.0-0' }}</td>
+                <td class="text-end">{{ d.activeDsAvg | number:'1.0-1' }}</td><td class="text-end">{{ d.qualificationRate | number:'1.0-1' }}%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Growth / Decline -->
+    <div *ngIf="showGrowthDecline" class="row mt-3 g-2">
+      <!-- Donut: distribution -->
+      <div class="col-md-3" *ngIf="growthDistributionChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-chart-pie me-1 text-success"></i> Growth Split</div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="growthDistributionChart"
+              [scheme]="growthGreenRedScheme"
+              [doughnut]="true"
+              [arcWidth]="0.42"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 210]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+      <!-- Table with inline mini-bars -->
+      <div [ngClass]="growthDistributionChart?.length ? 'col-md-9' : 'col-12'">
+        <div class="data-card h-100" *ngIf="result.growthData?.length">
+          <div class="data-card-header">{{ result?.metrics?.dimension === 'category' ? 'Category' : result?.metrics?.dimension === 'product' ? 'Product' : result?.metrics?.dimension === 'ds' ? 'DS' : (result?.metrics?.dimension | titlecase) || 'Region' }} Growth / Decline (1st Half vs 2nd Half)</div>
+          <div class="data-card-body p-0">
+            <div class="table-responsive" style="max-height:320px;overflow-y:auto;">
+              <table class="data-table mb-0">
+                <thead><tr><th>Name</th><th class="text-end">1st Half</th><th class="text-end">2nd Half</th><th class="text-end" style="min-width:120px">Change</th><th class="text-center">Trend</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let g of result.growthData">
+                    <td class="fw-semibold">{{ g.name }}</td>
+                    <td class="text-end">{{ g.firstHalfSales | number:'1.0-0' }}</td>
+                    <td class="text-end">{{ g.secondHalfSales | number:'1.0-0' }}</td>
+                    <td class="dev-cell">
+                      <div class="dev-bar-wrap">
+                        <div class="dev-bar" [ngClass]="g.direction === 'growing' ? 'dev-bar-spike' : (g.direction === 'declining' ? 'dev-bar-drop' : 'dev-bar-neutral')" [style.width.%]="getDevBarWidth(g.changePercent)"></div>
+                        <span class="dev-val" [ngClass]="{'text-success': g.direction === 'growing', 'text-danger': g.direction === 'declining'}">{{ g.changePercent | number:'1.0-1' }}%</span>
+                      </div>
+                    </td>
+                    <td class="text-center"><span class="rate-badge" [ngClass]="{'good': g.direction === 'growing', 'bad': g.direction === 'declining'}">{{ g.direction === 'growing' ? '▲ Growing' : (g.direction === 'declining' ? '▼ Declining' : '→ Stable') }}</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WD Code -->
+    <div *ngIf="showWdCodePerformance" class="row mt-3 g-2">
+      <div [ngClass]="wdCodeDonutChart?.length ? 'col-md-7' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">WD Code Performance</div>
+          <div class="data-card-body">
+            <div *ngIf="wdCodePerformanceChart?.length" class="chart-box">
+              <ngx-charts-bar-horizontal [results]="wdCodePerformanceChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'wd')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint" *ngIf="wdCodePerformanceChart?.length"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click any bar to see DS performance</div>
+            <div class="table-responsive" *ngIf="result.topWdCodes?.length">
+              <table class="data-table">
+                <thead><tr><th>WD Code</th><th>Branch</th><th class="text-end">Sales</th><th class="text-end">DS</th><th class="text-end">Qual %</th><th class="text-end">Share</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let w of result.topWdCodes">
+                    <td class="fw-semibold">{{ w.wdCode }}</td><td>{{ w.branch }}</td><td class="text-end">{{ w.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ w.dsCount }}</td>
+                    <td class="text-end"><span class="rate-badge" [ngClass]="{'good': w.qualificationRate >= 80, 'warn': w.qualificationRate >= 50 && w.qualificationRate < 80, 'bad': w.qualificationRate < 50}">{{ w.qualificationRate | number:'1.0-1' }}%</span></td>
+                    <td class="text-end">{{ w.sharePercent | number:'1.0-1' }}%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Sales Contribution Donut -->
+      <div class="col-md-5" *ngIf="wdCodeDonutChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-chart-pie me-1 text-info"></i> Sales Contribution</div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="wdCodeDonutChart"
+              [scheme]="colorScheme"
+              [doughnut]="true"
+              [arcWidth]="0.4"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 260]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DS Performance -->
+    <div *ngIf="showDsPerformance" class="row mt-3 g-2">
+      <div [ngClass]="dsQualTierChart?.length ? 'col-md-8' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ dsLabel }}</div>
+          <div class="data-card-body">
+            <div *ngIf="dsPerformanceChart?.length" class="chart-box">
+              <ngx-charts-bar-horizontal [results]="dsPerformanceChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'ds')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint" *ngIf="dsPerformanceChart?.length"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a DS name to view their full scorecard</div>
+            <div class="table-responsive" *ngIf="result.topDs?.length">
+              <table class="data-table">
+                <thead><tr><th>DS Name</th><th>Region</th><th>WD Code</th><th class="text-end">Sales</th><th class="text-end">Qual Days</th><th class="text-end">Total</th><th class="text-end">Rate</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let ds of result.topDs">
+                    <td class="fw-semibold">{{ ds.dsName }}</td><td>{{ ds.region }}</td><td>{{ ds.wdCode }}</td>
+                    <td class="text-end">{{ ds.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ ds.qualifiedDays }}</td><td class="text-end">{{ ds.totalDays }}</td>
+                    <td class="text-end"><span class="rate-badge" [ngClass]="{'good': ds.qualificationRate >= 80, 'warn': ds.qualificationRate >= 50 && ds.qualificationRate < 80, 'bad': ds.qualificationRate < 50}">{{ ds.qualificationRate | number:'1.0-1' }}%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Qual Tier Donut -->
+      <div class="col-md-4" *ngIf="dsQualTierChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-award me-1 text-warning"></i> Qual Tier Distribution</div>
+          <div class="data-card-body p-1 d-flex flex-column justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="dsQualTierChart"
+              [scheme]="qualTierScheme"
+              [doughnut]="true"
+              [arcWidth]="0.42"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 220]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Category Sales -->
+    <div *ngIf="showCategorySales && categoryChart?.length" class="row mt-3 g-2">
+      <!-- Bar chart -->
+      <div [ngClass]="categoryDonutChart?.length ? 'col-md-7' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">Top 10 Categories <span class="chart-sub-hint" *ngIf="result.categoryData?.length > 10">· Full list below</span></div>
+          <div class="data-card-body">
+            <div class="chart-box chart-box-tall">
+              <ngx-charts-bar-horizontal [results]="categoryChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'category')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a category to see product breakdown</div>
+            <div class="table-responsive" *ngIf="result.categoryData?.length">
+              <table class="data-table">
+                <thead><tr><th>Category</th><th class="text-end">Sales (Units)</th><th class="text-end">Market Share</th><th class="text-end">Products</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let c of result.categoryData">
+                    <td class="fw-semibold">{{ c.categoryName }}</td>
+                    <td class="text-end">{{ c.totalSales | number:'1.0-0' }}</td>
+                    <td class="text-end"><span class="rate-badge good">{{ c.sharePercent | number:'1.0-1' }}%</span></td>
+                    <td class="text-end">{{ c.productCount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div *ngIf="result.specificCategory && result.productBreakdown?.length" class="mt-3">
+              <div class="data-card-header bg-emerald">{{ result.specificCategory }} — Product Breakdown</div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead><tr><th>Product</th><th class="text-end">Sales (Units)</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let p of result.productBreakdown">
+                      <td class="fw-semibold">{{ p.productName }}</td>
+                      <td class="text-end">{{ p.totalSales | number:'1.0-0' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Market Share Donut -->
+      <div class="col-md-5" *ngIf="categoryDonutChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-chart-pie me-1 text-purple"></i> Market Share</div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="categoryDonutChart"
+              [scheme]="colorScheme"
+              [doughnut]="true"
+              [arcWidth]="0.4"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 260]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product/Category Period Comparison -->
+    <div class="data-card mt-3" *ngIf="showProductComparison && productComparisonChart?.length">
+      <div class="data-card-header">{{ result.entityLabel || 'Product' }} — Period Comparison</div>
+      <div class="data-card-body">
+        <div class="chart-box">
+          <!-- Single comparison graph: one bar per product showing % change -->
+          <ngx-charts-bar-vertical
+            [results]="productComparisonChart[0]?.series"
+            [scheme]="colorScheme"
+            [xAxis]="true"
+            [yAxis]="true"
+            [showDataLabel]="true"
+            [gradient]="true"
+            [roundEdges]="true"
+            [animations]="true"
+            [yAxisTickFormatting]="formatPercent"
+            [dataLabelFormatting]="formatPercent">
+          </ngx-charts-bar-vertical>
+        </div>
+        <div class="table-responsive" *ngIf="result.productComparisonData?.length">
+          <table class="data-table">
+            <thead><tr><th>Product</th><th class="text-end">Current</th><th class="text-end">Previous</th><th class="text-end">Change</th><th class="text-center">Trend</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let p of result.productComparisonData">
+                <td class="fw-semibold">{{ p.name }}</td>
+                <td class="text-end">{{ p.currentSales | number:'1.0-0' }}</td>
+                <td class="text-end">{{ p.previousSales | number:'1.0-0' }}</td>
+                <td class="text-end">{{ p.changePercent | number:'1.0-1' }}%</td>
+                <td class="text-center"><span class="rate-badge" [ngClass]="{'good': p.direction === 'up', 'bad': p.direction === 'down'}">{{ p.direction === 'up' ? 'Up' : (p.direction === 'down' ? 'Down' : 'Flat') }}</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div *ngIf="result.branchComparison?.length" class="mt-3">
+          <div class="data-card-header">Branch-wise Breakdown</div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead><tr><th>Branch</th><th class="text-end">Current</th><th class="text-end">Previous</th><th class="text-end">Change</th><th class="text-center">Trend</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let b of result.branchComparison">
+                  <td class="fw-semibold">{{ b.name }}</td>
+                  <td class="text-end">{{ b.currentSales | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ b.previousSales | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ b.changePercent | number:'1.0-1' }}%</td>
+                  <td class="text-center"><span class="rate-badge" [ngClass]="{'good': b.direction === 'up', 'bad': b.direction === 'down'}">{{ b.direction === 'up' ? 'Up' : (b.direction === 'down' ? 'Down' : 'Flat') }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Focus Brand Analysis -->
+    <div *ngIf="showFocusBrand" class="mt-3">
+      <div class="row g-2" *ngIf="focusBrandChart?.length">
+        <!-- Bar chart -->
+        <div [ngClass]="focusBrandSplitChart?.length ? 'col-md-7' : 'col-12'">
+          <div class="data-card h-100">
+            <div class="data-card-header bg-emerald">Focus Brand Performance</div>
+            <div class="data-card-body">
+              <div class="chart-box">
+                <ngx-charts-bar-horizontal [results]="focusBrandChart" [scheme]="gradientScheme" [xAxis]="true" [yAxis]="true"
+                  [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                  [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                  (select)="onChartDrillDown($event, 'product')">
+                </ngx-charts-bar-horizontal>
+              </div>
+              <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a product to compare periods</div>
+              <div class="table-responsive" *ngIf="result.focusProducts?.length">
+                <table class="data-table">
+                  <thead><tr><th>Product</th><th>Category</th><th class="text-end">Sales</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let f of result.focusProducts">
+                      <td class="fw-semibold"><i class="fa fa-star text-warning me-1" style="font-size:0.7rem"></i>{{ f.productName }}</td>
+                      <td>{{ f.categoryName }}</td>
+                      <td class="text-end">{{ f.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ f.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Focus vs Non-Focus Donut -->
+        <div class="col-md-5" *ngIf="focusBrandSplitChart?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-star me-1 text-warning"></i> Focus vs Non-Focus Split</div>
+            <div class="data-card-body p-1 d-flex flex-column justify-content-center align-items-center">
+              <ngx-charts-pie-chart
+                [results]="focusBrandSplitChart"
+                [scheme]="focusSplitScheme"
+                [doughnut]="true"
+                [arcWidth]="0.45"
+                [legend]="true"
+                [animations]="true"
+                [view]="[undefined, 240]">
+              </ngx-charts-pie-chart>
+              <div class="text-center mt-2 small text-muted">
+                Focus share: <strong class="text-warning">{{ result.metrics?.focusShare | number:'1.0-1' }}%</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="data-card mt-3" *ngIf="result.nonFocusProducts?.length">
+        <div class="data-card-header bg-rose">Top Non-Focus Products</div>
+        <div class="data-card-body p-0">
+          <table class="data-table mb-0">
+            <thead><tr><th>Product</th><th>Category</th><th class="text-end">Sales</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let nf of result.nonFocusProducts">
+                <td class="fw-semibold">{{ nf.productName }}</td>
+                <td>{{ nf.categoryName }}</td>
+                <td class="text-end">{{ nf.totalSales | number:'1.0-0' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- DS Scorecard: KPI Radar (gauge) row -->
+    <div *ngIf="showDsScorecard && dsScorecardRadarChart?.length" class="row mt-2 g-2">
+      <div class="col-md-5">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-tachometer-alt me-1 text-primary"></i> KPI Gauges</div>
+          <div class="data-card-body p-1">
+            <ngx-charts-bar-horizontal
+              [results]="dsScorecardRadarChart"
+              [scheme]="qualTierScheme"
+              [xAxis]="true" [yAxis]="true"
+              [showDataLabel]="true"
+              [gradient]="true"
+              [roundEdges]="true"
+              [animations]="true"
+              [xScaleMax]="150"
+              [dataLabelFormatting]="formatPercent"
+              [view]="[undefined, 140]">
+            </ngx-charts-bar-horizontal>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-7" *ngIf="dsProductChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-boxes me-1 text-success"></i> Product Mix (Donut)</div>
+          <div class="data-card-body p-1 d-flex justify-content-center align-items-center">
+            <ngx-charts-pie-chart
+              [results]="dsProductChart"
+              [scheme]="colorScheme"
+              [doughnut]="true"
+              [arcWidth]="0.4"
+              [legend]="true"
+              [animations]="true"
+              [view]="[undefined, 200]">
+            </ngx-charts-pie-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DS Scorecard: Sales Trend + Map row -->
+    <div *ngIf="showDsScorecard" class="row mt-2 g-2">
+      <div [ngClass]="(result.dsMapLocations?.length || result.dsOutletLocations?.length) ? 'col-md-6' : 'col-12'" *ngIf="dsTrendChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-chart-line me-1 text-primary"></i> Daily Sales Trend</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box-sm">
+              <ngx-charts-line-chart [results]="dsTrendChart" [scheme]="trendScheme" [xAxis]="true" [yAxis]="true"
+                [showXAxisLabel]="false" [showYAxisLabel]="false" [legend]="false" [autoScale]="true"
+                [gradient]="true" [animations]="true" [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-line-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="result.dsMapLocations?.length || result.dsOutletLocations?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-map-marked-alt me-1"></i>Route Map
+            <span class="float-end" style="font-size:0.6rem;font-weight:400;opacity:0.7;">
+              <span style="display:inline-block;width:8px;height:8px;background:#3b82f6;border-radius:50%;margin-right:2px;vertical-align:middle;"></span>Visits
+              <span style="display:inline-block;width:8px;height:8px;background:#10b981;border-radius:50%;margin:0 2px;vertical-align:middle;"></span>Outlets
+            </span>
+          </div>
+          <div class="data-card-body p-0 map-wrap">
+            <div id="ds-scorecard-map" style="height:220px;width:100%;z-index:1;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hierarchy Scorecard: Trend + Sub-entity + Heatmap -->
+    <div *ngIf="showHierarchyScorecard" class="row mt-2 g-2">
+      <div [ngClass]="result.hierarchyHeatmapPoints?.length ? 'col-md-4' : 'col-md-6'" *ngIf="hierarchyTrendChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Sales Trend</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box-sm">
+              <ngx-charts-line-chart [results]="hierarchyTrendChart" [scheme]="trendScheme" [xAxis]="true" [yAxis]="true"
+                [showXAxisLabel]="false" [showYAxisLabel]="false" [legend]="false" [autoScale]="true"
+                [gradient]="true" [animations]="true" [yAxisTickFormatting]="formatUnits">
+              </ngx-charts-line-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div [ngClass]="result.hierarchyHeatmapPoints?.length ? 'col-md-4' : 'col-md-6'" *ngIf="hierarchySubChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ result.hierarchySubBreakdown?.label }} Breakdown</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box-sm">
+              <ngx-charts-bar-horizontal [results]="hierarchySubChart" [scheme]="gradientScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'sub-entity')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint"><span class="hint-dot"></span> Click any bar to drill into that {{ result.hierarchySubBreakdown?.label?.toLowerCase() }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" *ngIf="result.hierarchyHeatmapPoints?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header">Geographic Distribution</div>
+          <div class="data-card-body p-1">
+            <div id="hierarchy-scorecard-map" style="height:220px;width:100%;border-radius:6px;"></div>
+            <div class="d-flex gap-2 justify-content-center mt-1" style="font-size:0.65rem;color:#64748b;">
+              <span><i class="fa fa-circle" style="color:#ef4444"></i> High</span>
+              <span><i class="fa fa-circle" style="color:#f59e0b"></i> Mid</span>
+              <span><i class="fa fa-circle" style="color:#3b82f6"></i> Low</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Hierarchy Scorecard: Top / Bottom DS tables -->
+    <div *ngIf="showHierarchyScorecard" class="row mt-2 g-2">
+      <div class="col-md-6" *ngIf="result.hierarchyTopDs?.length">
+        <div class="data-card">
+          <div class="data-card-header bg-emerald"><i class="fa fa-arrow-up me-1"></i>Top DS</div>
+          <div class="data-card-body p-0" style="max-height:220px;overflow-y:auto;">
+            <table class="data-table">
+              <thead><tr><th>#</th><th>DS Name</th><th>WD Code</th><th>Sales</th><th>Qual%</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let d of result.hierarchyTopDs; let i = index" (click)="onChartDrillDown(d.dsName, 'ds')" style="cursor:pointer;">
+                  <td>{{ i + 1 }}</td>
+                  <td class="fw-semibold">{{ d.dsName }}</td>
+                  <td>{{ d.wdCode }}</td>
+                  <td>{{ d.sales | number:'1.0-0' }}</td>
+                  <td>{{ d.qualRate | number:'1.0-1' }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6" *ngIf="result.hierarchyBottomDs?.length">
+        <div class="data-card">
+          <div class="data-card-header bg-rose"><i class="fa fa-arrow-down me-1"></i>Bottom DS</div>
+          <div class="data-card-body p-0" style="max-height:220px;overflow-y:auto;">
+            <table class="data-table">
+              <thead><tr><th>#</th><th>DS Name</th><th>WD Code</th><th>Sales</th><th>Qual%</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let d of result.hierarchyBottomDs; let i = index" (click)="onChartDrillDown(d.dsName, 'ds')" style="cursor:pointer;">
+                  <td>{{ i + 1 }}</td>
+                  <td class="fw-semibold">{{ d.dsName }}</td>
+                  <td>{{ d.wdCode }}</td>
+                  <td>{{ d.sales | number:'1.0-0' }}</td>
+                  <td>{{ d.qualRate | number:'1.0-1' }}%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Hierarchy Sub-entity Detail Table -->
+    <div *ngIf="showHierarchyScorecard && result.hierarchySubBreakdown?.data?.length" class="data-card mt-2">
+      <div class="data-card-header">{{ result.hierarchySubBreakdown.label }} Performance</div>
+      <div class="data-card-body p-0" style="max-height:300px;overflow-y:auto;">
+        <table class="data-table">
+          <thead><tr><th>#</th><th>{{ result.hierarchySubBreakdown.label }}</th><th>Sales</th><th>Qual%</th><th>Adherence%</th><th>DS Count</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let s of result.hierarchySubBreakdown.data; let i = index" (click)="onChartDrillDown(s.name, 'sub-entity')" style="cursor:pointer;">
+              <td>{{ i + 1 }}</td>
+              <td class="fw-semibold">{{ s.name }}</td>
+              <td>{{ s.sales | number:'1.0-0' }}</td>
+              <td>{{ s.qualRate | number:'1.0-1' }}%</td>
+              <td>{{ s.adherenceRate | number:'1.0-1' }}%</td>
+              <td>{{ s.dsCount }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Outlet-level Sales -->
+    <div *ngIf="showOutletSales">
+      <div class="metrics-row mb-3">
+        <div class="metric-card accent-blue"><div class="metric-label">Total Outlets</div><div class="metric-value">{{ result.metrics?.totalOutlets | number }}</div></div>
+        <div class="metric-card accent-green"><div class="metric-label">Transactions</div><div class="metric-value">{{ result.metrics?.totalTransactions | number }}</div></div>
+        <div class="metric-card accent-purple"><div class="metric-label">Total Revenue</div><div class="metric-value">{{ result.metrics?.grandRevenue | number:'1.0-0' }}</div></div>
+        <div class="metric-card accent-amber"><div class="metric-label">Avg Order Value</div><div class="metric-value">{{ result.metrics?.avgOrderValue | number:'1.0-2' }}</div></div>
+      </div>
+      <div class="data-card mt-3" *ngIf="outletSalesChart?.length">
+        <div class="data-card-header">Top Outlets by Revenue</div>
+        <div class="data-card-body">
+          <div class="chart-box">
+            <ngx-charts-bar-horizontal [results]="outletSalesChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+              [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+              [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits">
+            </ngx-charts-bar-horizontal>
+          </div>
+        </div>
+      </div>
+      <div class="data-card mt-3" *ngIf="result.outletSalesData?.length">
+        <div class="data-card-header">Outlet Performance Details</div>
+        <div class="data-card-body p-0">
+          <div class="table-responsive">
+            <table class="data-table mb-0">
+              <thead><tr><th>Outlet</th><th>DS</th><th>WD</th><th>Type</th><th class="text-end">Visits</th><th class="text-end">Revenue</th><th class="text-end">Avg Order</th></tr></thead>
+              <tbody>
+                <tr *ngFor="let o of result.outletSalesData">
+                  <td class="fw-semibold">{{ o.outletName }}<br><small class="text-muted">{{ o.market }}</small></td>
+                  <td>{{ o.dsName }}</td>
+                  <td>{{ o.wdCode }}</td>
+                  <td><span class="rate-badge" [ngClass]="{'good': o.shopType === 'Wholesale'}">{{ o.shopType }}</span></td>
+                  <td class="text-end">{{ o.visitCount }}</td>
+                  <td class="text-end fw-semibold">{{ o.totalRevenue | number:'1.0-0' }}</td>
+                  <td class="text-end">{{ o.avgOrderValue | number:'1.0-2' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Geographic Heatmap -->
+    <div *ngIf="showGeographicHeatmap">
+      <div class="metrics-row mb-3">
+        <!-- Show only relevant hierarchy counts for the requested scope -->
+        <div class="metric-card accent-slate" *ngIf="result.mapScopeLevel === 'all' || result.mapScopeLevel === 'district'">
+          <div class="metric-label">Districts</div><div class="metric-value">{{ result.metrics?.totalDistricts | number }}</div>
+        </div>
+        <div class="metric-card accent-purple" *ngIf="result.mapScopeLevel === 'all' || result.mapScopeLevel === 'district' || result.mapScopeLevel === 'branch'">
+          <div class="metric-label">Branches</div><div class="metric-value">{{ result.metrics?.totalBranches | number }}</div>
+        </div>
+        <div class="metric-card accent-green" *ngIf="result.mapScopeLevel === 'all' || result.mapScopeLevel === 'district' || result.mapScopeLevel === 'branch' || result.mapScopeLevel === 'region'">
+          <div class="metric-label">Regions</div><div class="metric-value">{{ result.metrics?.totalRegions | number }}</div>
+        </div>
+        <div class="metric-card accent-amber" *ngIf="result.mapScopeLevel === 'branch' || result.mapScopeLevel === 'region' || result.mapScopeLevel === 'circle'">
+          <div class="metric-label">Circles</div><div class="metric-value">{{ result.metrics?.totalCircles | number }}</div>
+        </div>
+        <div class="metric-card" style="border-left-color:#06b6d4" *ngIf="result.mapScopeLevel === 'region' || result.mapScopeLevel === 'circle' || result.mapScopeLevel === 'section' || result.mapScopeLevel === 'wd_code'">
+          <div class="metric-label">Sections</div><div class="metric-value">{{ result.metrics?.totalSections | number }}</div>
+        </div>
+        <div class="metric-card accent-red" *ngIf="result.mapScopeLevel === 'circle' || result.mapScopeLevel === 'section' || result.mapScopeLevel === 'wd_code'">
+          <div class="metric-label">WD Codes</div><div class="metric-value">{{ result.metrics?.totalWdCodes | number }}</div>
+        </div>
+      </div>
+      <div class="data-card mt-3">
+        <div class="data-card-header"><i class="fa fa-map-marked-alt me-2"></i>Sales Distribution Map
+          <span class="float-end" style="font-size:0.6rem;font-weight:400;opacity:0.7;">
+            <span style="display:inline-block;width:8px;height:8px;background:#ef4444;border-radius:50%;margin-right:2px;vertical-align:middle;"></span>High
+            <span style="display:inline-block;width:8px;height:8px;background:#f59e0b;border-radius:50%;margin:0 2px;vertical-align:middle;"></span>Med
+            <span style="display:inline-block;width:8px;height:8px;background:#3b82f6;border-radius:50%;margin:0 2px;vertical-align:middle;"></span>Low
+          </span>
+        </div>
+        <div class="data-card-body p-0">
+          <div id="geographic-heatmap" style="height:300px;width:100%;z-index:1;"></div>
+        </div>
+      </div>
+      <div class="row mt-3 g-3">
+        <!-- district -> branch -> region (or overall) -->
+        <div class="col-md-4" *ngIf="result.districtSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">District Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>District</th><th class="text-end">Sales</th><th class="text-end">Regions</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.districtSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.regions }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="result.branchSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">Branch Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>Branch</th><th class="text-end">Sales</th><th class="text-end">Regions</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.branchSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.regions }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4" *ngIf="result.regionSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">Region Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>Region</th><th class="text-end">Sales</th><th class="text-end">Districts</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.regionSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.districts }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- branch -> region -> circle -->
+        <div class="col-md-4" *ngIf="result.circleSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">Circle Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>Circle</th><th class="text-end">Sales</th><th class="text-end">Regions</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.circleSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.regions }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- region -> circle -> section -->
+        <div class="col-md-4" *ngIf="result.sectionSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">Section Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>Section</th><th class="text-end">Sales</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.sectionSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- circle -> section -> wd -->
+        <div class="col-md-4" *ngIf="result.wdSummary?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header">WD Code Summary</div>
+            <div class="data-card-body p-0">
+              <div class="table-responsive" style="max-height:280px;overflow-y:auto;">
+                <table class="data-table mb-0">
+                  <thead><tr><th>WD Code</th><th class="text-end">Sales</th><th class="text-end">DS</th><th class="text-end">Share</th></tr></thead>
+                  <tbody>
+                    <tr *ngFor="let r of result.wdSummary">
+                      <td class="fw-semibold">{{ r.name }}</td>
+                      <td class="text-end">{{ r.totalSales | number:'1.0-0' }}</td>
+                      <td class="text-end">{{ r.dsCount }}</td>
+                      <td class="text-end"><span class="rate-badge good">{{ r.sharePercent | number:'1.0-1' }}%</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Charts — side by side: bar + market share donut -->
+    <div *ngIf="topProductsChart?.length && !showDsPerformance" class="row mt-3 g-2">
+      <div [ngClass]="topWdCodesChart?.length ? 'col-md-7' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ productLabel }}</div>
+          <div class="data-card-body">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal [results]="topProductsChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'product')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a product to compare periods</div>
+          </div>
+        </div>
+      </div>
+      <!-- WD Code alongside product if both exist -->
+      <div class="col-md-5" *ngIf="topWdCodesChart?.length && !showWdCodePerformance">
+        <div class="data-card h-100">
+          <div class="data-card-header">{{ wdLabel }}</div>
+          <div class="data-card-body">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal [results]="topWdCodesChart" [scheme]="gradientScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+                (select)="onChartDrillDown($event, 'wd')">
+              </ngx-charts-bar-horizontal>
+            </div>
+            <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a WD code to explore</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WD Code Chart (standalone when no product chart) -->
+    <div class="data-card mt-3" *ngIf="topWdCodesChart?.length && !topProductsChart?.length && !showDsPerformance && !showWdCodePerformance">
+      <div class="data-card-header">{{ wdLabel }}</div>
+      <div class="data-card-body">
+        <div class="chart-box">
+          <ngx-charts-bar-horizontal [results]="topWdCodesChart" [scheme]="colorScheme" [xAxis]="true" [yAxis]="true"
+            [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+            [xAxisTickFormatting]="formatUnits" [dataLabelFormatting]="formatUnits"
+            (select)="onChartDrillDown($event, 'wd')">
+          </ngx-charts-bar-horizontal>
+        </div>
+        <div class="chart-drill-hint"><span class="hint-dot"></span><i class="fa fa-mouse-pointer"></i> Click a WD code to explore</div>
+      </div>
+    </div>
+
+    <!-- Outlet Coverage -->
+    <div *ngIf="showOutletCoverage" class="row mt-3 g-2">
+      <!-- Coverage bar chart -->
+      <div [ngClass]="outletCoverageChart?.length ? 'col-md-6' : 'col-12'">
+        <div class="data-card h-100">
+          <div class="data-card-header">Outlet Coverage</div>
+          <div class="data-card-body p-0">
+            <div class="table-responsive" style="max-height:320px;overflow-y:auto;">
+              <table class="data-table mb-0">
+                <thead><tr><th>DS Name</th><th class="text-end">Planned</th><th class="text-end">Visited</th><th class="text-end">Billed</th><th class="text-end">Coverage</th><th class="text-end">Billing</th></tr></thead>
+                <tbody>
+                  <tr *ngFor="let o of result.outletData">
+                    <td class="fw-semibold">{{ o.dsName }}</td><td class="text-end">{{ o.planned | number }}</td><td class="text-end">{{ o.visited | number }}</td><td class="text-end">{{ o.billed | number }}</td>
+                    <td class="text-end"><span class="rate-badge" [ngClass]="{'good': o.coveragePercent >= 80, 'warn': o.coveragePercent >= 50 && o.coveragePercent < 80, 'bad': o.coveragePercent < 50}">{{ o.coveragePercent | number:'1.0-1' }}%</span></td>
+                    <td class="text-end"><span class="rate-badge" [ngClass]="{'good': o.billingPercent >= 80, 'warn': o.billingPercent >= 50 && o.billingPercent < 80, 'bad': o.billingPercent < 50}">{{ o.billingPercent | number:'1.0-1' }}%</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Coverage rate bar chart -->
+      <div class="col-md-6" *ngIf="outletCoverageChart?.length">
+        <div class="data-card h-100">
+          <div class="data-card-header"><i class="fa fa-store me-1 text-success"></i> Coverage Rate by DS</div>
+          <div class="data-card-body p-2">
+            <div class="chart-box">
+              <ngx-charts-bar-horizontal [results]="outletCoverageChart" [scheme]="gradientScheme" [xAxis]="true" [yAxis]="true"
+                [showDataLabel]="true" [gradient]="true" [roundEdges]="true" [animations]="true"
+                [xAxisTickFormatting]="formatPercent" [dataLabelFormatting]="formatPercent">
+              </ngx-charts-bar-horizontal>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Time Productivity Table -->
+    <div class="data-card mt-3" *ngIf="showProductivity">
+      <div class="data-card-header">Time &amp; Productivity</div>
+      <div class="data-card-body p-0">
+        <div class="table-responsive">
+          <table class="data-table mb-0">
+            <thead><tr><th>DS Name</th><th class="text-end">Time (min)</th><th class="text-end">Avg Km</th><th class="text-end">Sales</th><th class="text-end">Sales/Min</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let p of result.productivityData">
+                <td class="fw-semibold">{{ p.dsName }}</td><td class="text-end">{{ p.avgTimeInMarket | number:'1.0-0' }}</td><td class="text-end">{{ p.avgKm | number:'1.0-1' }}</td>
+                <td class="text-end">{{ p.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ p.salesPerMinute | number:'1.0-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inventory Table -->
+    <div class="data-card mt-3" *ngIf="showInventory">
+      <div class="data-card-header">Inventory Analysis</div>
+      <div class="data-card-body p-0">
+        <div class="table-responsive">
+          <table class="data-table mb-0">
+            <thead><tr><th>DS Name</th><th class="text-end">Total Sales</th><th class="text-end">Active Days</th><th class="text-end">Avg Daily</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let i of result.inventoryData">
+                <td class="fw-semibold">{{ i.dsName }}</td><td class="text-end">{{ i.totalSales | number:'1.0-0' }}</td><td class="text-end">{{ i.totalDays }}</td><td class="text-end">{{ i.avgDailySales | number:'1.0-1' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Route Adherence Table -->
+    <div class="data-card mt-3" *ngIf="showRouteAdherence">
+      <div class="data-card-header">Route Adherence</div>
+      <div class="data-card-body p-0">
+        <div class="table-responsive">
+          <table class="data-table mb-0">
+            <thead><tr><th>DS Name</th><th class="text-end">Total Days</th><th class="text-end">Adherence Days</th><th class="text-end">Rate</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let r of result.routeData">
+                <td class="fw-semibold">{{ r.dsName }}</td><td class="text-end">{{ r.totalDays }}</td><td class="text-end">{{ r.adherenceDays }}</td>
+                <td class="text-end"><span class="rate-badge" [ngClass]="{'good': r.adherencePercent >= 80, 'warn': r.adherencePercent >= 50 && r.adherencePercent < 80, 'bad': r.adherencePercent < 50}">{{ r.adherencePercent | number:'1.0-1' }}%</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════════════
+         DS Leaderboard
+         ══════════════════════════════════════════════════════════ -->
+    <div *ngIf="showDsLeaderboard">
+
+      <!-- Summary cards -->
+      <div class="metrics-row">
+        <div class="metric-card accent-blue">
+          <div class="metric-label">Total DS</div>
+          <div class="metric-value">{{ result.metrics?.totalDs | number }}</div>
+        </div>
+        <div class="metric-card accent-green">
+          <div class="metric-label">Period Sales</div>
+          <div class="metric-value">{{ result.metrics?.grandTotal | number:'1.0-0' }}</div>
+        </div>
+        <div class="metric-card accent-amber">
+          <div class="metric-label">Avg Sales / DS</div>
+          <div class="metric-value">{{ result.metrics?.avgSales | number:'1.0-0' }}</div>
+        </div>
+        <div class="metric-card accent-purple">
+          <div class="metric-label">Period Days</div>
+          <div class="metric-value">{{ result.metrics?.periodDays }}</div>
+        </div>
+      </div>
+
+      <!-- Charts row -->
+      <div class="row mt-3 g-2">
+        <div class="col-md-6" *ngIf="dsLeaderboardTop10Chart?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-trophy text-warning me-1"></i> Top 10 DS by Sales</div>
+            <div class="data-card-body p-2">
+              <div class="chart-box">
+                <ngx-charts-bar-horizontal
+                  [results]="dsLeaderboardTop10Chart" [scheme]="colorScheme"
+                  [xAxis]="true" [yAxis]="true" [showDataLabel]="true"
+                  [gradient]="true" [roundEdges]="true" [animations]="true"
+                  [dataLabelFormatting]="formatUnits">
+                </ngx-charts-bar-horizontal>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6" *ngIf="dsLeaderboardBottom10Chart?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-arrow-down text-danger me-1"></i> Bottom 10 DS by Sales</div>
+            <div class="data-card-body p-2">
+              <div class="chart-box">
+                <ngx-charts-bar-horizontal
+                  [results]="dsLeaderboardBottom10Chart" [scheme]="causeColorScheme"
+                  [xAxis]="true" [yAxis]="true" [showDataLabel]="true"
+                  [gradient]="true" [roundEdges]="true" [animations]="true"
+                  [dataLabelFormatting]="formatUnits">
+                </ngx-charts-bar-horizontal>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Top 10 Table -->
+      <div class="data-card mt-3" *ngIf="result.dsTop10?.length">
+        <div class="data-card-header"><i class="fa fa-medal text-warning me-1"></i> Top 10 Performers</div>
+        <div class="data-card-body p-0">
+          <div class="table-responsive">
+            <table class="data-table mb-0">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>DS Name</th>
+                  <th>Region</th>
+                  <th>WD Code</th>
+                  <th class="text-end">Sales</th>
+                  <th class="text-end">Qual %</th>
+                  <th class="text-center">Rank Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ds of result.dsTop10">
+                  <td>
+                    <span *ngIf="ds.rank === 1" class="badge-medal gold">🥇 1</span>
+                    <span *ngIf="ds.rank === 2" class="badge-medal silver">🥈 2</span>
+                    <span *ngIf="ds.rank === 3" class="badge-medal bronze">🥉 3</span>
+                    <span *ngIf="ds.rank > 3" class="rank-num">{{ ds.rank }}</span>
+                  </td>
+                  <td class="fw-semibold">{{ ds.dsName }}</td>
+                  <td>{{ ds.region }}</td>
+                  <td>{{ ds.wdCode }}</td>
+                  <td class="text-end fw-semibold">{{ ds.totalSales | number:'1.0-0' }}</td>
+                  <td class="text-end">
+                    <span class="rate-badge" [ngClass]="{'good': ds.qualificationRate >= 80, 'warn': ds.qualificationRate >= 50 && ds.qualificationRate < 80, 'bad': ds.qualificationRate < 50}">
+                      {{ ds.qualificationRate | number:'1.0-1' }}%
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <ng-container *ngIf="ds.rankChange !== null && ds.rankChange !== 0">
+                      <span *ngIf="ds.rankChange > 0" class="rank-up">▲ {{ ds.rankChange }}</span>
+                      <span *ngIf="ds.rankChange < 0" class="rank-down">▼ {{ Math.abs(ds.rankChange) }}</span>
+                    </ng-container>
+                    <span *ngIf="ds.rankChange === 0" class="rank-same">— Same</span>
+                    <span *ngIf="ds.rankChange === null" class="rank-new">NEW</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom 10 Table -->
+      <div class="data-card mt-3" *ngIf="result.dsBottom10?.length">
+        <div class="data-card-header"><i class="fa fa-arrow-down text-danger me-1"></i> Bottom 10 Performers</div>
+        <div class="data-card-body p-0">
+          <div class="table-responsive">
+            <table class="data-table mb-0">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>DS Name</th>
+                  <th>Region</th>
+                  <th>WD Code</th>
+                  <th class="text-end">Sales</th>
+                  <th class="text-end">Qual %</th>
+                  <th class="text-center">Rank Change</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ds of result.dsBottom10">
+                  <td class="rank-num">{{ ds.rank }}</td>
+                  <td class="fw-semibold">{{ ds.dsName }}</td>
+                  <td>{{ ds.region }}</td>
+                  <td>{{ ds.wdCode }}</td>
+                  <td class="text-end fw-semibold">{{ ds.totalSales | number:'1.0-0' }}</td>
+                  <td class="text-end">
+                    <span class="rate-badge" [ngClass]="{'good': ds.qualificationRate >= 80, 'warn': ds.qualificationRate >= 50 && ds.qualificationRate < 80, 'bad': ds.qualificationRate < 50}">
+                      {{ ds.qualificationRate | number:'1.0-1' }}%
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <ng-container *ngIf="ds.rankChange !== null && ds.rankChange !== 0">
+                      <span *ngIf="ds.rankChange > 0" class="rank-up">▲ {{ ds.rankChange }}</span>
+                      <span *ngIf="ds.rankChange < 0" class="rank-down">▼ {{ Math.abs(ds.rankChange) }}</span>
+                    </ng-container>
+                    <span *ngIf="ds.rankChange === 0" class="rank-same">— Same</span>
+                    <span *ngIf="ds.rankChange === null" class="rank-new">NEW</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /DS Leaderboard -->
+
+    <!-- ══════════════════════════════════════════════════════════
+         Outlet Visit Frequency
+         ══════════════════════════════════════════════════════════ -->
+    <div *ngIf="showOutletVisitFrequency">
+
+      <!-- Summary cards -->
+      <div class="metrics-row">
+        <div class="metric-card accent-blue">
+          <div class="metric-label">Outlets Visited</div>
+          <div class="metric-value">{{ result.metrics?.totalOutlets | number }}</div>
+        </div>
+        <div class="metric-card accent-amber">
+          <div class="metric-label">Visited Only Once</div>
+          <div class="metric-value">{{ result.metrics?.lowVisited | number }}</div>
+        </div>
+        <div class="metric-card accent-green">
+          <div class="metric-label">Avg Visit Days</div>
+          <div class="metric-value">{{ result.metrics?.avgVisits | number:'1.0-1' }}</div>
+        </div>
+        <div class="metric-card accent-purple">
+          <div class="metric-label">Expected (Weekly)</div>
+          <div class="metric-value">{{ result.metrics?.expectedVisits }}×</div>
+        </div>
+      </div>
+
+      <!-- Charts + Map row -->
+      <div class="row mt-3 g-2">
+        <div class="col-md-5" *ngIf="outletVisitFrequencyChart?.length">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-chart-bar me-1"></i> Visit Frequency Distribution</div>
+            <div class="data-card-body p-2">
+              <div class="chart-box">
+                <ngx-charts-bar-vertical
+                  [results]="outletVisitFrequencyChart" [scheme]="causeColorScheme"
+                  [xAxis]="true" [yAxis]="true" [showDataLabel]="true"
+                  [gradient]="true" [roundEdges]="true" [animations]="true"
+                  xAxisLabel="Visit Count" yAxisLabel="Outlets">
+                </ngx-charts-bar-vertical>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-7">
+          <div class="data-card h-100">
+            <div class="data-card-header"><i class="fa fa-map-marked-alt me-1 text-danger"></i> Under-Visited Outlets Map</div>
+            <div class="data-card-body p-2">
+              <div id="outlet-visit-map" style="height:220px; width:100%; border-radius:6px;"></div>
+              <div class="map-legend mt-1 d-flex gap-3 flex-wrap">
+                <span><span class="legend-dot" style="background:#ef4444"></span> 1 day only</span>
+                <span><span class="legend-dot" style="background:#f59e0b"></span> 2-3 days</span>
+                <span><span class="legend-dot" style="background:#10b981"></span> 4+ days</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Table -->
+      <div class="data-card mt-3" *ngIf="result.underVisitedOutlets?.length">
+        <div class="data-card-header"><i class="fa fa-list me-1"></i> Under-Visited Outlets Detail</div>
+        <div class="data-card-body p-0">
+          <div class="table-responsive">
+            <table class="data-table mb-0">
+              <thead>
+                <tr>
+                  <th>Outlet Name</th>
+                  <th>Market</th>
+                  <th>DS Name</th>
+                  <th>Region</th>
+                  <th class="text-center">Visit Days</th>
+                  <th>Last Visited</th>
+                  <th class="text-end">Days Since Visit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let o of result.underVisitedOutlets">
+                  <td class="fw-semibold">{{ o.outletName }}</td>
+                  <td>{{ o.market }}</td>
+                  <td>{{ o.dsName }}</td>
+                  <td>{{ o.region }}</td>
+                  <td class="text-center">
+                    <span class="rate-badge" [ngClass]="{'bad': o.visitCount === 0, 'warn': o.visitCount > 0 && o.visitCount <= 2, 'good': o.visitCount > 2}">
+                      {{ o.visitCount }}
+                    </span>
+                  </td>
+                  <td>{{ o.lastVisitDate || '—' }}</td>
+                  <td class="text-end">
+                    <span *ngIf="o.daysSinceVisit !== null" [class]="o.daysSinceVisit > 14 ? 'text-danger fw-semibold' : ''">
+                      {{ o.daysSinceVisit }}d
+                    </span>
+                    <span *ngIf="o.daysSinceVisit === null">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <!-- /Outlet Visit Frequency -->
+
+    </div>
+    <!-- /#aiInsightsPdfContent -->
+
+  </ng-container>
+</div>
