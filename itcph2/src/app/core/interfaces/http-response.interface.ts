@@ -572,6 +572,7 @@ export interface teams {
 }
 
 export interface GetProductSelectorDataResponse {
+  skuDefaultAllocation: boolean;
   tableData: any[];
   isFocusList: [];
   isDspmList: [];
