@@ -148,7 +148,7 @@ class BranchSkuAllocation
         {
             $skuDefaultAllocation = true;
         }else{
-            $skuDefaultAllocation = false;
+            $skuDefaultAllocation = true;
         }
         $arrResult = array(
             "mainBranchList" => $this->getMainBranchList(),
