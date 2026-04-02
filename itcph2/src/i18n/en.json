@@ -341,7 +341,8 @@
       "products": "SKU",
       "downloadProductiveReport": "Productive Report",
       "downloadLeaderBoardReport": "Leaderboard Report",
-      "mdoPerformanceReport": "MDO Performance Report"
+      "mdoPerformanceReport": "MDO Performance Report",
+      "mdoTargetReport": "MDO Target Report"
     },
     "editProduct": {
       "productName": "Products Name",
