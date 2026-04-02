@@ -51,7 +51,7 @@ $font-display:          'Syne', sans-serif;
   margin-bottom: 0.35rem;
 }
 
-.prd-selector-page__filters[_ngcontent-ng-c3379978321] {
+.prd-selector-page__filters {
     position: relative;
     z-index: 1;
     max-width: 1200px;
@@ -75,14 +75,14 @@ $font-display:          'Syne', sans-serif;
 }
 
 // ── Filter form ────────────────────────────────────────────────────────────────
-.prd-selector-page__filters {
-  max-width: 1100px;
-  margin: 0 auto 1.75rem;
-  background: $color-surface;
-  border: 1.5px solid $color-border;
-  border-radius: $radius-lg;
-  padding: 1.25rem 1.5rem;
-}
+// .prd-selector-page__filters {
+//   max-width: 1100px;
+//   margin: 0 auto 1.75rem;
+//   background: $color-surface;
+//   border: 1.5px solid $color-border;
+//   border-radius: $radius-lg;
+//   padding: 1.25rem 1.5rem;
+// }
 
 .filter-row {
   display: flex;
