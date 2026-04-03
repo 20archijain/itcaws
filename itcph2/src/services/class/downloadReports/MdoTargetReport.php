@@ -606,7 +606,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.district FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.district";
+    $query = "SELECT DISTINCT s.district FROM mdo_dspm_summary AS s WHERE $where AND s.district != '' ORDER BY s.district";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
@@ -664,7 +664,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.circle FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.circle";
+    $query = "SELECT DISTINCT s.circle FROM mdo_dspm_summary AS s WHERE $where AND s.circle != '' ORDER BY s.circle";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
@@ -691,7 +691,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.section FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.section";
+    $query = "SELECT DISTINCT s.section FROM mdo_dspm_summary AS s WHERE $where AND s.section != '' ORDER BY s.section";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
@@ -718,7 +718,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.wd_code, s.wd_market FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.wd_code";
+    $query = "SELECT DISTINCT s.wd_code, s.wd_market FROM mdo_dspm_summary AS s WHERE $where AND s.wd_code != '' ORDER BY s.wd_code";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
@@ -748,7 +748,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.wd_market FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.wd_market";
+    $query = "SELECT DISTINCT s.wd_market FROM mdo_dspm_summary AS s WHERE $where AND s.wd_market != '' ORDER BY s.wd_market";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
@@ -775,7 +775,7 @@ class MdoTargetReport
 
     $rsAction    = null;
     $iActionRows = 0;
-    $query = "SELECT DISTINCT s.wd_pop_group FROM mdo_dspm_summary AS s WHERE $where ORDER BY s.wd_pop_group";
+    $query = "SELECT DISTINCT s.wd_pop_group FROM mdo_dspm_summary AS s WHERE $where AND s.wd_pop_group != '' ORDER BY s.wd_pop_group";
     $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
