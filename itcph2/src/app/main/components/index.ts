@@ -66,7 +66,7 @@ import { DistrictProductAllocationComponent } from './reporting/skuSetting/distr
 import { AllocationReportComponent } from './reporting/skuSetting/allocationReport.component';
 import { BreezeDashboardComponent } from './breeze-dashboard/breeze-dashboard.component';
 import { AiInsightsComponent } from './ai-insights/ai-insights.component';
-
+import { MDOReportComponent } from './reporting/mdo/mdo-report.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -135,6 +135,7 @@ export const MAIN_COMPONENTS = [
   AllocationReportComponent,
   BreezeDashboardComponent,
   AiInsightsComponent,
+  MDOReportComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -204,4 +205,5 @@ export const MAP_MAIN_COMPONENTS = {
   AllocationReportComponent,
   BreezeDashboardComponent,
   AiInsightsComponent,
+  MDOReportComponent,
 };
