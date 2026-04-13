@@ -7,7 +7,7 @@
     "start:proxyhost": "ng serve --configuration=proxy --host=0.0.0.0",
     "start:prodlocal": "ng serve --configuration=prodLocal",
     "build:local": "ng build --configuration=test",
-    "build": "ng build --configuration=production",
+    "build": "npm run copy_dist_services && ng build --configuration=production",
     "copy_dist_services": "rmdir /s /q \"src/services\" && xcopy \"dist/services\" \"src/services\\\" /s /e /y",
     "test": "ng test",
     "lint": "ng lint",

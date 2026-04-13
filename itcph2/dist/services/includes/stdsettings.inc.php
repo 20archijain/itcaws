@@ -29,7 +29,7 @@ define("SUCCESS", 200); //Success response code
 define("WARNING", 300); //Warning response code
 define("FAILED", 400); //Failed response code
 
-define('MAIL_FROM', "appilary@btlmonitor.com");
+define('MAIL_FROM', "help.appilary@gmail.com");
 define('MAIL_REGARDS', "Appilary Support Team");
 
 define("DEFAULT_TIMEZONE", "Asia/Calcutta");
@@ -110,7 +110,6 @@ $MOBILE_SERVICES_PATH = $UPROOTS_PATH . '/mobile_services';
 $WATERMARK_FONTS_PATH = $MOBILE_SERVICES_PATH . '/fonts';
 $CUST_FOLDER_PATH = $UPROOTS_PATH . constant("PRODS_ANY_FOLDER");
 $SAVE_SPREADSHEET_PATH = $UPROOTS_PATH . '/upload_xls';
-$SAVE_CUMMULATIVE_SPREADSHEET_PATH = $UPROOTS_PATH . '/email_xls';
 $SAVE_PDF_PATH = $UPROOTS_PATH . '/pdf';
 
 $CAPTCHA_IMG_URL = $SITE_URL . '/captcha';
@@ -149,7 +148,7 @@ $ARR_WATERMARK_POSITION = array(
 // Team Types
 $ARR_TEAM_TYPES = array(
     0 => "Van DS",
-    1 => "Niche",
+    1 => "CSR",
     2 => "Town SWD",
     3 => "Hybrid",
     4 => "SCP",

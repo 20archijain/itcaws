@@ -20,6 +20,11 @@ files:
     - "src/app/main/components/notification/app.notification.component.scss"
     - "src/app/main/components/download-db-table/download-db-table.component.scss"
     - "src/app/main/components/swd-retailer-target/swd-retailer-target.component.scss"
+    - "src/app/shared/components/breeze-accordion/breeze-accordion.component.scss"
+    - "src/app/main/components/breeze-dashboard/breeze-dashboard.component.scss"
+    - "src/app/main/components/ai-insights/ai-insights.component.scss"
+    - "src/app/main/components/npsr-dashboard/npsr-dashboard2.component.scss"
+    - "src/app/main/components/reporting/skuSetting/branchProductAllocation.component.scss"
 
 rules:
   # Extends

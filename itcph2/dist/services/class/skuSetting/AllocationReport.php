@@ -82,7 +82,7 @@ class AllocationReport
 
         $sQuery = "SELECT district, main_branch, branch_id from tblbranch" .
             " Where dstatus = 0 order by main_branch";
-            // echo $sQuery;die;
+        // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
@@ -98,11 +98,11 @@ class AllocationReport
 
                 if ($hoStatus == 1 && $districtStatus == 1 && $branchStatus == 1) {
                     $showStatus = "Allocation Completed";
-                } elseif($hoStatus == 0 && $districtStatus == 1 && $branchStatus == 1){
+                } elseif ($hoStatus == 0 && $districtStatus == 1 && $branchStatus == 1) {
                     $showStatus = "Pending at HO Level";
-                } elseif($hoStatus == 0 && $districtStatus == 0 && $branchStatus == 1){
+                } elseif ($hoStatus == 0 && $districtStatus == 0 && $branchStatus == 1) {
                     $showStatus = "Pending at District Level";
-                }else{
+                } else {
                     $showStatus = "Allocation not set yet by Branch";
                 }
 

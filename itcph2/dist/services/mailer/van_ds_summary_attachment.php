@@ -36,7 +36,7 @@ class VanDsMailer
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
-        $branchProductsTable = $this->_tables["BRANCH_PRODUCTS_TABLE"];
+        $branchProductsTable = "tblbranch_pickupstock_products";
         $stockSummaryTable = $this->_tables["STOCK_SUMMARY_TABLE"];
         $constantsTable = $this->_tables["CONSTANTS_TABLE"];
 
@@ -60,7 +60,7 @@ class VanDsMailer
 
                 if (isNonEmptyArray($arrTo) || isNonEmptyArray($arrCc)) {
                     // create header based on branch
-                    $arrHeader = array("WD Code", "Team Name", "Start Time", "End Time", "Total Time Spent", "ROC Deliveries", "Sell-in Shops", "Other Shops", "KM Travelled", "Total Shops (ROC + Other)", "Qualified Attendance");
+                    $arrHeader = array("WD Code", "Team Name", "Start Time", "End Time", "Total Time Spent", "Outlet Order", "Sell-in Shops", "Other Shops", "KM Travelled", "Total Shops", "Qualified Attendance");
 
                     // Get products
                     $arrProducts = array();
@@ -68,7 +68,7 @@ class VanDsMailer
                     $arrQueryProductsColumn = array();
                     $sProductAction = null;
                     $iProductRows = 0;
-                    $sProductQuery = "SELECT DISTINCT product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId AND product_type = 0 ORDER BY product_name";
+                    $sProductQuery = "SELECT DISTINCT product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId ORDER BY product_name";
                     $this->_dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
 
                     if ($iProductRows > 0) {
@@ -119,7 +119,7 @@ class VanDsMailer
                     $sProductColumns = implode(",", $arrQueryProductsColumn);
                     $sAction = null;
                     $iRows = 0;
-                    $sQuery = "SELECT a.start_datetime, a.end_datetime, SUM(a.total_roc_deliveries) AS total_roc_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, $sProductColumns" .
+                    $sQuery = "SELECT a.start_datetime, a.end_datetime, SUM(a.total_sales_deliveries) AS total_roc_deliveries, SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, $sProductColumns" .
                         ", b.team_id, b.team_name, b.wd_code FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND a.activity_date = '$currentDate' AND b.branch_id = $branchId GROUP BY a.team_id ORDER BY b.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -178,7 +178,8 @@ class VanDsMailer
                     }
 
                     $subject = "$branchName - Van DS Summary report for " . currentDate($currentDate, "d-m-Y");
-                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, $arrTo, $arrCc, true);
+                    // print_r($arrData);die;
+                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, array("kunalrajput8218@gmail.com"), array("hnys342@gmail.com"), true);
                 }
             }
         }

@@ -640,6 +640,26 @@ function getGridDataAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNo
     return $arrValues;
 }
 
+// Get Grid data as array
+function getGridDataForOrderAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNotSet = false)
+{
+    $arrValues = array();
+    if (isNonEmptyArray($arrData)) {
+        $arrFormattedData = array();
+        foreach ($arrData as $data) {
+            $arrFormattedData[$data["colNo"] . "-" . $data["rowNo"]] = $data["ans2"];
+        }
+        for ($column = 1; $column <= $noOfColumns; $column++) {
+            $arrValues[$column - 1] = array();
+            for ($row = 1; $row <= $noOfRows; $row++) {
+                $arrValues[$column - 1][] = isset($arrFormattedData[$column . "-" . $row]) && $arrFormattedData[$column . "-" . $row] ? $arrFormattedData[$column . "-" . $row] : ($zeroIfNotSet ? 0 : '');
+            }
+        }
+    }
+
+    return $arrValues;
+}
+
 function getBranchList($dbConn, $allBranch = false, $branchCond = "", $project = "", $all = 0, $returnOnlyIdsAsString = false, $groupBy = false, $groupByKey = "")
 {
     // get allowed projects and teams list

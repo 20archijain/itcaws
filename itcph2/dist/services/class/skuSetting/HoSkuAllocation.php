@@ -142,10 +142,9 @@ class HoSkuAllocation
     final public function getDefaultData()
     {
         $currentDate = currentDate("", "d");
-        if($currentDate > 21)
-        {
+        if ($currentDate > 21) {
             $skuDefaultAllocation = true;
-        }else{
+        } else {
             $skuDefaultAllocation = true;
         }
         $arrResult = array(
@@ -461,7 +460,7 @@ class HoSkuAllocation
             if ($rec_id > 0) {
                 updateRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", "dspm_focus = ?, is_focusbrand = ?, filled_by_ho = ?, user_id = ?", "rec_id = $rec_id", array($dspm_focus, $is_focusbrand, 1, $user));
 
-                 $arrStatus[] = 2;
+                $arrStatus[] = 2;
             } else {
                 $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_ho, rcd, rdt, user_id";
                 $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
@@ -471,8 +470,6 @@ class HoSkuAllocation
 
                 $arrStatus[] = $iStatus;
             }
-
-
         }
 
         if (in_array(0, $arrStatus)) {

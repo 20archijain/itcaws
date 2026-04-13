@@ -679,9 +679,9 @@ function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, 
 
         $email->Subject = $sSubject;
         $email->Body = $sSubject;
-        if($shareLink){
-         $email->Body.= "<a href='$fileLink' target='_blank'>$fileLink</a>";
-        }else{
+        if ($shareLink) {
+            $email->Body .= "<a href='$fileLink' target='_blank'>$fileLink</a>";
+        } else {
             $email->addAttachment($filename, $fileName);
         }
 

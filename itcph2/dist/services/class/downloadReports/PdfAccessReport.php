@@ -5,9 +5,6 @@ require $PHP_SPREADSHEET_PATH;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 
 // phpcs:ignore
 class PDFAccessReport
@@ -776,13 +773,21 @@ class PDFAccessReport
             $where .= " AND b.team_id IN $teamList";
         }
 
+        $where .= getFilterResult(
+            isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
+            array(
+                "dateFrom" => array("c.rcd", 2, "dateTo"),
+            ),
+            $this->_dbConn
+        );
+
         // Don't use a.dstatus = 0 AND c.dstatus = 0
         $arrBody = array();
         $sAction = null;
         $iRows = 0;
-        // $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD");
-        $sQuery = "SELECT c.rcd, c.team_id, c.access_datetime, a.is_type, a.team_name, a.circle, a.section, a.wd_code, b.district, b.branch_name,b.main_branch" .
-            " FROM $projectTeamTable AS a, $branchTable AS b,$tblpdf_access_log as c WHERE a.dstatus = 0 AND a.branch_id = b.branch_id AND a.team_id = c.team_id AND c.dstatus = 0 $where $dwnCond $sOrderCond";
+        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 5 => "NPSR");
+        $sQuery = "SELECT  c.team_id, c.rcd, c.access_datetime, a.is_type, a.team_name, a.circle, a.section, a.wd_code, b.district, b.branch_name,b.main_branch" .
+            " FROM $projectTeamTable AS a, $branchTable AS b,$tblpdf_access_log as c WHERE a.dstatus = 0 AND a.branch_id = b.branch_id AND a.team_id = c.team_id AND c.dstatus = 0 $where $dwnCond  GROUP BY c.team_id, c.rcd $sOrderCond";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -791,12 +796,14 @@ class PDFAccessReport
                     "Date",
                     "District",
                     "Branch",
+                    "Region",
                     "Circle",
                     "Section",
                     "WD Code",
+                    "DS Type",
                     "DS ID",
                     "DS Name",
-                    "PDF Accessed",
+                    // "PDF Accessed",
                     "PDF Access DateTime",
 
                 ),
@@ -804,7 +811,7 @@ class PDFAccessReport
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $teamId = $row['team_id'];
                 $captureDate = $row['rcd'];
-                $is_type = $row['is_type'];
+                $is_type = $types[$row['is_type']];
                 $access_datetime = $row['access_datetime'];
                 if ($access_datetime == null) {
                     $pdfAccessed = "No";
@@ -822,13 +829,15 @@ class PDFAccessReport
                 $arrData[] = array(
                     $captureDate,
                     $district,
+                    $main_branch,
                     $branch_name,
                     $circle,
                     $section,
                     $wd_code,
+                    $is_type,
                     $teamId,
                     $team_name,
-                    $pdfAccessed,
+                    // $pdfAccessed,
                     $access_datetime,
                 );
             }

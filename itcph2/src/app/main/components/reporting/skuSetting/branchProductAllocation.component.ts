@@ -266,6 +266,7 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
 
     if (current) {
       // ✅ REMOVE key completely when unchecking
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [productId]: _, ...rest } = this.dspmBrandMap;
       this.dspmBrandMap = rest;
     } else {
@@ -283,6 +284,7 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
     const current = !!this.isFocusBrandMap[productId];
 
     if (current) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [productId]: _, ...rest } = this.isFocusBrandMap;
       this.isFocusBrandMap = rest;
     } else {
@@ -291,7 +293,9 @@ export class BranchProductAllocationComponent implements AfterViewInit, OnInit, 
   }
 
   private clearFlagState(productId: number): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [productId]: _f, ...restFirst } = this.dspmBrandMap;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [productId]: _s, ...restSecond } = this.isFocusBrandMap;
     this.dspmBrandMap = restFirst;
     this.isFocusBrandMap = restSecond;

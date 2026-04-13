@@ -31,7 +31,7 @@ class UpdateFCMToken extends Utilities
         $versionCode = isset($postData['versionCode']) ? trim($postData['versionCode']) : '';
         $appType = isset($postData['appType']) ? trim($postData['appType']) : '';
         $deviceInfo = isset($postData['deviceInfo']) ? trim($postData['deviceInfo']) : '';
-        $lastLogout = isset($postData['lastLogout']) ? trim($postData['lastLogout']) : '';
+        $lastLogout = isset($postData['lastLogout']) && trim($postData['lastLogout']) !== '' ? trim($postData['lastLogout']) : null;
         $suspesiousScore = isset($postData['suspesiousScore']) ? trim($postData['suspesiousScore']) : '';
 
         $dbName = $this->arrUserDetails["db_name"];

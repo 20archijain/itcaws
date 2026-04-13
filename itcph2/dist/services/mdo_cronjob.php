@@ -40,16 +40,17 @@ class AddMdoParameter
             false,
             2
         );
-        // print_r($teamIds);die;
 
-
-        if (empty($teamIds)) return;
+        if (empty($teamIds)) {
+            return;
+        }
 
         foreach ($teamIds as $team) {
-
             $teamId = $team['team_id'];
             $isType = $team['is_type'] ?? '';
-            if (!$teamId) continue;
+            if (!$teamId) {
+                continue;
+            }
             $teamDetails = getRowColumns(
                 $this->_dbConn,
                 "tblmdo_summary",
@@ -60,16 +61,22 @@ class AddMdoParameter
                 [],
                 2
             );
-            $teamName   = $teamDetails['0'] ?? '';
+            $teamName = getRowColumn(
+                $this->_dbConn,
+                "tblproject_team",
+                "team_name",
+                "dstatus = 0 AND team_id = $teamId"
+            );
+            // $teamName   = $teamDetails['0'] ?? '';
             // $isType     = $teamDetails['1'] ?? '';
-            $circle     = $teamDetails['2'] ?? '';
-            $section    = $teamDetails['3'] ?? '';
-            $wdCode     = $teamDetails['4'] ?? '';
-            $wdMarket   = $teamDetails['5'] ?? '';
-            $wdPop      = $teamDetails['6'] ?? '';
-            $district   = $teamDetails['7'] ?? '';
-            $mainBranch = $teamDetails['8'] ?? '';
-            $branchName = $teamDetails['9'] ?? '';
+            $circle     = $teamDetails[2] ?? '';
+            $section    = $teamDetails[3] ?? '';
+            $wdCode     = $teamDetails[4] ?? '';
+            $wdMarket   = $teamDetails[5] ?? '';
+            $wdPop      = $teamDetails[6] ?? '';
+            $district   = $teamDetails[7] ?? '';
+            $mainBranch = $teamDetails[8] ?? '';
+            $branchName = $teamDetails[9] ?? '';
             $months = [
                 date('Y-m', strtotime('-2 month')),
                 date('Y-m', strtotime('-1 month')),
@@ -77,7 +84,6 @@ class AddMdoParameter
             ];
 
             foreach ($months as $month) {
-
                 list($year, $monthNum) = explode('-', $month);
 
                 // ---------------- DS COUNT ----------------
@@ -148,7 +154,6 @@ class AddMdoParameter
 
                 if ($sRows > 0) {
                     while ($row = $this->_dbConn->GetData($sAction)) {
-
                         $startTime = $row['startTime'];
                         $date      = $row['capture_date'];
 
@@ -170,7 +175,9 @@ class AddMdoParameter
 
                         if ($startTime && $endTime) {
                             $minutes = abs(strtotime($endTime) - strtotime($startTime)) / 60;
-                            if ($minutes >= 360) $daysCount++;
+                            if ($minutes >= 360) {
+                                $daysCount++;
+                            }
                         }
                     }
                 }
@@ -197,9 +204,13 @@ class AddMdoParameter
                         $alc  = round($row['alc']);
 
                         $dayIncentive = 0;
-                        if ($sale >= 4 && $alc >= 6) $dayIncentive = 120;
-                        elseif ($sale >= 3 && $alc >= 5) $dayIncentive = 100;
-                        elseif ($sale >= 2 && $alc >= 4) $dayIncentive =  75;
+                        if ($sale >= 4 && $alc >= 6) {
+                            $dayIncentive = 120;
+                        } elseif ($sale >= 3 && $alc >= 5) {
+                            $dayIncentive = 100;
+                        } elseif ($sale >= 2 && $alc >= 4) {
+                            $dayIncentive =  75;
+                        }
 
                         $totalIncentive += $dayIncentive;
                         $totalIncentive  = min($totalIncentive, 1200);
@@ -223,9 +234,13 @@ class AddMdoParameter
                         $alc = round((float)$row['alc']);
 
                         $dayIncentive2 = 0;
-                        if ($uob >= 18 && $alc >= 6) $dayIncentive2 = 120;
-                        elseif ($uob >= 16 && $alc >= 5) $dayIncentive2 = 100;
-                        elseif ($uob >= 14 && $alc >= 4) $dayIncentive2 =  75;
+                        if ($uob >= 18 && $alc >= 6) {
+                            $dayIncentive2 = 120;
+                        } elseif ($uob >= 16 && $alc >= 5) {
+                            $dayIncentive2 = 100;
+                        } elseif ($uob >= 14 && $alc >= 4) {
+                            $dayIncentive2 =  75;
+                        }
 
                         $totalIncentive2 += $dayIncentive2;
                         $totalIncentive2  = min($totalIncentive2, 1200);
@@ -233,7 +248,7 @@ class AddMdoParameter
                 }
 
                 // ---------------- INCENTIVE 3 & 4 - Criteria (Query4) ----------------
-                $acessTeams = getRowsColumns(
+                $acessTeams = getRowsColumn(
                     $this->_dbConn,
                     "tblmdo_access",
                     "teams",
@@ -244,11 +259,8 @@ class AddMdoParameter
                 $incentiveCriteria2 = 0;
 
                 if (!empty($acessTeams)) {
-                    // $teams = "'" . implode("','", $acessTeams) . "'";
-                    $teamValues = array_column($acessTeams, 'teams');
-                    if (!empty($teamValues)) {
-                        $teams = "'" . implode("','", $teamValues) . "'";
-
+                    $teams = "'" . implode("','", $acessTeams) . "'";
+                    if (!empty($teams)) {
                         $Query4 = "SELECT capture_date, value_m, outlet_re_visit, total_sale
                         FROM tblbreeze_response_data
                         WHERE dstatus=0 AND ds_id IN ($teams)
@@ -267,13 +279,17 @@ class AddMdoParameter
 
                                 $sale = $valueM > 0 ? ($totalSale / $valueM) : 0;
 
-                                if ($outletReVisit >= 14 && $sale >= 2) $daysCriteria1++;
-                                if ($outletReVisit >= 18 && $sale >= 4) $daysCriteria2++;
+                                if ($outletReVisit >= 14 && $sale >= 2) {
+                                    $daysCriteria1++;
+                                }
+                                if ($outletReVisit >= 18 && $sale >= 4) {
+                                    $daysCriteria2++;
+                                }
                             }
 
                             $targetDays         = 18;
-                            $incentiveCriteria1 = ($daysCriteria1 / $targetDays) * 1500;
-                            $incentiveCriteria2 = ($daysCriteria2 / $targetDays) * 4000;
+                            $incentiveCriteria1 = min(($daysCriteria1 / $targetDays) * 1500, 1500);
+                            $incentiveCriteria2 = min(($daysCriteria2 / $targetDays) * 4000, 4000);
                         }
                     }
                 }
@@ -394,7 +410,7 @@ class AddMdoParameter
                         van_ds_days=?, rmd_scp_days=?, gt_tl_days=?, ae_days=?, working_days=?,
                         incentive_rmd_scp=?, incentive_van_ds=?, incentive_criteria_1=?, incentive_criteria_2=?,
                         is_locked=?",
-                        "summary_id=$recId",
+                        "team_id=$teamId AND month='$month' AND year='$year'",
                         [
                             $teamName,
                             $isType,

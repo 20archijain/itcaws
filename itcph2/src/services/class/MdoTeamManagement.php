@@ -815,7 +815,6 @@ class MdoTeamManagement
                 // Delete old records
                 deleteRecord($this->_dbConn, "tblmdo_access", "mdo_id", $this->_iUserId, "", array($teamId));
                 deleteRecord($this->_dbConn, "tblmdo_wd_mapping", "mdo_id", $this->_iUserId, "", array($teamId));
-
                 foreach ($arrTeams as $accesteam) {
                     $accessCol = "mdo_id, teams, is_type, rcd, rdt";
                     $accessVal = "?, ?, ?, ?, ?";

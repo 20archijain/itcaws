@@ -1,13 +1,10 @@
 <?php
+
 /**
- * ============================================================================
- * SCALABLE AI INSIGHTS FRAMEWORK - Service Entry Point
- * ============================================================================
+ * ARIA AI Insights - Service Layer
  *
- * Thin service layer between AiInsights (controller stub) and InsightsExecutor.
- * Handles ACL injection and delegates query execution to InsightsExecutor.
- *
- * ============================================================================
+ * Sits between the controller (AiInsights) and the executor (InsightsExecutor).
+ * Injects ACL filters based on the user's access info before running queries.
  */
 
 namespace Services\AiInsights;

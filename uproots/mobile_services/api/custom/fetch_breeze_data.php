@@ -13,7 +13,7 @@
 $I_am_req_always = "I @m req @lway$ tokeniZer";
 date_default_timezone_set("Asia/Calcutta");
 
-$includesDir = '../../includes';
+$includesDir ='../../includes';
 require_once $includesDir . '/index.php';
 require_once $CLASSES_PATH . "/AppLogin.php";
 
@@ -183,7 +183,7 @@ class FetchBreezeData extends Utilities
         }
         $cost = max(1, $cost);
         global $LOG_PATH;
-        $dir = $LOG_PATH . "/" . $this->currentDate . '/rate_limit';
+        $dir = $LOG_PATH . '/rate_limit';
         if (!is_dir($dir)) {
             @mkdir($dir, 0755, true);
         }
@@ -302,15 +302,8 @@ class FetchBreezeData extends Utilities
 
         // Numeric fields: if present and non-empty, must be numeric
         $numericFields = [
-            'branch_id',
-            'qualified',
-            'present',
-            'type',
-            'total_km_travelled',
-            'planned_outlets',
-            'outlet_re_visit',
-            'new_outlet_visited',
-            'total_sale'
+            'branch_id', 'qualified', 'present', 'type',
+            'total_km_travelled', 'planned_outlets', 'outlet_re_visit', 'new_outlet_visited', 'total_sale'
         ];
         foreach ($numericFields as $field) {
             if (!array_key_exists($field, $row)) {
