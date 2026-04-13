@@ -98,10 +98,10 @@ class getMdoDSPM extends Utilities
                     }
                 }
             }
-            
+
             $isLocked = 1;
             if ($vanDsMtdCount >= 6 && $rmdScpMtdCount >= 10 && $gtTlCount >= 2 && $aeCount >= 2 && $daysCount >= 18) {
-               $isLocked = 0; 
+                $isLocked = 0;
             }
 
             $Query2 = "SELECT team_id, capture_date, SUM(ques_5) AS sale, AVG(ques_7) AS alc FROM $dbName.tblsurvey_response_details_mdo WHERE dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(capture_date, '%Y-%m') = '$month' AND type IN (6, 8) GROUP BY capture_date";

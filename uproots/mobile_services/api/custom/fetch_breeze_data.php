@@ -13,7 +13,7 @@
 $I_am_req_always = "I @m req @lway$ tokeniZer";
 date_default_timezone_set("Asia/Calcutta");
 
-$includesDir ='../../includes';
+$includesDir = '../../includes';
 require_once $includesDir . '/index.php';
 require_once $CLASSES_PATH . "/AppLogin.php";
 
