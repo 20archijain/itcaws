@@ -40,9 +40,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($district)) {
                     $districts = "'" . implode("','", $district) . "'";
-                    $condition .= " AND b.district IN ($districts)";
+                    $condition .= " AND a.district IN ($districts)";
                 } else {
-                    $condition .= " AND b.district = $district";
+                    $condition .= " AND a.district = $district";
                 }
             }
         }
@@ -64,9 +64,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($circle)) {
                     $circleIds = "'" . implode("','", $circle) . "'";
-                    $condition .= " AND b.circle IN ($circleIds)";
+                    $condition .= " AND a.circle IN ($circleIds)";
                 } else {
-                    $condition .= " AND b.circle = '$circle'";
+                    $condition .= " AND a.circle = '$circle'";
                 }
             }
         }
@@ -76,9 +76,9 @@ class MdoRouteDownload
             if (!$matchAll) {
                 if (isNonEmptyArray($section)) {
                     $sectionIds = "'" . implode("','", $section) . "'";
-                    $condition .= " AND b.section IN ($sectionIds)";
+                    $condition .= " AND a.section IN ($sectionIds)";
                 } else {
-                    $condition .= " AND b.section = '$section'";
+                    $condition .= " AND a.section = '$section'";
                 }
             }
         }
