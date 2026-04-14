@@ -1,19 +1,10 @@
 <?php
 /**
- * ============================================================================
- * SCALABLE AI INSIGHTS FRAMEWORK - Query Builder Engine
- * ============================================================================
+ * ARIA AI Insights - Query Builder
  *
- * Senior Developer Pattern:
- * - Configuration-driven (no manual SQL per new query type)
- * - Type-safe with proper error handling
- * - Reusable components for aggregations, filters, sorting
- * - Extensible metric system
- *
- * Usage: $builder = new QueryBuilder($config, $dbConnection);
- *        $query = $builder->buildQuery('product_sales', $filters);
- *
- * ============================================================================
+ * Builds SQL from the JSON query config (ai-insights-queries.json).
+ * Supports aggregation and time series query types, parameterized filters,
+ * keyword-based query routing, and ambiguity detection.
  */
 
 namespace AiInsights;

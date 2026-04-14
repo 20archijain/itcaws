@@ -1,13 +1,9 @@
 <?php
 /**
- * ============================================================================
- * SCALABLE AI INSIGHTS FRAMEWORK - Query Executor & Response Formatter
- * ============================================================================
+ * ARIA AI Insights - Executor
  *
- * Executes configuration-based queries and formats responses for frontend
- * Integrates with OpenAI for intelligent insights and recommendations
- *
- * ============================================================================
+ * Handles query routing, SQL execution via QueryBuilder, and OpenAI response
+ * generation. Also formats chart and map data returned to the frontend.
  */
 
 namespace AiInsights;
