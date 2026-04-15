@@ -17,6 +17,7 @@ require_once "common_functions.php";
 require_once "stdsettings.php";
 require_once "messages.php";
 require_once "labels.php";
+require_once "aws_config.php";
 
 $CLASSES_PATH = "$SITE_PATH/uproots/classes";
 require_once $CLASSES_PATH . "/CommonFunctions.php";

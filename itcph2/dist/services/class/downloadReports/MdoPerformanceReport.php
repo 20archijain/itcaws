@@ -3,12 +3,6 @@
 require_once $include_path . "defined_index.php";
 require $PHP_SPREADSHEET_PATH;
 
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
-
 // phpcs:ignore
 class MdoPerformanceReport
 {
@@ -901,7 +895,7 @@ class MdoPerformanceReport
                     // 3️⃣ Get unaccompanied sale from response table
                     $unacompaniedSale = 0;
                     if (!empty($arrUnaccompaniedDates)) {
-                       if ($dsType == 6 && $dsType == 8 && $dsType == 9) {
+                        if ($dsType == 6 && $dsType == 8 && $dsType == 9) {
                             // Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
                             $sQueryUnacc = "SELECT total_sale FROM tblbreeze_response_data WHERE dstatus = 0 AND team_id = '$dsId' AND capture_date IN($unaccompaniedDatesStr)";
                             $rsUnacc = null;

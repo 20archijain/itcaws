@@ -323,6 +323,10 @@ class ProcessResponse
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
 
+                        $orderCols = "resp_id, uni_id, client_id, project_id, team_id, s_id, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt";
+                        $orderVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
+                        $arrOrderParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
+
                         // Find page Ids to process based on skip logic if any
                         $arrPageIds = array();
                         if (isNonEmptyArray($processBasedOnSkipLogic)) {
@@ -360,6 +364,9 @@ class ProcessResponse
                                             $cols .= ", ques_$i";
                                             $vals .= ", ?";
                                             $arrParams[] = is_array($ans) ? json_encode($ans) : $ans;
+                                            $orderCols .= ", ques_$i";
+                                            $orderVals .= ", ?";
+                                            $arrOrderParams[] = is_array($ans) ? json_encode($ans) : $ans;
                                             $i++;
                                         }
                                     } else {
@@ -370,6 +377,9 @@ class ProcessResponse
                                             $cols .= ", ques_$i";
                                             $vals .= ", ?";
                                             $arrParams[] = is_array($answer) ? json_encode($answer) : (isset($answer) ? $answer : "");
+                                            $orderCols .= ", ques_$i";
+                                            $orderVals .= ", ?";
+                                            $arrOrderParams[] = is_array($answer) ? json_encode($answer) : (isset($answer) ? $answer : "");
                                             $i++;
                                         }
                                     }
@@ -383,6 +393,9 @@ class ProcessResponse
                                 $cols .= ", ques_$i";
                                 $vals .= ", ?";
                                 $arrParams[] = is_array($answer) ? json_encode($answer) : (isset($answer) ? $answer : "");
+                                $orderCols .= ", ques_$i";
+                                $orderVals .= ", ?";
+                                $arrOrderParams[] = is_array($answer) ? json_encode($answer) : (isset($answer) ? $answer : "");
                                 $i++;
                             }
                         }
@@ -548,18 +561,26 @@ class ProcessResponse
                                     $arrProductSummaryColumns = $this->getBranchWiseProducts($branchId, $jsonId, $userType);
                                     // Get sales
                                     $arrSales = getGridDataAsArray($arrProductsBought["ansGrid"], 2, count($arrProductSummaryColumns));
+                                    $arrOrders = getGridDataForOrderAsArray($arrProductsBought["ansGrid"], 2, count($arrProductSummaryColumns));
 
                                     $cols .= ", update_sale";
                                     $vals .= ", 1";
+                                    $orderCols .= ", update_order";
+                                    $orderVals .= ", 1";
 
                                     // Add sale for each product if sale > 0
                                     if (isNonEmptyArray($arrProductSummaryColumns)) {
                                         foreach ($arrProductSummaryColumns as $productIndex => $productSummaryColumn) {
                                             $iSale = isset($arrSales[1][$productIndex]) && floatval($arrSales[1][$productIndex]) ? floatval($arrSales[1][$productIndex]) : 0;
+                                            $iOrder = isset($arrOrders[1][$productIndex]) && floatval($arrOrders[1][$productIndex]) ? floatval($arrOrders[1][$productIndex]) : 0;
 
                                             if ($iSale > 0) {
                                                 $cols .= ", $productSummaryColumn";
                                                 $vals .= ", $iSale";
+                                            }
+                                            if ($iOrder > 0) {
+                                                $orderCols .= ", $productSummaryColumn";
+                                                $orderVals .= ", $iOrder";
                                             }
                                         }
                                     }
@@ -642,7 +663,19 @@ class ProcessResponse
                         }
 
                         if ($jsonId != 100) {
-                            $iStatus = addRecord($this->_dbConn, $responseTable, $cols, $vals, $arrParams);
+                            if ($arrParams[13] == "Outlet Delivery") {
+                                $iStatus = addRecord($this->_dbConn, "tblsurvey_response_details_delivery", $cols, $vals, $arrParams);
+                            } else {
+                                $iStatus = addRecord($this->_dbConn, $responseTable, $cols, $vals, $arrParams);
+                            }
+
+                            if ($jsonId == 15) {
+                                $iOrderStatus = addRecord($this->_dbConn, "tblsurvey_response_details_orders", $orderCols, $orderVals, $arrOrderParams);
+                                if ($iOrderStatus == 2) {
+                                    $this->_dbConn->GetLastInsertId($lastRecId);
+                                    updateRecord($this->_dbConn, "tblsurvey_response_details_orders", "ques_0 = 'Outlet Order'", "pro_id = $lastRecId");
+                                }
+                            }
 
                             // Update process status
                             if ($iStatus === 2) {

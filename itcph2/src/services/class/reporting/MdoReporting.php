@@ -990,18 +990,19 @@ class MdoReporting
                         $implementVisibility = "0";
                         $outletPic = "";
                     }
-                    $arrImg1 = $visibilityPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId' AND mob_img_id = '$visibilityPic'") : null;
+                    $arrImg1 = $visibilityPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name, file_domain", "uni_id = '$uniId'") : null;
 
                     $filepath1 = isset($arrImg1, $arrImg1[0]) ? $arrImg1[0] : "";
                     $filename1 = isset($arrImg1, $arrImg1[1]) ? $arrImg1[1] : "";
+                    $fileDomain = isset($arrImg1, $arrImg1[2]) ? $arrImg1[2] : "";
 
-                    $arrImg2 = $outletPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId' AND mob_img_id = '{$outletPic}'") : null;
+                    $arrImg2 = $outletPic ? getRowColumns($this->_dbConn, "tblsurvey_response_file_new", "file_path, file_name", "uni_id = '$uniId'") : null;
 
                     $filepath2 = isset($arrImg2, $arrImg2[0]) ? $arrImg2[0] : "";
                     $filename2 = isset($arrImg2, $arrImg2[1]) ? $arrImg2[1] : "";
 
-                    $link1 = $filepath1 ? $UPLOAD_URL . $filepath1 . $filename1 : "";
-                    $link2 = $filepath2 ? $UPLOAD_URL . $filepath2 . $filename2 : "";
+                    $link1 = $filepath1 ? $fileDomain . constant("PRODS_ANY_FOLDER") . $filepath1 . $filename1 : "";
+                    $link2 = $filepath2 ? $fileDomain . constant("PRODS_ANY_FOLDER") . $filepath2 . $filename2 : "";
 
                     $arrExcelData[] = [
                         $proId,
@@ -1061,6 +1062,11 @@ class MdoReporting
         $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
 
         echo json_encode($arrMessage);
+    }
+
+    private function getBranches()
+    {
+        return getBranchList($this->_dbConn, false, "", "", 0, true);
     }
 
     final public function getDownloadSummary()
@@ -1167,7 +1173,8 @@ class MdoReporting
             $sQuery = "SELECT a.pro_id, a.uni_id, a.call_time, a.capture_date, MIN(a.capture_datetime) AS startMarket, MAX(a.capture_datetime) AS lastMarket, a.capture_datetime, a.lt, a.lg, a.wd_code, a.ds_name, a.type" .
                 ", a.route_name, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, SUM(a.ques_5) AS surveyVol, SUM(a.ques_6) AS surveyVal, SUM(a.ques_7) AS lineCut, a.ques_8, a.ques_9, a.ques_10, a.ques_11" .
                 ", a.distance_in_meter, b.team_id, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name, c.main_branch, a.lt,a.lg FROM tblsurvey_response_details_mdo AS a" .
-                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 NOT IN ('Infra Details','InfraDetails') AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
+                ", $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.ques_0 NOT IN ('Infra Details','InfraDetails') AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10 AND a.pro_id > 0 $where $branchCond" .
+                " GROUP BY capture_date, team_id ORDER BY capture_datetime DESC";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
             // echo "$sQuery";die;
 
@@ -1216,7 +1223,6 @@ class MdoReporting
 
                     if ($iRowsUnaccDates > 0) {
                         while ($rowUnaccDate = $this->_dbConn->GetData($rsUnaccDates)) {
-
                             $unaccDate = $rowUnaccDate['capture_date'];
 
                             // skip if accompanied
@@ -1521,7 +1527,8 @@ class MdoReporting
                     $rsTeamAction = 0;
                     $sTeamQuery = "SELECT a.team_id, a.capture_date, a.capture_datetime, a.lt, a.work_with, a.other_details, a.lg, b.team_name, b.branch_id, b.is_type,b.circle,b.section, b.branch_id, b.ceil_id, c.district, c.branch_name" .
                         ", c.main_branch FROM tblattendance AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = 10" .
-                        " AND a.capture_date = '$date' AND a.team_id NOT IN (SELECT team_id FROM tblsurvey_response_details_mdo WHERE dstatus = 0 AND capture_date = '$date' AND ques_0 NOT IN ('Infra Details','InfraDetails')) AND a.call_type = '0' $where $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
+                        " AND a.capture_date = '$date' AND a.team_id NOT IN (SELECT team_id FROM tblsurvey_response_details_mdo WHERE dstatus = 0 AND capture_date = '$date' AND ques_0 NOT IN ('Infra Details','InfraDetails'))" .
+                        " AND a.call_type = '0' $where $branchCond GROUP BY a.team_id ORDER BY a.capture_datetime DESC";
                     $this->_dbConn->ExecuteSelectQuery($sTeamQuery, $rsTeamAction, $iTeamRows);
 
                     if ($iTeamRows) {
@@ -1545,8 +1552,15 @@ class MdoReporting
                             $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
                             if ($workWith == 0) {
                                 $typeOfWork = "Market work with DS";
-                                $wdCode = isset($dsDetails[0]) ? $dsDetails[0] : "";
-                                $attDsName = isset($dsDetails[1]) ? $dsDetails[1] : "";
+                                if ($dsDetails[0] == 'Market work with DS') {
+                                    $wdCode = isset($dsDetails[1]) ? $dsDetails[1] : "";
+                                    $attDsName = isset($dsDetails[2]) ? $dsDetails[2] : "";
+                                    $routeName = "";
+                                } else {
+                                    $wdCode = isset($dsDetails[0]) ? $dsDetails[0] : "";
+                                    $attDsName = isset($dsDetails[1]) ? $dsDetails[1] : "";
+                                    $routeName = isset($dsDetails[2]) ? $dsDetails[2] : "";
+                                }
                                 // $attDsName = $dsDetails[1];
                                 // $parts = explode(" - ", $attDsName, 2);
                                 $attDsNameOnly = isset($parts[0]) ? $parts[0] : "";
@@ -1562,7 +1576,6 @@ class MdoReporting
                                     $attDsType = '';
                                 }
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
-                                $routeName = isset($dsDetails[2]) ? $dsDetails[2] : "";
                             } elseif ($workWith == 1) {
                                 $typeOfWork = "Market work with AE";
                                 $wdCode = isset($dsDetails[1]) ? $dsDetails[1] : "";
@@ -2092,7 +2105,7 @@ class MdoReporting
 
                 $rsAllImages = null;
                 $iAllRows = 0;
-                $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id IN ($mobImgIdStr) ORDER BY b.mob_img_id";
+                $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath, b.file_domain AS domain FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' ORDER BY b.mob_img_id";
                 $this->_dbConn->ExecuteSelectQuery($sImageQuery, $rsAllImages, $iAllRows);
 
                 if ($iAllRows > 0) {
@@ -2170,7 +2183,7 @@ class MdoReporting
             if (isset($visibilityPic) && $visibilityPic) {
                 $storePhoto = $getCorrectImage($arrImages2, $visibilityPic);
                 if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
-                    $destImage = $CUST_FOLDER_PATH . $storePhoto['filepath'] . $storePhoto['name'];
+                    $destImage = $storePhoto['domain'] . constant("PRODS_ANY_FOLDER") . $storePhoto['filepath'] . $storePhoto['name'];
                     if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
                         $images[] = array(
                             'path' => $destImage,
@@ -2183,7 +2196,7 @@ class MdoReporting
             if (isset($outletPic) && $outletPic) {
                 $brandingPhoto = $getCorrectImage($arrImages2, $outletPic);
                 if ($brandingPhoto && !empty($brandingPhoto['filepath']) && !empty($brandingPhoto['name'])) {
-                    $destImage = $CUST_FOLDER_PATH . $brandingPhoto['filepath'] . $brandingPhoto['name'];
+                    $destImage = $brandingPhoto['domain'] . constant("PRODS_ANY_FOLDER") . $brandingPhoto['filepath'] . $brandingPhoto['name'];
                     if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
                         $images[] = array(
                             'path' => $destImage,
@@ -2257,189 +2270,6 @@ class MdoReporting
         $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
         echo json_encode($arrMessage);
     }
-
-    private function getBranches()
-    {
-        return getBranchList($this->_dbConn, false, "", "", 0, true);
-    }
-
-    // final public function getDownloadCSV()
-    // {
-    //     global $UPLOAD_URL;
-    //     $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 2 => "SWD", 7 => "MDO", 10 => "FSO", 6 => "RMD", 8 => "SCP DS", 9 => "Common FMCG Lite DS");
-    //     $currentDateTime = currentDateTime();
-    //     $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-
-    //     $where = $this->getCondition();
-    //     $where .= getFilterResult(
-    //         isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-    //         array("dateFrom" => array("a.capture_date", 2, "dateTo")),
-    //         $this->_dbConn
-    //     );
-
-    //     $branch = getFormData($this->_data['searchbar'], "branch");
-    //     if (checkIfAllSelected($branch)) {
-    //         $branch = $this->getBranches();
-    //     }
-
-    //     $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
-    //     $branchTable      = $this->_tables["BRANCH_TABLE"];
-
-    //     // --- FIX 1: Collect all branch IDs and query ONCE instead of looping ---
-    //     $allBranchIds = [];
-    //     foreach ($branch as $branchId) {
-    //         if ($branchId && !checkIfAllSelected($branchId)) {
-    //             if (isNonEmptyArray($branchId)) {
-    //                 foreach ($branchId as $id) $allBranchIds[] = (int)$id;
-    //             } else {
-    //                 $allBranchIds[] = (int)$branchId;
-    //             }
-    //         }
-    //     }
-
-    //     $branchCond = "";
-    //     if (!empty($allBranchIds)) {
-    //         $branchIds  = implode(",", $allBranchIds);
-    //         $branchCond = " AND b.branch_id IN ($branchIds)";
-    //     }
-
-    //     // --- FIX 2: Single main query instead of per-branch queries ---
-    //     $sQuery = "SELECT a.uni_id, a.team_id, a.capture_datetime, a.ques_2, a.ques_4, a.ques_5, a.ques_6, b.team_name, b.is_type, b.branch_id, c.branch_name, c.main_branch FROM tblsurvey_response_details_mdo AS a
-    //     JOIN $projectTeamTable AS b ON a.team_id = b.team_id JOIN $branchTable AS c ON b.branch_id = c.branch_id WHERE a.dstatus = 0 AND a.ques_0 = 'InfraDetails' $where $branchCond ORDER BY a.capture_datetime DESC";
-
-    //     $rsAction = null;
-    //     $iRows    = 0;
-    //     $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-
-    //     // --- FIX 3: Pre-fetch all DS IDs in one query using a JOIN ---
-    //     // Collect all rows first to extract ds_name/wd_code/team_id combos
-    //     $rawRows = [];
-    //     if ($iRows) {
-    //         while ($row = $this->_dbConn->GetData($rsAction)) {
-    //             $rawRows[] = $row;
-    //         }
-    //     }
-
-    //     // Build lookup keys for batch DS ID fetch
-    //     $dsLookupKeys = [];
-    //     foreach ($rawRows as $row) {
-    //         $mainDetails = json_decode($row['ques_2'], true);
-    //         $wdCode      = isset($mainDetails[0]) ? $mainDetails[0] : '';
-    //         $dsNameFull  = isset($mainDetails[1]) ? $mainDetails[1] : '';
-    //         $parts       = explode(" - ", $dsNameFull, 2);
-    //         $dsName      = isset($parts[0]) ? trim($parts[0]) : '';
-    //         $teamId      = (int)$row["team_id"];
-
-    //         $key = md5($dsName . '|' . $wdCode . '|' . $teamId);
-    //         $dsLookupKeys[$key] = ['ds_name' => $dsName, 'wd_code' => $wdCode, 'team_id' => $teamId];
-    //     }
-
-    //     // --- FIX 4: Batch fetch all DS IDs in ONE query using UNION or temp approach ---
-    //     $dsIdMap = [];
-    //     if (!empty($dsLookupKeys)) {
-    //         $unionParts = [];
-    //         foreach ($dsLookupKeys as $key => $params) {
-    //             $safeDs  = addslashes($params['ds_name']);
-    //             $safeWd  = addslashes($params['wd_code']);
-    //             $teamId  = (int)$params['team_id'];
-    //             $safeKey = addslashes($key);
-
-    //             // ✅ Wrap each SELECT in a subquery so LIMIT works with UNION ALL
-    //             $unionParts[] = "(SELECT ds_id, '$safeKey' AS lookup_key
-    //                   FROM tblmdo_offline_data
-    //                   WHERE dstatus = 0
-    //                     AND ds_name = '$safeDs'
-    //                     AND wd_code = '$safeWd'
-    //                     AND team_id = $teamId
-    //                   LIMIT 1)";
-    //         }
-
-    //         if (!empty($unionParts)) {
-    //             $dsQuery  = implode(" UNION ALL ", $unionParts);
-    //             $dsAction = null;
-    //             $dsRows   = 0;
-    //             $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
-    //             if ($dsRows) {
-    //                 while ($dsRow = $this->_dbConn->GetData($dsAction)) {
-    //                     $dsIdMap[$dsRow['lookup_key']] = $dsRow['ds_id'];
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     // --- FIX 5: Build CSV data using pre-fetched DS IDs ---
-    //     $header = [[
-    //         "Date",
-    //         "Branch",
-    //         "Region",
-    //         "MDO ID",
-    //         "MDO Name",
-    //         "MDO Type",
-    //         "DS Id",
-    //         "DS Name",
-    //         "DS Type",
-    //         "WD Code",
-    //         "Is DS Present",
-    //         "Total Outlet Visited",
-    //         "Sales Value in (Rs)"
-    //     ]];
-
-    //     $arrDataHolder = [];
-    //     foreach ($rawRows as $row) {
-    //         $captureDate = $row["capture_datetime"];
-    //         $mainDetails = json_decode($row['ques_2'], true);
-    //         $wdCode      = isset($mainDetails[0]) ? $mainDetails[0] : '';
-    //         $dsNameFull  = isset($mainDetails[1]) ? $mainDetails[1] : '';
-    //         $parts       = explode(" - ", $dsNameFull, 2);
-    //         $dsName      = isset($parts[0]) ? trim($parts[0]) : '';
-    //         $dsType      = isset($parts[1]) ? trim($parts[1]) : '';
-    //         $region      = $row["branch_name"];
-    //         $branchName  = $row["main_branch"];
-
-    //         $mdoId   = $row["team_id"];
-    //         $mdoName = $row["team_name"];
-    //         $mdoType = isset($row["is_type"]) ? ($arrTeamType[$row["is_type"]] ?? "") : "";
-
-    //         // Lookup DS ID from pre-fetched map
-    //         $key  = md5($dsName . '|' . $wdCode . '|' . (int)$mdoId);
-    //         $dsId = $dsIdMap[$key] ?? '';
-
-    //         $totalOutletVisited = $row['ques_4'] ?: "";
-    //         $totalSalesValue    = $row['ques_6'] ?: "";
-    //         // Define first
-    //         $isDsPresent = is_numeric($row['ques_5']) ? '' : $row['ques_5'];
-
-    //         // Convert blank to Yes if needed
-    //         if ($isDsPresent == '' && ($totalOutletVisited > 0 || $totalSalesValue > 0)) {
-    //             $isDsPresent = 'Yes';
-    //         }
-
-    //         // ✅ Skip only when DS is NOT 'No' AND values are zero
-    //         if ($isDsPresent != 'No' && ((float)$totalOutletVisited <= 0 || (float)$totalSalesValue <= 0)) {
-    //             continue;
-    //         }
-
-    //         $arrDataHolder[] = [
-    //             cleanCSVValue($captureDate),
-    //             cleanCSVValue($branchName),
-    //             cleanCSVValue($region),
-    //             cleanCSVValue($mdoId),
-    //             cleanCSVValue($mdoName),
-    //             cleanCSVValue($mdoType),
-    //             cleanCSVValue($dsId),
-    //             cleanCSVValue($dsName),
-    //             cleanCSVValue($dsType),
-    //             cleanCSVValue($wdCode),
-    //             cleanCSVValue($isDsPresent),
-    //             cleanCSVValue($totalOutletVisited),
-    //             cleanCSVValue($totalSalesValue)
-    //         ];
-    //     }
-
-    //     $arrResult  = formatDownloadData("DAYEND_Transaction_Report", $header, $arrDataHolder);
-    //     $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
-    //     echo json_encode($arrMessage);
-    // }
 
     final public function getDownloadCSV()
     {

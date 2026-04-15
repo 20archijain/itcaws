@@ -32,9 +32,13 @@ class processUpdateQualifiedMarketTime
         $currentDate = currentDate();
         $cond = "AND activity_date = '$currentDate'";
 
+        $saleProductSumExpr = implode(" + ", array_map(function ($i) { return "total_sale_product$i"; }, range(1, 145)));
+        $minDailySaleInM = (float) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minDailySaleInM' AND team_type = 0");
+        $maxDailySaleInM = (float) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'maxDailySaleInM' AND team_type = 0");
+
         $rsAction = null;
         $iRows = 0;
-        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime FROM $summaryTable WHERE dstatus = 0 AND is_update = 0 $cond";
+        $sQuery = "SELECT summary_id, team_id, activity_date, start_datetime, end_datetime, resp_startdatetime, resp_enddatetime, ($saleProductSumExpr) AS dailySaleInM FROM $summaryTable WHERE dstatus = 0 AND is_update = 0 $cond";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
@@ -52,7 +56,9 @@ class processUpdateQualifiedMarketTime
                 $totalShops = $orderShop + $addShop;
                 $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"] ? $row["end_datetime"] : $row["resp_enddatetime"], true);
                 $totalTime = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
-                $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? 1 : 0;
+                $dailySaleInM = (float) $row["dailySaleInM"];
+                $saleQualified = ($teamType == 5) || ($dailySaleInM >= $minDailySaleInM && $dailySaleInM <= $maxDailySaleInM);
+                $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec && $saleQualified ? 1 : 0;
                 $timeInMarket = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
                 $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                 $condition = "summary_id = ?";

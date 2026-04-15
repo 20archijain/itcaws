@@ -1,27 +1,27 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&display=swap');
 
 // ── Variables ──────────────────────────────────────────────────────────────────
-$color-bg:              #0f1117;
-$color-surface:         #161b27;
-$color-surface-alt:     #1e2535;
-$color-border:          #2a3245;
-$color-border-active:   #4a90d9;
-$color-accent:          #4a90d9;
-$color-accent-hover:    #5ba3ef;
-$color-green:           #3ecf8e;
-$color-red:             #e05252;
-$color-blue:             #1e9aff;
-$color-text:            #e8eaf0;
-$color-text-muted:      #8b92a8;
-$color-text-faint:      #555f75;
-$color-card:            #1a2030;
-$color-card-hover:      #aaafbe;
-$radius-lg:             12px;
-$radius-sm:             8px;
-$transition:            0.18s ease;
+$color-bg: #0f1117;
+$color-surface: #161b27;
+$color-surface-alt: #1e2535;
+$color-border: #2a3245;
+$color-border-active: #4a90d9;
+$color-accent: #4a90d9;
+$color-accent-hover: #5ba3ef;
+$color-green: #3ecf8e;
+$color-red: #e05252;
+$color-blue: #1e9aff;
+$color-text: #e8eaf0;
+$color-text-muted: #8b92a8;
+$color-text-faint: #555f75;
+$color-card: #1a2030;
+$color-card-hover: #aaafbe;
+$radius-lg: 12px;
+$radius-sm: 8px;
+$transition: 0.18s ease;
 // $font-mono:             'DM Mono', monospace;
-$font-mono:             "Mada", sans-serif;
-$font-display:          'Syne', sans-serif;
+$font-mono: "Mada", sans-serif;
+$font-display: 'Syne', sans-serif;
 
 // ── Page wrapper ───────────────────────────────────────────────────────────────
 .prd-selector-page {
@@ -52,20 +52,20 @@ $font-display:          'Syne', sans-serif;
 }
 
 .prd-selector-page__filters {
-    position: relative;
-    z-index: 1;
-    max-width: 1200px;
-    margin: 0 auto 1rem;
-    background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
-    backdrop-filter: blur(16px) saturate(180%);
-    border: none;
-    border-radius: 12px;
-    padding: 0.5rem;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    -webkit-border-radius: 12px;
-    -moz-border-radius: 12px;
-    -ms-border-radius: 12px;
-    -o-border-radius: 12px;
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(135deg, rgb(209 233 253 / 50%), rgb(155 202 255 / 40%));
+  backdrop-filter: blur(16px) saturate(180%);
+  border: none;
+  border-radius: 12px;
+  padding: 0.5rem;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  -ms-border-radius: 12px;
+  -o-border-radius: 12px;
 }
 
 .prd-selector-page__subtitle {
@@ -120,9 +120,13 @@ $font-display:          'Syne', sans-serif;
   appearance: none;
   -webkit-appearance: none;
 
-  &:focus { border-color: $color-border-active; }
+  &:focus {
+    border-color: $color-border-active;
+  }
 
-  option { background: $color-surface-alt; }
+  option {
+    background: $color-surface-alt;
+  }
 }
 
 .filter-actions {
@@ -143,12 +147,19 @@ $font-display:          'Syne', sans-serif;
   cursor: pointer;
   transition: background $transition, transform $transition, box-shadow $transition, opacity $transition;
 
-  &:active:not(:disabled) { transform: translateY(1px); }
-  &:disabled { opacity: 0.6; cursor: not-allowed; }
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 
   &--primary {
     background: $color-accent;
     color: #fff;
+
     &:hover:not(:disabled) {
       background: $color-accent-hover;
       box-shadow: 0 4px 16px rgba(74, 144, 217, 0.35);
@@ -160,7 +171,11 @@ $font-display:          'Syne', sans-serif;
     background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
     color: #ffffff;
     border: none;
-    &:hover:not(:disabled) { border-color: $color-text-muted; color: $color-text; }
+
+    &:hover:not(:disabled) {
+      border-color: $color-text-muted;
+      color: $color-text;
+    }
   }
 
   &--submit {
@@ -169,6 +184,7 @@ $font-display:          'Syne', sans-serif;
     display: flex;
     align-items: center;
     gap: 0.4rem;
+
     &:hover:not(:disabled) {
       background: $color-accent-hover;
       box-shadow: 0 4px 16px rgba(74, 144, 217, 0.35);
@@ -181,7 +197,7 @@ $font-display:          'Syne', sans-serif;
   display: inline-block;
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -222,7 +238,9 @@ $font-display:          'Syne', sans-serif;
     border-color: $color-border-active;
     box-shadow: inset 0 0 0 2px rgba(74, 144, 217, 0.12), 0 0 28px rgba(74, 144, 217, 0.07);
 
-    .dnd-panel__body { background: rgba(74, 144, 217, 0.035); }
+    .dnd-panel__body {
+      background: rgba(74, 144, 217, 0.035);
+    }
   }
 }
 
@@ -239,10 +257,14 @@ $font-display:          'Syne', sans-serif;
   gap: 0.25rem;
   margin-bottom: 0.3rem;
 
-  &--sub { margin-top: 0.15rem; }
+  &--sub {
+    margin-top: 0.15rem;
+  }
 }
 
-.dnd-panel__icon { font-size: 1.25rem; }
+.dnd-panel__icon {
+  font-size: 1.25rem;
+}
 
 .dnd-panel__title {
   font-size: 0.95rem;
@@ -259,31 +281,31 @@ $font-display:          'Syne', sans-serif;
   margin-bottom: 0;
 }
 
-.dnd-accordion__trigger{
-    width: 100%;
-    max-width: 800px;
-    border-radius: 8px;
-    padding: 0.4rem;
-    text-align: left;
-    border: none;
-    background: #99b6f6;
-    -webkit-border-radius: 8px;
-    -moz-border-radius: 8px;
-    -ms-border-radius: 8px;
-    -o-border-radius: 8px;
+.dnd-accordion__trigger {
+  width: 100%;
+  max-width: 800px;
+  border-radius: 8px;
+  padding: 0.4rem;
+  text-align: left;
+  border: none;
+  background: #99b6f6;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
 }
 
 .dnd-badge {
-      font-family: "DM Mono", monospace;
-    font-size: 0.72rem;
-    font-weight: 500;
-    padding: 4px 8px;
-    border-radius: 20px;
-    background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
-    color: #ffffff;
-    border: 1px solid #fff;
-    min-width: 28px;
-    text-align: center;
+  font-family: "DM Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #7a9ce7 0, #4680ff 100%);
+  color: #ffffff;
+  border: 1px solid #fff;
+  min-width: 28px;
+  text-align: center;
 
   &--active {
     background: #317553;
@@ -301,8 +323,14 @@ $font-display:          'Syne', sans-serif;
   gap: 0.45rem;
   transition: background $transition;
 
-  &::-webkit-scrollbar { width: 4px; }
-  &::-webkit-scrollbar-thumb { background: $color-border; border-radius: 2px; }
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: $color-border;
+    border-radius: 2px;
+  }
 }
 
 // ── Empty state ────────────────────────────────────────────────────────────────
@@ -318,7 +346,9 @@ $font-display:          'Syne', sans-serif;
   font-size: 0.82rem;
   flex: 1;
 
-  &__icon { font-size: 1.7rem; }
+  &__icon {
+    font-size: 1.7rem;
+  }
 }
 
 // ── Drop Hint ──────────────────────────────────────────────────────────────────
@@ -339,7 +369,9 @@ $font-display:          'Syne', sans-serif;
   flex: 1;
   transition: opacity $transition;
 
-  &__icon { font-size: 1.7rem; }
+  &__icon {
+    font-size: 1.7rem;
+  }
 
   &--visible {
     opacity: 1;
@@ -348,8 +380,8 @@ $font-display:          'Syne', sans-serif;
 }
 
 // ── Cards ──────────────────────────────────────────────────────────────────────
-.dnd-accordion__body{
-margin-top: 0.55rem;
+.dnd-accordion__body {
+  margin-top: 0.55rem;
 }
 
 .dnd-card {
@@ -374,11 +406,13 @@ margin-top: 0.55rem;
     background: $color-card-hover;
     border-color: #3a4560;
     color: #fff;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     transform: translateY(-1px);
   }
 
-  &:active { cursor: grabbing; }
+  &:active {
+    cursor: grabbing;
+  }
 
   // Dragging ghost state
   &.dragging {
@@ -454,7 +488,7 @@ margin-top: 0.55rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: #4680ff;
-    background:  rgb(224 237 252);
+    background: rgb(224 237 252);
     padding: 1px 5px;
     border-radius: 4px;
   }
@@ -483,13 +517,21 @@ margin-top: 0.55rem;
 
     &--add {
       color: #00ff8d;
-      &:hover { background: rgba(62, 207, 142, 0.14); border-color: $color-green; }
+
+      &:hover {
+        background: rgba(62, 207, 142, 0.14);
+        border-color: $color-green;
+      }
     }
 
     &--remove {
       color: $color-red;
       font-size: 1.25rem;
-      &:hover { background: rgba(224, 82, 82, 0.14); border-color: $color-red; }
+
+      &:hover {
+        background: rgba(224, 82, 82, 0.14);
+        border-color: $color-red;
+      }
     }
   }
 }
@@ -569,6 +611,7 @@ margin-top: 0.55rem;
   background: #9ebaf9;
   border-top: 2px solid #869fdb;
   border-bottom: 2px solid #869fdb;
+
   &__icon {
     font-size: 1.3rem;
     color: $color-text-faint;
@@ -605,12 +648,16 @@ margin-top: 0.55rem;
   text-decoration: underline;
   transition: color $transition;
 
-  &:hover { color: $color-red; }
+  &:hover {
+    color: $color-red;
+  }
 }
 
 // ── Animations ─────────────────────────────────────────────────────────────────
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 // ── Column headers (Focus Brand / Active labels above checkbox columns) ───────────
@@ -637,7 +684,10 @@ margin-top: 0.55rem;
   text-align: center;
 
   // spacer takes remaining space (the product-name column)
-  &--spacer { flex: 1; width: auto; }
+  &--spacer {
+    flex: 1;
+    width: auto;
+  }
 
   &__label {
     font-family: $font-mono;
@@ -664,22 +714,24 @@ margin-top: 0.55rem;
       border-color: rgba(224, 82, 82, 0.4);
       background: rgba(224, 82, 82, 0.08);
     }
+
     // turns red when both slots are used
     &--full-other {
-    color: #081c2c;
-    border-color: rgba(42, 5, 231, 0.4);
-    background: rgb(25 86 255 / 21%);
+      color: #081c2c;
+      border-color: rgba(42, 5, 231, 0.4);
+      background: rgb(25 86 255 / 21%);
     }
   }
 }
 
-.custom-table-parent{
+.custom-table-parent {
   width: 100%;
-    max-width: 1200px;
-    border-radius: 8px;
-    padding-top: 0.75rem;
-    text-align: center;
+  max-width: 1200px;
+  border-radius: 8px;
+  padding-top: 0.75rem;
+  text-align: center;
 }
+
 // ── Checkbox column cell inside each card ──────────────────────────────────────
 .dnd-checkbox-col {
   width: 44px;
@@ -743,32 +795,40 @@ margin-top: 0.55rem;
 
   // ── Focus Brand checkbox: amber/orange accent ────────────────────────────────────
   &__box--first {
-    &:hover { border-color: #e0963a; }
+    &:hover {
+      border-color: #e0963a;
+    }
   }
 
-  input:checked + &__box--first {
+  input:checked+&__box--first {
     background: #e0963a;
     border-color: #e0963a;
     box-shadow: 0 0 0 3px rgba(224, 150, 58, 0.18);
 
-    &::after { border-color: #fff; }
+    &::after {
+      border-color: #fff;
+    }
   }
 
   // ── Active checkbox: blue accent ───────────────────────────────────────────
   &__box--second {
-    &:hover { border-color: $color-accent; }
+    &:hover {
+      border-color: $color-accent;
+    }
   }
 
-  input:checked + &__box--second {
+  input:checked+&__box--second {
     background: $color-accent;
     border-color: $color-accent;
     box-shadow: 0 0 0 3px rgba(74, 144, 217, 0.18);
 
-    &::after { border-color: #fff; }
+    &::after {
+      border-color: #fff;
+    }
   }
 
   // Focus ring for keyboard nav
-  input:focus-visible + &__box {
+  input:focus-visible+&__box {
     outline: 2px solid $color-accent;
     outline-offset: 2px;
   }
@@ -798,6 +858,8 @@ margin-top: 0.55rem;
     border-right: 1.5px solid $color-border;
     height: 44px;
 
-    &__icon { transform: rotate(90deg); }
+    &__icon {
+      transform: rotate(90deg);
+    }
   }
 }

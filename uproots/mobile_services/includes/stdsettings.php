@@ -96,6 +96,8 @@ $TBL_TEAM_LOCATION = "tblteam_location";
 $TBL_DAILY_MOBILE_SUMMARY = "tbldaily_mobile_summary";
 $TBL_HAWKER_MOBILE_SUMMARY = "tblhawker_mobile_summary";
 $TBL_NOTIFICATION = "tbl_notification";
+$TBL_ORDER_DETAILS = "tblsurvey_response_details_orders";
+$TBL_DELIVERY_DETAILS = "tblsurvey_response_details_delivery";
 
 // DB Names
 $IMPACT_DB = "itccam5_impact";
@@ -125,13 +127,13 @@ $ARR_BTLMO74_DBS = array(
 );
 
 define("MOVE_IMAGES_ON_DIGITALOCEAN", array(
-    "ALL_DB" => false,       // set this to true to enable digitalocean for all DB on inmotionhosting
+    "ALL_DB" => true,       // set this to true to enable digitalocean for all DB on inmotionhosting
     $IMPACT_DB => false,
     $NOVICEMARCOM_DB => false,
     $WONDER_DB => false,
     $ZX_DB => false,
     $DELHI_DB => false,
-    $ITC_DB => false,
+    $ITC_DB => true,
     $ITCNEW_DB => false,
     $ITCPH2_DB => false,
     $JAIPUR_DB => false,

@@ -1,7 +1,6 @@
 import {
   Component,
   Input,
-  OnInit,
   OnChanges,
   SimpleChanges,
   OnDestroy,
@@ -43,7 +42,7 @@ export interface GroupedBarCategory {
     `,
   ],
 })
-export class ApexGroupedBarChartComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class ApexGroupedBarChartComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() transformedChartData: GroupedBarCategory[] = [];
   @Input() heading = '';
   @Input() height = 400;
@@ -55,8 +54,6 @@ export class ApexGroupedBarChartComponent implements OnInit, OnChanges, AfterVie
   chartId = 'apex-grouped-bar-' + Math.random().toString(36).slice(2, 10);
   chart: ApexCharts | null = null;
   chartWidth = 800;
-
-  ngOnInit(): void {}
 
   ngAfterViewInit(): void {
     this.buildAndRender();

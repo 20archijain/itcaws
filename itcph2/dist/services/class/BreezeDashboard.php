@@ -1563,7 +1563,7 @@ class BreezeDashboard
             $xAxisLabels[] = $label;
             $plannedArr[]  = (int)$vals['planned'];
             $revisitArr[]  = (int)$vals['revisit'];
-            $salesArr[]    = round($vals['sales'],   2);
+            $salesArr[] = round($vals['sales'], 2);
         }
 
         $graphData = [

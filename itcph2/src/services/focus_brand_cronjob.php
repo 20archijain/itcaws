@@ -31,13 +31,15 @@ class AddFocusBrand
 
     final public function addDataForFocus()
     {
+        $nextMonth = date("m", strtotime("+1 month"));
+        $nextYear  = date("Y", strtotime("+1 month"));
         $currentMonth = date("m");
         $currentYear  = date("Y");
-        $prevMonth = date("m", strtotime("first day of previous month"));
-        $prevYear  = date("Y", strtotime("first day of previous month"));
+        // $prevMonth = date("m", strtotime("first day of previous month"));
+        // $prevYear  = date("Y", strtotime("first day of previous month"));
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT distinct branch_id FROM tblbranch_products_month_wise WHERE dstatus = 0 AND month = '$prevMonth' AND year = '$prevYear'";
+        $sQuery = "SELECT distinct branch_id FROM tblbranch_products_month_wise WHERE dstatus = 0 AND month = '$currentMonth' AND year = '$currentYear'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
@@ -45,8 +47,8 @@ class AddFocusBrand
                 $branch_id = $row['branch_id'];
                 $sAction1 = null;
                 $iRows1 = 0;
-                $sQuery1 = "SELECT json_id, team_type, is_focusbrand, category_name, product_name, summary_column_name, net_rate,  sort_order FROM tblbranch_products_month_wise WHERE dstatus = 0" .
-                    " AND branch_id = '$branch_id' AND month = '$prevMonth' AND year = '$prevYear'";
+                $sQuery1 = "SELECT json_id, team_type, is_focusbrand, category_name, product_name, summary_column_name, net_rate, sort_order FROM tblbranch_products_month_wise WHERE dstatus = 0" .
+                    " AND branch_id = '$branch_id' AND month = '$currentMonth' AND year = '$currentYear'";
                 // echo $sQuery;die;
                 $this->_dbConn->ExecuteSelectQuery($sQuery1, $sAction1, $iRows1);
 
@@ -63,11 +65,11 @@ class AddFocusBrand
                             $row1['net_rate'],
                             $row1['sort_order'],
                             $branch_id,
-                            $currentMonth,
-                            $currentYear
+                            $nextMonth,
+                            $nextYear
                         );
 
-                        $recId = getRowColumn($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "dstatus = 0 AND branch_id = $branch_id AND month = '$currentMonth' AND year = '$currentYear' AND summary_column_name = '$summary_column_name'");
+                        $recId = getRowColumn($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "dstatus = 0 AND branch_id = $branch_id AND month = '$nextMonth' AND year = '$nextYear' AND summary_column_name = '$summary_column_name'");
 
                         if ($recId == 0) {
                             addRecord($this->_dbConn, "tblbranch_products_month_wise", "json_id, team_type, is_focusbrand, category_name, product_name, summary_column_name, net_rate, sort_order, branch_id, month, year", "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?", $arrList);

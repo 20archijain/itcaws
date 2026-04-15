@@ -104,7 +104,8 @@ class BranchSkuAllocation
         return array($arrDspm, $arrIsFocus, $arrData);
     }
 
-    final public function getSubmittedData(){
+    final public function getSubmittedData()
+    {
         $arrData = array();
         $region = $this->_data['region'];
         $teamType = $this->_data['teamType'];
@@ -144,10 +145,9 @@ class BranchSkuAllocation
     final public function getDefaultData()
     {
         $currentDate = currentDate("", "d");
-        if($currentDate > 21)
-        {
+        if ($currentDate > 21) {
             $skuDefaultAllocation = true;
-        }else{
+        } else {
             $skuDefaultAllocation = true;
         }
         $arrResult = array(
@@ -462,7 +462,7 @@ class BranchSkuAllocation
             $is_focusbrand = isset($record['isFocusBrand']) && $record['isFocusBrand'] ? 1 : 0;
             $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_branch, rcd, rdt, user_id";
             $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-            $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt ,$user);
+            $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt, $user);
 
             $iStatus = addRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", $cols, $vals, $arrParams);
             $arrStatus[] = $iStatus;

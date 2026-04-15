@@ -357,22 +357,22 @@ class Pdf extends FPDF
         }
     }
 
-      // for downloading image
+    // for downloading image
     public function downloadMultipleImagesToTemp(array $urlMap, int $batchSize = 35): array
     {
         $results = [];
 
-        if (empty($urlMap)) return $results;
+        if (empty($urlMap)) {
+            return $results;
+        }
 
         $chunks = array_chunk($urlMap, $batchSize, true);
 
         foreach ($chunks as $chunk) {
-
             $mh = curl_multi_init();
             $handles = [];
 
             foreach ($chunk as $key => $url) {
-
                 $tmp = sys_get_temp_dir() . '/pdf_' . md5($url) . '.jpg';
                 $fp  = fopen($tmp, 'w');
 
@@ -399,7 +399,6 @@ class Pdf extends FPDF
 
             // validate + retry failed
             foreach ($handles as $key => [$ch, $fp, $tmp, $url]) {
-
                 $error  = curl_errno($ch);
                 $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 
@@ -408,7 +407,6 @@ class Pdf extends FPDF
                 fclose($fp);
 
                 if ($error === 0 && $status == 200 && is_file($tmp) && filesize($tmp) > 2048) {
-
                     $data = file_get_contents($tmp);
                     if (@getimagesizefromstring($data) !== false) {
                         $results[$key] = $tmp;

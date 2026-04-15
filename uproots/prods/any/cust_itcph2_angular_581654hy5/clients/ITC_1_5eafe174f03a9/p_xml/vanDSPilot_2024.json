@@ -3,6 +3,8 @@
     "id": 99,
     "userType": 0,
     "version": 2,
+    "isKycActive": 1,
+    "kycWarningCount": 3,
     "app_version": "1.1.1",
     "relDate": "2024-05-11",
     "themeConfig": {
@@ -57,6 +59,7 @@
       "offlineDropdownApi": "https://upimg2.radardashboard.com/mobile_services/api/get_offline_dropdown_options.php",
       "calendarStatusApi": "https://upimg2.radardashboard.com/mobile_services/api/get_calendar_status.php",
       "masterDataUpdateApi": "https://upimg2.radardashboard.com/mobile_services/api/master_data_update_by_app.php",
+      "updateFcmToken": "https://upimg2.radardashboard.com/mobile_services/api/custom/update_fcm_token.php",
       "custom": {
         "getStockProductsSellingPriceApi": "https://upimg2.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php"
       }
@@ -448,7 +451,7 @@
         {
           "id": 2,
           "label": "",
-          "optype": 1000,
+          "optype": 0,
           "cam_type": 1,
           "validations": {
             "mn": 0
@@ -466,11 +469,11 @@
       "controls": [
         {
           "id": 1,
-          "label": "Take your Selfie",
-          "optype": 6,
+          "label": "",
+          "optype": 0,
           "cam_type": 1,
           "validations": {
-            "mn": 1
+            "mn": 0
           },
           "validationsMsg": {
             "mn": "Your selfie is required"
