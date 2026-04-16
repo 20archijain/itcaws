@@ -67,6 +67,24 @@ class processUpdateQualifiedMarketTime
                 }
             }
         }
+
+        // Disqualification pass: re-check already-qualified type-0 records in case
+        // new transactions pushed the sale out of range after the initial qualification.
+        $rsRecheck = null;
+        $iRecheckRows = 0;
+        $sRecheckQuery = "SELECT summary_id, team_id, ($saleProductSumExpr) AS dailySaleInM FROM $summaryTable WHERE dstatus = 0 AND is_update = 1 AND is_qualified = 1 $cond";
+        $this->dbConn->ExecuteSelectQuery($sRecheckQuery, $rsRecheck, $iRecheckRows);
+        if ($iRecheckRows > 0) {
+            while ($rowR = $this->dbConn->GetData($rsRecheck)) {
+                $recheckTeamType = (int) getRowColumn($this->dbConn, "tblproject_team", "is_type", "team_id = " . $rowR["team_id"]);
+                if ($recheckTeamType != 5) {
+                    $recheckSale = (float) $rowR["dailySaleInM"];
+                    if ($recheckSale < $minDailySaleInM || $recheckSale > $maxDailySaleInM) {
+                        updateRecord($this->dbConn, $summaryTable, "is_qualified = ?", "summary_id = ?", [0, $rowR["summary_id"]]);
+                    }
+                }
+            }
+        }
     }
 
     final public function processUpdateOutletCount()
