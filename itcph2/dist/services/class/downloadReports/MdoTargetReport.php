@@ -190,7 +190,7 @@ class MdoTargetReport
         $arrData      = [];
         $currentMonth = date('n');
         $currentYear  = date('Y');
-        $nextMonth    = $currentMonth + 1;
+        $nextMonth    = $currentMonth;
         $nextYear     = $currentYear;
 
         if ($nextMonth > 12) {
@@ -247,13 +247,12 @@ class MdoTargetReport
         echo json_encode($arrMessage);
     }
 
-    final public function getDownloadData()
+    public function getDownloadData()
     {
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
         $arrMonth = $this->_data['month'];
-
         $whereFilter = $this->getConditionFilter();
 
         // ---------------- HEADER ----------------
@@ -276,30 +275,30 @@ class MdoTargetReport
             "Achievement",
             "Ach%",
             "Max Points",
-            "Gate Achieved",
+            "Gate Achieved"
         ]];
 
-        // ---------------- PARAMETER CONFIG ----------------
+        // ---------------- PARAMETERS ----------------
         $gateParameters = [
             "Min 6 Days With Van DS/month"                  => ["target" => 6,  "col" => "van_ds_days",  "max" => 6],
             "Min 10 Days With RMD + SCP DS/month"           => ["target" => 10, "col" => "rmd_scp_days", "max" => 10],
             "Min 2 Days With GT TL/month"                   => ["target" => 2,  "col" => "gt_tl_days",   "max" => 2],
             "Min 2 Days With AE/month"                      => ["target" => 2,  "col" => "ae_days",      "max" => 2],
             "Avg Time in Market Daily(Min 18 Days / month)" => ["target" => 18, "col" => "working_days", "max" => 18],
-            "Total"                                         => ["target" => 0,  "col" => "total_achievement", "max" => 0],
         ];
 
         $payoutParameters = [
-            "Van DS Monthly Payout"                        => ["target" => 1200, "col" => "incentive_van_ds",     "max" => 1200],
-            "RMD/ SCP DS Monthly Payout"                   => ["target" => 1200, "col" => "incentive_rmd_scp",    "max" => 1200],
-            "Basis Sales Of All Infra Mapped (Criteria 1)" => ["target" => 1500, "col" => "incentive_criteria_1", "max" => 1500],
-            "Basis Sales Of All Infra Mapped (Criteria 2)" => ["target" => 4000, "col" => "incentive_criteria_2", "max" => 4000],
+            "Van DS Monthly Payout"                         => ["target" => 1200, "col" => "incentive_van_ds",     "max" => 1200],
+            "RMD/ SCP DS Monthly Payout"                    => ["target" => 1200, "col" => "incentive_rmd_scp",    "max" => 1200],
+            "(Avg RMD/SCP Sales > 2M/Day)-(Avg Van DS Daily UOB >=14)"  => ["target" => 1500, "col" => "incentive_criteria_1", "max" => 1500],
+            "(Avg RMD/SCP Sales > 4M/Day)-(Avg Van DS Daily UOB >=18)"  => ["target" => 4000, "col" => "incentive_criteria_2", "max" => 4000],
         ];
 
         $arrDataHolder = [];
 
         // ---------------- LOOP MONTHS ----------------
         foreach ($arrMonth as $month) {
+
             $date         = DateTime::createFromFormat('F Y', $month);
             $numericMonth = $date->format('m');
             $numericYear  = $date->format('Y');
@@ -307,66 +306,46 @@ class MdoTargetReport
 
             $sAction = null;
             $iRows   = 0;
+
             $sQuery  = "SELECT s.team_id, s.team_name, s.is_type, s.district, s.main_branch, s.branch_name,
-                           s.circle, s.section, s.wd_code, s.wd_market, s.wd_pop_group,
-                           s.van_ds_days, s.rmd_scp_days, s.gt_tl_days, s.ae_days, s.working_days,
-                           s.incentive_rmd_scp, s.incentive_van_ds, s.incentive_criteria_1,
-                           s.incentive_criteria_2, s.dstatus, s.is_locked
+                    s.circle, s.section, s.wd_code, s.wd_market, s.wd_pop_group,
+                    s.van_ds_days, s.rmd_scp_days, s.gt_tl_days, s.ae_days, s.working_days,
+                    s.incentive_rmd_scp, s.incentive_van_ds, s.incentive_criteria_1, s.incentive_criteria_2,
+                    s.dstatus, s.is_locked
                     FROM mdo_dspm_summary AS s
                     WHERE s.month = '$monthKey' AND s.year = $numericYear $whereFilter
                     GROUP BY s.team_id, s.month, s.year";
 
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-            if ($iRows <= 0) {
-                continue;
-            }
+            if ($iRows <= 0) continue;
 
+            // ---------------- SINGLE LOOP (FIXED) ----------------
             while ($row = $this->_dbConn->GetData($sAction)) {
-                // ---------------- DERIVE LABELS ----------------
-                $activeTeam = "";
-                if ($row['dstatus'] == 0) {
-                    $activeTeam = "Active";
-                } elseif ($row['dstatus'] == 1) {
-                    $activeTeam = "Inactive";
-                }
 
-                $mdoTypeLabel = "";
-                if ($row['is_type'] == 7) {
-                    $mdoTypeLabel = "MDO";
-                } elseif ($row['is_type'] == 10) {
-                    $mdoTypeLabel = "FSO";
-                } else {
-                    $mdoTypeLabel = $row['is_type'];
-                }
+                // ---------------- LABELS ----------------
+                $activeTeam = ($row['dstatus'] == 0) ? "Active" : "Inactive";
+
+                $mdoTypeLabel = ($row['is_type'] == 7) ? "MDO" : (($row['is_type'] == 10) ? "FSO" : $row['is_type']);
 
                 $isLocked = $row['is_locked'];
 
-                // ---------------- GATE PARAMETERS ----------------
-                // Reset total for each row
+                // ---------------- TOTAL PER TEAM ----------------
                 $totalAchievement = 0;
 
-                // First pass: accumulate total from all non-Total gate params
+                // ---------------- GATE PARAMETERS ----------------
                 foreach ($gateParameters as $paramLabel => $paramConfig) {
-                    if ($paramLabel === "Total") {
-                        continue;
-                    }
-                    $achCol       = $paramConfig['col'];
-                    $achievement  = !empty($row[$achCol]) ? $row[$achCol] : 0;
-                    $totalAchievement += $achievement;
-                }
 
-                // Inject accumulated total so the "Total" row can read it
-                $row['total_achievement'] = $totalAchievement;
-
-                // Second pass: build rows for all gate params including Total
-                foreach ($gateParameters as $paramLabel => $paramConfig) {
                     $target      = $paramConfig['target'];
                     $maxPoints   = $paramConfig['max'];
                     $achCol      = $paramConfig['col'];
                     $achievement = !empty($row[$achCol]) ? $row[$achCol] : 0;
-                    $achPct      = ($target > 0) ? round(($achievement / $target) * 100, 2) . "%" : "0%";
-                    $gateAchieved = ($isLocked == 0) ? "Y" : "N";
+
+                    $achPct = ($target > 0)
+                        ? round(($achievement / $target) * 100, 2) . "%"
+                        : "0%";
+
+                    $gateAchieved = ($achievement >= $target) ? "Y" : "N";
 
                     $arrDataHolder[] = [
                         $month,
@@ -387,19 +366,24 @@ class MdoTargetReport
                         $achievement,
                         $achPct,
                         $maxPoints,
-                        $gateAchieved,
+                        $gateAchieved
                     ];
                 }
 
-                // ---------------- PAYOUT PARAMETERS (only if is_locked == 0) ----------------
-                if ($isLocked == 0) {
+                // ---------------- PAYOUT PARAMETERS ----------------
+                // if ($isLocked == 0) {
                     foreach ($payoutParameters as $paramLabel => $paramConfig) {
+
                         $target      = $paramConfig['target'];
                         $maxPoints   = $paramConfig['max'];
                         $achCol      = $paramConfig['col'];
                         $achievement = !empty($row[$achCol]) ? $row[$achCol] : 0;
-                        $achPct      = ($target > 0) ? round(($achievement / $target) * 100, 2) . "%" : "0%";
-                        $gateAchieved = "";
+
+                        $totalAchievement += $achievement;
+
+                        $achPct = ($target > 0)
+                            ? round(($achievement / $target) * 100, 2) . "%"
+                            : "0%";
 
                         $arrDataHolder[] = [
                             $month,
@@ -420,10 +404,33 @@ class MdoTargetReport
                             $achievement,
                             $achPct,
                             $maxPoints,
-                            $gateAchieved,
+                            ""
                         ];
                     }
-                }
+                // }
+
+                // ---------------- TOTAL ROW PER TEAM ----------------
+                $arrDataHolder[] = [
+                    $month,
+                    $row['district'],
+                    $row['main_branch'],
+                    $row['branch_name'],
+                    $row['circle'],
+                    $row['section'],
+                    $row['wd_code'],
+                    $row['wd_pop_group'],
+                    $row['wd_market'],
+                    $row['team_id'],
+                    $row['team_name'],
+                    $mdoTypeLabel,
+                    $activeTeam,
+                    "Total Incentive Amount",
+                    "",
+                    $totalAchievement, // ✅ FINAL PER TEAM TOTAL
+                    "",
+                    "",
+                    ""
+                ];
             }
         }
 
