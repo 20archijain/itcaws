@@ -22,7 +22,7 @@
     "@angular/compiler": "^19.2.21",
     "@angular/core": "^19.2.21",
     "@angular/forms": "^19.2.21",
-    "@angular/google-maps": "^18.0.0",
+    "@angular/google-maps": "^19.2.19",
     "@angular/localize": "^19.2.21",
     "@angular/platform-browser": "^19.2.21",
     "@angular/platform-browser-dynamic": "^19.2.21",
