@@ -275,6 +275,12 @@ export interface StockProduct extends DropdownList {
   existTeamTableCond?: number;
 }
 
+export interface ManualAssignTargetResponse {
+  branchList: DropdownList[];
+  productList: [];
+  // showInputOption: boolean;
+}
+
 export interface ReadyStockPickupResponse {
   previousMonthProduct1: string;
   previousMonthProduct2: string;
