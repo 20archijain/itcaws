@@ -67,6 +67,7 @@ import { AllocationReportComponent } from './reporting/skuSetting/allocationRepo
 import { BreezeDashboardComponent } from './breeze-dashboard/breeze-dashboard.component';
 import { AiInsightsComponent } from './ai-insights/ai-insights.component';
 import { MDOReportComponent } from './reporting/mdo/mdo-report.component';
+import { ManualAssignTargetComponent } from './reporting/UpdateManualTarget/ManualAssignTarget.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -136,6 +137,7 @@ export const MAIN_COMPONENTS = [
   BreezeDashboardComponent,
   AiInsightsComponent,
   MDOReportComponent,
+  ManualAssignTargetComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -206,4 +208,5 @@ export const MAP_MAIN_COMPONENTS = {
   BreezeDashboardComponent,
   AiInsightsComponent,
   MDOReportComponent,
+  ManualAssignTargetComponent,
 };

@@ -335,6 +335,7 @@
     "download": {
       "downloadLineCut": "Line Cut Report",
       "downloadTargetReport": "Target Report",
+      "targetTitle": "Assign Target",
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
       "downloadEvaluationReport": "Evaluation Report",
