@@ -187,13 +187,13 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
   scopeOptions: string[] = [];
   scopeOptionsLoading = false;
   readonly contextFilterTypes = [
-    { type: 'District', icon: 'fa-map',          phrase: 'district' },
-    { type: 'Branch',   icon: 'fa-building',     phrase: 'branch' },
-    { type: 'Region',   icon: 'fa-globe',        phrase: 'region' },
-    { type: 'Circle',   icon: 'fa-circle',       phrase: 'circle' },
-    { type: 'Section',  icon: 'fa-layer-group',  phrase: 'section' },
-    { type: 'WD Code',  icon: 'fa-barcode',      phrase: 'wd code' },
-    { type: 'DS',       icon: 'fa-user',         phrase: 'for ds' },
+    { type: 'District', icon: 'fa-map', phrase: 'district' },
+    { type: 'Branch', icon: 'fa-building', phrase: 'branch' },
+    { type: 'Region', icon: 'fa-globe', phrase: 'region' },
+    { type: 'Circle', icon: 'fa-circle', phrase: 'circle' },
+    { type: 'Section', icon: 'fa-layer-group', phrase: 'section' },
+    { type: 'WD Code', icon: 'fa-barcode', phrase: 'wd code' },
+    { type: 'DS', icon: 'fa-user', phrase: 'for ds' },
   ];
 
   // Typeahead suggestions (dropdown while typing)
@@ -1038,12 +1038,12 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
     // Cascade: WD Code narrows by Branch; DS narrows by WD Code or Branch;
     // Circle/Section/District narrow by Branch
     const parentMap: { [key: string]: string[] } = {
-      branch:   ['District'],
-      region:   ['Branch', 'District'],
-      circle:   ['Region', 'Branch'],
-      section:  ['Circle', 'Region', 'Branch'],
-      wd_code:  ['Section', 'Circle', 'Region', 'Branch'],
-      ds:       ['WD Code', 'Section', 'Circle', 'Region', 'Branch'],
+      branch: ['District'],
+      region: ['Branch', 'District'],
+      circle: ['Region', 'Branch'],
+      section: ['Circle', 'Region', 'Branch'],
+      wd_code: ['Section', 'Circle', 'Region', 'Branch'],
+      ds: ['WD Code', 'Section', 'Circle', 'Region', 'Branch'],
     };
     let parentType = '';
     let parentValue = '';
@@ -1086,11 +1086,11 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       // Remove child-level filters that may not exist under the newly selected parent
       const childrenMap: { [key: string]: string[] } = {
         'District': ['Branch', 'Region', 'Circle', 'Section', 'WD Code', 'DS'],
-        'Branch':   ['Region', 'Circle', 'Section', 'WD Code', 'DS'],
-        'Region':   ['Circle', 'Section', 'WD Code', 'DS'],
-        'Circle':   ['Section', 'WD Code', 'DS'],
-        'Section':  ['WD Code', 'DS'],
-        'WD Code':  ['DS'],
+        'Branch': ['Region', 'Circle', 'Section', 'WD Code', 'DS'],
+        'Region': ['Circle', 'Section', 'WD Code', 'DS'],
+        'Circle': ['Section', 'WD Code', 'DS'],
+        'Section': ['WD Code', 'DS'],
+        'WD Code': ['DS'],
       };
       const children = childrenMap[this.pendingContextType] || [];
       if (children.length) {
@@ -1455,9 +1455,9 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
     anomalies.forEach(a => {
       const label = a.cause === 'no_ds_in_field' ? 'No DS'
         : a.cause === 'attendance_issue' ? 'Attendance'
-        : a.cause === 'market_issue' ? 'Market'
-        : a.cause === 'demand_spike' ? 'Demand Spike'
-        : a.cause === 'extra_ds_deployed' ? 'Extra DS' : 'Other';
+          : a.cause === 'market_issue' ? 'Market'
+            : a.cause === 'demand_spike' ? 'Demand Spike'
+              : a.cause === 'extra_ds_deployed' ? 'Extra DS' : 'Other';
       causeMap[label] = (causeMap[label] || 0) + 1;
     });
     this.rootCauseChart = Object.entries(causeMap)
@@ -1468,18 +1468,18 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
     const dateActual: Record<string, number> = {};
     const dateExpected: Record<string, number> = {};
     anomalies.forEach(a => {
-      dateActual[a.date]    = (dateActual[a.date]    || 0) + a.actualSales;
-      dateExpected[a.date]  = (dateExpected[a.date]  || 0) + a.expectedSales;
+      dateActual[a.date] = (dateActual[a.date] || 0) + a.actualSales;
+      dateExpected[a.date] = (dateExpected[a.date] || 0) + a.expectedSales;
     });
     const sortedDates = Object.keys(dateActual).sort();
     this.actualVsExpectedChart = [
       { name: 'Expected', series: sortedDates.map(d => ({ name: this.shortDate(d), value: Math.round(dateExpected[d]) })) },
-      { name: 'Actual',   series: sortedDates.map(d => ({ name: this.shortDate(d), value: Math.round(dateActual[d])   })) },
+      { name: 'Actual', series: sortedDates.map(d => ({ name: this.shortDate(d), value: Math.round(dateActual[d]) })) },
     ];
 
     // 4. Heatmap calendar — branch × date grid
     const branches = [...new Set(anomalies.map(a => a.branch))];
-    const dates    = [...new Set(anomalies.map(a => a.date))].sort();
+    const dates = [...new Set(anomalies.map(a => a.date))].sort();
     this.anomalyCalendarDates = dates;
     const lookup: Record<string, any> = {};
     anomalies.forEach(a => { lookup[`${a.branch}|${a.date}`] = a; });
@@ -1501,7 +1501,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const prodMap: Record<string, { actual: number; expected: number }> = {};
       focusAnomalies.forEach(a => {
         if (!prodMap[a.productName]) { prodMap[a.productName] = { actual: 0, expected: 0 }; }
-        prodMap[a.productName].actual   += a.actualSales || 0;
+        prodMap[a.productName].actual += a.actualSales || 0;
         prodMap[a.productName].expected += a.expectedSales || 0;
       });
       // Sort by expected desc, take top 10
@@ -1511,7 +1511,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
 
       this.focusBrandAnomalyChart = [
         { name: 'Expected', series: sortedProds.map(([name, v]) => ({ name, value: Math.round(v.expected) })) },
-        { name: 'Actual',   series: sortedProds.map(([name, v]) => ({ name, value: Math.round(v.actual)   })) },
+        { name: 'Actual', series: sortedProds.map(([name, v]) => ({ name, value: Math.round(v.actual) })) },
       ];
 
       // Deviation % bar (worst drops first)
@@ -1555,7 +1555,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
 
     // RMD vs Stockist DS donut
     const rmdTotal = data.filter(r => r.type === 'RMD').reduce((s, r) => s + r.totalSalesM, 0);
-    const stTotal  = data.filter(r => r.type === 'Stockist DS').reduce((s, r) => s + r.totalSalesM, 0);
+    const stTotal = data.filter(r => r.type === 'Stockist DS').reduce((s, r) => s + r.totalSalesM, 0);
     this.breezeTypeChart = [
       { name: 'RMD', value: Math.round(rmdTotal * 100) / 100 },
       { name: 'Stockist DS', value: Math.round(stTotal * 100) / 100 },
@@ -1633,7 +1633,11 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
   toggleSection(id: string, event?: Event) {
     if (event) { event.stopPropagation(); }
     this.collapsedSections[id] = !this.collapsedSections[id];
-    try { localStorage.setItem(this.COLLAPSED_KEY, JSON.stringify(this.collapsedSections)); } catch {}
+    try {
+      localStorage.setItem(this.COLLAPSED_KEY, JSON.stringify(this.collapsedSections));
+    } catch {
+      //
+    }
   }
 
   private loadCollapsedSections() {

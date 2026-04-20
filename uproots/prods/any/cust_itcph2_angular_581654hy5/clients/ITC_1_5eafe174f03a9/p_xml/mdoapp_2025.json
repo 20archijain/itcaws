@@ -1,6 +1,7 @@
 {
   "appConfig": {
     "id": 10,
+    "userType": 0,
     "version": 2,
     "app_version": "1.1.1",
     "relDate": "2024-05-11",
@@ -12,9 +13,9 @@
       "headerTextColor": "#000000"
     },
     "logoConfig": {
-      "splashScreenUrl": "http://upimg.btlmonitor.com/assets/drawable/splash.png",
-      "clientLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/client-logo.png",
-      "projectLogoUrl": "http://upimg.btlmonitor.com/assets/drawable/company_logo.png"
+      "splashScreenUrl": "http://upimg2.radardashboard.com/assets/drawable/splash.png",
+      "clientLogoUrl": "http://upimg2.radardashboard.com/assets/drawable/client-logo.png",
+      "projectLogoUrl": "http://upimg2.radardashboard.com/assets/drawable/company_logo.png"
     },
     "fontsConfig": {
       "fontSize": "XLARGE",
@@ -30,66 +31,76 @@
         "sortorder": 3,
         "type": 0,
         "hide": 0,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/report.png"
       },
       {
-        "label": "Upload",
+        "label": "Pending",
         "sortorder": 2,
         "type": 0,
         "hide": 0,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/icon-pending-17.png"
       },
       {
         "label": "Home",
         "sortorder": 1,
         "type": 0,
         "hide": 0,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/ic_home.png"
       },
       {
-        "label": "Master",
+        "label": "Locator",
         "sortorder": 4,
         "type": 0,
         "hide": 0,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/locator.png"
+      },
+      {
+        "label": "Master",
+        "sortorder": 5,
+        "type": 0,
+        "hide": 0,
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/ic_document.png"
       },
       {
         "label": "Assign",
         "sortorder": 5,
         "type": 0,
         "hide": 1,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/ic_gold_medel.PNG"
       },
       {
         "label": "Stock",
         "sortorder": 6,
         "type": 1,
         "hide": 1,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/ic_gold_medel.PNG"
       },
       {
         "label": "Logout",
         "sortorder": 7,
         "type": 1,
         "hide": 1,
-        "icon": "https://upimg.btlmonitor.com/dspm_icon/ic_gold_medel.PNG"
+        "icon": "https://upimg2.radardashboard.com/dspm_icon/ic_gold_medel.PNG"
       }
     ],
     "apiUrls": {
-      "surveyUploadUrl": "http://upimg.btlmonitor.com/mobile_services/api/data.php",
-      "imageUploadUrl": "http://upimg.btlmonitor.com/mobile_services/api/file.php",
-      "jsonUpdateUrl": "http://upimg.btlmonitor.com/mobile_services/api/jsonUpdate.php",
-      "statsUrl": "http://upimg.btlmonitor.com/mobile_services/api/summary.php",
-      "offlineDropdownApi": "http://upimg.btlmonitor.com/mobile_services/api/get_offline_dropdown_options.php",
-      "calendarStatusApi": "http://upimg.btlmonitor.com/mobile_services/api/get_calendar_status.php",
-      "masterDataUpdateApi": "http://upimg.btlmonitor.com/mobile_services/api/master_data_update_by_app.php",
-      "mdooutletsummarydata": "http://upimg.btlmonitor.com/mobile_services/api/custom/mdo_summary_data.php"
+      "surveyUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/data.php",
+      "imageUploadUrl": "http://upimg2.radardashboard.com/mobile_services/api/file.php",
+      "jsonUpdateUrl": "http://upimg2.radardashboard.com/mobile_services/api/jsonUpdate.php",
+      "statsUrl": "http://upimg2.radardashboard.com/mobile_services/api/summary.php",
+      "offlineDropdownApi": "http://upimg2.radardashboard.com/mobile_services/api/get_offline_dropdown_options.php",
+      "calendarStatusApi": "http://upimg2.radardashboard.com/mobile_services/api/get_calendar_status.php",
+      "mdoRouteTrackerApi": "http://upimg2.radardashboard.com/mobile_services/api/custom/get_mdo_route_tracker_data.php",
+      "mdoReportDateViewData": "http://upimg2.radardashboard.com/mobile_services/api/custom/mdo_report_date_view_data.php",
+      "mdoNotificationData": "http://upimg2.radardashboard.com/mobile_services/api/custom/get_mdo_app_notification.php",
+      "mdoDspmData": "http://upimg2.radardashboard.com/mobile_services/api/custom/get_mdo_dspm_data.php"
     }
   },
   "appForms": [
     {
       "id": 1,
       "title": "Reporting Type",
+      "infraDetailsActive": 1,
       "controls": [
         {
           "id": 1,
@@ -105,7 +116,7 @@
           "skip_logic": [
             0,
             2,
-            0
+            11
           ],
           "validations": {
             "mn": 1
@@ -121,8 +132,7 @@
           "optList": [
             "Market work with DS",
             "Market work with GT TL",
-            "Market work with AE",
-            "Independent market work"
+            "Market work with AE"
           ],
           "validations": {
             "mn": 1
@@ -199,7 +209,7 @@
       "controls": [
         {
           "id": 1,
-          "label": "Total Lines",
+          "label": "Survey Volume (Ms)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -208,14 +218,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Lines is required",
-            "len": "Total Lines should be 1 to 50 characters long",
-            "vtype": "Enter valid Total Lines"
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
           }
         },
         {
           "id": 2,
-          "label": "Total Values (Rs)",
+          "label": "Survey Value (Rs)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -224,14 +234,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Values is required",
-            "len": "Total Values should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Values"
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
           }
         },
         {
           "id": 3,
-          "label": "Total Volume (M)",
+          "label": "Lines Cut",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -240,14 +250,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Volume is required",
-            "len": "Total Volume should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Volume"
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
           }
         },
         {
           "id": 4,
-          "label": "Did you find ITC visibility at this outlet?",
+          "label": "Does the outlet have ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -257,12 +267,24 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility type required"
           }
         },
         {
           "id": 5,
-          "label": "Did you implement visibility?",
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -272,11 +294,23 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility status is required?"
           }
         },
         {
-          "id": 6,
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
           "label": "",
           "optype": 0,
           "optList": [
@@ -291,7 +325,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 9,
           "label": "",
           "optype": 0,
           "dtype": 2,
@@ -304,43 +338,19 @@
             "mn": "Outlet name is required",
             "len": "Outlet name should be 1 to 50 characters long",
             "vtype": "Enter valid Outlet name"
-          }
-        },
-        {
-          "id": 8,
-          "label": "",
-          "optype": 0,
-          "cam_type": 2,
-          "validations": {
-            "mn": 0
-          },
-          "validationsMsg": {
-            "mn": "Outlet Picture is required"
-          }
-        },
-        {
-          "id": 9,
-          "label": "",
-          "optype": 0,
-          "cam_type": 2,
-          "validations": {
-            "mn": 0
-          },
-          "validationsMsg": {
-            "mn": "Outlet Picture is required"
           }
         }
       ]
     },
     {
       "id": 4,
-      "userType": 6,
-      "title": "Survey Questions RMD",
+      "userType": 5,
+      "title": "Survey Questions NPSR",
       "end": 1,
       "controls": [
         {
           "id": 1,
-          "label": "Total Lines",
+          "label": "Survey Volume (Ms)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -349,14 +359,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Lines is required",
-            "len": "Total Lines should be 1 to 50 characters long",
-            "vtype": "Enter valid Total Lines"
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
           }
         },
         {
           "id": 2,
-          "label": "Total Values (Rs)",
+          "label": "Survey Value (Rs)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -365,14 +375,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Values is required",
-            "len": "Total Values should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Values"
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
           }
         },
         {
           "id": 3,
-          "label": "Total Volume (M)",
+          "label": "Lines Cut",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -381,14 +391,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Volume is required",
-            "len": "Total Volume should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Volume"
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
           }
         },
         {
           "id": 4,
-          "label": "Did you find ITC visibility at this outlet?",
+          "label": "Does the outlet have ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -398,12 +408,24 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility type required"
           }
         },
         {
           "id": 5,
-          "label": "Did you implement visibility?",
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -413,11 +435,23 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility status is required?"
           }
         },
         {
-          "id": 6,
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
           "label": "",
           "optype": 0,
           "optList": [
@@ -432,7 +466,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 9,
           "label": "",
           "optype": 0,
           "dtype": 2,
@@ -445,43 +479,19 @@
             "mn": "Outlet name is required",
             "len": "Outlet name should be 1 to 50 characters long",
             "vtype": "Enter valid Outlet name"
-          }
-        },
-        {
-          "id": 8,
-          "label": "",
-          "optype": 0,
-          "cam_type": 2,
-          "validations": {
-            "mn": 0
-          },
-          "validationsMsg": {
-            "mn": "Outlet Picture is required"
-          }
-        },
-        {
-          "id": 9,
-          "label": "",
-          "optype": 0,
-          "cam_type": 2,
-          "validations": {
-            "mn": 0
-          },
-          "validationsMsg": {
-            "mn": "Outlet Picture is required"
           }
         }
       ]
     },
     {
       "id": 5,
-      "userType": 4,
-      "title": "Survey Questions SCP",
+      "userType": 6,
+      "title": "Survey Questions RMD",
       "end": 1,
       "controls": [
         {
           "id": 1,
-          "label": "Total Lines",
+          "label": "Survey Volume (Ms)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -490,14 +500,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Lines is required",
-            "len": "Total Lines should be 1 to 50 characters long",
-            "vtype": "Enter valid Total Lines"
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
           }
         },
         {
           "id": 2,
-          "label": "Total Values (Rs)",
+          "label": "Survey Value (Rs)",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -506,14 +516,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Values is required",
-            "len": "Total Values should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Values"
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
           }
         },
         {
           "id": 3,
-          "label": "Total Volume (M)",
+          "label": "Lines Cut",
           "optype": 4,
           "dtype": 1,
           "validations": {
@@ -522,14 +532,14 @@
             "vtype": 20
           },
           "validationsMsg": {
-            "mn": "Total Volume is required",
-            "len": "Total Volume should be 1 to 5 characters long",
-            "vtype": "Enter valid Total Volume"
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
           }
         },
         {
           "id": 4,
-          "label": "Did you find ITC visibility at this outlet?",
+          "label": "Does the outlet have ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -539,12 +549,24 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility type required"
           }
         },
         {
           "id": 5,
-          "label": "Did you implement visibility?",
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
           "optype": 1,
           "optList": [
             "Yes",
@@ -554,11 +576,23 @@
             "mn": 1
           },
           "validationsMsg": {
-            "mn": "Outlet type required"
+            "mn": "ITC visibility status is required?"
           }
         },
         {
-          "id": 6,
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
           "label": "",
           "optype": 0,
           "optList": [
@@ -573,7 +607,7 @@
           }
         },
         {
-          "id": 7,
+          "id": 9,
           "label": "",
           "optype": 0,
           "dtype": 2,
@@ -587,35 +621,575 @@
             "len": "Outlet name should be 1 to 50 characters long",
             "vtype": "Enter valid Outlet name"
           }
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "userType": 2,
+      "title": "Survey Questions Town SWD",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Survey Volume (Ms)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Survey Value (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Lines Cut",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
+          }
+        },
+        {
+          "id": 4,
+          "label": "Does the outlet have ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility type required"
+          }
+        },
+        {
+          "id": 5,
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility status is required?"
+          }
+        },
+        {
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
         },
         {
           "id": 8,
           "label": "",
           "optype": 0,
-          "cam_type": 2,
+          "optList": [
+            "Ask",
+            "Non-ask"
+          ],
           "validations": {
             "mn": 0
           },
           "validationsMsg": {
-            "mn": "Outlet Picture is required"
+            "mn": "Outlet type required"
           }
         },
         {
           "id": 9,
           "label": "",
           "optype": 0,
-          "cam_type": 2,
+          "dtype": 2,
           "validations": {
-            "mn": 0
+            "mn": 0,
+            "len": "1-50",
+            "vtype": 1
           },
           "validationsMsg": {
-            "mn": "Outlet Picture is required"
+            "mn": "Outlet name is required",
+            "len": "Outlet name should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlet name"
           }
         }
       ]
     },
     {
-      "id": 6,
+      "id": 7,
+      "userType": 8,
+      "title": "Survey Questions SCP",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Survey Volume (Ms)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Survey Value (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Lines Cut",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
+          }
+        },
+        {
+          "id": 4,
+          "label": "Does the outlet have ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility type required"
+          }
+        },
+        {
+          "id": 5,
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility status is required?"
+          }
+        },
+        {
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
+          "label": "",
+          "optype": 0,
+          "optList": [
+            "Ask",
+            "Non-ask"
+          ],
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet type required"
+          }
+        },
+        {
+          "id": 9,
+          "label": "",
+          "optype": 0,
+          "dtype": 2,
+          "validations": {
+            "mn": 0,
+            "len": "1-50",
+            "vtype": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet name is required",
+            "len": "Outlet name should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlet name"
+          }
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "userType": 33,
+      "title": "Survey Questions (Type for future)",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Survey Volume (Ms)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Survey Value (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Lines Cut",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
+          }
+        },
+        {
+          "id": 4,
+          "label": "Does the outlet have ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility type required"
+          }
+        },
+        {
+          "id": 5,
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility status is required"
+          }
+        },
+        {
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
+          "label": "",
+          "optype": 0,
+          "optList": [
+            "Ask",
+            "Non-ask"
+          ],
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet type required"
+          }
+        },
+        {
+          "id": 9,
+          "label": "",
+          "optype": 0,
+          "dtype": 2,
+          "validations": {
+            "mn": 0,
+            "len": "1-50",
+            "vtype": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet name is required",
+            "len": "Outlet name should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlet name"
+          }
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "userType": 9,
+      "title": "Survey Questions FMCG LITE DS",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Survey Volume (Ms)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Volume (Ms) is required",
+            "len": "Survey Volume (Ms) should be 1 to 50 characters long",
+            "vtype": "Enter valid Survey Volume (Ms)"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Survey Value (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Survey Value (Rs) is required",
+            "len": "Survey Value (Rs) should be 1 to 5 characters long",
+            "vtype": "Enter valid Survey Value (Rs)"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Lines Cut",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Lines Cut is required",
+            "len": "Lines Cut should be 1 to 5 characters long",
+            "vtype": "Enter valid Lines Cut"
+          }
+        },
+        {
+          "id": 4,
+          "label": "Does the outlet have ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility type required"
+          }
+        },
+        {
+          "id": 5,
+          "label": "Outlet Visibility Picture",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Visibility Picture is required"
+          }
+        },
+        {
+          "id": 6,
+          "label": "Did you implement ITC visibility?",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "ITC visibility status is required?"
+          }
+        },
+        {
+          "id": 7,
+          "label": "Click Outlet Photo",
+          "optype": 6,
+          "cam_type": 2,
+          "validations": {
+            "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet Photo is required"
+          }
+        },
+        {
+          "id": 8,
+          "label": "",
+          "optype": 0,
+          "optList": [
+            "Ask",
+            "Non-ask"
+          ],
+          "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Outlet type required"
+          }
+        },
+        {
+          "id": 9,
+          "label": "",
+          "optype": 0,
+          "dtype": 2,
+          "validations": {
+            "mn": 0,
+            "len": "1-50",
+            "vtype": 1
+          },
+          "validationsMsg": {
+            "mn": "Outlet name is required",
+            "len": "Outlet name should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlet name"
+          }
+        }
+      ]
+    },
+    {
+      "id": 10,
       "title": "Attendance",
       "end": 1,
       "controls": [
@@ -656,17 +1230,131 @@
       ]
     },
     {
-      "id": 7,
+      "id": 11,
       "title": "Day End",
       "end": 1,
       "controls": [
         {
           "id": 1,
-          "label": "Take your Selfie",
-          "optype": 6,
+          "label": "Total Outlets Visited by DS",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Outlets Visited is required",
+            "len": "Outlets Visited should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlets Visited"
+          }
+        },
+        {
+          "id": 2,
+          "label": "",
+          "optype": 0,
+          "dtype": 1,
+          "validations": {
+            "mn": 0,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Total Sales Volume is required",
+            "len": "Total Sales Volume should be 1 to 5 characters long",
+            "vtype": "Enter valid Total Sales Volume"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Sales Value in (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Sales Value in (M) is required",
+            "len": "Sales Value in (M) should be 1 to 5 characters long",
+            "vtype": "Enter valid Sales Value in (M)"
+          }
+        },
+        {
+          "id": 4,
+          "label": "",
+          "optype": 0,
           "cam_type": 1,
           "validations": {
+            "mn": 0
+          },
+          "validationsMsg": {
+            "mn": "Your selfie is required"
+          }
+        }
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Infra Details",
+      "end": 1,
+      "controls": [
+        {
+          "id": 1,
+          "label": "Total Outlets Visited by DS",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Outlets Visited is required",
+            "len": "Outlets Visited should be 1 to 50 characters long",
+            "vtype": "Enter valid Outlets Visited"
+          }
+        },
+        {
+          "id": 2,
+          "label": "Is DS Present",
+          "optype": 1,
+          "optList": [
+            "Yes",
+            "No"
+          ],
+          "validations": {
             "mn": 1
+          },
+          "validationsMsg": {
+            "mn": "DS presence status is required"
+          }
+        },
+        {
+          "id": 3,
+          "label": "Sales Value in (Rs)",
+          "optype": 4,
+          "dtype": 1,
+          "validations": {
+            "mn": 1,
+            "len": "1-5",
+            "vtype": 20
+          },
+          "validationsMsg": {
+            "mn": "Sales Value in (M) is required",
+            "len": "Sales Value in (M) should be 1 to 5 characters long",
+            "vtype": "Enter valid Sales Value in (M)"
+          }
+        },
+        {
+          "id": 4,
+          "label": "",
+          "optype": 0,
+          "cam_type": 1,
+          "validations": {
+            "mn": 0
           },
           "validationsMsg": {
             "mn": "Your selfie is required"

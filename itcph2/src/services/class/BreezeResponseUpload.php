@@ -51,6 +51,7 @@ class BreezeResponseUpload
         // Expected headers EXACTLY SAME as Excel and DB column names
         $expectedHeaders = [
             'capture_date',
+            'district',
             'branch_id',
             'branch_name',
             'circle',
@@ -68,7 +69,8 @@ class BreezeResponseUpload
             'planned_outlets',
             'outlet_re_visit',
             'new_outlet_visited',
-            'total_sale'
+            'total_sale',
+            'value_m'
         ];
 
         // Mandatory fields
@@ -219,6 +221,7 @@ class BreezeResponseUpload
 
         $arrExcelData[] = [
             'capture_date',
+            'district',
             'branch_id',
             'branch_name',
             'circle',
@@ -236,7 +239,8 @@ class BreezeResponseUpload
             'planned_outlets',
             'outlet_re_visit',
             'new_outlet_visited',
-            'total_sale'
+            'total_sale',
+            'value_m'
         ];
 
         $fileName = "BREEZE_DATA_FORMAT.xlsx";

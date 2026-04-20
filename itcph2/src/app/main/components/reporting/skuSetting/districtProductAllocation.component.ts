@@ -17,6 +17,7 @@ import { environment } from 'src/environments/environment';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
+import { Functions } from 'src/app/core/utils/functions.list';
 
 export interface CategoryGroup {
   category: string;
@@ -42,6 +43,8 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
   statusFlagCond = false;
   defaultDspm = false;
   submittedDataList = [];
+  currentDate = Functions.currentDate();
+  skuDefaultAllocation = false;
 
   availableProducts: ProductItem[] = [];   // left panel — from backend
   selectedProducts: ProductItem[] = [];    // right panel — temp array
@@ -103,6 +106,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.mainBranchOptions = resp.data.mainBranchList;
+            this.skuDefaultAllocation = resp.data.skuDefaultAllocation;
           }
         })
     );
@@ -262,6 +266,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
 
     if (current) {
       // ✅ REMOVE key completely when unchecking
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [productId]: _, ...rest } = this.dspmBrandMap;
       this.dspmBrandMap = rest;
     } else {
@@ -279,6 +284,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
     const current = !!this.isFocusBrandMap[productId];
 
     if (current) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { [productId]: _, ...rest } = this.isFocusBrandMap;
       this.isFocusBrandMap = rest;
     } else {
@@ -287,7 +293,9 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
   }
 
   private clearFlagState(productId: number): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [productId]: _f, ...restFirst } = this.dspmBrandMap;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { [productId]: _s, ...restSecond } = this.isFocusBrandMap;
     this.dspmBrandMap = restFirst;
     this.isFocusBrandMap = restSecond;
@@ -297,107 +305,115 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
 
   submit() {
 
-    const type = this.form.get('teamType')?.value;
+    if (this.currentDate['day'] > 21) {
 
-    const focusKeys = Object.keys(this.isFocusBrandMap || {});
-    const dspmKeys = Object.keys(this.dspmBrandMap || {});
+      const type = this.form.get('teamType')?.value;
 
-    // ✅ Focus must be between 2 and 4
-    const hasValidFocusCount = focusKeys.length > 1 && focusKeys.length < 5;
+      const focusKeys = Object.keys(this.isFocusBrandMap || {});
+      const dspmKeys = Object.keys(this.dspmBrandMap || {});
 
-    // ✅ DSPM must be exactly 2
-    const hasValidDspmCount = dspmKeys.length === 2;
+      // ✅ Focus must be between 2 and 4
+      const hasValidFocusCount = focusKeys.length > 1 && focusKeys.length < 5;
 
-    // ✅ Ensure type-safe comparison (fixes string/number mismatch issue)
-    const focusSet = new Set(focusKeys.map(String));
+      // ✅ DSPM must be exactly 2
+      const hasValidDspmCount = dspmKeys.length === 2;
 
-    const allDspmInsideFocus = dspmKeys
-      .map(String)
-      .every(key => focusSet.has(key));
+      // ✅ Ensure type-safe comparison (fixes string/number mismatch issue)
+      const focusSet = new Set(focusKeys.map(String));
+
+      const allDspmInsideFocus = dspmKeys
+        .map(String)
+        .every(key => focusSet.has(key));
 
 
-    let formSubmissionCond = false;
+      let formSubmissionCond = false;
 
-    if (type === '5') {
-      formSubmissionCond =
-        hasValidFocusCount &&
-        hasValidDspmCount &&
-        allDspmInsideFocus;
-    } else {
-      formSubmissionCond = hasValidFocusCount;
-    }
-
-    if (formSubmissionCond) {
-
-      if (!this.isDisabled && this.selectedProducts.length > 0 && this.form.valid) {
-
-        this.isDisabled = true;
-        this.loaderService.startLoader();
-
-        const productsWithFlags = this.selectedProducts.map(p => ({
-          ...p,
-          dspmBrand: !!this.dspmBrandMap[p.id],
-          isFocusBrand: !!this.isFocusBrandMap[p.id],
-        }));
-
-        const payload: ProductSelectorPayload = {
-          selectedProducts: productsWithFlags,
-          formData: this.form.getRawValue(),
-        };
-
-        this.subscription.push(
-          this.formService.customActionCall<SubmitSelectedProductsResponse>(
-            STATIC_MODULES.custom.submitSelectedProducts,
-            payload,
-            null,
-            this.url
-          )
-            .pipe(
-              finalize(() => {
-                this.isDisabled = false;
-                this.loaderService.stopLoader();
-              })
-            )
-            .subscribe(resp => {
-              if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-                this.canGoBackGuard.markAsPristine();
-                this.clearForm();
-              }
-            })
-        );
+      if (type === '5') {
+        formSubmissionCond =
+          hasValidFocusCount &&
+          hasValidDspmCount &&
+          allDspmInsideFocus;
+      } else {
+        formSubmissionCond = hasValidFocusCount;
       }
 
-    } else {
+      if (formSubmissionCond) {
 
-      // ❌ Validation Errors
-      if (type === '5') {
+        if (!this.isDisabled && this.selectedProducts.length > 0 && this.form.valid) {
 
-        if (!hasValidFocusCount) {
+          this.isDisabled = true;
+          this.loaderService.startLoader();
+
+          const productsWithFlags = this.selectedProducts.map(p => ({
+            ...p,
+            dspmBrand: !!this.dspmBrandMap[p.id],
+            isFocusBrand: !!this.isFocusBrandMap[p.id],
+          }));
+
+          const payload: ProductSelectorPayload = {
+            selectedProducts: productsWithFlags,
+            formData: this.form.getRawValue(),
+          };
+
+          this.subscription.push(
+            this.formService.customActionCall<SubmitSelectedProductsResponse>(
+              STATIC_MODULES.custom.submitSelectedProducts,
+              payload,
+              null,
+              this.url
+            )
+              .pipe(
+                finalize(() => {
+                  this.isDisabled = false;
+                  this.loaderService.stopLoader();
+                })
+              )
+              .subscribe(resp => {
+                if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+                  this.canGoBackGuard.markAsPristine();
+                  this.clearForm();
+                }
+              })
+          );
+        }
+
+      } else {
+
+        // ❌ Validation Errors
+        if (type === '5') {
+
+          if (!hasValidFocusCount) {
+            this.toastrService.toastr({
+              msg: 'Focus Brand must be between 2 and 4 SKUs',
+              type: 'error'
+            });
+          }
+          else if (!hasValidDspmCount) {
+            this.toastrService.toastr({
+              msg: 'DSPM Brand must have exactly 2 SKUs',
+              type: 'error'
+            });
+          }
+          else if (!allDspmInsideFocus) {
+            this.toastrService.toastr({
+              msg: 'DSPM SKUs must be selected from Focus Brand only',
+              type: 'error'
+            });
+          }
+
+        } else {
+
           this.toastrService.toastr({
             msg: 'Focus Brand must be between 2 and 4 SKUs',
             type: 'error'
           });
         }
-        else if (!hasValidDspmCount) {
-          this.toastrService.toastr({
-            msg: 'DSPM Brand must have exactly 2 SKUs',
-            type: 'error'
-          });
-        }
-        else if (!allDspmInsideFocus) {
-          this.toastrService.toastr({
-            msg: 'DSPM SKUs must be selected from Focus Brand only',
-            type: 'error'
-          });
-        }
-
-      } else {
-
-        this.toastrService.toastr({
-          msg: 'Focus Brand must be between 2 and 4 SKUs',
-          type: 'error'
-        });
       }
+    } else {
+      this.toastrService.toastr({
+        msg: 'You can not allocate SKU before 22',
+        type: 'error'
+      });
     }
   }
 

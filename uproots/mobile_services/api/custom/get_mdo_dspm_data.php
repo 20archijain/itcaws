@@ -42,7 +42,6 @@ class getMdoDSPM extends Utilities
 
         foreach ($months as $month) {
             $cardItems = array();
-            $insentiveItems = [];
             list($year, $newMonth) = explode('-', $month);
             $datesInMonth = $this->tableUtil->getRowsColumn("$dbName.tblattendance", "capture_date", "dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(capture_date, '%Y-%m') = '$month'", array(), true);
             $Query = "SELECT type, COUNT(DISTINCT CONCAT(ds_name, '_', DATE(capture_date))) AS cnt FROM $dbName.tblattendance WHERE dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(capture_date, '%Y-%m') = '$month' AND type IN (0, 6, 8, 9) GROUP BY type";
@@ -100,6 +99,11 @@ class getMdoDSPM extends Utilities
                 }
             }
 
+            $isLocked = 1;
+            if ($vanDsMtdCount >= 6 && $rmdScpMtdCount >= 10 && $gtTlCount >= 2 && $aeCount >= 2 && $daysCount >= 18) {
+                $isLocked = 0;
+            }
+
             $Query2 = "SELECT team_id, capture_date, SUM(ques_5) AS sale, AVG(ques_7) AS alc FROM $dbName.tblsurvey_response_details_mdo WHERE dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(capture_date, '%Y-%m') = '$month' AND type IN (6, 8) GROUP BY capture_date";
             $sAction2 = null;
             $sRows2 = 0;
@@ -109,7 +113,7 @@ class getMdoDSPM extends Utilities
                 while ($row2 = $this->dbConn->GetData($sAction2)) {
                     $teamId = $row2['team_id'];
                     $sale = $row2['sale'];
-                    $alc  = round($row2['alc']); // average linecut
+                    $alc  = round((float)$row2['alc']); // average linecut
                     $dayIncentive = 0;
                     if ($sale >= 4 && $alc >= 6) {
                         $dayIncentive = 120;
@@ -123,6 +127,71 @@ class getMdoDSPM extends Utilities
                     $totalIncentive = min($totalIncentive, 1200);
                 }
             }
+
+            $Query3 = "SELECT team_id, capture_date, COUNT(DISTINCT ques_4) AS uob, AVG(ques_7) AS alc FROM $dbName.tblsurvey_response_details_mdo WHERE dstatus = 0 AND team_id = $teamId AND DATE_FORMAT(capture_date, '%Y-%m') = '$month' AND type = 0 GROUP BY capture_date";
+            $sAction3 = null;
+            $sRows3 = 0;
+            $totalIncentive2 = 0;
+            $this->dbConn->ExecuteSelectQuery($Query3, $sAction3, $sRows3);
+            if ($sRows3 > 0) {
+                while ($row3 = $this->dbConn->GetData($sAction3)) {
+                    $teamId = $row3['team_id'];
+                    $uob = $row3['uob'];
+                    $alc  = round((float)$row3['alc']); // average linecut
+                    $dayIncentive2 = 0;
+                    if ($uob >= 18 && $alc >= 6) {
+                        $dayIncentive2 = 120;
+                    } elseif ($uob >= 16 && $alc >= 5) {
+                        $dayIncentive2 = 100;
+                    } elseif ($uob >= 14 && $alc >= 4) {
+                        $dayIncentive2 = 75;
+                    }
+
+                    $totalIncentive2 += $dayIncentive2;
+                    $totalIncentive2 = min($totalIncentive2, 1200);
+                }
+            }
+
+            $acessTeams = $this->tableUtil->getRowsColumn("$dbName.tblmdo_access", "teams", "dstatus = 0 AND mdo_id = $teamId AND is_type IN (6, 8)");
+            $teams = "'" . implode("','", $acessTeams) . "'";
+
+            $Query4 = "SELECT capture_date, value_m, outlet_re_visit, total_sale FROM $dbName.tblbreeze_response_data WHERE dstatus = 0 AND ds_id IN ($teams) AND DATE_FORMAT(capture_date, '%Y-%m') = '$month'";
+            $sAction4 = null;
+            $sRows4 = 0;
+            $daysCriteria1 = 0; // >=14 UOB and >=2 sales
+            $daysCriteria2 = 0; // >=18 UOB and >=4 sales
+            $incentiveCriteria1 = 0;
+            $incentiveCriteria2 = 0;
+            $this->dbConn->ExecuteSelectQuery($Query4, $sAction4, $sRows4);
+            if ($sRows4 > 0) {
+                while ($row4 = $this->dbConn->GetData($sAction4)) {
+                    $valueM = $row4['value_m'];
+                    $outletReVisit  = $row4['outlet_re_visit'];
+                    $totalSale  = $row4['total_sale'];
+                    if ($valueM > 0) {
+                        $sale = $totalSale / $valueM;
+                    } else {
+                        $sale = 0;
+                    }
+
+                    // Criteria 1
+                    if ($outletReVisit >= 14 && $sale >= 2) {
+                        $daysCriteria1++;
+                    }
+
+                    // Criteria 2
+                    if ($outletReVisit >= 18 && $sale >= 4) {
+                        $daysCriteria2++;
+                    }
+                }
+
+                $targetDays = 18;
+
+                $incentiveCriteria1 = min(($daysCriteria1 / $targetDays) * 1500, 1500);
+                $incentiveCriteria2 = min(($daysCriteria2 / $targetDays) * 4000, 4000);
+            }
+
+            $totalEarned = $totalIncentive + $totalIncentive2 + $incentiveCriteria1 + $incentiveCriteria2;
 
             $bannerItems = [];
             for ($i = 1; $i <= 4; $i++) {
@@ -216,7 +285,7 @@ class getMdoDSPM extends Utilities
                 "view_type" => 2,
                 "rate" => "",
                 "color" => "#118ab2",
-                "lockInfo" => ""
+                "lockInfo" => "Locked based on gate parameters 1"
             ];
 
             $metricGroups = array(
@@ -238,19 +307,67 @@ class getMdoDSPM extends Utilities
                 ),
             );
 
-            $insentiveItems[] = [
-                "id" => 1,
-                "label" => "On Accompanied RMD / SCP DS visit",
-                "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
-                "current_value" => (int)$totalIncentive,
-                "target_value" => 1200,
-                "max_value" => 1200,
-                "unit" => "",
-                "view_type" => 3,
-                "rate" => "₹1200",
-                "color" => "#118ab2",
-                "lockInfo" => ""
-            ];
+            $insentiveItems = array(
+                array(
+                    "id" => 1,
+                    "label" => "On Accompanied RMD / SCP DS visit",
+                    "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
+                    "current_value" => (int)$totalIncentive,
+                    "target_value" => 1200,
+                    "max_value" => 1200,
+                    "unit" => "",
+                    "view_type" => 3,
+                    "rate" => "₹1200",
+                    "color" => "#118ab2",
+                    "isLocked" => $isLocked,
+                    "lockInfo" => "Locked based on gate parameters 2"
+                ),
+                array(
+                    "id" => 2,
+                    "label" => "On Accompanied Van DS visit",
+                    "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
+                    "current_value" => (int)$totalIncentive2,
+                    "target_value" => 1200,
+                    "max_value" => 1200,
+                    "unit" => "",
+                    "view_type" => 3,
+                    "rate" => "₹1200",
+                    "color" => "#19AF55",
+                    "isLocked" => $isLocked,
+                    "lockInfo" => "Locked based on gate parameters 3"
+                ),
+            );
+
+            $insentiveItems2 = array(
+                array(
+                    "id" => 1,
+                    "label" => "Sales > 4M /Day / UOB >=14",
+                    "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
+                    "current_value" => (int)$incentiveCriteria1,
+                    "target_value" => 1500,
+                    "max_value" => 1500,
+                    "unit" => "",
+                    "view_type" => 3,
+                    "rate" => "1500",
+                    "color" => "#55298a",
+                    "isLocked" => $isLocked,
+                    "lockInfo" => "Locked based on gate parameters 4"
+                ),
+                array(
+                    "id" => 2,
+                    "label" => "Sales > 4M /Day / UOB >=18",
+                    "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
+                    "current_value" => (int)$incentiveCriteria2,
+                    "target_value" => 4000,
+                    "max_value" => 4000,
+                    "unit" => "",
+                    "view_type" => 3,
+                    "rate" => "4000",
+                    "color" => "#d91136",
+                    "isLocked" => $isLocked,
+                    "lockInfo" => "Locked based on gate parameters 5"
+                ),
+            );
 
             $metricGroups2 = array(
                 array(
@@ -260,6 +377,14 @@ class getMdoDSPM extends Utilities
                     "groupViewType" => "list",
                     "groupStyle" => "banner",
                     "metrics" => $insentiveItems,
+                ),
+                array(
+                    "groupTitle" => "Basis Sales of All Infra Mapped to MDO",
+                    "groupIcon" => "https://cdn-icons-png.flaticon.com/512/2913/2913133.png",
+                    "groupColor" => "#f30909",
+                    "groupViewType" => "list",
+                    "groupStyle" => "banner",
+                    "metrics" => $insentiveItems2,
                 ),
             );
 
@@ -282,7 +407,7 @@ class getMdoDSPM extends Utilities
 
             $mdoLeaderboardData[] = array(
                 "month" => date('M', strtotime($month)),
-                "earnedPoints" => 0,
+                "earned_payout" => $totalEarned,
                 "max_payout" => 6400,
                 "marketWithInfraItems" => $marketWithInfraItems,
             );

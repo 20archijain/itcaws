@@ -37,8 +37,8 @@ class ProcessMdoData
         $rsAction = null;
         $iRows = 0;
 
-        $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND updated_date != '$currentDate' LIMIT 60";
-        // $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND mdo_id IN ('22870') LIMIT 30";
+        $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND (updated_date != '$currentDate' OR updated_date IS NULL) LIMIT 50";
+        // $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND mdo_id IN (23904) AND is_previous_day_updated = 0 LIMIT 50";
 
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -258,12 +258,9 @@ class ProcessMdoData
                             );
                             $lastFocus2DateUnits = $lastPurchaseFocus2[0] && $lastPurchaseFocus2[1] ? $lastPurchaseFocus2[0] . ", " . $lastPurchaseFocus2[1] : 0;
                         }
-                    } elseif ($teamType == 6 || $teamType == 8 || $teamType == 9) {
-                        $valueM = getRowColumn($this->dbConn, "tblbreeze_response_data", "value_m", "team_id = '$team' AND dstatus = 0");
-                        $sale = getRowColumn($this->dbConn, "tblbreeze_response_data", "SUM(total_sale)", "team_id = '$team' AND dstatus = 0 AND capture_date BETWEEN '$monthStart' AND '$currentDate'");
-                        $totalSale = isNonEmpty($valueM) && $valueM != NULL ? round($sale / $valueM, 2) : 0;
-
+                    } else {
                         // reset variables for team types 6,8,9
+                        $totalSale = 0;
                         $averageSale = 0;
                         $avegCft = 0;
                         $totalUlc = 0;

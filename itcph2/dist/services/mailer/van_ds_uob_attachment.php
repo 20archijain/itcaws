@@ -186,7 +186,7 @@ class VanDsMailer
                 return !empty($row['DS Name']) && !empty($row['Total Outlets Mapped']);
             });
             $subject = "Van DS - Consolidated UOB report for North (MTD)";
-            $this->commonFunctions->sendMailWithAttachment($fileName, $subject, array("SMIS.RPA@ITC.IN"), array("appilary@gmail.com", "Aryaman.Chand@itc.in", "Sanjeev.Kr@itc.in", "Akhilesh.chourasia@itc.in", "Tmnd.Rpa@itc.in", "Koyel.Guha@itc.in"), $arrHeaders, $arrExcelData);
+            $this->commonFunctions->sendMailWithAttachment($fileName, $subject, array("SMIS.RPA@ITC.IN"), array("appilary@gmail.com", "Sanjeev.Kr@itc.in", "Akhilesh.chourasia@itc.in", "Tmnd.Rpa@itc.in", "Koyel.Guha@itc.in"), $arrHeaders, $arrExcelData);
         }
     }
 }

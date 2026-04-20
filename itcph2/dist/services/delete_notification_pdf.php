@@ -1,4 +1,5 @@
 <?php
+
 date_default_timezone_set("Asia/Calcutta");
 $I_am_req_always = "I am req always";
 
@@ -44,7 +45,6 @@ class PDFDeleter
         $deletedCount = 0;
 
         foreach ($folders as $folderPath) {
-
             $folderName = basename($folderPath);
             $folderDate = null;
 
@@ -59,7 +59,7 @@ class PDFDeleter
                     substr($folderName, 6, 2);
             }
 
-            // ⛔ Skip invalid folders SAFELY
+            // kip invalid folders SAFELY
             if (!$folderDate) {
                 echo "Skipped (invalid): $folderName\n";
                 continue;
@@ -73,9 +73,8 @@ class PDFDeleter
                 continue;
             }
 
-            // 🔥 DATE STRING COMPARISON
+            // DATE STRING COMPARISON
             if ($folderDate < $cutoffDate) {
-
                 echo "Deleting: $folderName\n";
 
                 foreach (glob($folderPath . '/*') as $file) {

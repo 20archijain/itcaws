@@ -1,19 +1,11 @@
 <?php
+
 /**
- * ============================================================================
- * SCALABLE AI INSIGHTS FRAMEWORK - Query Builder Engine
- * ============================================================================
+ * ARIA AI Insights - Query Builder
  *
- * Senior Developer Pattern:
- * - Configuration-driven (no manual SQL per new query type)
- * - Type-safe with proper error handling
- * - Reusable components for aggregations, filters, sorting
- * - Extensible metric system
- *
- * Usage: $builder = new QueryBuilder($config, $dbConnection);
- *        $query = $builder->buildQuery('product_sales', $filters);
- *
- * ============================================================================
+ * Builds SQL from the JSON query config (ai-insights-queries.json).
+ * Supports aggregation and time series query types, parameterized filters,
+ * keyword-based query routing, and ambiguity detection.
  */
 
 namespace AiInsights;
@@ -403,9 +395,11 @@ class QueryBuilder
         }
         $queryText = strtolower(implode(' ', $flatFilters));
 
-        if (strpos($queryText, 'worst') !== false ||
+        if (
+            strpos($queryText, 'worst') !== false ||
             strpos($queryText, 'bottom') !== false ||
-            strpos($queryText, 'low') !== false) {
+            strpos($queryText, 'low') !== false
+        ) {
             return $sortingConfig['worst'] ?? 'DESC';
         }
 
@@ -418,7 +412,7 @@ class QueryBuilder
     private function buildFinalQuery()
     {
         $query = "SELECT " . implode(', ', $this->select)
-               . " FROM " . $this->dbTable . " a";
+            . " FROM " . $this->dbTable . " a";
 
         foreach ($this->joins as $join) {
             $query .= " " . $join;
@@ -536,8 +530,13 @@ class QueryBuilder
             $secondScore = 0;
             $skip = true;
             foreach ($scores as $q => $s) {
-                if ($skip) { $skip = false; continue; }
-                $second = $q; $secondScore = $s; break;
+                if ($skip) {
+                    $skip = false;
+                    continue;
+                }
+                $second = $q;
+                $secondScore = $s;
+                break;
             }
             $isAmbiguous = $second !== null && $topScore > 0 && ($secondScore / $topScore) >= 0.75;
             return [
@@ -689,5 +688,3 @@ class QueryBuilder
         return null;
     }
 }
-
-?>

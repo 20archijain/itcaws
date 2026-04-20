@@ -101,9 +101,9 @@ class generatePDFCronjob
         $wdCode = $teamInfo[5];
 
         // Get branch information
-        $branchInfo = getRowColumns( $this->_dbConn, $branchTable, "branch_name, main_branch", "branch_id = $branchId AND dstatus = 0" );
+        $branchInfo = getRowColumns($this->_dbConn, $branchTable, "branch_name, main_branch", "branch_id = $branchId AND dstatus = 0");
 
-        $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
+        $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query
 
         $variants = [];
         $varAction = null;
@@ -155,7 +155,7 @@ class generatePDFCronjob
         $sProductSaleColumns = implode(",", $summaryColName);
         $isTypeMap = [0 => "Van DS", 1 => "Niches", 5 => "NPSR"];
         $dsType = isset($isTypeMap[$isType]) ? $isTypeMap[$isType] : "";
-        // $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
+        // $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query
 
         // Fetch sales data for this team within datetime range
         $sQuery = "SELECT a.capture_datetime, a.capture_date, a.ques_0, a.ques_1, a.ques_3, $sProductSaleColumns" .
@@ -455,7 +455,6 @@ class generatePDFCronjob
         $this->_dbConn->ExecuteSelectQuery($ProductQueryVarient, $varAction, $varRows);
 
         if ($varRows > 0) {
-
             $pdf->AddPage();
 
             $pdf->SetFont('Arial', 'B', 9);
@@ -480,7 +479,6 @@ class generatePDFCronjob
             $pdf->SetFont('Arial', '', 7);
 
             while ($rowVar = $this->_dbConn->GetData($varAction)) {
-
                 $variantName = $rowVar['product_name'];
                 $col = $rowVar['summary_column_name'];
 
