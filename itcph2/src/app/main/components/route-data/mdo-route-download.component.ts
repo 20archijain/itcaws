@@ -19,7 +19,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './mdo-route-download.component.html'
+    templateUrl: './mdo-route-download.component.html',
+    standalone: false
 })
 export class MdoDownloadRouteComponent implements OnDestroy, OnInit {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

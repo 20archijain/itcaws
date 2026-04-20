@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-column-chart',
-  template: `
+    selector: 'app-column-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-bar-vertical
@@ -42,7 +42,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [roundEdges]="roundEdges">
     </ngx-charts-bar-vertical>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class ColumnChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

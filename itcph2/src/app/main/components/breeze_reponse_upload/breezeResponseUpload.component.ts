@@ -17,7 +17,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './breezeResponseUpload.component.html',
+    templateUrl: './breezeResponseUpload.component.html',
+    standalone: false
 })
 export class BreezeResponseUploadComponent implements OnInit, OnDestroy {
 

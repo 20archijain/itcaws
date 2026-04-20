@@ -13,8 +13,9 @@ import { environment } from 'src/environments/environment';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './npsr-dashboard.component.html',
-  styleUrls: ['./npsr-dashboard.component.scss']
+    templateUrl: './npsr-dashboard.component.html',
+    styleUrls: ['./npsr-dashboard.component.scss'],
+    standalone: false
 })
 export class NpsrDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

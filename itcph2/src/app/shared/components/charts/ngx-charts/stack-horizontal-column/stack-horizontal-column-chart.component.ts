@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-stack-horizontal-column-chart',
-  template: `
+    selector: 'app-stack-horizontal-column-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-bar-horizontal-stacked
@@ -39,7 +39,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [tooltipDisabled]="tooltipDisabled">
     </ngx-charts-bar-horizontal-stacked>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class StackHorizontalColumnChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

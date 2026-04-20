@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-stack-area-chart',
-  template: `
+    selector: 'app-stack-area-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-area-chart-stacked
@@ -39,7 +39,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [yScaleMax]="yScaleMax">
     </ngx-charts-area-chart-stacked>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class StackAreaChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

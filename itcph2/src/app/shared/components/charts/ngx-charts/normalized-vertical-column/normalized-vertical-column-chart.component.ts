@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-normalized-vertical-column-chart',
-  template: `
+    selector: 'app-normalized-vertical-column-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-bar-vertical-normalized
@@ -44,7 +44,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
         </ng-template>
     </ngx-charts-bar-vertical-normalized>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class NormalizedVerticalColumnChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

@@ -8,11 +8,12 @@ import { Functions } from 'src/app/core/utils/functions.list';
 import { ControlMaxDate } from 'src/app/core/interfaces/helpers.interface';
 
 @Component({
-  selector: 'app-daterange',
-  styleUrls: [
-    './daterange.component.scss'
-  ],
-  templateUrl: './daterange.component.html',
+    selector: 'app-daterange',
+    styleUrls: [
+        './daterange.component.scss'
+    ],
+    templateUrl: './daterange.component.html',
+    standalone: false
 })
 export class DateRangeComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

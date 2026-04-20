@@ -12,8 +12,9 @@ import { environment } from 'src/environments/environment';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './universe-data.component.html',
-  styleUrls: ["./sites-on-map.component.scss"],
+    templateUrl: './universe-data.component.html',
+    styleUrls: ["./sites-on-map.component.scss"],
+    standalone: false
 })
 export class UniverseDataComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

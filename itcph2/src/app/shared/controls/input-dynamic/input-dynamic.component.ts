@@ -7,8 +7,9 @@ import { CONTROL_CONFIG } from 'src/app/app.constants';
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  selector: 'app-input-dynamic',
-  templateUrl: './input-dynamic.component.html'
+    selector: 'app-input-dynamic',
+    templateUrl: './input-dynamic.component.html',
+    standalone: false
 })
 export class InputDynamicComponent extends InputComponent implements OnChanges, OnInit {
   @Input() inputConfig: InputConfig[] = [];

@@ -14,7 +14,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './mdoview.team.component.html'
+    templateUrl: './mdoview.team.component.html',
+    standalone: false
 })
 export class MDOViewTeamComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

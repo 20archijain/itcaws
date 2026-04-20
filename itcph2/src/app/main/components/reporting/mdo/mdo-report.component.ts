@@ -12,7 +12,8 @@ import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFil
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './mdo-report.component.html'
+    templateUrl: './mdo-report.component.html',
+    standalone: false
 })
 export class MDOReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

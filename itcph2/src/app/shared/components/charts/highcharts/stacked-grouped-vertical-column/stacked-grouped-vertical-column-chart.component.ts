@@ -5,15 +5,16 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { StackedGroupedColumnChartData } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  selector: 'app-stacked-grouped-vertical-column-chart',
-  template: `
+    selector: 'app-stacked-grouped-vertical-column-chart',
+    template: `
     <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
     <highcharts-chart
       [Highcharts]="Highcharts"
       [options]="stackGroupedColumnChartOptions"
       style="{{ style }}">
     </highcharts-chart>
-  `
+  `,
+    standalone: false
 })
 export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnChanges {
   @Input() width = CHART_DEFAULTS.WIDTH;

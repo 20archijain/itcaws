@@ -12,8 +12,9 @@ import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './active-mdo-reporting.component.html',
-  styleUrls: ["./active-mdo-reporting.component.scss"],
+    templateUrl: './active-mdo-reporting.component.html',
+    styleUrls: ["./active-mdo-reporting.component.scss"],
+    standalone: false
 })
 export class ActiveMDOUsersListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

@@ -11,26 +11,21 @@ import * as XLSX from "xlsx";
 import * as FileSaver from "file-saver";
 
 @Component({
-  selector: "app-breeze-accordion",
-  templateUrl: "./breeze-accordion.component.html",
-  styleUrls: ["./breeze-accordion.component.scss"],
-  animations: [
-    trigger("columnAnimation", [
-      transition(":enter", [
-        style({ opacity: 0, transform: "translateX(50px)" }),
-        animate(
-          "300ms ease-out",
-          style({ opacity: 1, transform: "translateX(0)" }),
-        ),
-      ]),
-      transition(":leave", [
-        animate(
-          "300ms ease-in",
-          style({ opacity: 0, transform: "translateX(50px)" }),
-        ),
-      ]),
-    ]),
-  ],
+    selector: "app-breeze-accordion",
+    templateUrl: "./breeze-accordion.component.html",
+    styleUrls: ["./breeze-accordion.component.scss"],
+    animations: [
+        trigger("columnAnimation", [
+            transition(":enter", [
+                style({ opacity: 0, transform: "translateX(50px)" }),
+                animate("300ms ease-out", style({ opacity: 1, transform: "translateX(0)" })),
+            ]),
+            transition(":leave", [
+                animate("300ms ease-in", style({ opacity: 0, transform: "translateX(50px)" })),
+            ]),
+        ]),
+    ],
+    standalone: false
 })
 export class BreezeAccordionComponent implements OnChanges {
   @Input() monthlySalesData: any;

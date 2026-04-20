@@ -7,8 +7,9 @@ import { NavigationItem } from '../navigation';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-  selector: 'app-nav-content',
-  templateUrl: './nav-content.component.html',
+    selector: 'app-nav-content',
+    templateUrl: './nav-content.component.html',
+    standalone: false
 })
 export class NavContentComponent implements OnDestroy, OnInit, AfterViewInit {
   @Output() private onNavMobCollapse = new EventEmitter();

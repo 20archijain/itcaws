@@ -17,8 +17,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-custom-gallery',
-  templateUrl: './custom-gallery.component.html'
+    selector: 'app-custom-gallery',
+    templateUrl: './custom-gallery.component.html',
+    standalone: false
 })
 export class CustomGalleryComponent implements OnDestroy, OnInit {
   @ViewChild('previewContainer', { static: false }) private previewContainer: ElementRef;

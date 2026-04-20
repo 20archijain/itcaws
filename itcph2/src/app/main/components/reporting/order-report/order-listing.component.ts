@@ -20,7 +20,8 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-  templateUrl: './order-listing.component.html'
+    templateUrl: './order-listing.component.html',
+    standalone: false
 })
 export class OrderListingComponent implements OnDestroy, OnInit {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

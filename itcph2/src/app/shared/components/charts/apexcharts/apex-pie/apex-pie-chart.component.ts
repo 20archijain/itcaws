@@ -1,14 +1,15 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-apex-pie-chart',
-  template: `
+    selector: 'app-apex-pie-chart',
+    template: `
     <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
     <app-apex-chart
       [chartID]="chartID || defaultChartID"
       [chartConfig]="piechartConfig">
     </app-apex-chart>
-  `
+  `,
+    standalone: false
 })
 export class ApexPieChartComponent implements OnInit {
   @Input() heading = '';

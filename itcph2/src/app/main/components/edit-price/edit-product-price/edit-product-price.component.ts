@@ -24,8 +24,9 @@ function oneOfTwoRequiredValidator(): ValidatorFn {
 }
 
 @Component({
-  selector: 'app-edit-product-price',
-  templateUrl: './edit-product-price.component.html',
+    selector: 'app-edit-product-price',
+    templateUrl: './edit-product-price.component.html',
+    standalone: false
 })
 export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

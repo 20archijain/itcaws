@@ -15,8 +15,9 @@ import { ConfirmationModalService } from 'src/app/core/services/confirmation-mod
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 
 @Component({
-  templateUrl: './app.notification.component.html',
-  styleUrls: ["./app.notification.component.scss"],
+    templateUrl: './app.notification.component.html',
+    styleUrls: ["./app.notification.component.scss"],
+    standalone: false
 })
 export class AppNotificationComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

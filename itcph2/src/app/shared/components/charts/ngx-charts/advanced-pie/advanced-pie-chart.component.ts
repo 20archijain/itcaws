@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-advance-pie-chart',
-  template: `
+    selector: 'app-advance-pie-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-advanced-pie-chart
@@ -19,7 +19,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [tooltipDisabled]="tooltipDisabled">
     </ngx-charts-advanced-pie-chart>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class AdvancePieChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

@@ -12,10 +12,11 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  styleUrls: [
-    './download-db-table.component.scss',
-  ],
-  templateUrl: './download-db-table.component.html',
+    styleUrls: [
+        './download-db-table.component.scss',
+    ],
+    templateUrl: './download-db-table.component.html',
+    standalone: false
 })
 export class DownloadDBTableComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

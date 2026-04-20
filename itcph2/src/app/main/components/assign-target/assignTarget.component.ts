@@ -16,8 +16,9 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './assignTarget.component.html',
-  styleUrls: ['./assignTarget.component.scss']
+    templateUrl: './assignTarget.component.html',
+    styleUrls: ['./assignTarget.component.scss'],
+    standalone: false
 })
 export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

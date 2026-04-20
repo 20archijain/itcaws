@@ -6,8 +6,9 @@ import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interfac
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-  selector: 'app-dropdown',
-  templateUrl: './dropdown.component.html'
+    selector: 'app-dropdown',
+    templateUrl: './dropdown.component.html',
+    standalone: false
 })
 export class DropdownComponent implements OnChanges, OnInit {
   @Input() private validators = null;

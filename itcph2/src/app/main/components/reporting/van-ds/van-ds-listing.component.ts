@@ -20,7 +20,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './van-ds-listing.component.html'
+    templateUrl: './van-ds-listing.component.html',
+    standalone: false
 })
 export class VanDsListingComponent implements OnDestroy, OnInit {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

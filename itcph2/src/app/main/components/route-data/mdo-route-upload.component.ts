@@ -18,7 +18,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
 
 @Component({
-  templateUrl: './mdo-route-upload.component.html',
+    templateUrl: './mdo-route-upload.component.html',
+    standalone: false
 })
 export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
   @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;

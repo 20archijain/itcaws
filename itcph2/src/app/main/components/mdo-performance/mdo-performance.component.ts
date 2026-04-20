@@ -12,7 +12,8 @@ import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFil
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './mdo-performance.component.html'
+    templateUrl: './mdo-performance.component.html',
+    standalone: false
 })
 export class MdoPerformanceComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

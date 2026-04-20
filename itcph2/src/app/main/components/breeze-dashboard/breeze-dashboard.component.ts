@@ -17,8 +17,9 @@ import { LoaderService } from "src/app/core/services/loader.service";
 import { environment } from "src/environments/environment";
 
 @Component({
-  templateUrl: "./breeze-dashboard.component.html",
-  styleUrls: ["./breeze-dashboard.component.scss"],
+    templateUrl: "./breeze-dashboard.component.html",
+    styleUrls: ["./breeze-dashboard.component.scss"],
+    standalone: false
 })
 export class BreezeDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

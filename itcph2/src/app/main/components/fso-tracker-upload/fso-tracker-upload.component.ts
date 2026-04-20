@@ -20,8 +20,9 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  templateUrl: './fso-tracker-upload.component.html',
-  styleUrls: ['./fso-tracker-upload.component.scss']
+    templateUrl: './fso-tracker-upload.component.html',
+    styleUrls: ['./fso-tracker-upload.component.scss'],
+    standalone: false
 })
 export class FSOTrackerDataUploadComponent implements OnDestroy, OnInit {
   @ViewChildren(FileUploadComponent) private fileUploadComponents: FileUploadComponent[];

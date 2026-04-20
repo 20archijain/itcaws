@@ -9,8 +9,9 @@ import { RoutingService } from 'src/app/core/services/routing.service';
 import { CONSTANTS } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-breadcrumb',
-  templateUrl: './breadcrumb.component.html',
+    selector: 'app-breadcrumb',
+    templateUrl: './breadcrumb.component.html',
+    standalone: false
 })
 export class BreadcrumbComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

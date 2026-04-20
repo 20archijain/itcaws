@@ -6,8 +6,9 @@ enum SpinnerType {
 }
 
 @Component({
-  selector: 'app-button',
-  templateUrl: './button.component.html',
+    selector: 'app-button',
+    templateUrl: './button.component.html',
+    standalone: false
 })
 export class ButtonComponent {
   @Output() private onClick = new EventEmitter<Event>();

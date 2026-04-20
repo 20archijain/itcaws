@@ -13,7 +13,8 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './focus.brand.reporting.component.html'
+    templateUrl: './focus.brand.reporting.component.html',
+    standalone: false
 })
 export class FocusBrandReportingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

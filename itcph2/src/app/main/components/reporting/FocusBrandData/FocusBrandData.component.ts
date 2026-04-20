@@ -12,7 +12,8 @@ import { environment } from 'src/environments/environment';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './FocusBrandData.component.html'
+    templateUrl: './FocusBrandData.component.html',
+    standalone: false
 })
 export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

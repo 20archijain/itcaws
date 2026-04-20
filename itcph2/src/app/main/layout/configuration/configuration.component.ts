@@ -4,10 +4,11 @@ import { Location } from '@angular/common';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-  encapsulation: ViewEncapsulation.None,
-  selector: 'app-configuration',
-  styleUrls: ['./configuration.component.scss'],
-  template: ``,
+    encapsulation: ViewEncapsulation.None,
+    selector: 'app-configuration',
+    styleUrls: ['./configuration.component.scss'],
+    template: ``,
+    standalone: false
 })
 export class ConfigurationComponent implements OnInit {
   public layoutType: string; // layout type

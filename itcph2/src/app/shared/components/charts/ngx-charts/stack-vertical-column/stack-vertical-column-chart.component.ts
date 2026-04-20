@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-stack-vertical-column-chart',
-  template: `
+    selector: 'app-stack-vertical-column-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-bar-vertical-stacked
@@ -40,7 +40,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [yScaleMax]="yScaleMax">
     </ngx-charts-bar-vertical-stacked>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class StackVerticalColumnChartComponent extends LineChartComponent implements OnChanges {
   view = undefined;

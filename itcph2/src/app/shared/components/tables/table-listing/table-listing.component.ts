@@ -20,8 +20,9 @@ import { CustomGalleryConfig } from 'src/app/core/interfaces/common.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-table-listing',
-  templateUrl: './table-listing.component.html'
+    selector: 'app-table-listing',
+    templateUrl: './table-listing.component.html',
+    standalone: false
 })
 export class TableListingComponent implements OnInit, OnDestroy {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

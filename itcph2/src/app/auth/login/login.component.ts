@@ -13,8 +13,9 @@ import { GA_ACTION_LIST } from 'src/app/core/utils/GAMapping';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  styleUrls: ['./login.component.scss'],
-  templateUrl: './login.component.html',
+    styleUrls: ['./login.component.scss'],
+    templateUrl: './login.component.html',
+    standalone: false
 })
 export class LoginComponent implements OnDestroy, OnInit {
   // @ViewChild(CaptchaComponent, { static: false }) private captchaComponent: CaptchaComponent;

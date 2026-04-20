@@ -4,8 +4,9 @@ import { MapConfig } from 'src/app/core/interfaces/common.interface';
 import { MAP_DEFAULTS, mapPath } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-area-map',
-  templateUrl: './area-map.component.html'
+    selector: 'app-area-map',
+    templateUrl: './area-map.component.html',
+    standalone: false
 })
 export class AreaMapComponent implements OnChanges {
   @Input() markers: MapConfig[] = [];

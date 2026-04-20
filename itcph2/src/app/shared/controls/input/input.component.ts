@@ -6,8 +6,9 @@ import { FormService } from 'src/app/core/services/form.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-input',
-  templateUrl: './input.component.html'
+    selector: 'app-input',
+    templateUrl: './input.component.html',
+    standalone: false
 })
 export class InputComponent implements OnChanges, OnInit {
   @Input() private validators = null;

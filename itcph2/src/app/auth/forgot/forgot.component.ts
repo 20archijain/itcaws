@@ -12,8 +12,9 @@ import { GA_ACTION_LIST } from 'src/app/core/utils/GAMapping';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  styleUrls: ['./forgot.component.scss'],
-  templateUrl: './forgot.component.html',
+    styleUrls: ['./forgot.component.scss'],
+    templateUrl: './forgot.component.html',
+    standalone: false
 })
 export class ForgotComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

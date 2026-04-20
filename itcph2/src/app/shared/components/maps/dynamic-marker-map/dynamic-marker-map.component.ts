@@ -6,8 +6,9 @@ import { mapPath, MAP_DEFAULTS, MAP_STYLES } from 'src/app/app.constants';
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  selector: 'app-dynamic-marker-map',
-  templateUrl: './dynamic-marker-map.component.html'
+    selector: 'app-dynamic-marker-map',
+    templateUrl: './dynamic-marker-map.component.html',
+    standalone: false
 })
 export class HeatMapComponent implements OnChanges, OnInit {
   @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow;

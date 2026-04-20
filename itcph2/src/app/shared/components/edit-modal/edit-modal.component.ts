@@ -16,8 +16,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-edit-modal',
-  templateUrl: './edit-modal.component.html'
+    selector: 'app-edit-modal',
+    templateUrl: './edit-modal.component.html',
+    standalone: false
 })
 export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
   @ViewChild('editModal', { static: false }) private editModal: ModalComponent;

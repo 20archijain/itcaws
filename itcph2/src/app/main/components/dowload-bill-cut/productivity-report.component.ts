@@ -12,8 +12,9 @@ import { DropdownList, GetProductiveReportDataResponse, GetDownloadFileDetails  
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  selector: 'app-productivity-report',
-  templateUrl: './productivity-report.component.html'
+    selector: 'app-productivity-report',
+    templateUrl: './productivity-report.component.html',
+    standalone: false
 })
 export class ProductivityReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

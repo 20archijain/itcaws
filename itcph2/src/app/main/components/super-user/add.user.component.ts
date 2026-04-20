@@ -17,7 +17,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './add.user.component.html'
+    templateUrl: './add.user.component.html',
+    standalone: false
 })
 export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
   private passwordNotMatchError = 'err.passwordNotSame';

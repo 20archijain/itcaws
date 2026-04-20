@@ -18,10 +18,11 @@ import { Functions } from 'src/app/core/utils/functions.list';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  styleUrls: [
-    './add.group.component.scss',
-  ],
-  templateUrl: './add.group.component.html',
+    styleUrls: [
+        './add.group.component.scss',
+    ],
+    templateUrl: './add.group.component.html',
+    standalone: false
 })
 export class AddGroupComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

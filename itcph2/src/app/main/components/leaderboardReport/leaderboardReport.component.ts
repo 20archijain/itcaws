@@ -13,7 +13,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './leaderboardReport.component.html',
+    templateUrl: './leaderboardReport.component.html',
+    standalone: false
 })
 export class LeaderBoardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

@@ -4,8 +4,8 @@ import { LegendPosition } from '@swimlane/ngx-charts';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-grouped-vertical-column-chart',
-  template: `
+    selector: 'app-grouped-vertical-column-chart',
+    template: `
     <h4 class="chart-title mt-4" style="text-align: center;">{{ heading }}</h4>
     <div [ngStyle]="{ height: height + 'px', width: '100%' }">
       <div *ngIf="transformedChartData && transformedChartData.length; else noData">
@@ -33,6 +33,7 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
       </ng-template>
     </div>
   `,
+    standalone: false
 })
 export class GroupedVerticalColumnChartComponent implements OnInit {
   @Input() transformedChartData: any[] = [];

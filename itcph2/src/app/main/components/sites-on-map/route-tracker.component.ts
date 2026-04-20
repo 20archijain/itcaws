@@ -13,9 +13,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './route-tracker.component.html',
-  styleUrls: ["./sites-on-map.component.scss"],
-
+    templateUrl: './route-tracker.component.html',
+    styleUrls: ["./sites-on-map.component.scss"],
+    standalone: false
 })
 export class RouteTrackerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

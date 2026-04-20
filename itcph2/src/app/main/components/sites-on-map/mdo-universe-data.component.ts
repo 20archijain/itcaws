@@ -12,8 +12,9 @@ import { environment } from 'src/environments/environment';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './mdo-universe-data.component.html',
-  styleUrls: ["./sites-on-map.component.scss"],
+    templateUrl: './mdo-universe-data.component.html',
+    styleUrls: ["./sites-on-map.component.scss"],
+    standalone: false
 })
 export class MdoUniverseDataComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

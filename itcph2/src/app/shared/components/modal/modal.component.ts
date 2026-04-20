@@ -1,10 +1,11 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
 
 @Component({
-  encapsulation: ViewEncapsulation.None,
-  selector: 'app-modal',
-  styleUrls: ['./modal.component.scss'],
-  templateUrl: './modal.component.html',
+    encapsulation: ViewEncapsulation.None,
+    selector: 'app-modal',
+    styleUrls: ['./modal.component.scss'],
+    templateUrl: './modal.component.html',
+    standalone: false
 })
 export class ModalComponent {
   @Input() dialogClass: string;

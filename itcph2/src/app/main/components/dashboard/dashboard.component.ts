@@ -11,8 +11,9 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './dashboard.component.html',
-  styleUrls: ["./dashboard.component.scss"],
+    templateUrl: './dashboard.component.html',
+    styleUrls: ["./dashboard.component.scss"],
+    standalone: false
 })
 export class DashboardComponent implements OnDestroy, OnInit {
   activeIndex = 0;

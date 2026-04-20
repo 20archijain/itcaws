@@ -6,8 +6,9 @@ import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-  selector: 'app-radio',
-  templateUrl: './radio.component.html'
+    selector: 'app-radio',
+    templateUrl: './radio.component.html',
+    standalone: false
 })
 export class RadioComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

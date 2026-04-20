@@ -6,8 +6,9 @@ import { NextConfig } from 'src/app/app-config';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
+    selector: 'app-navbar',
+    templateUrl: './navbar.component.html',
+    standalone: false
 })
 export class NavBarComponent implements OnInit {
   nextConfig: any;

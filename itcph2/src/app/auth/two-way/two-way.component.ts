@@ -15,7 +15,8 @@ import { SessionUtil } from 'src/app/core/utils/session.util';
 import { LoginDataUser } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  templateUrl: './two-way.component.html'
+    templateUrl: './two-way.component.html',
+    standalone: false
 })
 export class TwoWayComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

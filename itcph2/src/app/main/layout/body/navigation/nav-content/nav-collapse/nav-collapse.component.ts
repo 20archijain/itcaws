@@ -5,19 +5,20 @@ import { INavigationItem } from '../../navigation';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-  animations: [
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateY(-100%)', display: 'block' }),
-        animate('250ms ease-in', style({ transform: 'translateY(0%)' }))
-      ]),
-      transition(':leave', [
-        animate('250ms ease-in', style({ transform: 'translateY(-100%)' }))
-      ])
-    ])
-  ],
-  selector: 'app-nav-collapse',
-  templateUrl: './nav-collapse.component.html',
+    animations: [
+        trigger('slideInOut', [
+            transition(':enter', [
+                style({ transform: 'translateY(-100%)', display: 'block' }),
+                animate('250ms ease-in', style({ transform: 'translateY(0%)' }))
+            ]),
+            transition(':leave', [
+                animate('250ms ease-in', style({ transform: 'translateY(-100%)' }))
+            ])
+        ])
+    ],
+    selector: 'app-nav-collapse',
+    templateUrl: './nav-collapse.component.html',
+    standalone: false
 })
 export class NavCollapseComponent {
   private nextConfig: any;

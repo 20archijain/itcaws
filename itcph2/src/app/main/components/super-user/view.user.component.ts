@@ -14,7 +14,8 @@ import { DropdownList, GetUserDataResponse } from 'src/app/core/interfaces/http-
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './view.user.component.html'
+    templateUrl: './view.user.component.html',
+    standalone: false
 })
 export class ViewUserComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

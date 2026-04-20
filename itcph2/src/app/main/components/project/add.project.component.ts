@@ -14,7 +14,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ChekboxOutput } from 'src/app/core/interfaces/helpers.interface';
 
 @Component({
-  templateUrl: './add.project.component.html'
+    templateUrl: './add.project.component.html',
+    standalone: false
 })
 export class AddProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];

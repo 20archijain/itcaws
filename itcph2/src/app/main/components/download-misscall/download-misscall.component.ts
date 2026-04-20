@@ -13,7 +13,8 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './download-misscall.component.html',
+    templateUrl: './download-misscall.component.html',
+    standalone: false
 })
 export class DownloadMisscallComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

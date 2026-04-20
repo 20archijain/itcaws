@@ -17,7 +17,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  templateUrl: './add.team.component.html'
+    templateUrl: './add.team.component.html',
+    standalone: false
 })
 export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];

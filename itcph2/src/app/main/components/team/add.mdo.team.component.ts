@@ -17,7 +17,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  templateUrl: './add.mdo.team.component.html'
+    templateUrl: './add.mdo.team.component.html',
+    standalone: false
 })
 export class AddMdoTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];

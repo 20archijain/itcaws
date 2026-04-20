@@ -11,8 +11,9 @@ import { GAService } from '../../services/ga.service';
 import { HttpRequestResponse, TimeoutModalConfig } from '../../interfaces/common.interface';
 
 @Component({
-  selector: 'app-session-timeout',
-  templateUrl: './session-timeout.component.html',
+    selector: 'app-session-timeout',
+    templateUrl: './session-timeout.component.html',
+    standalone: false
 })
 export class SessionTimeoutComponent implements OnDestroy, OnInit {
   private gaLabels = GA_ACTION_LIST.auth.logout;

@@ -6,8 +6,9 @@ import { ListingActions, ListingBulkActionOutput } from 'src/app/core/interfaces
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  selector: 'app-listing-searchbar',
-  templateUrl: './listing-searchbar.component.html'
+    selector: 'app-listing-searchbar',
+    templateUrl: './listing-searchbar.component.html',
+    standalone: false
 })
 export class ListingSearchbarComponent implements OnInit {
   @Output() private onAction = new EventEmitter<ListingBulkActionOutput>();

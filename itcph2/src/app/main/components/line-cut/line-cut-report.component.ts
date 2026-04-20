@@ -13,7 +13,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 
 @Component({
-  templateUrl: './line-cut-report.component.html'
+    templateUrl: './line-cut-report.component.html',
+    standalone: false
 })
 export class LineCutReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

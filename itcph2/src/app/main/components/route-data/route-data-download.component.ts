@@ -14,8 +14,9 @@ import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './route-data-download.component.html',
-  styleUrls: ["./route-data.component.scss"],
+    templateUrl: './route-data-download.component.html',
+    styleUrls: ["./route-data.component.scss"],
+    standalone: false
 })
 export class RouteDataDownloadComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

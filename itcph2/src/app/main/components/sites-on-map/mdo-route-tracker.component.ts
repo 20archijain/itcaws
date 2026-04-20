@@ -13,8 +13,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './mdo-route-tracker.component.html',
-  styleUrls: ["./sites-on-map.component.scss"],
+    templateUrl: './mdo-route-tracker.component.html',
+    styleUrls: ["./sites-on-map.component.scss"],
+    standalone: false
 })
 export class MdoRouteTrackerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

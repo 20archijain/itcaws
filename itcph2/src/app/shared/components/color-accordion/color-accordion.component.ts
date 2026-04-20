@@ -2,20 +2,21 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { trigger, style, transition, animate } from '@angular/animations';
 
 @Component({
-  selector: 'app-color-accordion',
-  templateUrl: './color-accordion.component.html',
-  styleUrls: ['./color-accordion.component.scss'],
-  animations: [
-    trigger('columnAnimation', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(50px)' }),
-        animate('300ms ease-out', style({ opacity: 1, transform: 'translateX(0)' })),
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
-      ]),
-    ]),
-  ]
+    selector: 'app-color-accordion',
+    templateUrl: './color-accordion.component.html',
+    styleUrls: ['./color-accordion.component.scss'],
+    animations: [
+        trigger('columnAnimation', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateX(50px)' }),
+                animate('300ms ease-out', style({ opacity: 1, transform: 'translateX(0)' })),
+            ]),
+            transition(':leave', [
+                animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
+            ]),
+        ]),
+    ],
+    standalone: false
 })
 export class ColorAccordionComponent {
   @Input() monthlySalesData: any;

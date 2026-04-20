@@ -13,7 +13,8 @@ import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './MasterData.component.html'
+    templateUrl: './MasterData.component.html',
+    standalone: false
 })
 export class MasterDataListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

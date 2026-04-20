@@ -5,13 +5,14 @@ import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interfac
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-  selector: 'app-textarea',
-  styles: [
-    `.no-resize {
+    selector: 'app-textarea',
+    styles: [
+        `.no-resize {
       resize: none;
     }`
-  ],
-  templateUrl: './textarea.component.html',
+    ],
+    templateUrl: './textarea.component.html',
+    standalone: false
 })
 export class TextareaComponent implements OnChanges, OnInit {
   @Input() private validators = null;

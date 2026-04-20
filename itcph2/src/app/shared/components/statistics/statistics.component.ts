@@ -6,8 +6,9 @@ import { StatisticsConfig } from 'src/app/core/interfaces/common.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-statistics',
-  templateUrl: './statistics.component.html'
+    selector: 'app-statistics',
+    templateUrl: './statistics.component.html',
+    standalone: false
 })
 export class StatisticsComponent {
   @Output() private onFilter = new EventEmitter();

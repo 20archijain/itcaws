@@ -12,7 +12,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './view.wdmapping.component.html'
+    templateUrl: './view.wdmapping.component.html',
+    standalone: false
 })
 export class ViewWdMappingComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

@@ -14,7 +14,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 
 @Component({
-  templateUrl: './attendance-tracker.component.html'
+    templateUrl: './attendance-tracker.component.html',
+    standalone: false
 })
 export class AttendanceTrackerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

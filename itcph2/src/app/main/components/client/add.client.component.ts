@@ -13,7 +13,8 @@ import { FileUploadEvent } from 'src/app/core/interfaces/helpers.interface';
 import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.list';
 
 @Component({
-  templateUrl: './add.client.component.html'
+    templateUrl: './add.client.component.html',
+    standalone: false
 })
 export class AddClientComponent implements OnInit, OnDestroy {
   @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;

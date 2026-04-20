@@ -8,9 +8,10 @@ import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  selector: 'app-captcha',
-  styleUrls: ['./captcha.component.scss'],
-  templateUrl: './captcha.component.html',
+    selector: 'app-captcha',
+    styleUrls: ['./captcha.component.scss'],
+    templateUrl: './captcha.component.html',
+    standalone: false
 })
 export class CaptchaComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

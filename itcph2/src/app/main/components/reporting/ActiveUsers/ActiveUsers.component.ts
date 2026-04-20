@@ -12,8 +12,9 @@ import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './ActiveUsers.component.html',
-  styleUrls: ["./ActiveUsers.component.scss"],
+    templateUrl: './ActiveUsers.component.html',
+    styleUrls: ["./ActiveUsers.component.scss"],
+    standalone: false
 })
 export class ActiveUsersListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

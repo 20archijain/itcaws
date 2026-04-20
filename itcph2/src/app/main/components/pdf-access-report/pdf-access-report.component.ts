@@ -12,7 +12,8 @@ import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFil
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './pdf-access-report.component.html'
+    templateUrl: './pdf-access-report.component.html',
+    standalone: false
 })
 export class PDFAccessReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

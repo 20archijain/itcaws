@@ -26,8 +26,9 @@ import { environment } from 'src/environments/environment';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  selector: 'app-new-table-listing',
-  templateUrl: './table-listing.new.component.html'
+    selector: 'app-new-table-listing',
+    templateUrl: './table-listing.new.component.html',
+    standalone: false
 })
 export class TableListingNewComponent implements OnInit, OnDestroy {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

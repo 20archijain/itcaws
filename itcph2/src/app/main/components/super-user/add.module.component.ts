@@ -13,7 +13,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './add.module.component.html'
+    templateUrl: './add.module.component.html',
+    standalone: false
 })
 export class AddModuleComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];

@@ -7,8 +7,9 @@ import { ListingService } from 'src/app/core/services/listing.service';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-  selector: 'app-checkbox',
-  templateUrl: './checkbox.component.html'
+    selector: 'app-checkbox',
+    templateUrl: './checkbox.component.html',
+    standalone: false
 })
 export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

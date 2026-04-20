@@ -10,8 +10,9 @@ import { URL_PARAMS_KEYS } from 'src/app/app.constants';
 import { MAP_MAIN_COMPONENTS } from '../../components';
 
 @Component({
-  selector: 'app-body',
-  templateUrl: './body.component.html'
+    selector: 'app-body',
+    templateUrl: './body.component.html',
+    standalone: false
 })
 export class BodyComponent implements OnDestroy, OnInit {
   @ViewChild(DynamicComponentDirective, { static: true }) private dynComp: DynamicComponentDirective;

@@ -4,8 +4,9 @@ import { REQUEST_STATUS } from 'src/app/app.constants';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  selector: 'app-alert',
-  templateUrl: './alert.component.html'
+    selector: 'app-alert',
+    templateUrl: './alert.component.html',
+    standalone: false
 })
 export class AlertComponent {
   @Input() response: HttpRequestResponse = null;

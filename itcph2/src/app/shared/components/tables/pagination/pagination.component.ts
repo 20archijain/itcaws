@@ -4,8 +4,9 @@ import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { LISTING } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-pagination',
-  templateUrl: './pagination.component.html'
+    selector: 'app-pagination',
+    templateUrl: './pagination.component.html',
+    standalone: false
 })
 export class PaginationComponent implements OnChanges, OnInit {
   @Input() private noOfTotalLinks = 7;

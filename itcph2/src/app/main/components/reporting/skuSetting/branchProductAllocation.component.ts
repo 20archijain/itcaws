@@ -25,8 +25,9 @@ export interface CategoryGroup {
 }
 
 @Component({
-  templateUrl: './branchProductAllocation.component.html',
-  styleUrls: ['./branchProductAllocation.component.scss']
+    templateUrl: './branchProductAllocation.component.html',
+    styleUrls: ['./branchProductAllocation.component.scss'],
+    standalone: false
 })
 export class BranchProductAllocationComponent implements AfterViewInit, OnInit, OnDestroy {
 

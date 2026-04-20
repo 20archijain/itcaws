@@ -20,8 +20,9 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Component({
-  templateUrl: './swd-retailer-target.component.html',
-  styleUrls: ['./swd-retailer-target.component.scss']
+    templateUrl: './swd-retailer-target.component.html',
+    styleUrls: ['./swd-retailer-target.component.scss'],
+    standalone: false
 })
 export class SWDTargetUploadComponent implements OnDestroy, OnInit {
   @ViewChildren(FileUploadComponent) private fileUploadComponents: FileUploadComponent[];

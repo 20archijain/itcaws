@@ -12,8 +12,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './productive-dashboard.component.html',
-  styleUrls: ['./productive-dashboard.component.scss']
+    templateUrl: './productive-dashboard.component.html',
+    styleUrls: ['./productive-dashboard.component.scss'],
+    standalone: false
 })
 export class ProductiveDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

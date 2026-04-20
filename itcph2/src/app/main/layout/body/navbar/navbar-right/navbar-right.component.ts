@@ -13,9 +13,10 @@ import { GA_ACTION_LIST } from 'src/app/core/utils/GAMapping';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  providers: [NgbDropdownConfig],
-  selector: 'app-navbar-right',
-  templateUrl: './navbar-right.component.html',
+    providers: [NgbDropdownConfig],
+    selector: 'app-navbar-right',
+    templateUrl: './navbar-right.component.html',
+    standalone: false
 })
 export class NavbarRightComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

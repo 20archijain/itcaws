@@ -13,7 +13,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { MapConfig } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  templateUrl: './attendance-locator.component.html'
+    templateUrl: './attendance-locator.component.html',
+    standalone: false
 })
 export class AttendanceLocatorComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

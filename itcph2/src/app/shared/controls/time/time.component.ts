@@ -5,8 +5,9 @@ import { Subscription } from 'rxjs';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-  selector: 'app-time',
-  templateUrl: './time.component.html',
+    selector: 'app-time',
+    templateUrl: './time.component.html',
+    standalone: false
 })
 export class TimeComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

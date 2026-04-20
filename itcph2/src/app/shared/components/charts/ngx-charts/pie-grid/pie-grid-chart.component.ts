@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-pie-grid-chart',
-  template: `
+    selector: 'app-pie-grid-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-pie-grid
@@ -20,7 +20,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [minWidth]="pieGridMinEachGraphWidth">
     </ngx-charts-pie-grid>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class PieGridChartComponent extends LineChartComponent implements OnChanges {
   @Input() pieGridLabel = '';

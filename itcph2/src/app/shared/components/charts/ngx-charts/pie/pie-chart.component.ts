@@ -6,8 +6,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  selector: 'app-pie-chart',
-  template: `
+    selector: 'app-pie-chart',
+    template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-pie-chart
@@ -26,7 +26,8 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [tooltipDisabled]="tooltipDisabled">
     </ngx-charts-pie-chart>
   </div>
-  `
+  `,
+    standalone: false
 })
 export class PieChartComponent extends LineChartComponent implements OnChanges {
   @Input() hidePieChartLabels = false;

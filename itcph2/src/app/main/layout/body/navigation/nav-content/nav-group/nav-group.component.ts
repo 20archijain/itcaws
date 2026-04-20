@@ -5,8 +5,9 @@ import { INavigationItem } from '../../navigation';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-  selector: 'app-nav-group',
-  templateUrl: './nav-group.component.html',
+    selector: 'app-nav-group',
+    templateUrl: './nav-group.component.html',
+    standalone: false
 })
 export class NavGroupComponent implements OnInit {
   private nextConfig: any;

@@ -5,8 +5,9 @@ import { MapConfig } from 'src/app/core/interfaces/common.interface';
 import { MAP_DEFAULTS, mapPath } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-line-map',
-  templateUrl: './line-map.component.html'
+    selector: 'app-line-map',
+    templateUrl: './line-map.component.html',
+    standalone: false
 })
 export class LineMapComponent implements AfterViewInit, OnChanges {
   @ViewChild(MapPolyline) mapPolyline: MapPolyline;

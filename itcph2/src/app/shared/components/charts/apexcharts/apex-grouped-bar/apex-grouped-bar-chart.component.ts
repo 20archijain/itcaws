@@ -15,8 +15,8 @@ export interface GroupedBarCategory {
 }
 
 @Component({
-  selector: 'app-apex-grouped-bar-chart',
-  template: `
+    selector: 'app-apex-grouped-bar-chart',
+    template: `
     <h4 class="chart-title mt-4" style="text-align: center;">{{ heading }}</h4>
     <div class="apex-grouped-bar-scroll" title="Scroll horizontally to see all levels">
       <div class="apex-grouped-bar-inner" [style.min-width.px]="chartWidth">
@@ -24,8 +24,8 @@ export interface GroupedBarCategory {
       </div>
     </div>
   `,
-  styles: [
-    `
+    styles: [
+        `
       .apex-grouped-bar-scroll {
         width: 100%;
         overflow-x: auto;
@@ -40,7 +40,8 @@ export interface GroupedBarCategory {
         margin: 0;
       }
     `,
-  ],
+    ],
+    standalone: false
 })
 export class ApexGroupedBarChartComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() transformedChartData: GroupedBarCategory[] = [];

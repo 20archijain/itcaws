@@ -5,8 +5,9 @@ import { Subscription } from 'rxjs';
 import { ApexChartService } from 'src/app/core/services/apex-chart.service';
 
 @Component({
-  selector: 'app-apex-chart',
-  template: `<div id="{{this.chartID}}"></div>`,
+    selector: 'app-apex-chart',
+    template: `<div id="{{this.chartID}}"></div>`,
+    standalone: false
 })
 export class ApexChartComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

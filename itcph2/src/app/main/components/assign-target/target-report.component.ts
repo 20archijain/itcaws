@@ -12,7 +12,8 @@ import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFil
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './target-report.component.html'
+    templateUrl: './target-report.component.html',
+    standalone: false
 })
 export class TargetReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

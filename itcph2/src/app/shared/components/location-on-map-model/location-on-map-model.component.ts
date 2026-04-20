@@ -7,8 +7,9 @@ import { LISTING, MAP_DEFAULTS } from 'src/app/app.constants';
 import { ModalComponent } from '../modal/modal.component';
 
 @Component({
-  selector: 'app-location-on-map-modal',
-  templateUrl: './location-on-map-modal.component.html'
+    selector: 'app-location-on-map-modal',
+    templateUrl: './location-on-map-modal.component.html',
+    standalone: false
 })
 export class LocationOnMapModalComponent implements OnInit, OnDestroy {
   @ViewChild('locationOnMapModal', { static: true }) private locationOnMapModal: ModalComponent;

@@ -19,7 +19,8 @@ import { ConfirmationModalService } from 'src/app/core/services/confirmation-mod
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './route-data-upload.component.html',
+    templateUrl: './route-data-upload.component.html',
+    standalone: false
 })
 export class RouteDataUploadComponent implements OnInit, OnDestroy {
   @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;

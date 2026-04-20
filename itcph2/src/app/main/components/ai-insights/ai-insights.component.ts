@@ -15,9 +15,10 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './ai-insights.component.html',
-  styleUrls: ['./ai-insights.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    templateUrl: './ai-insights.component.html',
+    styleUrls: ['./ai-insights.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AiInsightsComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

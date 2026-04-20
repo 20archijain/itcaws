@@ -15,7 +15,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './my-profile.component.html'
+    templateUrl: './my-profile.component.html',
+    standalone: false
 })
 export class MyProfileComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

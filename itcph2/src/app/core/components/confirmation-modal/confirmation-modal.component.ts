@@ -6,8 +6,9 @@ import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationModalService } from '../../services/confirmation-modal.service';
 
 @Component({
-  selector: 'app-confirmation-modal',
-  template: '',
+    selector: 'app-confirmation-modal',
+    template: '',
+    standalone: false
 })
 export class ConfirmationModalComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

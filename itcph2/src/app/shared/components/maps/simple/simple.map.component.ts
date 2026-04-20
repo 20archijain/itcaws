@@ -5,8 +5,9 @@ import { MapConfig } from 'src/app/core/interfaces/common.interface';
 import { mapPath, MAP_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
-  selector: 'app-simple-map',
-  templateUrl: './simple-map.component.html'
+    selector: 'app-simple-map',
+    templateUrl: './simple-map.component.html',
+    standalone: false
 })
 export class SimpleMapComponent implements OnChanges {
   @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow;

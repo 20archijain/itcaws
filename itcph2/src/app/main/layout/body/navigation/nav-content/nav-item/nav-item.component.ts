@@ -5,8 +5,9 @@ import { INavigationItem } from '../../navigation';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-  selector: 'app-nav-item',
-  templateUrl: './nav-item.component.html',
+    selector: 'app-nav-item',
+    templateUrl: './nav-item.component.html',
+    standalone: false
 })
 export class NavItemComponent {
   private nextConfig: any;

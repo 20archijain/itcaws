@@ -11,8 +11,9 @@ import { FILE_SIZE_VALIDATOR, FILE_TYPE_VALIDATOR } from 'src/app/core/validator
 import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  selector: 'app-file-upload',
-  templateUrl: './file-upload.component.html'
+    selector: 'app-file-upload',
+    templateUrl: './file-upload.component.html',
+    standalone: false
 })
 export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];

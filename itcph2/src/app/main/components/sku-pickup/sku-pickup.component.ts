@@ -12,8 +12,9 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './sku-pickup.component.html',
-  styleUrls: ['./sku-pickup.component.scss'],
+    templateUrl: './sku-pickup.component.html',
+    styleUrls: ['./sku-pickup.component.scss'],
+    standalone: false
 })
 export class SkuPickupComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

@@ -14,8 +14,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 
 @Component({
-  templateUrl: './evaluation-report.component.html',
-  styleUrls: ["./evaluation-report.component.scss"],
+    templateUrl: './evaluation-report.component.html',
+    styleUrls: ["./evaluation-report.component.scss"],
+    standalone: false
 })
 export class EvaluationReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

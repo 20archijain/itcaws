@@ -18,7 +18,8 @@ export interface CategoryGroup {
 }
 
 @Component({
-  templateUrl: './allocationReport.component.html',
+    templateUrl: './allocationReport.component.html',
+    standalone: false
 })
 export class AllocationReportComponent implements OnInit {
 

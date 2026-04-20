@@ -10,8 +10,9 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './sales-dashboard.component.html',
-  styleUrls: ['./sales-dashboard.component.scss']
+    templateUrl: './sales-dashboard.component.html',
+    styleUrls: ['./sales-dashboard.component.scss'],
+    standalone: false
 })
 export class SalesDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

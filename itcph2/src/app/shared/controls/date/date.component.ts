@@ -8,8 +8,9 @@ import { ControlMaxDate } from 'src/app/core/interfaces/helpers.interface';
 import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  selector: 'app-date',
-  templateUrl: './date.component.html',
+    selector: 'app-date',
+    templateUrl: './date.component.html',
+    standalone: false
 })
 export class DateComponent implements OnChanges, OnInit {
   @Input() private validators = null;

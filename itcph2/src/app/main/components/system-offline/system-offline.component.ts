@@ -11,7 +11,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './system-offline.component.html'
+    templateUrl: './system-offline.component.html',
+    standalone: false
 })
 export class SystemOfflineComponent implements OnInit {
   private subscription: Subscription[] = [];

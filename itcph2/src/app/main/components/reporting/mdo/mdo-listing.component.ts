@@ -20,7 +20,8 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './mdo-listing.component.html'
+    templateUrl: './mdo-listing.component.html',
+    standalone: false
 })
 export class MdoListingComponent implements OnDestroy, OnInit {
   @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;

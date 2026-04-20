@@ -15,12 +15,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist",
+            "outputPath": {
+              "base": "dist"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/resources",
@@ -52,7 +55,13 @@
               "raf",
               "rgbcolor",
               "html2canvas"
-            ]
+            ],
+            "browser": "src/main.ts",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "."
+              ]
+            }
           },
           "configurations": {
             "development": {
@@ -61,9 +70,7 @@
               "sourceMap": true,
               "namedChunks": false,
               "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              "extractLicenses": true
             },
             "production": {
               "fileReplacements": [
@@ -78,8 +85,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "baseHref": "/",
               "budgets": [
                 {
@@ -102,8 +107,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
@@ -125,8 +128,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -148,8 +149,6 @@
               "namedChunks": false,
               "aot": true,
               "extractLicenses": false,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "baseHref": "",
               "budgets": [
                 {

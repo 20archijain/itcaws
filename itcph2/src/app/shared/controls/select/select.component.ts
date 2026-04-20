@@ -8,11 +8,12 @@ import { Functions } from 'src/app/core/utils/functions.list';
 import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  selector: 'app-select',
-  styleUrls: [
-    './select.component.scss',
-  ],
-  templateUrl: './select.component.html',
+    selector: 'app-select',
+    styleUrls: [
+        './select.component.scss',
+    ],
+    templateUrl: './select.component.html',
+    standalone: false
 })
 export class SelectComponent implements OnChanges, OnInit {
   @Input() private validators = null;

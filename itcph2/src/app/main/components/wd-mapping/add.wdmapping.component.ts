@@ -12,7 +12,8 @@ import { DropdownList, GetAddProjectDataResponse } from 'src/app/core/interfaces
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './add.wdmapping.component.html'
+    templateUrl: './add.wdmapping.component.html',
+    standalone: false
 })
 export class AddWdMappingComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];

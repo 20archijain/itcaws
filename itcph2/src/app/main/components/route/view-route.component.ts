@@ -12,7 +12,8 @@ import { REQUEST_STATUS, STATIC_MODULES, CONTROL_CONFIG } from 'src/app/app.cons
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './view-route.component.html'
+    templateUrl: './view-route.component.html',
+    standalone: false
 })
 export class ViewRouteComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

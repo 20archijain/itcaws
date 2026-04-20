@@ -6,7 +6,8 @@ import { CustomPolyfill } from 'src/app/core/utils/polyfills';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Directive({
-  selector: '[appScrollToFirstInvalidInput]',
+    selector: '[appScrollToFirstInvalidInput]',
+    standalone: false
 })
 export class ScrollToFirstInvalidInputDirective {
   @Input() private appScrollToFirstInvalidInput: UntypedFormGroup;
