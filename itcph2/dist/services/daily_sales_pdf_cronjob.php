@@ -101,9 +101,9 @@ class generatePDFCronjob
         $wdCode = $teamInfo[5];
 
         // Get branch information
-        $branchInfo = getRowColumns( $this->_dbConn, $branchTable, "branch_name, main_branch", "branch_id = $branchId AND dstatus = 0" );
+        $branchInfo = getRowColumns($this->_dbConn, $branchTable, "branch_name, main_branch", "branch_id = $branchId AND dstatus = 0");
 
-        $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
+        $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query
 
         $variants = [];
         $varAction = null;
@@ -155,7 +155,7 @@ class generatePDFCronjob
         $sProductSaleColumns = implode(",", $summaryColName);
         $isTypeMap = [0 => "Van DS", 1 => "Niches", 5 => "NPSR"];
         $dsType = isset($isTypeMap[$isType]) ? $isTypeMap[$isType] : "";
-        // $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query 
+        // $ProductQueryVarient = "SELECT DISTINCT product_name, summary_column_name, category_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId  AND team_type = $isType  ORDER BY product_name";  // get all the product from the query
 
         // Fetch sales data for this team within datetime range
         $sQuery = "SELECT a.capture_datetime, a.capture_date, a.ques_0, a.ques_1, a.ques_3, $sProductSaleColumns" .
@@ -557,7 +557,7 @@ class generatePDFCronjob
                 //     "\r\nPDF Generated Successfully for Summary ID: $summaryId , Team ID: $teamId\r\n",
                 //     $this->logFilename
                 // );
-                return array(1, $downloadPath);
+                return array(1, $downloadPath, $summaryId);
             } else {
                 // debug_log(
                 //     "\r\nError: PDF Generated but Database Update Failed for Summary ID: $summaryId\r\n",
@@ -576,8 +576,9 @@ class generatePDFCronjob
 
     final public function generatePDF()
     {
-        $currentDate = currentDate();
-        $sDateCond = "AND a.activity_date = '$currentDate'";
+        // $currentDate = currentDate();
+        $currentDate = '2026-02-16';
+        $sDateCond = "AND a.activity_date = '$currentDate' and a.team_id = 19734";
 
         $cDT = currentDateTime();
         $cD = $currentDate;
@@ -585,7 +586,7 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null" .
+        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ds_number, b.team_name FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null" .
             " AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -595,12 +596,15 @@ class generatePDFCronjob
                 $start_datetime = $row["attendance_datetime"];
                 $end_datetime = $row["dayend_datetime"];
                 $team_id = $row["team_id"];
+                $ds_number = $row["ds_number"];
+                $team_name = $row["team_name"];
                 $notificationTitle = "Survey Summary";
 
                 if (isset($start_datetime) && isset($end_datetime) && !empty($start_datetime) && !empty($end_datetime)) {
                     $pdfGenerated = $this->generatePDFForTeam($team_id, $start_datetime, $end_datetime, $summary_id);
                     if ($pdfGenerated[0] == 1) {
                         $actualPdfUrl = $pdfGenerated[1];
+                        $summaryId = $pdfGenerated[2];
 
                         // Create complete tracking URL - use summary_id as the tracking ID
                         $trackingUrl = "https://upimg2.radardashboard.com/mobile_services/api/custom/track_pdf_access.php?sid=" . $summary_id . "&url=" . urlencode($actualPdfUrl);
@@ -612,6 +616,9 @@ class generatePDFCronjob
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrParams = array($team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
                         $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
+                        // Send the QR code image via WhatsApp
+                        $qrSent = $this->sendWhatsAppMessage('91' . $ds_number, $actualPdfUrl, $team_name, 'vnsai');
+                        updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", array(1));
                     } else {
                         // debug_log(
                         //     "\r\nData Not Added to Notification Table for Team ID: $team_id date - $currentDate\r\n" .
@@ -621,6 +628,137 @@ class generatePDFCronjob
                 }
             }
         }
+    }
+
+    // Send WhatsApp PDF
+    private function sendWhatsAppMessage($phoneNumber, $FilePath, $team_name, $apiType = 'wab')
+    {
+        if ($apiType === 'wab') {
+            // WAB API Configuration
+            $apiUrl = 'https://api.wab.ai/whatsapp-api/v1.0/customer/95755/bot/b9b57bd0131f43fb/template';
+            $authorizationToken = '6f088510-93ef-41a2-b9d4-cf7570fbcbe1-Hswi54Q';
+            $namespace = 'a7a46341_4176_4bd7_b74f_bf560970e605';
+
+            $qrImageLink = $FilePath;
+            $payload = [
+                'payload' => [
+                    'name' => 'qr_utility',
+                    'components' => [
+                        [
+                            'type' => 'header',
+                            'parameters' => [
+                                [
+                                    'type' => 'image',
+                                    'image' => [
+                                        'link' => $qrImageLink
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $team_name
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'button',
+                            'sub_type' => 'quick_reply',
+                            'index' => 0,
+                            'parameters' => [
+                                [
+                                    'type' => 'payload',
+                                    'payload' => 'flow_3A4EBA3C81F543A7BD3F25C680C68A10'
+                                ]
+                            ]
+                        ]
+                    ],
+                    'language' => [
+                        'code' => 'en_US',
+                        'policy' => 'deterministic'
+                    ],
+                    'namespace' => $namespace
+                ],
+                'phoneNumber' => $phoneNumber
+            ];
+
+            $headers = [
+                'Authorization: Basic ' . $authorizationToken,
+                'Content-Type: application/json'
+            ];
+            $postFields = json_encode($payload);
+        } elseif ($apiType === 'vnsai') {
+            // VNSAI API Configuration
+            $apiUrl = 'https://api.vnsai.com/WAApi/send';
+            $headers = ['Cookie: SERVERID=webC1'];
+            $postFields = [
+                'userid' => 'AppilaryAnanta',
+                'password' => 'ztzYF8q4',
+                'wabaNumber' => '919211627912',
+                'output' => 'json',
+                'mobile' => $phoneNumber,
+                'sendMethod' => 'quick',
+                'msgType' => 'Media',
+                'templateName' => 'radar_2',
+                'msg' => "Dear Sir,
+
+Sharing Day End Report of {$team_name}. PDF attached.",
+                'mediaType' => 'Document',
+                'mediaUrl' => $FilePath
+            ];
+        } else {
+            throw new InvalidArgumentException('Invalid API type provided.');
+        }
+
+        // Convert data to query string
+        // $postData = http_build_query($postFields);
+
+        // // Create stream context
+        // $options = [
+        //     'http' => [
+        //         'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+        //             "Cookie: SERVERID=webC1\r\n",
+        //         'method'  => 'POST',
+        //         'content' => $postData,
+        //         'timeout' => 30
+        //     ]
+        // ];
+
+        // $context = stream_context_create($options);
+
+        // // Send request
+        // $response = file_get_contents($apiUrl, false, $context);
+
+        // if ($response === FALSE) {
+        //     return "Error sending request";
+        // }
+        // echo "WhatsApp API Response: " . $response; // Log the response for debugging
+
+        // return json_decode($response, true);
+
+        // Initialize cURL
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        // Execute the cURL request
+        $response = curl_exec($ch);
+
+        // Check for errors
+        $success = false;
+        if (curl_errno($ch)) {
+            error_log('WhatsApp API Error: ' . curl_error($ch));
+        } else {
+            $success = true;
+        }
+
+        curl_close($ch);
+        return $success;
     }
 }
 
