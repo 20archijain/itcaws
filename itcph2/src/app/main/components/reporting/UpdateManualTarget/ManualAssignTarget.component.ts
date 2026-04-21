@@ -21,7 +21,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   body: string[] = [];
   branchOptions: DropdownList[] = [];
   productOptions = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;
   showInputOption = false;
@@ -48,6 +48,10 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
     this.subscription.forEach(sub => sub.unsubscribe());
   }
 
+  get quantityFormGroup() {
+    return this.form.get('quantity') as UntypedFormGroup;
+  }
+
 
   getInitialData() {
     this.loaderService.startLoader();
@@ -58,7 +62,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.branchOptions = resp.data.branchList;
+            this.branchOptions = resp?.data?.branchList || [];
           }
         })
     );
@@ -68,7 +72,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   getProductsList() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ManualAssignTargetResponse>(STATIC_MODULES.custom.getproduct, { branch: this.form.get('branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<ManualAssignTargetResponse>(STATIC_MODULES.custom.getproduct, { branch: this.form?.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
@@ -77,10 +81,10 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
             this.form.addControl('quantity', new UntypedFormGroup({}));
 
 
-            if (this.form.get('quantity')) {
-              this.form.removeControl('quantity');
-              this.form.addControl('quantity', new UntypedFormGroup({}));
-            }
+            // if (this.form.get('quantity')) {
+            //   this.form.removeControl('quantity');
+            //   this.form.addControl('quantity', new UntypedFormGroup({}));
+            // }
             const quantity = this.form.get('quantity') as UntypedFormGroup;
 
             this.productOptions.forEach(item => {
@@ -128,7 +132,9 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
                 this.form.reset();
                 this.form.removeControl('quantity');
+                this.form.addControl('quantity', new UntypedFormGroup({}));
                 this.getInitialData();
+                this.productOptions = [];
             }
           })
       );
