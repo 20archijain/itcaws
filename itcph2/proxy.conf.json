@@ -1,7 +1,11 @@
 {
-  "/": {
+  "/services": {
     "target": "http://localhost:80",
     "secure": false,
-    "logLevel": "debug"
+    "changeOrigin": true,
+    "logLevel": "debug",
+    "pathRewrite": {
+      "^/services": "/work/itcawsportal/itcph2/dist/browser/services"
+    }
   }
 }

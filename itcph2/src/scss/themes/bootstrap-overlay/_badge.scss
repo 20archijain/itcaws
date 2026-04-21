@@ -1,3 +1,6 @@
+@use "../../settings/custom-variables" as *;
+@use "sass:color";
+
 /**  =====================
       Badges css start
 ==========================  **/
@@ -9,7 +12,7 @@
 }
 @each $color, $value in $theme-colors {
   .badge-light-#{$color} {
-    background: transparentize($value, 0.8);
+    background: color.adjust($value, $alpha: -0.8);
     border-color: theme-color-level($color, $alert-border-level);
     color: $value;
   }

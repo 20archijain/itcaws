@@ -54,7 +54,8 @@
               "core-js",
               "raf",
               "rgbcolor",
-              "html2canvas"
+              "html2canvas",
+              "leaflet"
             ],
             "browser": "src/main.ts",
             "stylePreprocessorOptions": {
@@ -122,17 +123,17 @@
                   "with": "src/environments/environment.proxy.ts"
                 }
               ],
-              "optimization": false,
+              "optimization": true,
               "outputHashing": "all",
               "sourceMap": true,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumWarning": "5mb",
+                  "maximumError": "7mb"
                 }
               ]
             },
@@ -140,7 +141,7 @@
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.test.ts"
+                  "with": "src/environments/environment.proxy.ts"
                 }
               ],
               "optimization": true,
@@ -153,7 +154,7 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "2mb",
+                  "maximumWarning": "4mb",
                   "maximumError": "5mb"
                 }
               ]

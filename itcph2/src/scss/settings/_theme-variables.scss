@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // =======================================
 //     List of variables for layout
 // =======================================
@@ -61,7 +63,7 @@ $menu-light-background: #fff;
 $menu-light-text-color: #535763;
 $menu-active-color: $primary-color;
 
-$dark-layout: darken(#101b33, 8%);
+$dark-layout: color.adjust(#101b33, $lightness: -8%);
 $dark-layout-font: #adb7be;
 
 // Menu icon

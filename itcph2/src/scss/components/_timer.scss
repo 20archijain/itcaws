@@ -1,3 +1,5 @@
+@use "../mixins/mixin-timer" as *;
+
 $timer-border-thickness: 10px;
 $mask-color: #ccc;
 $spin-color: #337ab7;

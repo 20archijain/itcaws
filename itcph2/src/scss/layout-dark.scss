@@ -1,4 +1,7 @@
-@import "settings/theme-variables";
+@use "sass:color";
+@use "sass:list";
+@use "settings/theme-variables" as *;
+
 /**  =====================
      Dark css start
 ==========================  **/
@@ -24,11 +27,11 @@ body.next-dark {
   h4,
   h5,
   h6 {
-    color: lighten($dark-layout-font, 10%);
+    color: color.adjust($dark-layout-font, $lightness: 10%);
   }
 
   .text-muted {
-    color: darken($dark-layout-font, 10%) !important;
+    color: color.adjust($dark-layout-font, $lightness: -10%) !important;
   }
 
   hr {
@@ -37,11 +40,11 @@ body.next-dark {
 
   .bg-light,
   .bg-white {
-    background-color: lighten($dark-layout, 3%) !important;
+    background-color: color.adjust($dark-layout, $lightness: 3%) !important;
   }
 
   .text-white {
-    color: lighten($dark-layout-font, 10%) !important;
+    color: color.adjust($dark-layout-font, $lightness: 10%) !important;
   }
 
   .btn-theme,
@@ -59,7 +62,7 @@ body.next-dark {
   .scroll-div {
     > .scroll-element {
       .scroll-bar {
-        background-color: darken($dark-layout, 10%);
+        background-color: color.adjust($dark-layout, $lightness: -10%);
       }
     }
   }
@@ -116,7 +119,7 @@ body.next-dark {
 
   .dropdown-divider,
   .table-bordered {
-    border: 1px solid lighten($dark-layout, 3%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 3%);
   }
 
   .dropdown-menu > a.active {
@@ -124,46 +127,46 @@ body.next-dark {
   }
 
   .user-card .user-about-block img {
-    box-shadow: 0 0 0 5px lighten($dark-layout, 7%);
+    box-shadow: 0 0 0 5px color.adjust($dark-layout, $lightness: 7%);
   }
 
   .latest-update-card .card-body .latest-update-box .update-meta .update-icon.ring,
   .page-header.breadcumb-sticky,
   .user-card .user-about-block .certificated-badge,
   .user-card-3 .certificated-badge {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
   }
   /* ==========  card css start  =========== */
   .card:not([class*="bg-"]) {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
     box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.08);
 
     .card-header {
       background-color: transparent;
-      // border-bottom: 1px solid lighten($dark-layout, 4%);
+      // border-bottom: 1px solid color.adjust($dark-layout, $lightness: 4%);
       h5 {
-        color: darken($dark-layout-font, 5%) !important;
+        color: color.adjust($dark-layout-font, $lightness: -5%) !important;
 
         &:after {
-          background-color: lighten($dark-layout, 15%);
+          background-color: color.adjust($dark-layout, $lightness: 15%);
         }
       }
 
       .card-header-right {
         .btn.dropdown-toggle {
-          color: lighten($dark-layout-font, 10%);
+          color: color.adjust($dark-layout-font, $lightness: 10%);
         }
       }
     }
 
     .card-footer {
-      border-top: 1px solid lighten($dark-layout, 5%);
+      border-top: 1px solid color.adjust($dark-layout, $lightness: 5%);
       background: transparent;
     }
 
     &.card-load {
       .card-loader {
-        background-color: transparentize($dark-layout, 0.2%);
+        background-color: color.adjust($dark-layout, $alpha: -0.2);
 
         i {
           color: $primary-color;
@@ -190,24 +193,24 @@ body.next-dark {
 
   .user-profile,
   .user-profile-list table tr td {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
     box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.08);
   }
   /* ================================    Dropdown Start  ===================== */
   .dropdown-menu {
-    background-color: lighten($dark-layout, 15%);
+    background-color: color.adjust($dark-layout, $lightness: 15%);
     box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.08);
 
     &.show {
       &:before {
-        color: lighten($dark-layout, 7%);
+        color: color.adjust($dark-layout, $lightness: 7%);
         text-shadow: 0 -2px 2px rgba(0, 0, 0, 0.08);
       }
     }
 
     > li {
       > a {
-        // color: lighten($dark-layout-font,5%);
+        // color: color.adjust($dark-layout-font, $lightness: 5%);
         color: #adb7be !important;
       }
 
@@ -215,7 +218,7 @@ body.next-dark {
       &:active,
       &:focus,
       &:hover {
-        background: transparentize($dark-layout-font, 0.9);
+        background: color.adjust($dark-layout-font, $alpha: -0.9);
 
         > a {
           background: transparent;
@@ -229,13 +232,13 @@ body.next-dark {
     &:focus,
     &:hover {
       color: #fff !important;
-      background-color: transparentize($dark-layout-font, 0.9);
+      background-color: color.adjust($dark-layout-font, $alpha: -0.9);
     }
   }
   /* ====================  Navbar Start  ===================== */
   .pcoded-navbar {
     .header-logo {
-      // background: lighten($dark-layout,7%);
+      // background: color.adjust($dark-layout, $lightness: 7%);
       // box-shadow: 0 1px 0 0 $dark-layout;
     }
 
@@ -267,8 +270,8 @@ body.next-dark {
   /* ===================  Navbar end  ===================== */
   .pcoded-header {
     &:not([class*="header-"]) {
-      background: nth($color-header-color, 5);
-      color: transparentize($header-dark-text-color, 0.2);
+      background: list.nth($color-header-color, 5);
+      color: color.adjust($header-dark-text-color, $alpha: -0.2);
       box-shadow: 0 1px 0 0 $dark-layout;
       .main-search {
         .search-close > .input-group-text {
@@ -277,8 +280,8 @@ body.next-dark {
 
         &.open {
           .input-group {
-            background: lighten($dark-layout, 5%);
-            border-color: darken($dark-layout-font, 40%);
+            background: color.adjust($dark-layout, $lightness: 5%);
+            border-color: color.adjust($dark-layout-font, $lightness: -40%);
 
             .search-btn {
               .input-group-text {
@@ -291,15 +294,15 @@ body.next-dark {
     }
 
     .dropdown-menu {
-      color: transparentize($header-dark-text-color, 0.2) !important;
+      color: color.adjust($header-dark-text-color, $alpha: -0.2) !important;
 
       a {
-        color: transparentize($header-dark-text-color, 0.2) !important;
+        color: color.adjust($header-dark-text-color, $alpha: -0.2) !important;
       }
 
       > li {
         > a {
-          color: transparentize($header-dark-text-color, 0.2);
+          color: color.adjust($header-dark-text-color, $alpha: -0.2);
         }
 
         &.active,
@@ -316,7 +319,7 @@ body.next-dark {
     .input-group .input-group-text,
     a,
     dropdown-toggle {
-      color: transparentize($header-dark-text-color, 0.2);
+      color: color.adjust($header-dark-text-color, $alpha: -0.2);
 
       &:hover {
         color: #fff;
@@ -326,41 +329,41 @@ body.next-dark {
     .dropdown {
       &.show {
         &:before {
-          color: lighten($dark-layout, 7%);
+          color: color.adjust($dark-layout, $lightness: 7%);
           text-shadow: 0 -1px 2px rgba(0, 0, 0, 0.12);
         }
       }
 
       .notification {
         .noti-head {
-          border-bottom: 1px solid lighten($dark-layout, 5%);
-          background: lighten($dark-layout, 7%);
+          border-bottom: 1px solid color.adjust($dark-layout, $lightness: 5%);
+          background: color.adjust($dark-layout, $lightness: 7%);
         }
 
         .noti-body {
           li {
             &.notification:hover {
-              background: transparentize($primary-color, 0.9);
+              background: color.adjust($primary-color, $alpha: -0.9);
             }
 
             p {
               strong {
-                color: lighten($dark-layout-font, 10%);
+                color: color.adjust($dark-layout-font, $lightness: 10%);
               }
             }
           }
         }
 
         .noti-footer {
-          border-top: 1px solid lighten($dark-layout, 5%);
-          background: lighten($dark-layout, 7%);
+          border-top: 1px solid color.adjust($dark-layout, $lightness: 5%);
+          background: color.adjust($dark-layout, $lightness: 7%);
         }
       }
 
       .profile-notification {
         .pro-head {
           color: $dark-layout-font;
-          background: lighten($dark-layout, 15%);
+          background: color.adjust($dark-layout, $lightness: 15%);
 
           .dud-logout {
             color: $dark-layout-font;
@@ -370,12 +373,12 @@ body.next-dark {
 
       &.drp-user.show {
         &:before {
-          color: lighten($dark-layout, 15%);
+          color: color.adjust($dark-layout, $lightness: 15%);
         }
       }
 
       .pro-body li a:hover {
-        background: transparentize($dark-layout-font, 0.9);
+        background: color.adjust($dark-layout-font, $alpha: -0.9);
         background: transparent;
       }
     }
@@ -383,11 +386,11 @@ body.next-dark {
 
   .mobile-menu {
     span {
-      background-color: transparentize($header-dark-text-color, 0.2);
+      background-color: color.adjust($header-dark-text-color, $alpha: -0.2);
 
       &:after,
       &:before {
-        background-color: transparentize($header-dark-text-color, 0.2);
+        background-color: color.adjust($header-dark-text-color, $alpha: -0.2);
       }
     }
 
@@ -405,10 +408,10 @@ body.next-dark {
   /**  =====================  Chatting css start  ==========================  **/
   .header-chat,
   .header-user-list {
-    background-color: lighten($dark-layout, 3%);
+    background-color: color.adjust($dark-layout, $lightness: 3%);
 
     .h-list-header {
-      border-bottom: 1px solid darken($dark-layout, 3%);
+      border-bottom: 1px solid color.adjust($dark-layout, $lightness: -3%);
 
       .input-group {
         background: transparent;
@@ -419,7 +422,7 @@ body.next-dark {
       }
 
       .form-control {
-        background: lighten($dark-layout, 7%);
+        background: color.adjust($dark-layout, $lightness: 7%);
         color: $dark-layout-font;
       }
     }
@@ -433,7 +436,7 @@ body.next-dark {
     .h-list-body {
       .userlist-box {
         &:after {
-          background: darken($dark-layout, 3%);
+          background: color.adjust($dark-layout, $lightness: -3%);
         }
 
         .live-status {
@@ -454,15 +457,15 @@ body.next-dark {
         }
 
         &:after {
-          color: lighten($dark-layout, 3%);
+          color: color.adjust($dark-layout, $lightness: 3%);
           box-shadow: none;
-          background: lighten($dark-layout, 12%);
+          background: color.adjust($dark-layout, $lightness: 12%);
         }
       }
 
       &.msg-open {
         &:after {
-          color: transparentize($primary-color, 0.9);
+          color: color.adjust($primary-color, $alpha: -0.9);
         }
       }
     }
@@ -470,21 +473,21 @@ body.next-dark {
 
   .header-chat {
     .h-list-body {
-      background: lighten($dark-layout, 0%);
+      background: color.adjust($dark-layout, $lightness: 0%);
 
       .chat-messages {
         .chat-menu-reply {
           > div {
             p {
-              background: lighten($dark-layout, 5%);
+              background: color.adjust($dark-layout, $lightness: 5%);
               box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
             }
 
             &:before {
-              color: lighten($dark-layout, 5%);
+              color: color.adjust($dark-layout, $lightness: 5%);
               text-shadow: 7px 10px 20px rgba(0, 0, 0, 0.1);
-              border-bottom-color: lighten($dark-layout, 5%);
-              border-right-color: lighten($dark-layout, 5%);
+              border-bottom-color: color.adjust($dark-layout, $lightness: 5%);
+              border-right-color: color.adjust($dark-layout, $lightness: 5%);
             }
           }
         }
@@ -492,16 +495,16 @@ body.next-dark {
         .chat-menu-content {
           > div {
             p {
-              background: darken($dark-layout, 8%);
+              background: color.adjust($dark-layout, $lightness: -8%);
               color: #fff;
               box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
             }
 
             &:before {
-              color: darken($dark-layout, 8%);
+              color: color.adjust($dark-layout, $lightness: -8%);
               text-shadow: -4px 4px 10px rgba(0, 0, 0, 0.15);
-              border-left-color: darken($dark-layout, 8%);
-              border-top-color: darken($dark-layout, 8%);
+              border-left-color: color.adjust($dark-layout, $lightness: -8%);
+              border-top-color: color.adjust($dark-layout, $lightness: -8%);
             }
           }
         }
@@ -509,10 +512,10 @@ body.next-dark {
     }
 
     .h-list-footer {
-      background: lighten($dark-layout, 0%);
+      background: color.adjust($dark-layout, $lightness: 0%);
 
       .input-group {
-        background: lighten($dark-layout, 10%);
+        background: color.adjust($dark-layout, $lightness: 10%);
         box-shadow: 0 10px 20px 0 rgba(0, 0, 0, 0.1);
 
         .form-control,
@@ -528,45 +531,45 @@ body.next-dark {
         }
 
         &:after {
-          color: lighten($dark-layout, 10%);
+          color: color.adjust($dark-layout, $lightness: 10%);
           text-shadow: 4px 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .btn-primary {
-          background: darken($dark-layout, 7%);
-          border-color: darken($dark-layout, 7%);
+          background: color.adjust($dark-layout, $lightness: -7%);
+          border-color: color.adjust($dark-layout, $lightness: -7%);
         }
 
         .btn-success {
-          background: lighten($dark-layout, 0%);
-          border-color: lighten($dark-layout, 0%);
+          background: color.adjust($dark-layout, $lightness: 0%);
+          border-color: color.adjust($dark-layout, $lightness: 0%);
         }
       }
     }
   }
   /**====== Chat css end ======**/
   .border-bottom {
-    border-bottom: 1px solid lighten($dark-layout, 5%) !important;
+    border-bottom: 1px solid color.adjust($dark-layout, $lightness: 5%) !important;
   }
 
   .border-top {
-    border-top: 1px solid lighten($dark-layout, 5%) !important;
+    border-top: 1px solid color.adjust($dark-layout, $lightness: 5%) !important;
   }
 
   .task-list {
     &:after {
-      background: lighten($dark-layout, 5%);
+      background: color.adjust($dark-layout, $lightness: 5%);
     }
   }
 
   .table {
     td {
-      border-top: 1px solid lighten($dark-layout, 5%);
+      border-top: 1px solid color.adjust($dark-layout, $lightness: 5%);
     }
 
     thead {
       th {
-        border-bottom: 1px solid lighten($dark-layout, 5%);
+        border-bottom: 1px solid color.adjust($dark-layout, $lightness: 5%);
         color: $dark-layout-font;
         background: transparent;
       }
@@ -606,11 +609,11 @@ body.next-dark {
   .page-link {
     color: #007bff;
     background-color: $dark-layout;
-    border: 1px solid darken($dark-layout, 10%);
+    border: 1px solid color.adjust($dark-layout, $lightness: -10%);
 
     &:hover {
-      background-color: darken($dark-layout, 10%);
-      border: 1px solid darken($dark-layout, 10%);
+      background-color: color.adjust($dark-layout, $lightness: -10%);
+      border: 1px solid color.adjust($dark-layout, $lightness: -10%);
     }
   }
 
@@ -622,7 +625,7 @@ body.next-dark {
 
   .page-item.disabled .page-link {
     background-color: $dark-layout;
-    border: 1px solid darken($dark-layout, 10%);
+    border: 1px solid color.adjust($dark-layout, $lightness: -10%);
   }
 
   .blockquote {
@@ -634,7 +637,7 @@ body.next-dark {
   }
 
   .blockquote-footer {
-    color: darken($dark-layout-font, 10%);
+    color: color.adjust($dark-layout-font, $lightness: -10%);
   }
 
   .support-bar [class*="col"],
@@ -643,25 +646,25 @@ body.next-dark {
   .table thead th,
   .table-bordered td,
   .table-bordered th {
-    border-color: lighten($dark-layout, 5%);
+    border-color: color.adjust($dark-layout, $lightness: 5%);
   }
 
   .footable .label-default,
   .footable .pagination > .disabled > a,
   .footable .pagination > li > a,
   .footable.table-striped > tbody > tr:nth-child(odd) {
-    background-color: transparentize(darken($dark-layout, 10%), 0.75);
-    border: 1px solid lighten($dark-layout, 5%);
-    color: darken($dark-layout-font, 10%);
+    background-color: color.adjust(color.adjust($dark-layout, $lightness: -10%), $alpha: -0.75);
+    border: 1px solid color.adjust($dark-layout, $lightness: 5%);
+    color: color.adjust($dark-layout-font, $lightness: -10%);
   }
 
   .footable.table > tbody > tr > td,
   .footable.table > tfoot > tr > td {
-    border-top: 1px solid lighten($dark-layout, 5%);
+    border-top: 1px solid color.adjust($dark-layout, $lightness: 5%);
   }
 
   .footable.table > thead > tr > th {
-    border-bottom: 2px solid lighten($dark-layout, 3%);
+    border-bottom: 2px solid color.adjust($dark-layout, $lightness: 3%);
   }
 
   .footable-details.table-hover > tbody > tr:hover,
@@ -674,7 +677,7 @@ body.next-dark {
   }
 
   table.dataTable.table-striped.DTFC_Cloned tbody {
-    background-color: darken($dark-layout, 3%);
+    background-color: color.adjust($dark-layout, $lightness: -3%);
   }
 
   .dataTable {
@@ -684,15 +687,15 @@ body.next-dark {
   }
 
   table.DTFC_Cloned tr {
-    background-color: lighten($dark-layout, 7%);
+    background-color: color.adjust($dark-layout, $lightness: 7%);
   }
 
   .highcharts-background {
-    fill: lighten($dark-layout, 7%) !important;
+    fill: color.adjust($dark-layout, $lightness: 7%) !important;
   }
 
   .progress {
-    background-color: darken($dark-layout, 3%);
+    background-color: color.adjust($dark-layout, $lightness: -3%);
   }
 
   .nav-tabs {
@@ -703,8 +706,8 @@ body.next-dark {
     .nav-item:hover .nav-link,
     .nav-link.active {
       color: #fff;
-      border-color: lighten($dark-layout, 3%);
-      background: lighten($dark-layout, 7%) !important;
+      border-color: color.adjust($dark-layout, $lightness: 3%);
+      background: color.adjust($dark-layout, $lightness: 7%) !important;
     }
   }
 
@@ -727,21 +730,21 @@ body.next-dark {
   }
 
   .input-group-text {
-    border-color: darken($dark-layout, 3%);
+    border-color: color.adjust($dark-layout, $lightness: -3%);
     color: $dark-layout-font;
   }
 
   .custom-file-label,
   .custom-select,
   .form-control {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
     color: $dark-layout-font;
-    border-color: darken($dark-layout, 3%);
+    border-color: color.adjust($dark-layout, $lightness: -3%);
 
     &:focus {
-      background: lighten($dark-layout, 2%);
+      background: color.adjust($dark-layout, $lightness: 2%);
       color: $dark-layout-font;
-      border-color: lighten($dark-layout, 2%);
+      border-color: color.adjust($dark-layout, $lightness: 2%);
     }
   }
 
@@ -750,24 +753,24 @@ body.next-dark {
   }
 
   .custom-file-label::after {
-    background-color: darken($dark-layout, 3%);
+    background-color: color.adjust($dark-layout, $lightness: -3%);
     color: $dark-layout-font;
-    border-left: 1px solid lighten($dark-layout, 3%);
+    border-left: 1px solid color.adjust($dark-layout, $lightness: 3%);
   }
 
   .form-control:disabled,
   .form-control[readonly] {
-    background: lighten($dark-layout, 1%);
-    color: darken($dark-layout-font, 3%);
+    background: color.adjust($dark-layout, $lightness: 1%);
+    color: color.adjust($dark-layout-font, $lightness: -3%);
   }
 
   .bootstrap-tagsinput {
-    background: lighten($dark-layout, 3%);
-    border: 1px solid lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 3%);
   }
 
   .input-group {
-    background-color: lighten($dark-layout, 3%);
+    background-color: color.adjust($dark-layout, $lightness: 3%);
   }
 
   .dtp-content text {
@@ -777,7 +780,7 @@ body.next-dark {
   .select2-container--default {
     .select2-selection--multiple,
     .select2-selection--single {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
       border: 1px solid $dark-layout;
 
       .select2-selection__rendered {
@@ -787,7 +790,7 @@ body.next-dark {
   }
 
   .select2-container--default.select2-container--disabled .select2-selection--single {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
   }
 
   .ms-container {
@@ -801,31 +804,31 @@ body.next-dark {
 
     .ms-selectable,
     .ms-selection {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
       color: $dark-layout-font;
 
       li.ms-elem-selectable,
       li.ms-elem-selection {
         border-bottom: 1px solid $dark-layout;
         color: $dark-layout-font;
-        background: lighten($dark-layout, 3%);
+        background: color.adjust($dark-layout, $lightness: 3%);
       }
     }
   }
 
   .sw-theme-default {
     .step-anchor {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
 
     .step-content,
     .sw-container {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
 
     ul.step-anchor > li a {
       color: $dark-layout-font;
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
 
       > h6,
       p {
@@ -838,21 +841,21 @@ body.next-dark {
   .sw-theme-circles,
   .sw-theme-dots {
     .sw-container {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
   .sw-theme-arrows {
-    border: 1px solid lighten($dark-layout, 1%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 1%);
 
     .step-content,
     .sw-container {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
 
     ul.step-anchor > li a {
       color: $dark-layout-font;
-      background: lighten($dark-layout, 3%) !important;
+      background: color.adjust($dark-layout, $lightness: 3%) !important;
 
       > h6,
       p {
@@ -860,25 +863,25 @@ body.next-dark {
       }
 
       &:after {
-        border-left: 30px solid lighten($dark-layout, 3%);
+        border-left: 30px solid color.adjust($dark-layout, $lightness: 3%);
       }
 
       &:before {
-        border-left: 30px solid darken($dark-layout, 3%);
+        border-left: 30px solid color.adjust($dark-layout, $lightness: -3%);
       }
     }
   }
 
   .sw-theme-arrows {
     > ul.step-anchor {
-      background: lighten($dark-layout, 3%);
-      border: 1px solid lighten($dark-layout, 1%);
+      background: color.adjust($dark-layout, $lightness: 3%);
+      border: 1px solid color.adjust($dark-layout, $lightness: 1%);
 
       > li {
         > a {
           &:hover {
             &:after {
-              border-left: 30px solid lighten($dark-layout, 3%);
+              border-left: 30px solid color.adjust($dark-layout, $lightness: 3%);
             }
           }
         }
@@ -887,37 +890,37 @@ body.next-dark {
   }
 
   .select2-container--default .select2-selection--multiple .select2-selection__choice {
-    background: lighten($dark-layout, 1%);
-    border: 1px solid lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 1%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 7%);
   }
 
   .sw-theme-default > ul.step-anchor > li.done > a.nav-link:after {
-    background: lighten($dark-layout, 10%);
+    background: color.adjust($dark-layout, $lightness: 10%);
   }
 
   .sw-theme-default > ul.step-anchor > li > a.nav-link:after {
-    background: darken($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: -7%);
   }
 
   .sw-theme-dots .step-content,
   .sw-theme-dots .sw-toolbar,
   .sw-theme-dots > ul.step-anchor {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
   }
 
   .sw-theme-arrows > ul.step-anchor > li.done > a {
-    background: lighten($dark-layout, 3%) !important;
+    background: color.adjust($dark-layout, $lightness: 3%) !important;
 
     &:after {
-      border-left: 30px solid lighten($dark-layout, 3%) !important;
+      border-left: 30px solid color.adjust($dark-layout, $lightness: 3%) !important;
     }
   }
 
   .sw-theme-arrows > ul.step-anchor > li.active > a {
-    background: darken($dark-layout, 7%) !important;
+    background: color.adjust($dark-layout, $lightness: -7%) !important;
 
     &:after {
-      border-left: 30px solid darken($dark-layout, 7%) !important;
+      border-left: 30px solid color.adjust($dark-layout, $lightness: -7%) !important;
     }
   }
 
@@ -925,7 +928,7 @@ body.next-dark {
     > ul.step-anchor {
       > li.done {
         > a {
-          color: lighten($dark-layout-font, 10%);
+          color: color.adjust($dark-layout-font, $lightness: 10%);
         }
       }
     }
@@ -938,44 +941,44 @@ body.next-dark {
   }
 
   .ck.ck-editor__main > .ck-editor__editable {
-    background: lighten($dark-layout, 3%) !important;
+    background: color.adjust($dark-layout, $lightness: 3%) !important;
   }
 
   .ck.ck-editor__main > .ck-editor__editable:not(.ck-focused) {
-    border-color: lighten($dark-layout, 1%) !important;
+    border-color: color.adjust($dark-layout, $lightness: 1%) !important;
   }
 
   .ck.ck-toolbar__separator {
-    background: darken($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: -7%);
   }
 
   .document-editor__editable-container {
-    background: lighten($dark-layout, 0%);
+    background: color.adjust($dark-layout, $lightness: 0%);
 
     .ck-editor__editable.ck-editor__editable_inline {
-      background: lighten($dark-layout, 0%);
-      border: 1px solid darken($dark-layout, 7%);
+      background: color.adjust($dark-layout, $lightness: 0%);
+      border: 1px solid color.adjust($dark-layout, $lightness: -7%);
     }
   }
 
   .document-editor {
-    border: 1px solid darken($dark-layout, 7%);
+    border: 1px solid color.adjust($dark-layout, $lightness: -7%);
   }
 
   .ck-content .table table,
   .ck-content .table table td,
   .ck-content .table table th {
-    border-color: darken($dark-layout, 7%);
-    background: lighten($dark-layout, 0%);
+    border-color: color.adjust($dark-layout, $lightness: -7%);
+    background: color.adjust($dark-layout, $lightness: 0%);
   }
 
   .ck.ck-toolbar {
-    background: lighten($dark-layout, 0%);
-    border: 1px solid lighten($dark-layout, 0%);
+    background: color.adjust($dark-layout, $lightness: 0%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 0%);
   }
 
   .document-editor__toolbar {
-    border-bottom: 1px solid darken($dark-layout, 7%);
+    border-bottom: 1px solid color.adjust($dark-layout, $lightness: -7%);
   }
 
   .ck.ck-button .ck-button__label,
@@ -996,18 +999,18 @@ body.next-dark {
   }
 
   .fullcalendar-card .fc-button {
-    border-color: lighten($dark-layout, 7%);
+    border-color: color.adjust($dark-layout, $lightness: 7%);
   }
 
   .h-list-body .chat-messages .chat-menu-reply > div {
     &:before {
-      color: darken($dark-layout, 7%);
-      border-right-color: darken($dark-layout, 7%);
-      border-bottom-color: darken($dark-layout, 7%);
+      color: color.adjust($dark-layout, $lightness: -7%);
+      border-right-color: color.adjust($dark-layout, $lightness: -7%);
+      border-bottom-color: color.adjust($dark-layout, $lightness: -7%);
     }
 
     p {
-      background: darken($dark-layout, 7%);
+      background: color.adjust($dark-layout, $lightness: -7%);
     }
   }
 
@@ -1027,13 +1030,13 @@ body.next-dark {
     td,
     th,
     thead {
-      border-color: lighten($dark-layout, 3%);
+      border-color: color.adjust($dark-layout, $lightness: 3%);
     }
 
     .fc-divider,
     .fc-list-heading td,
     .fc-popover .fc-header {
-      background-color: lighten($dark-layout, 3%);
+      background-color: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
@@ -1044,12 +1047,12 @@ body.next-dark {
   }
 
   .invoice-total.table {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
   }
 
   .filter-bar {
     .navbar {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
@@ -1069,52 +1072,52 @@ body.next-dark {
     .task-right-header-revision,
     .task-right-header-status,
     .task-right-header-users {
-      border-color: lighten($dark-layout, 3%);
+      border-color: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
   .h-list-body {
     .userlist-box {
       &:after {
-        background: lighten($dark-layout, 3%);
+        background: color.adjust($dark-layout, $lightness: 3%);
       }
     }
 
     .userlist-box.active {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
   .msg-card {
     .msg-block > .row > div {
       &:before {
-        background: lighten($dark-layout, 3%);
+        background: color.adjust($dark-layout, $lightness: 3%);
       }
     }
 
     .msg-user-chat {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
     }
   }
 
   .note-card {
     .note-box-aside {
-      border-right: 1px solid lighten($dark-layout, 3%);
+      border-right: 1px solid color.adjust($dark-layout, $lightness: 3%);
     }
 
     .note-write {
-      background: lighten($dark-layout, 3%);
+      background: color.adjust($dark-layout, $lightness: 3%);
 
       &:after,
       &:before {
-        border-left: 1px solid lighten($dark-layout, 1%);
+        border-left: 1px solid color.adjust($dark-layout, $lightness: 1%);
       }
     }
 
     .list-group-item,
     .list-group-item.active {
-      background: lighten($dark-layout, 3%);
-      border-color: lighten($dark-layout, 1%);
+      background: color.adjust($dark-layout, $lightness: 3%);
+      border-color: color.adjust($dark-layout, $lightness: 1%);
       color: $dark-layout-font;
     }
   }
@@ -1139,7 +1142,7 @@ body.next-dark {
   .table-columned > tbody {
     > tr {
       > td {
-        border-left: 1px solid lighten($dark-layout, 4%);
+        border-left: 1px solid color.adjust($dark-layout, $lightness: 4%);
       }
     }
   }
@@ -1148,31 +1151,31 @@ body.next-dark {
     li {
       background: $dark-layout;
       border: 1px solid $dark-layout;
-      border-top: 5px solid lighten($dark-layout, 5%);
+      border-top: 5px solid color.adjust($dark-layout, $lightness: 5%);
       color: $dark-layout-font;
     }
   }
 
   .bd-example-modal,
   .bd-example-row {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
   }
 
   pre[class*="language-"] > code {
-    box-shadow: -1px 0 0 0 lighten($dark-layout, 1%), 0 0 0 1px lighten($dark-layout, 3%);
+    box-shadow: -1px 0 0 0 color.adjust($dark-layout, $lightness: 1%), 0 0 0 1px color.adjust($dark-layout, $lightness: 3%);
   }
 
   .modal-content {
-    background: lighten($dark-layout, 0%);
-    border: 1px solid lighten($dark-layout, 5%);
+    background: color.adjust($dark-layout, $lightness: 0%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 5%);
   }
 
   .modal-header {
-    border-bottom: 1px solid lighten($dark-layout, 5%) !important;
+    border-bottom: 1px solid color.adjust($dark-layout, $lightness: 5%) !important;
   }
 
   .modal-footer {
-    border-top: 1px solid lighten($dark-layout, 5%) !important;
+    border-top: 1px solid color.adjust($dark-layout, $lightness: 5%) !important;
   }
 
   .close,
@@ -1185,10 +1188,10 @@ body.next-dark {
   .email-card {
     .tab-content {
       .table {
-        // background: transparentize($dark-layout ,0.7);
+        // background: color.adjust($dark-layout, $alpha: -0.7);
         tr {
           &.read {
-            background: transparentize($dark-layout, 0.3);
+            background: color.adjust($dark-layout, $alpha: -0.3);
           }
 
           &:hover {
@@ -1303,7 +1306,7 @@ body.next-dark {
 
   .support-bar {
     .card-footer {
-      background: lighten($dark-layout, 7%) !important;
+      background: color.adjust($dark-layout, $lightness: 7%) !important;
       border-top: 1px solid $dark-layout;
     }
   }
@@ -1331,7 +1334,7 @@ body.next-dark {
   }
 
   .grid-stack {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
   }
 
   .slider-track {
@@ -1340,16 +1343,16 @@ body.next-dark {
 
   :not(pre) > code[class*="language-"],
   pre[class*="language-"] {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
 
     code {
-      background-color: lighten($dark-layout, 7%);
+      background-color: color.adjust($dark-layout, $lightness: 7%);
     }
   }
 
   .card .card-body pre[class*="language-"] > code {
-    box-shadow: -1px 0 0 0 $primary-color, 0 0 0 1px lighten($dark-layout, 5%);
-    background: lighten($dark-layout, 7%);
+    box-shadow: -1px 0 0 0 $primary-color, 0 0 0 1px color.adjust($dark-layout, $lightness: 5%);
+    background: color.adjust($dark-layout, $lightness: 7%);
     background-size: 3em 3em;
     background-origin: content-box;
     background-attachment: local;
@@ -1368,8 +1371,8 @@ body.next-dark {
   }
 
   .nestable-lists {
-    border-top: 2px solid lighten($dark-layout, 3%);
-    border-bottom: 2px solid lighten($dark-layout, 3%);
+    border-top: 2px solid color.adjust($dark-layout, $lightness: 3%);
+    border-bottom: 2px solid color.adjust($dark-layout, $lightness: 3%);
   }
 
   #nestable2 .dd-item > button:before,
@@ -1383,30 +1386,30 @@ body.next-dark {
     border: 1px solid $dark-layout;
 
     &:hover {
-      color: lighten($dark-layout-font, 3%);
+      color: color.adjust($dark-layout-font, $lightness: 3%);
       background: $dark-layout;
     }
   }
 
   .dd-placeholder {
-    background: lighten($dark-layout, 3%);
+    background: color.adjust($dark-layout, $lightness: 3%);
     border-color: $dark-layout-font;
   }
 
   .dd3-content,
   .dd3-handle {
     color: $dark-layout-font;
-    border: 1px solid lighten($dark-layout, 7%);
+    border: 1px solid color.adjust($dark-layout, $lightness: 7%);
     background: $dark-layout;
   }
 
   .dd3-content:hover {
-    color: lighten($dark-layout-font, 3%);
+    color: color.adjust($dark-layout-font, $lightness: 3%);
     background: $dark-layout;
   }
 
   .dropzone .dz-message {
-    color: lighten($dark-layout-font, 3%);
+    color: color.adjust($dark-layout-font, $lightness: 3%);
   }
 
   .datepicker {
@@ -1471,7 +1474,7 @@ body.next-dark {
 
   .trash {
     background: $dark-layout;
-    border-color: lighten($dark-layout, 7%);
+    border-color: color.adjust($dark-layout, $lightness: 7%);
   }
 
   .syntax-output {
@@ -1494,7 +1497,7 @@ body.next-dark {
 
   .ck-content .image > figcaption {
     color: $dark-layout-font !important;
-    background: lighten($dark-layout, 7%) !important;
+    background: color.adjust($dark-layout, $lightness: 7%) !important;
   }
 
   .message-mobile .task-right-header-status {
@@ -1519,25 +1522,25 @@ body.next-dark {
   }
 
   .cd-timeline__content::before {
-    border-left-color: lighten($dark-layout, 7%);
-    filter: drop-shadow(1px 0 1px lighten($dark-layout, 7%));
+    border-left-color: color.adjust($dark-layout, $lightness: 7%);
+    filter: drop-shadow(1px 0 1px color.adjust($dark-layout, $lightness: 7%));
   }
 
   .cd-timeline__block:nth-child(even) .cd-timeline__content::before {
-    border-right-color: lighten($dark-layout, 7%);
-    filter: drop-shadow(-1px 0 1px lighten($dark-layout, 7%));
+    border-right-color: color.adjust($dark-layout, $lightness: 7%);
+    filter: drop-shadow(-1px 0 1px color.adjust($dark-layout, $lightness: 7%));
   }
 
   .cd-timeline__container::before {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
   }
 
   .cd-timeline__date {
-    color: lighten($dark-layout-font, 10%);
+    color: color.adjust($dark-layout-font, $lightness: 10%);
   }
 
   .cd-timeline__img {
-    box-shadow: 0 0 0 4px lighten($dark-layout, 7%), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 4px color.adjust($dark-layout, $lightness: 7%), inset 0 2px 0 rgba(0, 0, 0, 0.08), 0 3px 0 4px rgba(0, 0, 0, 0.05);
   }
 
   .cd-timeline-navigation a {
@@ -1591,7 +1594,7 @@ body.next-dark {
   }
 
   .questions input {
-    background: lighten($dark-layout, 7%);
+    background: color.adjust($dark-layout, $lightness: 7%);
     color: $dark-layout-font;
   }
 
@@ -1618,7 +1621,7 @@ body.next-dark {
       }
 
       .dropdown-menu {
-        color: transparentize($header-dark-text-color, 0.2) !important;
+        color: color.adjust($header-dark-text-color, $alpha: -0.2) !important;
 
         a {
           color: $theme-font-color;
@@ -1674,11 +1677,11 @@ body.next-dark {
   }
   @media only screen and (max-width: 991px) {
     .pcoded-header {
-      background: lighten($dark-layout, 7%);
+      background: color.adjust($dark-layout, $lightness: 7%);
       color: #fff;
 
       > .collapse:not(.show) {
-        background: lighten($dark-layout, 10%);
+        background: color.adjust($dark-layout, $lightness: 10%);
         box-shadow: 0 1px 20px 0 rgba(0, 0, 0, 0.08);
 
         a {

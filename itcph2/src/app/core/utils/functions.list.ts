@@ -1,6 +1,6 @@
 import { Color, colorSets, ScaleType } from '@swimlane/ngx-charts';
 import { findIndex } from 'ramda';
-import * as moment from 'moment';
+import moment from 'moment';
 import { saveAs } from 'file-saver';
 
 import { GA_ROUTE_MAPPING } from './GAMapping';
