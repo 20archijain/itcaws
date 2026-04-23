@@ -216,21 +216,21 @@ export const ATLEAST_ONE_VALUE_REQUIRED_VALIDATOR = (index?: number): ValidatorF
             if ((form.controls[controlKey] as UntypedFormArray).controls.length) {
               (form.controls[controlKey] as UntypedFormArray).controls.forEach(control => {
                 // Form group
-                if (control && control.controls && Object.keys(control.controls).length) {
-                  Object.keys(control.controls).forEach(innerControl => {
-                    values.push(control.controls[innerControl].value);
+                if (control && (control as UntypedFormGroup).controls && Object.keys((control as UntypedFormGroup).controls).length) {
+                  Object.keys((control as UntypedFormGroup).controls).forEach(innerControl => {
+                    values.push((control as UntypedFormGroup).controls[innerControl].value);
                   });
                 } else {
                   values.push(control.value);
                 }
               });
             } else {
-              if (Object.keys(form.controls[controlKey].controls).length) {
-                Object.keys(form.controls[controlKey].controls).forEach(innerControl => {
-                  values.push(form.controls[controlKey].controls[innerControl].value);
+              if (Object.keys((form.controls[controlKey] as UntypedFormArray).controls).length) {
+                Object.keys((form.controls[controlKey] as UntypedFormArray).controls).forEach(innerControl => {
+                  values.push((form.controls[controlKey] as UntypedFormArray).controls[innerControl as any].value);
                 });
               } else {
-                values.push(form.controls[controlKey].value);
+                values.push((form.controls[controlKey] as UntypedFormArray).value);
               }
             }
           } else {
