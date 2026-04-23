@@ -18,6 +18,7 @@ class VanDswhatsAppSummary
     private $_dbConn = null;
     private $_tables = [];
     private $_productSaleVolumeFormula = "";
+    private $_resolvedSansFont = null;
 
     public function __construct($dbConn)
     {
@@ -28,30 +29,37 @@ class VanDswhatsAppSummary
 
     public function sendTeamSummary()
     {
-        $currentDate = currentDate();
-        // $currentDate = "2026-02-08"; // For testing
-        $this->clearOldImageDateFolders($currentDate);
-        $monthStartDate = date("Y-m-01", strtotime($currentDate));
-        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
-        $constantsTable = $this->_tables["CONSTANTS_TABLE"];
+        $debugStep = "start";
+        try {
+            $currentDate = currentDate();
+            // $currentDate = "2026-02-08"; // For testing
+            $this->clearOldImageDateFolders($currentDate);
+            $monthStartDate = date("Y-m-01", strtotime($currentDate));
+            $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+            $constantsTable = $this->_tables["CONSTANTS_TABLE"];
 
-        $minTotalShops = (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
-        $minQualifiedAttendanceTimeInMin = (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
-        $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
+            $minTotalShops = (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
+            $minQualifiedAttendanceTimeInMin = (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
+            $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
-        $sAction = null;
-        $iRows = 0;
-        // Reset flags for previous dates so current-date batching can run cleanly.
-        updateRecord($this->_dbConn, $projectTeamTable, "summary_sent = 0", " dstatus = 0 AND s_id = 99 AND summary_sent_date IS NOT NULL AND summary_sent_date != '$currentDate'");
+            $sAction = null;
+            $iRows = 0;
+            // Reset flags for previous dates so current-date batching can run cleanly.
+            $debugStep = "reset_summary_sent";
+            $sAction10 = null;
+            $iRows10 = 0;
+            $resetQuery = "UPDATE $projectTeamTable SET summary_sent = 0 WHERE dstatus = 0 AND s_id = 99 AND summary_sent_date IS NOT NULL AND summary_sent_date != '$currentDate'";
+            $this->_dbConn->ExecuteSelectQuery($resetQuery, $sAction10, $iRows10);
 
-        $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
+            $debugStep = "fetch_sections";
+            $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
             "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' " .
             "AND COALESCE(b.summary_sent, 0) = 0 GROUP BY b.section ORDER BY b.section LIMIT 15";
-        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+            $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-        $createdImages = array();
-        $processedSections = array();
-        if ($iRows > 0) {
+            $createdImages = array();
+            $processedSections = array();
+            if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $aeName = $row["ae_name"];
                 $phoneNumber = $row["ae_number"];
@@ -67,9 +75,9 @@ class VanDswhatsAppSummary
                 $sectionTypeFlags = $this->getSectionTypeFlags($phoneNumber, $section);
                 $teamStrength = $this->getTeamStrengthData($phoneNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec);
                 $npsrToday = $this->getSnapshotTodayData($dailyRows, 5, 2, $teamDetails);
-                $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5);
+                $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5, $currentDate, $phoneNumber, $section);
                 $vanDsToday = $this->getSnapshotTodayData($dailyRows, 0, 20, $teamDetails);
-                $vanDsMtd = $this->getSnapshotMtdData($mtdRows, 0);
+                $vanDsMtd = $this->getSnapshotMtdData($mtdRows, 0, $currentDate, $phoneNumber, $section);
                 if (!empty($phoneNumber)) {
                     $imagePath = $this->createAeSummaryImage(
                         $currentDate,
@@ -94,35 +102,49 @@ class VanDswhatsAppSummary
                     }
                 }
             }
-        }
+            }
 
-        if (count($processedSections) > 0) {
+            if (count($processedSections) > 0) {
             $sectionList = array();
             foreach (array_keys($processedSections) as $sentSection) {
                 $sectionList[] = "'" . addslashes($sentSection) . "'";
             }
             $sectionInClause = implode(",", $sectionList);
-            updateRecord($this->_dbConn, $projectTeamTable, "summary_sent = 1, summary_sent_date = '$currentDate'", "dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)");
-        }
+            $debugStep = "mark_sent_sections";
+            $sAction5 = null;
+            $iRows = 0;
+            $markSentQuery = "UPDATE $projectTeamTable SET summary_sent = 1, summary_sent_date = '$currentDate' WHERE dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)";
+            $this->_dbConn->ExecuteSelectQuery($markSentQuery, $sAction5, $iRows);
+            }
 
-        // If nothing is pending now, remove all generated images for this date.
-        $pendingCount = (int) getRowColumn(
+            // If nothing is pending now, remove all generated images for this date.
+            $debugStep = "pending_count_check";
+            $pendingCount = (int) getRowColumn(
             $this->_dbConn,
             $projectTeamTable,
             "COUNT(DISTINCT section)",
             "dstatus = 0 AND s_id = 99 AND section IS NOT NULL AND section != '' " .
-            "AND (COALESCE(summary_sent, 0) = 0 OR summary_sent_date IS NULL OR summary_sent_date != '$currentDate')"
-        );
-        if ($pendingCount === 0) {
-            $this->clearGeneratedImagesForDate($currentDate);
-        }
+                "AND (COALESCE(summary_sent, 0) = 0 OR summary_sent_date IS NULL OR summary_sent_date != '$currentDate')"
+            );
+            if ($pendingCount === 0) {
+                $this->clearGeneratedImagesForDate($currentDate);
+            }
 
-        echo json_encode(array(
+            echo json_encode(array(
             "status" => 1,
             "capture_date" => $currentDate,
             "total_images" => count($createdImages),
             "images" => $createdImages
-        ));
+            ));
+        } catch (Exception $e) {
+            echo json_encode(array(
+                "status" => 400,
+                "message" => array($e->getMessage()),
+                "debug_step" => $debugStep,
+                "data" => "",
+                "hidePopup" => false
+            ));
+        }
     }
 
     private function clearGeneratedImagesForDate($currentDate)
@@ -253,10 +275,10 @@ class VanDswhatsAppSummary
             array("Average Strike Rate", $npsrToday["avg_strike_rate"], $blue),
             array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], $orange, $npsrToday["lowest_strike_team"]),
             array("Infra Volume", $npsrToday["infra_volume"], $purple),
-            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], $red),
+            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], $red, $npsrToday["infra_below_limit_names"]),
             array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), $green),
             array("Average Time Spent", $npsrToday["avg_time_spent"], $blue),
-            array("Below 6 Hours", $npsrToday["below_6_hours"], $red)
+            array("Below 6 Hours", $npsrToday["below_6_hours"], $red, $npsrToday["below_6_hours_names"])
         );
         if ($hasNpsr) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 500, "NPSR SNAPSHOT (TODAY)", $blue, $npsrTodayRows, $line, $dark, "N");
@@ -266,9 +288,9 @@ class VanDswhatsAppSummary
         // NPSR MTD
         $npsrMtdRows = array(
             array("Average Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), $green),
-            array("Average Daily Volume", $npsrMtd["avg_daily_volume"], $green),
-            array("Incentive Brand 1", $npsrMtd["incentive_brand_1"], $purple),
-            array("Incentive Brand 2", $npsrMtd["incentive_brand_2"], $orange)
+            array("Average Infra Volume", $npsrMtd["avg_daily_volume"], $green),
+            array($npsrMtd["incentive_brand_1_label"], $npsrMtd["incentive_brand_1"], $purple),
+            array($npsrMtd["incentive_brand_2_label"], $npsrMtd["incentive_brand_2"], $orange)
         );
         if ($hasNpsr) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 300, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRows, $line, $dark, "N");
@@ -306,7 +328,15 @@ class VanDswhatsAppSummary
         $footerY2 = $footerY1 + 56;
         imagefilledrectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $white);
         imagerectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $line);
-        $strikeText = $hasNpsr ? $npsrToday["avg_strike_rate"] : "NA";
+        $npsrStrike = isset($npsrToday["avg_strike_rate"]) ? trim((string) $npsrToday["avg_strike_rate"]) : "";
+        $vanStrike = isset($vanDsToday["avg_strike_rate"]) ? trim((string) $vanDsToday["avg_strike_rate"]) : "";
+        if ($hasNpsr && $npsrStrike !== "" && strtoupper($npsrStrike) !== "NA") {
+            $strikeText = $npsrStrike;
+        } elseif ($hasVan && $vanStrike !== "" && strtoupper($vanStrike) !== "NA") {
+            $strikeText = $vanStrike;
+        } else {
+            $strikeText = "NA";
+        }
         $infraText = $hasVan ? $vanDsToday["infra_volume"] : "NA";
         $timeText = $hasVan ? $vanDsToday["avg_time_spent"] : "NA";
         $belowText = $hasVan ? $vanDsToday["infra_below_limit"] : "NA";
@@ -469,12 +499,17 @@ class VanDswhatsAppSummary
         }
         imagefilledellipse($img, $cx, $cy, $radius * 2, $radius * 2, $bgColor);
         if ($text !== "") {
-            $font = 4;
-            $textWidth = imagefontwidth($font) * strlen($text);
-            $textHeight = imagefontheight($font);
-            $tx = (int) ($cx - ($textWidth / 2));
-            $ty = (int) ($cy - ($textHeight / 2));
-            imagestring($img, $font, $tx, $ty, $text, $textColor);
+            $this->drawTextInBox(
+                $img,
+                $cx - $radius,
+                $cy - $radius,
+                $cx + $radius,
+                $cy + $radius,
+                $text,
+                3,
+                $textColor,
+                false
+            );
         }
     }
 
@@ -524,21 +559,32 @@ class VanDswhatsAppSummary
 
     private function getReadableSansFont()
     {
+        if ($this->_resolvedSansFont !== null) {
+            return $this->_resolvedSansFont;
+        }
+        $projectFont = dirname(__FILE__) . "/../../assets/fonts/team_summary.ttf";
+        if (file_exists($projectFont)) {
+            $this->_resolvedSansFont = $projectFont;
+            return $this->_resolvedSansFont;
+        }
         $candidates = array(
-            // Prefer modern clean sans fonts similar to shared sample.
-            "C:/Windows/Fonts/segoeui.ttf",
-            "C:/Windows/Fonts/calibri.ttf",
-            "C:/Windows/Fonts/arial.ttf",
+            // Server-friendly fallbacks when bundled font is unavailable.
             "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
-            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+            // Windows fallbacks for local development.
+            "C:/Windows/Fonts/segoeui.ttf",
+            "C:/Windows/Fonts/calibri.ttf",
+            "C:/Windows/Fonts/arial.ttf"
         );
         foreach ($candidates as $path) {
             if (file_exists($path)) {
-                return $path;
+                $this->_resolvedSansFont = $path;
+                return $this->_resolvedSansFont;
             }
         }
-        return "";
+        $this->_resolvedSansFont = "";
+        return $this->_resolvedSansFont;
     }
 
     private function mapGdToTtfSize($font)
@@ -742,15 +788,26 @@ class VanDswhatsAppSummary
         );
     }
 
-    private function getSnapshotMtdData($mtdRows, $teamType)
+    private function getSnapshotMtdData($mtdRows, $teamType, $currentDate, $aeNumber, $section)
     {
         $rows = $this->filterByType($mtdRows, $teamType);
+        $month = date("m", strtotime($currentDate));
+        $year = date("Y", strtotime($currentDate));
+        $branchIdList = $this->getSectionBranchIdList($rows, $aeNumber, $section);
+        $focusBrandProducts = $this->getFocusBrandOneProducts($branchIdList, $month, $year);
+        $brandMeta1 = isset($focusBrandProducts[0]) ? $focusBrandProducts[0] : array("columns" => array(), "label" => "Incentive Brand 1");
+        $brandMeta2 = isset($focusBrandProducts[1]) ? $focusBrandProducts[1] : array("columns" => array(), "label" => "Incentive Brand 2");
+        $teamIdList = $this->getSectionTeamIdList($rows, $aeNumber, $section);
+        $incentiveBrand1Percent = $this->calculateIncentivePercentByColumns($teamIdList, $currentDate, $brandMeta1["columns"]);
+        $incentiveBrand2Percent = $this->calculateIncentivePercentByColumns($teamIdList, $currentDate, $brandMeta2["columns"]);
         if (count($rows) === 0) {
             return array(
                 "avg_daily_outlets_billed" => "0",
                 "avg_daily_volume" => "0 Ms",
-                "incentive_brand_1" => "0%",
-                "incentive_brand_2" => "0%"
+                "incentive_brand_1_label" => $brandMeta1["label"],
+                "incentive_brand_1" => $incentiveBrand1Percent,
+                "incentive_brand_2_label" => $brandMeta2["label"],
+                "incentive_brand_2" => $incentiveBrand2Percent
             );
         }
 
@@ -769,12 +826,260 @@ class VanDswhatsAppSummary
         $days = count($dailyBilled);
         $avgDailyBilled = $days > 0 ? array_sum($dailyBilled) / $days : 0;
         $avgDailyVolume = $days > 0 ? array_sum($dailyVolume) / $days : 0;
-
         return array(
             "avg_daily_outlets_billed" => $this->formatNumber($avgDailyBilled, 2),
             "avg_daily_volume" => $this->formatNumber($avgDailyVolume, 2) . " Ms",
-            "incentive_brand_1" => "NA",
-            "incentive_brand_2" => "NA"
+            "incentive_brand_1_label" => $brandMeta1["label"],
+            "incentive_brand_1" => $incentiveBrand1Percent,
+            "incentive_brand_2_label" => $brandMeta2["label"],
+            "incentive_brand_2" => $incentiveBrand2Percent
+        );
+    }
+
+    private function getSectionTeamIdList($rows, $aeNumber, $section)
+    {
+        $teamIds = array();
+        foreach ($rows as $row) {
+            $teamId = isset($row["team_id"]) ? (int) $row["team_id"] : 0;
+            if ($teamId > 0) {
+                $teamIds[$teamId] = true;
+            }
+        }
+        if (count($teamIds) === 0) {
+            $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+            $action = null;
+            $count = 0;
+            $query = "SELECT DISTINCT team_id FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND team_id IS NOT NULL";
+            $this->_dbConn->ExecuteSelectQuery($query, $action, $count);
+            if ($count > 0) {
+                while ($data = $this->_dbConn->GetData($action)) {
+                    $teamId = isset($data["team_id"]) ? (int) $data["team_id"] : 0;
+                    if ($teamId > 0) {
+                        $teamIds[$teamId] = true;
+                    }
+                }
+            }
+        }
+        return count($teamIds) > 0 ? implode(",", array_keys($teamIds)) : "";
+    }
+
+    private function calculateIncentivePercentByColumns($teamIdList, $currentDate, $columns)
+    {
+        if ($teamIdList === "" || !is_array($columns) || count($columns) === 0) {
+            return "0%";
+        }
+        $targetTable = "tblassign_target";
+        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
+        $monthStartDate = date("Y-m-01", strtotime($currentDate));
+
+        $targetExprParts = array();
+        $saleExprParts = array();
+        foreach ($columns as $col) {
+            $targetExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
+            $saleExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
+        }
+        $targetExpr = implode(" + ", $targetExprParts);
+        $saleExpr = implode(" + ", $saleExprParts);
+
+        $targetValue = 0.0;
+        $targetAction = null;
+        $targetRows = 0;
+        $targetQuery = "SELECT ($targetExpr) AS total_target FROM $targetTable WHERE team_id IN ($teamIdList)";
+        $this->_dbConn->ExecuteSelectQuery($targetQuery, $targetAction, $targetRows);
+        if ($targetRows > 0) {
+            $targetData = $this->_dbConn->GetData($targetAction);
+            $targetValue = isset($targetData["total_target"]) ? (float) $targetData["total_target"] : 0;
+        }
+
+        if ($targetValue <= 0) {
+            return "0%";
+        }
+
+        $saleValue = 0.0;
+        $saleAction = null;
+        $saleRows = 0;
+        $saleQuery = "SELECT ($saleExpr) AS total_sale FROM $summaryTable WHERE dstatus = 0 AND team_id IN ($teamIdList) AND activity_date BETWEEN '$monthStartDate' AND '$currentDate'";
+        $this->_dbConn->ExecuteSelectQuery($saleQuery, $saleAction, $saleRows);
+        if ($saleRows > 0) {
+            $saleData = $this->_dbConn->GetData($saleAction);
+            $saleValue = isset($saleData["total_sale"]) ? (float) $saleData["total_sale"] : 0;
+        }
+
+        $percent = ($saleValue / $targetValue) * 100;
+        return $this->formatNumber($percent, 2) . "%";
+    }
+
+    private function getFocusBrandOneProducts($branchIdList, $month, $year)
+    {
+        if ($branchIdList === "") {
+            return array();
+        }
+        $brandProductsTable = "tblbranch_products_month_wise";
+        $action = null;
+        $rowsCount = 0;
+        $query = "SELECT summary_column_name, product_name FROM $brandProductsTable " .
+            "WHERE month = '$month' AND year = '$year' AND branch_id IN ($branchIdList) AND is_focusbrand = 1 " .
+            "AND summary_column_name IS NOT NULL AND summary_column_name != '' ORDER BY sort_order, rec_id";
+        $this->_dbConn->ExecuteSelectQuery($query, $action, $rowsCount);
+
+        $products = array();
+        if ($rowsCount > 0) {
+            while ($row = $this->_dbConn->GetData($action)) {
+                $col = isset($row["summary_column_name"]) ? trim((string) $row["summary_column_name"]) : "";
+                $name = isset($row["product_name"]) ? trim((string) $row["product_name"]) : "";
+                if (!preg_match('/^total_sale_product[0-9]+$/i', $col)) {
+                    continue;
+                }
+                $label = $name !== "" ? $name : $col;
+                if (!isset($products[$label])) {
+                    $products[$label] = array("columns" => array(), "label" => $label);
+                }
+                $products[$label]["columns"][$col] = true;
+            }
+        }
+        $result = array();
+        foreach ($products as $meta) {
+            $result[] = array(
+                "columns" => array_keys($meta["columns"]),
+                "label" => $meta["label"]
+            );
+            if (count($result) >= 2) {
+                break;
+            }
+        }
+        return $result;
+    }
+
+    private function calculateIncentiveBrandMeta($rows, $teamType, $currentDate, $focusBrand, $aeNumber, $section)
+    {
+        $teamIds = array();
+        foreach ($rows as $row) {
+            $teamId = isset($row["team_id"]) ? (int) $row["team_id"] : 0;
+            if ($teamId > 0) {
+                $teamIds[$teamId] = true;
+            }
+        }
+        if (count($teamIds) === 0) {
+            return array("label" => "Incentive Brand " . $focusBrand, "percent" => "0%");
+        }
+
+        $month = date("m", strtotime($currentDate));
+        $year = date("Y", strtotime($currentDate));
+        $teamIdList = implode(",", array_keys($teamIds));
+        $branchIdList = $this->getSectionBranchIdList($rows, $aeNumber, $section);
+        if ($branchIdList === "") {
+            return array("label" => "Incentive Brand " . $focusBrand, "percent" => "0%");
+        }
+
+        $brandMeta = $this->getIncentiveBrandColumnsAndNames($branchIdList, $month, $year, $teamType, $focusBrand);
+        $columns = $brandMeta["columns"];
+        $label = $brandMeta["label"];
+        if (count($columns) === 0) {
+            return array("label" => $label, "percent" => "0%");
+        }
+
+        $targetTable = "tblassign_target";
+        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
+        $monthStartDate = date("Y-m-01", strtotime($currentDate));
+
+        $targetExprParts = array();
+        $saleExprParts = array();
+        foreach ($columns as $col) {
+            $targetExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
+            $saleExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
+        }
+        $targetExpr = implode(" + ", $targetExprParts);
+        $saleExpr = implode(" + ", $saleExprParts);
+
+        $targetValue = 0.0;
+        $targetAction = null;
+        $targetRows = 0;
+        $targetQuery = "SELECT ($targetExpr) AS total_target FROM $targetTable " .
+            "WHERE team_id IN ($teamIdList)";
+        $this->_dbConn->ExecuteSelectQuery($targetQuery, $targetAction, $targetRows);
+        if ($targetRows > 0) {
+            $targetData = $this->_dbConn->GetData($targetAction);
+            $targetValue = isset($targetData["total_target"]) ? (float) $targetData["total_target"] : 0;
+        }
+
+        $saleValue = 0.0;
+        $saleAction = null;
+        $saleRows = 0;
+        $saleQuery = "SELECT ($saleExpr) AS total_sale FROM $summaryTable " .
+            "WHERE dstatus = 0 AND team_id IN ($teamIdList) AND activity_date BETWEEN '$monthStartDate' AND '$currentDate'";
+        $this->_dbConn->ExecuteSelectQuery($saleQuery, $saleAction, $saleRows);
+        if ($saleRows > 0) {
+            $saleData = $this->_dbConn->GetData($saleAction);
+            $saleValue = isset($saleData["total_sale"]) ? (float) $saleData["total_sale"] : 0;
+        }
+
+        if ($targetValue <= 0) {
+            return array("label" => $label, "percent" => "0%");
+        }
+        $percent = ($saleValue / $targetValue) * 100;
+        return array(
+            "label" => $label,
+            "percent" => $this->formatNumber($percent, 2) . "%"
+        );
+    }
+
+    private function getSectionBranchIdList($rows, $aeNumber, $section)
+    {
+        $branchIds = array();
+        foreach ($rows as $row) {
+            $branchId = isset($row["branch_id"]) ? (int) $row["branch_id"] : 0;
+            if ($branchId > 0) {
+                $branchIds[$branchId] = true;
+            }
+        }
+        if (count($branchIds) === 0) {
+            $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+            $action = null;
+            $count = 0;
+            $query = "SELECT DISTINCT branch_id FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND branch_id IS NOT NULL";
+            $this->_dbConn->ExecuteSelectQuery($query, $action, $count);
+            if ($count > 0) {
+                while ($data = $this->_dbConn->GetData($action)) {
+                    $branchId = isset($data["branch_id"]) ? (int) $data["branch_id"] : 0;
+                    if ($branchId > 0) {
+                        $branchIds[$branchId] = true;
+                    }
+                }
+            }
+        }
+        return count($branchIds) > 0 ? implode(",", array_keys($branchIds)) : "";
+    }
+
+    private function getIncentiveBrandColumnsAndNames($branchIdList, $month, $year, $teamType, $focusBrand)
+    {
+        $brandProductsTable = "tblbranch_products_month_wise";
+        $action = null;
+        $rowsCount = 0;
+        $query = "SELECT DISTINCT summary_column_name, product_name FROM $brandProductsTable " .
+            "WHERE month = '$month' AND year = '$year' AND branch_id IN ($branchIdList) " .
+            "AND is_focusbrand = '$focusBrand' " .
+            "AND summary_column_name IS NOT NULL AND summary_column_name != '' ORDER BY product_name";
+        $this->_dbConn->ExecuteSelectQuery($query, $action, $rowsCount);
+
+        $columns = array();
+        $names = array();
+        if ($rowsCount > 0) {
+            while ($row = $this->_dbConn->GetData($action)) {
+                $col = isset($row["summary_column_name"]) ? trim((string) $row["summary_column_name"]) : "";
+                $name = isset($row["product_name"]) ? trim((string) $row["product_name"]) : "";
+                if (preg_match('/^total_sale_product[0-9]+$/i', $col)) {
+                    $columns[$col] = true;
+                    if ($name !== "") {
+                        $names[$name] = true;
+                    }
+                }
+            }
+        }
+        $nameList = array_keys($names);
+        $label = count($nameList) > 0 ? implode(", ", $nameList) : ("Incentive Brand " . $focusBrand);
+        return array(
+            "columns" => array_keys($columns),
+            "label" => $label
         );
     }
 
@@ -786,7 +1091,7 @@ class VanDswhatsAppSummary
         $summaryAction = null;
         $summaryRows = 0;
         $query = "SELECT a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.dayend_datetime, a.total_sales_deliveries, a.total_sellin_shops, a.total_other_shops, a.is_qualified, " .
-            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = 99" .
+            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type, b.branch_id FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = 99" .
             " AND b.ae_number = '$aeNumber' AND b.section = '$section' AND a.activity_date BETWEEN '$dateFrom' AND '$dateTo'";
         $this->_dbConn->ExecuteSelectQuery($query, $summaryAction, $summaryRows);
 
