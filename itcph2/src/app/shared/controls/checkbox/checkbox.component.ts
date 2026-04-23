@@ -5,14 +5,15 @@ import { Subscription } from 'rxjs';
 import { ChekboxOutput } from 'src/app/core/interfaces/helpers.interface';
 import { ListingService } from 'src/app/core/services/listing.service';
 import { FormService } from 'src/app/core/services/form.service';
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-    selector: 'app-checkbox',
-    templateUrl: './checkbox.component.html',
-    standalone: false
+  selector: 'app-checkbox',
+  templateUrl: './checkbox.component.html',
+  standalone: false,
 })
 export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
-  private subscription: Subscription[] = [];
+  private subscription: (Subscription | undefined)[] = [];
   @Input() private validators = null;
   @Input() private defaultValue = null;
   @Output() private emitSelectedRecords = new EventEmitter<ChekboxOutput>();
@@ -21,11 +22,11 @@ export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
   @Input() private value = null;
   @Input() private selectedRecords = [];
   @Input() private tableData: any[] = [];
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() showValidationState = true;
   @Input() isChecked = false;
   @Input() hide = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'checkbox';
   @Input() label = '';
   @Input() noMargin = false;
@@ -54,9 +55,9 @@ export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
   }
@@ -69,7 +70,7 @@ export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
     }
 
     this.subscription.push(
-      this.inputField.statusChanges
+      this.inputField?.statusChanges
         .subscribe(() => {
           this.resetError(null);
         })
@@ -77,7 +78,7 @@ export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    this.subscription.forEach(sub => sub.unsubscribe());
+    this.subscription.forEach(sub => sub?.unsubscribe());
   }
 
   get inputField() {
@@ -99,7 +100,7 @@ export class CheckboxComponent implements OnChanges, OnDestroy, OnInit {
     this.emitSelectedRecords.emit(list);
   }
 
-  resetError($event: Event) {
+  resetError($event: Event | null) {
     if ($event && $event.stopPropagation) {
       $event.stopPropagation();
     }

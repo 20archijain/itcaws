@@ -7,9 +7,9 @@ import { ToastrService } from '../../services/toastr.service';
 import { ToastrConfig } from '../../interfaces/toastr.interface';
 
 @Component({
-    selector: 'app-toastr',
-    template: '',
-    standalone: false
+  selector: 'app-toastr',
+  template: '',
+  standalone: false,
 })
 export class ToastrComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

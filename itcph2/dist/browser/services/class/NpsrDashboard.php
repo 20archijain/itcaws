@@ -880,6 +880,7 @@ class NpsrDashboard
         $arrMonthYear = array();
         $monthWiseSales = array();
         $totalSumDistrictLevelSale = array();
+        $arrWeekWiselabel = array();
 
         // Get all sales-related columns
         $query = "SELECT a.summary_column_name, d.main_branch FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .

@@ -24,7 +24,7 @@ export class AuthGuardService implements OnDestroy {
     );
   }
 
-  private checkValidUser(url: string) {
+  private checkValidUser(url: string | undefined) {
     // Login or forgot or two-way
     if (url && (url.indexOf('login') > -1 || url.indexOf('forgot') > -1 || url.indexOf('two-way') > -1)) {
       // Already logged in, send back to previous screen
@@ -55,7 +55,7 @@ export class AuthGuardService implements OnDestroy {
 
   canActivateChild(next: ActivatedRouteSnapshot) {
     const urlParams = next.params;
-    const allModulesList: SessionModuleObject = JSON.parse(SessionUtil.getItem('modules'));
+    const allModulesList: SessionModuleObject = JSON.parse(SessionUtil.getItem('modules') || '{}');
 
     if (allModulesList) {
       const moduleCodes = Object.keys(allModulesList);

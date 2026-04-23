@@ -26,14 +26,16 @@ export class AuthService {
         })
       .pipe(
         tap((response: HttpRequestResponse<LoginDataResponse>) => {
-          if (response && response.status !== REQUEST_STATUS.FAILED) {
+          if (response && response.status !== REQUEST_STATUS.FAILED && response.data) {
 
             // store each response object
             for (const key in response.data) {
-              if (typeof response.data[key] === 'object') {
-                SessionUtil.setItem(key, JSON.stringify(response.data[key]));
+              const typedKey = key as keyof LoginDataResponse;
+              const value = response.data[typedKey];
+              if (typeof value === 'object') {
+                SessionUtil.setItem(key, JSON.stringify(value));
               } else {
-                SessionUtil.setItem(key, response.data[key]);
+                SessionUtil.setItem(key, String(value));
               }
             }
 
@@ -68,10 +70,12 @@ export class AuthService {
 
             // store each response object
             for (const key in response.data) {
-              if (typeof response.data[key] === 'object') {
-                SessionUtil.setItem(key, JSON.stringify(response.data[key]));
+              const typedKey = key as keyof LoginDataResponse;
+              const value = response.data[typedKey];
+              if (typeof value === 'object') {
+                SessionUtil.setItem(key, JSON.stringify(value));
               } else {
-                SessionUtil.setItem(key, response.data[key]);
+                SessionUtil.setItem(key, String(value));
               }
             }
 
@@ -83,7 +87,7 @@ export class AuthService {
   }
 
   sendOtp() {
-    const userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user'));
+    const userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user') || '{}');
 
     return this.formService
       .customActionCall<LoginDataResponse>(STATIC_MODULES.twoWay.resendOtp.action, { id: userDetails.id },

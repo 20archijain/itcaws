@@ -968,7 +968,7 @@ class MdoReporting
                     } else {
                         $arrRoute = $route && $shopId ? getRowColumns($this->_dbConn, "tblroute_details", "team_id, outlet_name", "rec_id = $shopId") : "";
                     }
-                    $dsName = $row["ds_name"];
+                    $dsName = isset($row["ds_name"]) ? (string)$row["ds_name"] : "";
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
                     $surveyVol = $row["ques_5"];
@@ -1394,6 +1394,7 @@ class MdoReporting
                                     $unaccomTotalUlc = count($unaccomtotalUniqueProducts); // unique products across all records
                                 }
                             }
+                            $unaccomTotalUlc = isset($unaccomTotalUlc) ? $unaccomTotalUlc : 0;
                             $unacompaniedULCPerDay        = $unaccompaniedDays > 0 ? round($unaccomTotalUlc / $unaccompaniedDays) : 0;
                         }
                     }
@@ -1403,10 +1404,10 @@ class MdoReporting
                     $unacompaniedSellOutletPerDay = $unaccompaniedDays > 0 ? round($unacompaniedSellOutlets / $unaccompaniedDays) : 0;
 
 
-                    $dsName = $row["ds_name"];
+                    $dsName = isset($row["ds_name"]) ? (string)$row["ds_name"] : "";
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
-                    $dsType = $parts[1];
+                    $dsType = isset($parts[1]) ? $parts[1] : "";
                     $startTime = getRowColumn($this->_dbConn, "tblattendance", "MIN(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND call_type = '0'");
                     $arrDayEndDetails = getRowColumns($this->_dbConn, "tblattendance", "MIN(capture_datetime), other_details, distance", "capture_date = '$date' AND team_id = $teamId AND call_type = '1'");
                     if (isNonEmptyArray($arrDayEndDetails)) {

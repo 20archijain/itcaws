@@ -31,9 +31,9 @@ class GetProductsDeliveredData extends Utilities
         global $ITCPH2_DB, $TBL_PROJECT_TEAM, $TBL_ORDER_DETAILS, $TBL_DELIVERY_DETAILS;
 
         $dbName = $this->arrUserDetails["db_name"];
-        $teamId = $this->arrUserDetails["team_id"] ?? 3;
+        $teamId = $this->arrUserDetails["team_id"];
 
-        $jsonId = $this->requestGetData["json_id"] ?? 99;
+        $jsonId = $this->requestGetData["json_id"];
         // $orderId = isset($this->requestGetData["order_id"]) ? $this->requestGetData["order_id"] : null;
 
         $branchId = ($dbName == $ITCPH2_DB) ?
@@ -60,11 +60,12 @@ class GetProductsDeliveredData extends Utilities
                 $sProductsQuery = "SELECT rec_id, product_name, summary_column_name, category_name, sort_order" .
                     " FROM $dbName.tblbranch_pickupstock_products WHERE branch_id = ?" .
                     " AND json_id = ? AND team_type = ? AND dstatus = 0 ORDER BY sort_order";
+                $queryParams = array($branchId, $jsonId, $teamType);
                 $this->dbConn->ExecuteSelectQuery(
                     $sProductsQuery,
                     $rsProductsAction,
                     $iProductsActionRows,
-                    array($branchId, $jsonId, $teamType)
+                    $queryParams
                 );
 
                 // Products found
@@ -89,7 +90,7 @@ class GetProductsDeliveredData extends Utilities
                         " FROM $dbName.$TBL_ORDER_DETAILS WHERE team_id = ? AND dstatus = 0";
 
                     $queryParams = array($teamId);
-                    $sOrderQuery .= " ORDER BY capture_datetime DESC LIMIT 1";
+                    $sOrderQuery .= " ORDER BY capture_datetime DESC";
 
                     $rsOrderDetails = null;
                     $iOrderDetailsRows = 0;
@@ -102,67 +103,76 @@ class GetProductsDeliveredData extends Utilities
 
                     // Order found
                     if ($iOrderDetailsRows > 0) {
-                        $rowOrder = $this->dbConn->GetData($rsOrderDetails);
-                        $orderIdValue = (int)$rowOrder["pro_id"];
-                        $order_status = (int)$rowOrder["order_status"];
-                        $shopId = (int)$rowOrder["ques_3"];
-                        $orderDateFormatted = date("Y-m-d H:i", strtotime($rowOrder["capture_datetime"]));
-
-                        // if delivery found
-                        if ($order_status === 1) {
-                            //Get delivery details from tblsurvey_response_details_delivery
-                            $sDeliveryQuery = "SELECT pro_id, capture_datetime, " . implode(", ", $arrSummaryColumnNames) .
-                                " FROM $dbName.$TBL_DELIVERY_DETAILS WHERE order_id = ? AND dstatus = 0";
-
-                            $queryDeliveryParams = array($orderIdValue);
-                            $sDeliveryQuery .= " ORDER BY capture_datetime DESC LIMIT 1";
-
-                            $rsDeliveryDetails = null;
-                            $iDeliveryDetailsRows = 0;
-                            $this->dbConn->ExecuteSelectQuery(
-                                $sDeliveryQuery,
-                                $rsDeliveryDetails,
-                                $iDeliveryDetailsRows,
-                                $queryDeliveryParams
-                            );
+                        $arrOrdersResponse = array();
+                        while ($rowOrder = $this->dbConn->GetData($rsOrderDetails)) {
+                            // $rowOrder = $this->dbConn->GetData($rsOrderDetails);
+                            $orderIdValue = (int)$rowOrder["pro_id"];
+                            $order_status = (int)$rowOrder["order_status"];
+                            $shopId = (int)$rowOrder["ques_3"];
+                            $orderDateFormatted = date("Y-m-d H:i", strtotime($rowOrder["capture_datetime"]));
+                            $rowDelivery = array();
+                            $arrProductsForOrder = $arrProducts;
 
                             // if delivery found
-                            if ($iDeliveryDetailsRows > 0) {
-                                $rowDelivery = $this->dbConn->GetData($rsDeliveryDetails);
-                                // $deliveryIdValue = (int)$rowDelivery["pro_id"];
-                                // $deliveryShopId = (int)$rowDelivery["ques_3"];
-                                // $deliveryDateFormatted = date("Y-m-d H:i", strtotime($rowDelivery["capture_datetime"]));
+                            if ($order_status === 1) {
+                                //Get delivery details from tblsurvey_response_details_delivery
+                                $sDeliveryQuery = "SELECT pro_id, capture_datetime, " . implode(", ", $arrSummaryColumnNames) .
+                                    " FROM $dbName.$TBL_DELIVERY_DETAILS WHERE order_id = ? AND dstatus = 0";
+
+                                $queryDeliveryParams = array($orderIdValue);
+                                $sDeliveryQuery .= " ORDER BY capture_datetime DESC LIMIT 1";
+
+                                $rsDeliveryDetails = null;
+                                $iDeliveryDetailsRows = 0;
+                                $this->dbConn->ExecuteSelectQuery(
+                                    $sDeliveryQuery,
+                                    $rsDeliveryDetails,
+                                    $iDeliveryDetailsRows,
+                                    $queryDeliveryParams
+                                );
+
+                                // if delivery found
+                                if ($iDeliveryDetailsRows > 0) {
+                                    $rowDelivery = $this->dbConn->GetData($rsDeliveryDetails);
+                                    // $deliveryIdValue = (int)$rowDelivery["pro_id"];
+                                    // $deliveryShopId = (int)$rowDelivery["ques_3"];
+                                    // $deliveryDateFormatted = date("Y-m-d H:i", strtotime($rowDelivery["capture_datetime"]));
+                                }
                             }
-                        }
 
-                        // Update ordered_qty & delivery_qty for each product from summary_column_name values
-                        foreach ($arrProducts as $index => $arrProduct) {
-                            $colName = $arrSummaryColumnNames[$index];
-                            $orderedQty = isset($rowOrder[$colName]) ? (float)$rowOrder[$colName] : 0;
-                            $arrProducts[$index]["ordered_qty"] = (int)$orderedQty;
-                            $delivered_qty = isset($rowDelivery[$colName]) ? (float)$rowDelivery[$colName] : 0;
-                            $arrProducts[$index]["delivered_qty"] = (int)$delivered_qty;
-                        }
-
-                        // Filter products to only include those with ordered_qty > 0
-                        $arrFilteredProducts = array();
-                        foreach ($arrProducts as $arrProduct) {
-                            if ($arrProduct["ordered_qty"] > 0) {
-                                $arrFilteredProducts[] = $arrProduct;
+                            // Update ordered_qty & delivery_qty for each product from summary_column_name values
+                            foreach ($arrProductsForOrder as $index => $arrProduct) {
+                                $colName = $arrSummaryColumnNames[$index];
+                                $orderedQty = isset($rowOrder[$colName]) ? (float)$rowOrder[$colName] : 0;
+                                $arrProductsForOrder[$index]["ordered_qty"] = (int)$orderedQty;
+                                $delivered_qty = isset($rowDelivery[$colName]) ? (float)$rowDelivery[$colName] : 0;
+                                $arrProductsForOrder[$index]["delivered_qty"] = (int)$delivered_qty;
                             }
-                        }
 
+                            // Filter products to only include those with ordered_qty > 0
+                            $arrFilteredProducts = array();
+                            foreach ($arrProductsForOrder as $arrProduct) {
+                                if ($arrProduct["ordered_qty"] > 0) {
+                                    $arrFilteredProducts[] = $arrProduct;
+                                }
+                            }
+
+
+                            $arrOrdersResponse[] = array(
+                                "orderId" => $orderIdValue,
+                                "orderStatus" => $order_status,
+                                "shopId" => $shopId,
+                                "orderDate" => $orderDateFormatted,
+                                "products" => $arrFilteredProducts,
+                            );
+                        }
 
                         $arrResponse = array(
                             'listOfStages' => [
                                 ["stage" => 0, "title" => "Ordered", "color" => "#007bff"],
                                 ["stage" => 1, "title" => "Delivered", "color" => "#ff4000"],
                             ],
-                            "orderId" => $orderIdValue,
-                            "orderStatus" => $order_status,
-                            "shopId" => $shopId,
-                            "orderDate" => $orderDateFormatted,
-                            "products" => $arrFilteredProducts,
+                            "orders" => $arrOrdersResponse,
                         );
 
                         $response = $this->response->sendResponse(array("message" => "", "response" => $arrResponse), 1);

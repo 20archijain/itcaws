@@ -2,26 +2,27 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
-    selector: 'app-radio',
-    templateUrl: './radio.component.html',
-    standalone: false
+  selector: 'app-radio',
+  templateUrl: './radio.component.html',
+  standalone: false,
 })
 export class RadioComponent implements OnChanges, OnDestroy, OnInit {
-  private subscription: Subscription[] = [];
+  private subscription: (Subscription | undefined)[] = [];
   @Input() private validators = null;
   @Input() private defaultValue = '';
   @Output() private onChange = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() options: DropdownList<any>[] = [];
   @Input() inline = false;
   @Input() hide = false;
   @Input() showValidationState = true;
   @Input() isRequired = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'radio';
   @Input() label = '';
   @Input() labelClassName = 'form-label';
@@ -46,9 +47,9 @@ export class RadioComponent implements OnChanges, OnDestroy, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
   }
@@ -61,13 +62,13 @@ export class RadioComponent implements OnChanges, OnDestroy, OnInit {
     }
 
     this.subscription.push(
-      this.inputField.statusChanges
+      this.inputField?.statusChanges
         .subscribe(() => this.resetError(null))
     );
   }
 
   ngOnDestroy() {
-    this.subscription.forEach(sub => sub.unsubscribe());
+    this.subscription.forEach(sub => sub?.unsubscribe());
   }
 
   get inputField() {
@@ -80,10 +81,10 @@ export class RadioComponent implements OnChanges, OnDestroy, OnInit {
 
   onOptionChange($event: Event) {
     this.resetError($event);
-    this.onChange.emit({ event: $event, value: this.group.get(this.controlName).value });
+    this.onChange.emit({ event: $event, value: this.group.get(this.controlName)?.value });
   }
 
-  resetError($event: Event) {
+  resetError($event: Event | null) {
     if ($event && $event.stopPropagation) {
       $event.stopPropagation();
     }

@@ -69,12 +69,22 @@ export interface SessionModule extends HttpRequestModuleCodes {
   breadcrumbs: boolean;
   id: number;
   name: string;
-  actions: string[];
-  fold: string;
+  hidden: boolean;
   icon: string;
-  hidden: number;
+  fold: string;
   componentName: string;
   submodules: SessionModuleObject;
+  actions: string[];
+}
+
+export interface AsideItem {
+  hide?: boolean;
+  icon?: string;
+  isHidden?: boolean;
+  modc?: string;
+  name: string;
+  pmodc?: string;
+  submodules?: AsideItem[];
 }
 
 export interface MapConfig {

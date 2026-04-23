@@ -208,7 +208,7 @@
         "circle": "Circle",
         "section": "Section",
         "team": "Team Name",
-        "teamType" :"Team Type"
+        "teamType": "Team Type"
       }
     },
     "user": {
@@ -267,16 +267,16 @@
         }
       }
     },
-    "focusBrandReporting":{
-      "id" : "ID",
-      "branch" : "Branch",
-      "month" : "Month",
-      "year" : "Year",
-      "category_name" : "Category Name",
-      "product_name" : "Product Name",
-      "summary_column_name" : "Summary Column Name",
-      "viewFocusBrand" : "Focus Brand Reporting",
-      "editProduct" : "Edit Product"
+    "focusBrandReporting": {
+      "id": "ID",
+      "branch": "Branch",
+      "month": "Month",
+      "year": "Year",
+      "category_name": "Category Name",
+      "product_name": "Product Name",
+      "summary_column_name": "Summary Column Name",
+      "viewFocusBrand": "Focus Brand Reporting",
+      "editProduct": "Edit Product"
     },
     "reporting": {
       "timestamp": "Timestamp",
@@ -335,6 +335,7 @@
     "download": {
       "downloadLineCut": "Line Cut Report",
       "downloadTargetReport": "Target Report",
+      "targetTitle": "Assign Target",
       "downloadBillCutt": "UOB Report",
       "downloadBinderReport": "Binder Report",
       "downloadEvaluationReport": "Evaluation Report",
@@ -436,8 +437,8 @@
     "show": "Show",
     "reset": "Reset",
     "searchProduct": "Search Products",
-    "format" : "Format",
-    "details" : "Details"
+    "format": "Format",
+    "details": "Details"
   },
   "err": {
     "username": {

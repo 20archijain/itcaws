@@ -266,6 +266,7 @@ class MdoTargetReport
             "WD Code",
             "WD Pop Group",
             "WD Market",
+            "CIEL ID",
             "MDO Id",
             "MDO Name",
             "MDO Type",
@@ -298,7 +299,6 @@ class MdoTargetReport
 
         // ---------------- LOOP MONTHS ----------------
         foreach ($arrMonth as $month) {
-
             $date         = DateTime::createFromFormat('F Y', $month);
             $numericMonth = $date->format('m');
             $numericYear  = $date->format('Y');
@@ -313,15 +313,22 @@ class MdoTargetReport
                     s.incentive_rmd_scp, s.incentive_van_ds, s.incentive_criteria_1, s.incentive_criteria_2,
                     s.dstatus, s.is_locked
                     FROM mdo_dspm_summary AS s
-                    WHERE s.month = '$monthKey' AND s.year = $numericYear $whereFilter
+                    WHERE s.is_type != 10 AND s.month = '$monthKey' AND s.year = $numericYear $whereFilter
                     GROUP BY s.team_id, s.month, s.year";
 
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-            if ($iRows <= 0) continue;
+            if ($iRows <= 0) {
+                continue;
+            }
 
             // ---------------- SINGLE LOOP (FIXED) ----------------
             while ($row = $this->_dbConn->GetData($sAction)) {
+                $mdoId = $row['team_id'];
+                $mdoDetails = getRowColumns($this->_dbConn, "tblproject_team", "ceil_id, circle, section", "team_id = $mdoId");
+                $ceilId = $mdoDetails ? $mdoDetails[0] : "";
+                $circle = $mdoDetails ? $mdoDetails[1] : "";
+                $section = $mdoDetails ? $mdoDetails[2] : "";
 
                 // ---------------- LABELS ----------------
                 $activeTeam = ($row['dstatus'] == 0) ? "Active" : "Inactive";
@@ -333,9 +340,11 @@ class MdoTargetReport
                 // ---------------- TOTAL PER TEAM ----------------
                 $totalAchievement = 0;
 
+                // ✅ Track if ALL gates are achieved
+                $allGatesAchieved = true; // assume true, set false if any gate fails
+
                 // ---------------- GATE PARAMETERS ----------------
                 foreach ($gateParameters as $paramLabel => $paramConfig) {
-
                     $target      = $paramConfig['target'];
                     $maxPoints   = $paramConfig['max'];
                     $achCol      = $paramConfig['col'];
@@ -347,16 +356,22 @@ class MdoTargetReport
 
                     $gateAchieved = ($achievement >= $target) ? "Y" : "N";
 
+                    // ✅ If any gate fails, mark overall as not achieved
+                    if ($gateAchieved === "N") {
+                        $allGatesAchieved = false;
+                    }
+
                     $arrDataHolder[] = [
                         $month,
                         $row['district'],
                         $row['main_branch'],
                         $row['branch_name'],
-                        $row['circle'],
-                        $row['section'],
+                        $circle,
+                        $section,
                         $row['wd_code'],
                         $row['wd_pop_group'],
                         $row['wd_market'],
+                        $ceilId,
                         $row['team_id'],
                         $row['team_name'],
                         $mdoTypeLabel,
@@ -370,44 +385,58 @@ class MdoTargetReport
                     ];
                 }
 
+                // ✅ If criteria_2 is maxed (4000), suppress criteria_1
+                $rawCriteria2 = !empty($row['incentive_criteria_2']) ? $row['incentive_criteria_2'] : 0;
+                if ($rawCriteria2 == 4000) {
+                    $row['incentive_criteria_1'] = 0;
+                }
+
+                // If  citeria_1 is > 0, suppress criteria_2
+                $rawCriteria1 = !empty($row['incentive_criteria_1']) ? $row['incentive_criteria_1'] : 0;
+                if ($rawCriteria1 > 0) {
+                    $row['incentive_criteria_2'] = 0;
+                }
+
                 // ---------------- PAYOUT PARAMETERS ----------------
-                // if ($isLocked == 0) {
-                    foreach ($payoutParameters as $paramLabel => $paramConfig) {
-
-                        $target      = $paramConfig['target'];
-                        $maxPoints   = $paramConfig['max'];
-                        $achCol      = $paramConfig['col'];
+                foreach ($payoutParameters as $paramLabel => $paramConfig) {
+                    $target      = $paramConfig['target'];
+                    $maxPoints   = $paramConfig['max'];
+                    $achCol      = $paramConfig['col'];
+                    if ($isLocked == 1) {
+                        $achievement = 0;
+                        $totalAchievement = 0;
+                    } else {
                         $achievement = !empty($row[$achCol]) ? $row[$achCol] : 0;
-
                         $totalAchievement += $achievement;
-
-                        $achPct = ($target > 0)
-                            ? round(($achievement / $target) * 100, 2) . "%"
-                            : "0%";
-
-                        $arrDataHolder[] = [
-                            $month,
-                            $row['district'],
-                            $row['main_branch'],
-                            $row['branch_name'],
-                            $row['circle'],
-                            $row['section'],
-                            $row['wd_code'],
-                            $row['wd_pop_group'],
-                            $row['wd_market'],
-                            $row['team_id'],
-                            $row['team_name'],
-                            $mdoTypeLabel,
-                            $activeTeam,
-                            $paramLabel,
-                            $target,
-                            $achievement,
-                            $achPct,
-                            $maxPoints,
-                            ""
-                        ];
                     }
-                // }
+
+                    $achPct = ($target > 0)
+                        ? round(($achievement / $target) * 100, 2) . "%"
+                        : "0%";
+
+                    $arrDataHolder[] = [
+                        $month,
+                        $row['district'],
+                        $row['main_branch'],
+                        $row['branch_name'],
+                        $circle,
+                        $section,
+                        $row['wd_code'],
+                        $row['wd_pop_group'],
+                        $row['wd_market'],
+                        $ceilId,
+                        $row['team_id'],
+                        $row['team_name'],
+                        $mdoTypeLabel,
+                        $activeTeam,
+                        $paramLabel,
+                        $target,
+                        $achievement,
+                        $achPct,
+                        $maxPoints,
+                        ""
+                    ];
+                }
 
                 // ---------------- TOTAL ROW PER TEAM ----------------
                 $arrDataHolder[] = [
@@ -415,11 +444,12 @@ class MdoTargetReport
                     $row['district'],
                     $row['main_branch'],
                     $row['branch_name'],
-                    $row['circle'],
-                    $row['section'],
+                    $circle,
+                    $section,
                     $row['wd_code'],
                     $row['wd_pop_group'],
                     $row['wd_market'],
+                    $ceilId,
                     $row['team_id'],
                     $row['team_name'],
                     $mdoTypeLabel,
@@ -429,7 +459,7 @@ class MdoTargetReport
                     $totalAchievement, // ✅ FINAL PER TEAM TOTAL
                     "",
                     "",
-                    ""
+                    $allGatesAchieved ? "Y" : "N"  // ✅ Y only if ALL gates achieved
                 ];
             }
         }

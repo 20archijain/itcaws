@@ -6,9 +6,9 @@ import { FormService } from 'src/app/core/services/form.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    selector: 'app-input',
-    templateUrl: './input.component.html',
-    standalone: false
+  selector: 'app-input',
+  templateUrl: './input.component.html',
+  standalone: false,
 })
 export class InputComponent implements OnChanges, OnInit {
   @Input() private validators = null;
@@ -30,7 +30,7 @@ export class InputComponent implements OnChanges, OnInit {
   @Input() hide = false;
   @Input() tooltipDirection = 'top';
   @Input() tooltipContent = '';
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() isHorizontalForm = false;
   @Input() groupClassName = '';
   @Input() labelClassName = 'form-label';
@@ -66,9 +66,9 @@ export class InputComponent implements OnChanges, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
   }

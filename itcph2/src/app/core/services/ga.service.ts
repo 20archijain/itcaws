@@ -22,7 +22,7 @@ export class GAService implements OnDestroy {
   }
 
   initiateGMapTracking() {
-    this.gtag = window['gtag'];
+    this.gtag = (window as any).gtag;
 
     if (this.gtag) {
       // disable automatically page hit tracking

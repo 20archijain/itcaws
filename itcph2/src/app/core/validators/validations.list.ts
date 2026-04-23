@@ -331,6 +331,16 @@ export const COMMON_VALIDATORS = {
       MAXLENGTH_VALIDATOR('Quantity', VALIDATION_LENGTH.QTY_MAXLENGTH),
       PATTERN_VALIDATOR('Quantity'),
     ],
+    nonZeroNumberWithMaxAndMin(controlText: string, maxNumber?: number, minNumber?: number) {
+      return [
+        MAXVALUE_VALIDATOR(controlText, maxNumber ? maxNumber : VALIDATION_LENGTH.NUMBER_MAXVALUE),
+        MINVALUE_VALIDATOR(controlText, minNumber ? minNumber : VALIDATION_LENGTH.MINVALUE),
+        PATTERN_VALIDATOR(controlText),
+        REQUIRED_VALIDATOR(controlText),
+        // MAXLENGTH_VALIDATOR(controlText, maxLength ? maxLength : VALIDATION_LENGTH.MAXLENGTH),
+        // MINLENGTH_VALIDATOR(controlText, minLength ? minLength : VALIDATION_LENGTH.MINLENGTH),
+      ];
+    },
   },
   validators: {
     date: [
@@ -434,6 +444,21 @@ export const COMMON_VALIDATORS = {
       Validators.min(VALIDATION_LENGTH.MINVALUE - 1),
       Validators.maxLength(VALIDATION_LENGTH.QTY_MAXLENGTH),
     ],
+    nonZeroNumberWithMaxAndMin(isRegex?: RegExp, isRequired?: boolean, maxNumber?: number, minNumber?: number) {
+      const validators = [
+        REGEX_VALIDATOR(isRegex ? isRegex : NON_ZERO_NUMBER_REGEX),
+        Validators.max(maxNumber ? maxNumber : VALIDATION_LENGTH.NUMBER_MAXVALUE),
+        Validators.min(minNumber ? minNumber : VALIDATION_LENGTH.MINVALUE),
+        // Validators.maxLength(maxLength ? maxLength : VALIDATION_LENGTH.MAXLENGTH),
+        // Validators.minLength(minLength ? minLength : VALIDATION_LENGTH.MINLENGTH),
+      ];
+
+      if (isRequired) {
+        validators.push(Validators.required);
+      }
+      return validators;
+
+    },
   },
 };
 

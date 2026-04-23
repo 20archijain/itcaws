@@ -6,16 +6,16 @@ import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationModalService } from '../../services/confirmation-modal.service';
 
 @Component({
-    selector: 'app-confirmation-modal',
-    template: '',
-    standalone: false
+  selector: 'app-confirmation-modal',
+  template: '',
+  standalone: false,
 })
 export class ConfirmationModalComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private labelsKeys = ['modal.confirmation.title', 'modal.confirmation.text', 'modal.confirmation.cancel'];
-  private labels = [];
+  private labels: string[] = [];
   private isGoBackGuardCheck = false;
-  private text: string;
+  private text = '';
 
   constructor(private confirmationModalService: ConfirmationModalService, private translate: TranslateService) { }
 

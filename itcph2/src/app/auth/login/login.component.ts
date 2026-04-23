@@ -13,15 +13,15 @@ import { GA_ACTION_LIST } from 'src/app/core/utils/GAMapping';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-    styleUrls: ['./login.component.scss'],
-    templateUrl: './login.component.html',
-    standalone: false
+  styleUrls: ['./login.component.scss'],
+  templateUrl: './login.component.html',
+  standalone: false,
 })
 export class LoginComponent implements OnDestroy, OnInit {
   // @ViewChild(CaptchaComponent, { static: false }) private captchaComponent: CaptchaComponent;
   private subscription: Subscription[] = [];
   private gaLabels = GA_ACTION_LIST.auth.login;
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   isDisabled = false;
   errorMessages = {
     // captcha: LOGIN_VALIDATORS.messages.captcha,
@@ -65,12 +65,12 @@ export class LoginComponent implements OnDestroy, OnInit {
             this.gaService.sendEvent(this.gaLabels.apiSuccess, this.gaLabels.category, this.gaLabels.label, response?.status);
 
             if (response && response.status !== REQUEST_STATUS.FAILED) {
-              if (response.data.enableTwoWayAuth) {
+              if (response.data?.enableTwoWayAuth) {
                 this.authService.isComingAfterLogin = true;
                 this.navigateToTwoWay();
               } else {
-                const params = Functions.getHomeLocation();
-                this.routerService.navigate('app', params);
+                const params = Functions.getHomeLocation() ?? [];
+                this.routerService.navigate('app', params as never[]);
               }
             } else {
               // if (CONSTANTS.REGENERATE_CAPTCHA_IF_FAILS) {

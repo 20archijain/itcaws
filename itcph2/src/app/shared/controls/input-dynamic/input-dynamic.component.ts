@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { UntypedFormArray, UntypedFormGroup } from '@angular/forms';
+import { AbstractControl, UntypedFormArray, UntypedFormGroup } from '@angular/forms';
 
 import { InputComponent } from '../input/input.component';
 import { InputConfig } from 'src/app/core/interfaces/helpers.interface';
@@ -7,9 +7,9 @@ import { CONTROL_CONFIG } from 'src/app/app.constants';
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-    selector: 'app-input-dynamic',
-    templateUrl: './input-dynamic.component.html',
-    standalone: false
+  selector: 'app-input-dynamic',
+  templateUrl: './input-dynamic.component.html',
+  standalone: false,
 })
 export class InputDynamicComponent extends InputComponent implements OnChanges, OnInit {
   @Input() inputConfig: InputConfig[] = [];
@@ -39,7 +39,7 @@ export class InputDynamicComponent extends InputComponent implements OnChanges, 
     return this.group.get(this.controlName) as UntypedFormArray;
   }
 
-  getGroup(group) {
+  getGroup(group: any) {
     return group as UntypedFormGroup;
   }
 
@@ -50,7 +50,7 @@ export class InputDynamicComponent extends InputComponent implements OnChanges, 
   }
 
   createDynamicControl() {
-    const controls = {};
+    const controls: Record<string, [any, any]> = {};
     if (this.inputConfig && this.inputConfig.length) {
       this.inputConfig.forEach(control => {
         controls[control.controlName] = [null, control.validators];
@@ -68,8 +68,8 @@ export class InputDynamicComponent extends InputComponent implements OnChanges, 
 
   onChangeOption(controlIndex: number, configIndex: number, controlName: string, isDisableAllowed: boolean) {
     if (isDisableAllowed) {
-      const selectedValues = this.dynamicControl.controls.map((formGroup: UntypedFormGroup) => {
-        return formGroup.controls[controlName].value;
+      const selectedValues = this.dynamicControl.controls.map((formGroup: AbstractControl) => {
+        return (formGroup as UntypedFormGroup).controls[controlName].value;
       });
 
       (this.inputConfig[configIndex].options as DropdownList[]).forEach((option: DropdownList) => {

@@ -6,9 +6,9 @@ import { Subscription } from 'rxjs';
 import { GAService } from './core/services/ga.service';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    standalone: false
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  standalone: false,
 })
 export class AppComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

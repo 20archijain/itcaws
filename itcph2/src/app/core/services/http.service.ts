@@ -61,16 +61,16 @@ export class HttpService {
     return this.makeRequest<T>(url, requestPayload, headers);
   }
 
-  upload<T>(url: string, files: File | File[] | CustomFile[], params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
+  upload<T>(url: string, files: File | File[] | CustomFile[] | null, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
     if (files) {
       const requestPayload = this.createRequestPayload(params);
       const formData = new FormData();
       if (Array.isArray(files)) {
         files.forEach((file, index) => {
           if ((file as CustomFile)?.fileKey) {
-            formData.append((file as CustomFile).fileKey, file.file, file.file.name);
+            formData.append((file as CustomFile).fileKey, (file as CustomFile).file, (file as CustomFile).file.name);
           } else {
-            formData.append(`file${index}`, file, file.name);
+            formData.append(`file${index}`, file as File, (file as File).name);
           }
         });
       } else {

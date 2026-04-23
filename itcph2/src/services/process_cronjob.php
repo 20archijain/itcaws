@@ -326,6 +326,7 @@ class ProcessResponse
                         $orderCols = "resp_id, uni_id, client_id, project_id, team_id, s_id, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $orderVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
                         $arrOrderParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
+                        $hasOrderQty = false;
 
                         // Find page Ids to process based on skip logic if any
                         $arrPageIds = array();
@@ -581,6 +582,7 @@ class ProcessResponse
                                             if ($iOrder > 0) {
                                                 $orderCols .= ", $productSummaryColumn";
                                                 $orderVals .= ", $iOrder";
+                                                $hasOrderQty = true;
                                             }
                                         }
                                     }
@@ -663,19 +665,17 @@ class ProcessResponse
                         }
 
                         if ($jsonId != 100) {
-                            if ($arrParams[13] == "Outlet Delivery") {
-                                $iStatus = addRecord($this->_dbConn, "tblsurvey_response_details_delivery", $cols, $vals, $arrParams);
-                            } else {
-                                $iStatus = addRecord($this->_dbConn, $responseTable, $cols, $vals, $arrParams);
-                            }
+                            // if ($arrParams[13] == "Outlet Order") {
+                            // } else {
+                            // }
+                            $iStatus = addRecord($this->_dbConn, $responseTable, $cols, $vals, $arrParams);
+                            // $iStatus = addRecord($this->_dbConn, "tblsurvey_response_details_delivery", $cols, $vals, $arrParams);
 
-                            if ($jsonId == 15) {
+                            // if ($jsonId == 15) {
+                            if ($hasOrderQty) {
                                 $iOrderStatus = addRecord($this->_dbConn, "tblsurvey_response_details_orders", $orderCols, $orderVals, $arrOrderParams);
-                                if ($iOrderStatus == 2) {
-                                    $this->_dbConn->GetLastInsertId($lastRecId);
-                                    updateRecord($this->_dbConn, "tblsurvey_response_details_orders", "ques_0 = 'Outlet Order'", "pro_id = $lastRecId");
-                                }
                             }
+                            // }
 
                             // Update process status
                             if ($iStatus === 2) {

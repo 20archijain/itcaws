@@ -5,20 +5,20 @@ import { saveAs } from 'file-saver';
 
 import { GA_ROUTE_MAPPING } from './GAMapping';
 import { SessionUtil } from './session.util';
-import { ControlMaxDate, CsvDataFormat } from '../interfaces/helpers.interface';
+import { ControlMaxDate, CsvDataFormat, FormattedDate } from '../interfaces/helpers.interface';
 import { DATE_FORMAT, URL_PARAMS_KEYS } from 'src/app/app.constants';
-import { SessionModule, SessionModuleObject, ThemeMap } from '../interfaces/common.interface';
+import { AsideItem, ChartColorSchemeNames, HttpRequestModuleCodes, SessionModule, SessionModuleObject, ThemeMap } from '../interfaces/common.interface';
 
 export class Functions {
-  private modulesList: any[] = [];
+  private asideItems: AsideItem[] = [];
   private csvData = '';
 
-  static isEmptyArray(value: any[]) {
+  static isEmptyArray(value: any[]): boolean {
     return value && Array.isArray(value) && value.length === 0;
   }
 
   static getValuesFromObjectAsArray(object: { [key: string]: any }): any[] {
-    const arr = [];
+    const arr: any[] = [];
     Object.keys(object).forEach(key => {
       arr.push(object[key]);
     });
@@ -102,8 +102,7 @@ export class Functions {
     return monthNames[nextMonthIndex];
   }
 
-
-  static currentDate(customDate?: string, firstDay?: boolean) {
+  static currentDate(customDate?: string, firstDay?: boolean): FormattedDate<number> {
     let date = new Date();
     if (customDate) {
       date = new Date(customDate);
@@ -117,7 +116,7 @@ export class Functions {
     return { date, month, year, day };
   }
 
-  static currentFormatedDate() {
+  static currentFormatedDate(): FormattedDate<string> {
     const date = new Date();
 
     const day = date.getDate();
@@ -128,7 +127,7 @@ export class Functions {
     return { date, month, year, day };
   }
 
-  static getValidDatetimeForSorting(datetime: string) {
+  static getValidDatetimeForSorting(datetime: string): string {
     if (datetime) {
       const dateAndTime = datetime.split(' ');
       const time = dateAndTime && dateAndTime[1] ? dateAndTime[1] : '';
@@ -157,7 +156,7 @@ export class Functions {
     return false;
   }
 
-  static createCSV({ fileName, header, body }: CsvDataFormat) {
+  static createCSV({ fileName, header, body }: CsvDataFormat): void {
     Functions.prototype.csvData = '';
     const blob = new Blob([Functions.prototype.getCsvData(header, body)], { type: 'text/csv;charset=utf8;' });
 
@@ -167,37 +166,13 @@ export class Functions {
     this.downloadFile(blobURL, `${fileName.replace(/ /g, '_')}.csv`);
   }
 
-  static downloadFile(fileUrl: string, fileName: string) {
+  static downloadFile(fileUrl: string, fileName: string): void {
     if (fileUrl) {
       saveAs(fileUrl, fileName);
     }
   }
 
-  static getHomeLocation() {
-    const landing = JSON.parse(SessionUtil.getItem('landing'));
-    const modules = JSON.parse(SessionUtil.getItem('modules'));
-
-    // If User has landing page permission, send that page otherwise send first module as landing page
-    if (modules) {
-      if (landing && (modules[landing[URL_PARAMS_KEYS.modc]] || modules[landing[URL_PARAMS_KEYS.pmodc]])) {
-        return [
-          landing[URL_PARAMS_KEYS.modc],
-          landing[URL_PARAMS_KEYS.pmodc]
-        ];
-      } else {
-        const modulesKeys = Object.keys(modules);
-
-        return [
-          modules[modulesKeys[0]][URL_PARAMS_KEYS.modc],
-          modules[modulesKeys[0]][URL_PARAMS_KEYS.pmodc]
-        ];
-      }
-    }
-
-    return null;
-  }
-
-  static printBlob(blob: Blob) {
+  static printBlob(blob: Blob): void {
     // creates a DOMString containing a URL representing the object given in the parameter
     const blobURL = URL.createObjectURL(blob);
 
@@ -209,12 +184,12 @@ export class Functions {
     iframe.onload = function () {
       setTimeout(function () {
         iframe.focus();
-        iframe.contentWindow.print();
+        iframe.contentWindow?.print();
       }, 1);
     };
   }
 
-  static getChartColorsScheme() {
+  static getChartColorsScheme(): ThemeMap {
     const sets = {} as ThemeMap;
     colorSets.push({
       domain: [],
@@ -224,7 +199,7 @@ export class Functions {
     });
 
     colorSets.forEach((set: Color) => {
-      sets[set.name.toUpperCase()] = {
+      sets[set.name.toUpperCase() as ChartColorSchemeNames] = {
         domain: set.domain
       };
     });
@@ -232,84 +207,21 @@ export class Functions {
     return sets;
   }
 
-  static getAsideItems() {
-    let modules: SessionModuleObject;
-    if (SessionUtil.getItem('modules')) {
-      modules = JSON.parse(SessionUtil.getItem('modules'));
-      Functions.prototype.modulesList = Functions.prototype.getModules(modules);
-    }
-
-    return Functions.prototype.modulesList;
+  static calculateColumnWidth(noOfColumns: number): number {
+    return Math.round((100 / noOfColumns) * 100) / 100;
   }
 
-  static getModuleInfo(route: string, modc: string, pmodc: string) {
-    let index: number;
-    const modules = Functions.prototype.modulesList || this.getAsideItems();
-    let moduleInfo;
-
-    // application module
-    if (route === 'app') {
-      // main/parent module
-      if (pmodc === '0') {
-        index = findIndex(mod => mod[URL_PARAMS_KEYS.modc] === modc)(modules);
-        moduleInfo = index >= 0 ? modules[index] : null;
-      } else {
-        // sub/child modules
-        const pindex = findIndex(mod => mod[URL_PARAMS_KEYS.modc] === pmodc)(modules);
-        index = pindex >= 0 ? findIndex(mod => mod[URL_PARAMS_KEYS.modc] === modc)(modules[pindex].submodules) : -1;
-        moduleInfo = index >= 0 ? modules[index] : null;
-      }
-    } else {
-      // static module (auth)
-      return GA_ROUTE_MAPPING[modc];
-    }
-
-    return moduleInfo;
-  }
-
-  static calculateColumnWidth(noOfColumns: number) {
-    const num = +(100 / noOfColumns);
-
-    return +num.toString().match(/^-?\d+(?:\.\d{0,2})?/)[0];
-  }
-
-  static scrollToFocusElement(element: HTMLElement, leaveSpaceOnTop = 0, subtractInputHeight = false) {
+  static scrollToFocusElement(element: HTMLElement, leaveSpaceOnTop = 0, subtractInputHeight = false): void {
     // scrollbar start position from top of window
     const scrollBarPosition = window.pageYOffset;
 
     if (element) {
-      const elementPosition = element.offsetTop || element.parentElement.offsetTop;
+      const elementPosition = element.offsetTop || element?.parentElement?.offsetTop || 0;
       window.scrollBy(0, elementPosition - leaveSpaceOnTop - (scrollBarPosition - (subtractInputHeight ? element.scrollHeight : 0)));
     }
   }
 
-  private getModules(modules: SessionModuleObject) {
-    const newModules = Object.keys(modules);
-    const modulesList = [];
-
-    // list of main modules
-    if (!Functions.isEmptyArray(newModules)) {
-      newModules.forEach((mod) => {
-        modulesList.push(this.getAsideItem(modules[mod]));
-      });
-    }
-
-    return modulesList;
-  }
-
-  private getAsideItem(mod: SessionModule) {
-    return {
-      hide: true,
-      icon: mod.icon,
-      isHidden: !!mod.hidden,
-      modc: mod.modc,
-      name: mod.name,
-      pmodc: mod.pmodc,
-      submodules: Functions.isEmptyArray(Object.keys(mod.submodules)) ? [] : this.getModules(mod.submodules)
-    };
-  }
-
-  private getCsvData(header: string[][], body: string[][]) {
+  private getCsvData(header: string[][], body: string[][]): string {
     if (header && header.length > 0) {
       this.getCsvHeader(header);
     }
@@ -325,7 +237,7 @@ export class Functions {
     return '';
   }
 
-  private getCsvHeader(header: string[][]) {
+  private getCsvHeader(header: string[][]): void {
     if (header && header.length > 0) {
       const headerData = header.map((data: string[]) => {
         return data.join(',');
@@ -335,7 +247,7 @@ export class Functions {
     }
   }
 
-  private getCsvBody(body: string[][]) {
+  private getCsvBody(body: string[][]): void {
     if (body && body.length > 0) {
       const bodyData = body.map((data: string[]) => {
         return data.join(',');
@@ -343,5 +255,97 @@ export class Functions {
 
       this.csvData = `${this.csvData}${bodyData.join('\r\n')}`;
     }
+  }
+
+  static getHomeLocation(): string[] | null {
+    const landingRaw = SessionUtil.getItem('landing');
+    const modulesRaw = SessionUtil.getItem('modules');
+    const landing: HttpRequestModuleCodes = landingRaw ? JSON.parse(landingRaw) : {};
+    const modules: SessionModuleObject = modulesRaw ? JSON.parse(modulesRaw) : {};
+
+    // If User has landing page permission, send that page otherwise send first module as landing page
+    if (modules) {
+      const modcKey = URL_PARAMS_KEYS.modc as keyof HttpRequestModuleCodes;
+      const pmodcKey = URL_PARAMS_KEYS.pmodc as keyof HttpRequestModuleCodes;
+      if (landing && (modules[landing[modcKey]] || modules[landing[pmodcKey]])) {
+        return [
+          landing[modcKey],
+          landing[pmodcKey]
+        ];
+      } else {
+        const modulesKeys = Object.keys(modules);
+
+        return [
+          modules[modulesKeys[0]][modcKey],
+          modules[modulesKeys[0]][pmodcKey]
+        ];
+      }
+    }
+
+    return null;
+  }
+
+  static getAsideItems(): AsideItem[] {
+    let modules: SessionModuleObject;
+    if (SessionUtil.getItem('modules')) {
+      modules = JSON.parse(SessionUtil.getItem('modules') || '{}');
+      Functions.prototype.asideItems = Functions.prototype.getModules(modules);
+    }
+
+    return Functions.prototype.asideItems;
+  }
+
+  private getModules(modules: SessionModuleObject): AsideItem[] {
+    const modulesKeys = Object.keys(modules);
+    const asideItems: AsideItem[] = [];
+
+    // list of main modules
+    if (!Functions.isEmptyArray(modulesKeys)) {
+      modulesKeys.forEach((mod) => {
+        asideItems.push(this.getAsideItem(modules[mod]));
+      });
+    }
+
+    return asideItems;
+  }
+
+  private getAsideItem(mod: SessionModule): AsideItem {
+    return {
+      hide: true,
+      icon: mod.icon,
+      isHidden: !!mod.hidden,
+      modc: mod.modc,
+      name: mod.name,
+      pmodc: mod.pmodc,
+      submodules: Functions.isEmptyArray(Object.keys(mod.submodules)) ? [] : this.getModules(mod.submodules)
+    };
+  }
+
+  static getModuleInfo(route: string, modc: string, pmodc: string): AsideItem | null {
+    let index: number;
+    const modules = Functions.prototype.asideItems || this.getAsideItems();
+    let moduleInfo;
+
+    // application module
+    if (route === 'app') {
+      const modcKey = URL_PARAMS_KEYS.modc as keyof HttpRequestModuleCodes;
+
+      // main/parent module
+      if (pmodc === '0') {
+        index = findIndex((mod: AsideItem) => mod[modcKey] === modc)(modules);
+        moduleInfo = index >= 0 ? modules[index] : null;
+      } else {
+        // sub/child modules
+        const pindex = findIndex((mod: AsideItem) => mod[modcKey] === pmodc)(modules);
+        index = pindex >= 0 && modules[pindex].submodules ?
+          findIndex((mod: AsideItem) => mod[modcKey] === modc)(modules[pindex].submodules) : -1;
+        moduleInfo = index >= 0 ? modules[index] : null;
+      }
+    } else {
+      // static module (auth)
+      return GA_ROUTE_MAPPING[modc as keyof typeof GA_ROUTE_MAPPING];
+    }
+
+    return moduleInfo;
   }
 }

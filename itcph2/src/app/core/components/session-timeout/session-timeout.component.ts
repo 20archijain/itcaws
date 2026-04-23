@@ -11,18 +11,18 @@ import { GAService } from '../../services/ga.service';
 import { HttpRequestResponse, TimeoutModalConfig } from '../../interfaces/common.interface';
 
 @Component({
-    selector: 'app-session-timeout',
-    templateUrl: './session-timeout.component.html',
-    standalone: false
+  selector: 'app-session-timeout',
+  templateUrl: './session-timeout.component.html',
+  standalone: false,
 })
 export class SessionTimeoutComponent implements OnDestroy, OnInit {
   private gaLabels = GA_ACTION_LIST.auth.logout;
   private subscription: Subscription[] = [];
   private countdownStart = false;
-  private pollScreenObservable: Observable<number>;
-  private pollScreenSubscription: Subscription;
+  private pollScreenObservable!: Observable<number>;
+  private pollScreenSubscription!: Subscription;
   private action = '';
-  @ViewChild('timeoutModal', { static: true }) timeoutModal: ModalComponent;
+  @ViewChild('timeoutModal', { static: true }) timeoutModal!: ModalComponent;
   countdown = 0;
 
   constructor(private authService: AuthService, private routerService: RoutingService, private renderer2: Renderer2,
