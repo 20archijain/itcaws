@@ -17,18 +17,21 @@ class VanDswhatsAppSummary
 {
     private $_dbConn = null;
     private $_tables = [];
+    private $_productSaleVolumeFormula = "";
 
     public function __construct($dbConn)
     {
         $this->_dbConn = $dbConn;
         $this->_tables = $GLOBALS['TABLES'];
+        $this->_productSaleVolumeFormula = $this->buildProductSaleVolumeFormula();
     }
 
     public function sendTeamSummary()
     {
-        $currentDate = currentDate();
+        // $currentDate = currentDate();
+        $currentDate = "2026-02-05"; // For testing
+        $monthStartDate = date("Y-m-01", strtotime($currentDate));
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
-        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $constantsTable = $this->_tables["CONSTANTS_TABLE"];
 
         $minTotalShops = (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minTotalShops'");
@@ -37,181 +40,828 @@ class VanDswhatsAppSummary
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.start_datetime, a.end_datetime, a.dayend_datetime, a.resp_startdatetime, a.resp_enddatetime, a.total_roc_deliveries, a.total_sellin_shops, a.total_other_shops" .
-            ", a.total_meter_travelled, b.team_id, b.team_name, b.wd_code, b.ae_name, b.ae_number FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND a.activity_date = '$currentDate'";
+        // Reset flags for previous dates so current-date batching can run cleanly.
+        updateRecord($this->_dbConn, $projectTeamTable, "summary_sent = 0", " dstatus = 0 AND s_id = 99 AND summary_sent_date IS NOT NULL AND summary_sent_date != '$currentDate'");
+
+        $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
+            "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' " .
+            "AND COALESCE(b.summary_sent, 0) = 0 GROUP BY b.section ORDER BY b.section LIMIT 15";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
+        $createdImages = array();
+        $processedSections = array();
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
-                $teamId = $row["team_id"];
-                $aeNumber = $row["ae_number"];
-                $totalDistanceTravelled = isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0;
-                $totalShopsDone = $row["total_roc_deliveries"] + $row["total_other_shops"];
-                $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
-                $isQualifiedAttendance = $totalShopsDone >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "Yes" : "No";
-                $marketTime = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
-                // Convert $marketTime from minutes to hours and minutes
-                $hours = floor($marketTime / 60);
-                $minutes = $marketTime % 60;
+                $aeName = $row["ae_name"];
+                $phoneNumber = $row["ae_number"];
+                $wdCode = $row["wd_code"];
+                $section = $row["section"];
+                $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section'";
+                $totalSalesmen = (int) getRowColumn($this->_dbConn, $projectTeamTable, "COUNT(team_id)", $aeCondition);
 
-                // Format the time string
-                if ($hours > 0 && $minutes > 0) {
-                    $marketTimeFormatted = $hours . " hr " . $minutes . " min";
-                } elseif ($hours > 0) {
-                    $marketTimeFormatted = $hours . " hr";
-                } else {
-                    $marketTimeFormatted = $minutes . " min";
-                }
+                $dailyRows = $this->getAeSummaryRows($phoneNumber, $section, $currentDate, $currentDate);
+                $mtdRows = $this->getAeSummaryRows($phoneNumber, $section, $monthStartDate, $currentDate);
 
-                $dayEndMarked = (isset($row["dayend_datetime"]) && $row["dayend_datetime"] != null) ? "Yes" : "No";
-
-                // Get covered routes
-                $coveredRoutesQuery = "SELECT DISTINCT SUBSTRING(ques_1, 3, LENGTH(ques_1)-4) AS covered_route FROM tblsurvey_response_details WHERE dstatus = 0 AND capture_date = '$currentDate' AND team_id = $teamId";
-                $coveredRoutesAction = null;
-                $coveredRoutesRows = 0;
-                $coveredRoutes = [];
-                $this->_dbConn->ExecuteSelectQuery($coveredRoutesQuery, $coveredRoutesAction, $coveredRoutesRows);
-                if ($coveredRoutesRows > 0) {
-                    while ($coveredRow = $this->_dbConn->GetData($coveredRoutesAction)) {
-                        $coveredRoutes[] = $coveredRow['covered_route'];
-                    }
-                }
-                $routeNamesString = "'" . implode("','", $coveredRoutes) . "'";
-
-                $TotalShops = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT outlet_name) AS total", "dstatus = 0 AND team_id = $teamId AND route_name IN ($routeNamesString)");
-
-                // Get covered outlets
-                // $coveredOutletsQuery = "SELECT DISTINCT SUBSTRING(ques_2, 3, LENGTH(ques_2)-4) AS covered_outlet FROM tblsurvey_response_details WHERE dstatus = 0 AND capture_date = '$currentDate' AND team_id = $teamId";
-                // $coveredOutletsAction = null;
-                // $coveredOutletsRows = 0;
-                // $coveredOutlets = [];
-                // $this->_dbConn->ExecuteSelectQuery($coveredOutletsQuery, $coveredOutletsAction, $coveredOutletsRows);
-                // if ($coveredOutletsRows > 0) {
-                //     while ($coveredOutletRow = $this->_dbConn->GetData($coveredOutletsAction)) {
-                //         $coveredOutlets[] = $coveredOutletRow['covered_outlet'];
-                //     }
-                // }
-                // $outletsNamesString = "'" . implode("','", $coveredOutlets) . "'";
-
-                // Get not done shops
-                // $notDoneShopsQuery = "SELECT DISTINCT outlet_name FROM tblroute_details WHERE dstatus = 0 AND route_name IN ($routeNamesString) AND rec_id NOT IN ($outletsNamesString) AND team_id = $teamId";
-                // $notDoneShopsAction = null;
-                // $notDoneShopsRows = 0;
-                // $notDoneShops = [];
-                // $this->_dbConn->ExecuteSelectQuery($notDoneShopsQuery, $notDoneShopsAction, $notDoneShopsRows);
-                // if ($notDoneShopsRows > 0) {
-                //     while ($notDoneShopsRow = $this->_dbConn->GetData($notDoneShopsAction)) {
-                //         // Check if outlet_name is empty, if yes, assign "NA" to it
-                //         $outletName = !empty($notDoneShopsRow['outlet_name']) ? $notDoneShopsRow['outlet_name'] : "NA";
-                //         $notDoneShops[] = $outletName;
-                //     }
-                // }
-                // $notDoneShopsString = implode(", ", $notDoneShops);
-
-
-                // Prepare data for WhatsApp API call
-                $phoneNumber = $aeNumber;
-                $payload = array(
-                    'name' => 'ae_summary_utility',
-                    'components' => array(
-                        array(
-                            'type' => 'body',
-                            'parameters' => array(
-                                array('type' => 'text', 'text' => $row['ae_name']),
-                                array('type' => 'text', 'text' => $row['team_name']),
-                                array('type' => 'text', 'text' => $row['wd_code']),
-                                array('type' => 'text', 'text' => $isQualifiedAttendance),
-                                array('type' => 'text', 'text' => $marketTimeFormatted),
-                                array('type' => 'text', 'text' => $dayEndMarked),
-                                array('type' => 'text', 'text' => $totalShopsDone . '/' . $TotalShops),
-                                array('type' => 'text', 'text' => $totalDistanceTravelled)
-                            )
-                        )
-                    ),
-                    'language' => array(
-                        'code' => 'en_US',
-                        'policy' => 'deterministic'
-                    ),
-                    'namespace' => 'a7a46341_4176_4bd7_b74f_bf560970e605'
-                );
-
-                // Encode the data as JSON
-                $jsonData = json_encode(array('phoneNumber' => $phoneNumber, 'payload' => $payload));
-
-                // Check if summary already exists, if not, add summary else don't add summary
-                $isExist = isRecordExist($this->_dbConn, "whatsapp_summary_logs", "id", "team_id = $teamId AND capture_date = '$currentDate'");
-
-                if (!$isExist && !empty($phoneNumber)) { // Check if ae_number is not null
-                    // API endpoint and authorization token
-                    $url = 'https://api.wab.ai/whatsapp-api/v1.0/customer/95755/bot/b9b57bd0131f43fb/template';
-                    $authorizationToken = '6f088510-93ef-41a2-b9d4-cf7570fbcbe1-Hswi54Q';
-
-                    // Initialize cURL session
-                    $curl = curl_init();
-
-                    // Set the cURL options
-                    curl_setopt_array($curl, array(
-                        CURLOPT_URL => $url,
-                        CURLOPT_RETURNTRANSFER => true,
-                        CURLOPT_ENCODING => '',
-                        CURLOPT_MAXREDIRS => 10,
-                        CURLOPT_TIMEOUT => 0,
-                        CURLOPT_FOLLOWLOCATION => true,
-                        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                        CURLOPT_CUSTOMREQUEST => 'POST',
-                        CURLOPT_POSTFIELDS => $jsonData,
-                        CURLOPT_HTTPHEADER => array(
-                            'Authorization: Basic ' . $authorizationToken,
-                            'Content-Type: application/json'
-                        ),
-                    ));
-
-                    // Execute the cURL request
-                    $response = curl_exec($curl);
-
-                    // Check for errors
-                    if (curl_errno($curl)) {
-                        echo 'Error: ' . curl_error($curl);
-                    } else {
-                        // Display the response
-                        echo $response;
-
-                        $tableName = "whatsapp_summary_logs";
-                        $columns = "ae_name, team_name, team_id, wd_code, qualified_attendance, market_time_formatted, day_end_marked, shops_summary, not_visited_shops, api_response, capture_date";
-
-                        $values = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-
-                        $params = array(
-                            $row['ae_name'],
-                            $row['team_name'],
-                            $row['team_id'],
-                            $row['wd_code'],
-                            $isQualifiedAttendance,
-                            $marketTimeFormatted,
-                            $dayEndMarked,
-                            $totalShopsDone . '/' . $TotalShops,
-                            $totalDistanceTravelled,
-                            $response,
-                            $currentDate
+                $teamDetails = $this->getSectionTeamDetails($phoneNumber, $section);
+                $sectionTypeFlags = $this->getSectionTypeFlags($phoneNumber, $section);
+                $teamStrength = $this->getTeamStrengthData($phoneNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec);
+                $npsrToday = $this->getSnapshotTodayData($dailyRows, 5, 2, $teamDetails);
+                $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5);
+                $vanDsToday = $this->getSnapshotTodayData($dailyRows, 0, 20, $teamDetails);
+                $vanDsMtd = $this->getSnapshotMtdData($mtdRows, 0);
+                if (!empty($phoneNumber)) {
+                    $imagePath = $this->createAeSummaryImage(
+                        $currentDate,
+                        $aeName,
+                        $wdCode,
+                        $section,
+                        $teamStrength,
+                        $npsrToday,
+                        $npsrMtd,
+                        $vanDsToday,
+                        $vanDsMtd,
+                        $sectionTypeFlags
+                    );
+                    if ($imagePath) {
+                        $processedSections[$section] = true;
+                        $createdImages[] = array(
+                            "ae_name" => $aeName,
+                            "ae_number" => $phoneNumber,
+                            "section" => $section,
+                            "image_path" => $imagePath
                         );
-
-                        $result = addRecord($this->_dbConn, $tableName, $columns, $values, $params);
-
-                        // Check the result of the insert operation
-                        if ($result === 2) {
-                            echo "Record inserted successfully.";
-                        } elseif ($result === 1) {
-                            echo "Record already exists.";
-                        } else {
-                            echo "Failed to insert record.";
-                        }
                     }
-
-                    // Close the cURL session
-                    curl_close($curl);
                 }
             }
         }
+
+        if (count($processedSections) > 0) {
+            $sectionList = array();
+            foreach (array_keys($processedSections) as $sentSection) {
+                $sectionList[] = "'" . addslashes($sentSection) . "'";
+            }
+            $sectionInClause = implode(",", $sectionList);
+            updateRecord($this->_dbConn, $projectTeamTable, "summary_sent = 1, summary_sent_date = '$currentDate'", "dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)");
+        }
+
+        echo json_encode(array(
+            "status" => 1,
+            "capture_date" => $currentDate,
+            "total_images" => count($createdImages),
+            "images" => $createdImages
+        ));
+    }
+
+    private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = array())
+    {
+        if (!function_exists('imagecreatetruecolor')) {
+            return "";
+        }
+
+        $targetDir = $GLOBALS["CUST_FOLDER_PATH"] . "/ae_summary_images/" . $currentDate;
+        if (!is_dir($targetDir)) {
+            @mkdir($targetDir, 0777, true);
+        }
+
+        $fileName = $this->sanitizeFileName($aeName . "_" . $wdCode . "_" . $section) . ".png";
+        $absolutePath = $targetDir . "/" . $fileName;
+
+        $hasNpsr = isset($sectionTypeFlags["has_npsr"]) ? (bool) $sectionTypeFlags["has_npsr"] : true;
+        $hasVan = isset($sectionTypeFlags["has_van"]) ? (bool) $sectionTypeFlags["has_van"] : true;
+        if (!$hasNpsr && !$hasVan) {
+            $hasNpsr = true;
+            $hasVan = true;
+        }
+
+        $canvasW = 1080;
+        $contentBottom = 590;
+        if ($hasNpsr) {
+            $contentBottom += 516; // NPSR today panel + gap
+            $contentBottom += 316; // NPSR MTD panel + gap
+        }
+        if ($hasVan) {
+            $contentBottom += 496; // VAN today panel + gap
+            $contentBottom += 216; // VAN MTD panel + gap
+        }
+        $canvasH = max(980, $contentBottom + 90);
+        $img = imagecreatetruecolor($canvasW, $canvasH);
+        imageantialias($img, true);
+        $bg = imagecolorallocate($img, 246, 249, 252);
+        imagefill($img, 0, 0, $bg);
+
+        $blue = imagecolorallocate($img, 10, 65, 140);
+        $green = imagecolorallocate($img, 26, 150, 74);
+        $orange = imagecolorallocate($img, 226, 122, 33);
+        $red = imagecolorallocate($img, 206, 53, 57);
+        $purple = imagecolorallocate($img, 95, 53, 153);
+        $dark = imagecolorallocate($img, 34, 49, 63);
+        $white = imagecolorallocate($img, 255, 255, 255);
+        $line = imagecolorallocate($img, 214, 225, 239);
+        $muted = imagecolorallocate($img, 94, 113, 136);
+
+        // Header
+        imagefilledrectangle($img, 12, 12, $canvasW - 12, 100, $blue);
+        $this->drawCenterText($img, 12, 20, $canvasW - 12, 94, "TEAM SUMMARY", 5, $white);
+        $this->drawHeaderMeta($img, $aeName, $section, $currentDate, $dark);
+
+        // Team strength cards in mobile-friendly 2x2 grid
+        $this->drawStrengthCard($img, 16, 150, 514, 180, "TOTAL SALESMEN", (string) $teamStrength["total"], $blue, "T", "");
+        $this->drawStrengthCard($img, 550, 150, 514, 180, "QUALIFIED TODAY", (string) $teamStrength["qualified"], $green, "Q", "");
+        $this->drawStrengthCard($img, 16, 344, 514, 230, "UNQUALIFIED", (string) $teamStrength["unqualified"], $orange, "U", $teamStrength["unqualified_names"]);
+        $this->drawStrengthCard($img, 550, 344, 514, 230, "ABSENT", (string) $teamStrength["absent"], $red, "A", $teamStrength["absent_names"]);
+
+        $cursorY = 590;
+
+        // NPSR blocks (only if section has NPSR)
+        $npsrTodayRows = array(
+            array("Average Outlets Visited", $this->formatCompactNumber($npsrToday["avg_outlets_visited"]), $blue),
+            array("Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), $blue),
+            array("Average Strike Rate", $npsrToday["avg_strike_rate"], $blue),
+            array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], $orange, $npsrToday["lowest_strike_team"]),
+            array("Infra Volume", $npsrToday["infra_volume"], $purple),
+            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], $red),
+            array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), $green),
+            array("Average Time Spent", $npsrToday["avg_time_spent"], $blue),
+            array("Below 6 Hours", $npsrToday["below_6_hours"], $red)
+        );
+        if ($hasNpsr) {
+            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 500, "NPSR SNAPSHOT (TODAY)", $blue, $npsrTodayRows, $line, $dark, "N");
+            $cursorY += 516;
+        }
+
+        // NPSR MTD
+        $npsrMtdRows = array(
+            array("Average Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), $green),
+            array("Average Daily Volume", $npsrMtd["avg_daily_volume"], $green),
+            array("Incentive Brand 1", $npsrMtd["incentive_brand_1"], $purple),
+            array("Incentive Brand 2", $npsrMtd["incentive_brand_2"], $orange)
+        );
+        if ($hasNpsr) {
+            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 300, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRows, $line, $dark, "N");
+            $cursorY += 316;
+        }
+
+        // VAN Today
+        $vanTodayRows = array(
+            array("Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), $blue),
+            array("Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), $blue),
+            array("Average Strike Rate", $vanDsToday["avg_strike_rate"], $blue),
+            array("Infra Volume", $vanDsToday["infra_volume"], $purple),
+            array("Infra Below 20 Ms", $vanDsToday["infra_below_limit"], $red, $vanDsToday["infra_below_limit_names"]),
+            array("Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), $green),
+            array("Average Time Spent", $vanDsToday["avg_time_spent"], $blue),
+            array("Below 6 Hours", $vanDsToday["below_6_hours"], $red, $vanDsToday["below_6_hours_names"])
+        );
+        if ($hasVan) {
+            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 480, "VAN DS SNAPSHOT (TODAY)", $blue, $vanTodayRows, $line, $dark, "V");
+            $cursorY += 496;
+        }
+
+        // VAN MTD
+        $vanMtdRows = array(
+            array("Average Daily Outlets Billed", $this->formatCompactNumber($vanDsMtd["avg_daily_outlets_billed"]), $purple),
+            array("Average Daily Volume", $vanDsMtd["avg_daily_volume"], $purple)
+        );
+        if ($hasVan) {
+            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 200, "VAN DS SNAPSHOT (MONTH TILL DATE)", $purple, $vanMtdRows, $line, $dark, "V");
+            $cursorY += 216;
+        }
+
+        // Footer insight strip
+        $footerY1 = $cursorY + 10;
+        $footerY2 = $footerY1 + 56;
+        imagefilledrectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $white);
+        imagerectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $line);
+        $strikeText = $hasNpsr ? $npsrToday["avg_strike_rate"] : "NA";
+        $infraText = $hasVan ? $vanDsToday["infra_volume"] : "NA";
+        $timeText = $hasVan ? $vanDsToday["avg_time_spent"] : "NA";
+        $belowText = $hasVan ? $vanDsToday["infra_below_limit"] : "NA";
+        $insightText = "Overall Strike: " . $strikeText .
+            "  |  Infra Volume: " . $infraText .
+            "  |  Avg Time: " . $timeText .
+            "  |  Infra Below Target: " . $belowText;
+        $this->drawCenterText($img, 24, $footerY1 + 4, $canvasW - 24, $footerY2 - 4, $insightText, 4, $muted);
+
+        imagepng($img, $absolutePath);
+        imagedestroy($img);
+        return $absolutePath;
+    }
+
+    private function drawHeaderMeta($img, $aeName, $section, $currentDate, $color)
+    {
+        $meta = "AE: " . strtoupper($aeName) . " | SEC: " . strtoupper($section) . " | DATE: " . $currentDate;
+        $this->drawCenterText($img, 12, 102, 1068, 140, $meta, 4, $color);
+    }
+
+    private function drawStrengthCard($img, $x, $y, $w, $h, $label, $value, $valueColor, $iconText, $note = "")
+    {
+        $white = imagecolorallocate($img, 255, 255, 255);
+        $line = imagecolorallocate($img, 214, 225, 239);
+        $dark = imagecolorallocate($img, 34, 49, 63);
+        imagefilledrectangle($img, $x, $y, $x + $w, $y + $h, $white);
+        imagerectangle($img, $x, $y, $x + $w, $y + $h, $line);
+        $iconCx = $x + 38;
+        $iconCy = $y + 34;
+        $this->drawIconBadge($img, $iconCx, $iconCy, $valueColor, $iconText, null, 14);
+        $this->drawCenterText($img, $x + 12, $y + 20, $x + $w - 12, $y + 64, $label, 4, $dark);
+        $this->drawCenterText($img, $x + 12, $y + 62, $x + $w - 12, $y + 110, $value, 5, $valueColor);
+        if ($note !== "") {
+            $this->drawWrappedTextInBox($img, $x + 14, $y + 108, $x + $w - 14, $y + $h - 10, $note, 4, $dark, 1);
+        }
+    }
+
+    private function drawWrappedTextInBox($img, $x1, $y1, $x2, $y2, $text, $font, $color, $lineSpacing = 1)
+    {
+        $text = trim((string) $text);
+        if ($text === "") {
+            return;
+        }
+        $maxWidth = max(20, $x2 - $x1);
+        $lines = array();
+        $paragraphs = preg_split("/\\r\\n|\\n|\\r/", $text);
+        foreach ($paragraphs as $paragraph) {
+            $paragraph = trim((string) $paragraph);
+            if ($paragraph === "") {
+                $lines[] = "";
+                continue;
+            }
+            $words = preg_split('/\s+/', $paragraph);
+            $current = "";
+            foreach ($words as $word) {
+                $candidate = $current === "" ? $word : ($current . " " . $word);
+                $candidateWidth = $this->measureTextWidth($candidate, $font);
+                if ($candidateWidth <= $maxWidth) {
+                    $current = $candidate;
+                } else {
+                    if ($current !== "") {
+                        $lines[] = $current;
+                    }
+                    $current = $word;
+                }
+            }
+            if ($current !== "") {
+                $lines[] = $current;
+            }
+        }
+
+        $lineHeight = $this->getLineHeightForFont($font) + $lineSpacing;
+        $maxLines = max(1, (int) floor(($y2 - $y1) / max(1, $lineHeight)));
+        if (count($lines) > $maxLines && $font > 2) {
+            $this->drawWrappedTextInBox($img, $x1, $y1, $x2, $y2, $text, $font - 1, $color, $lineSpacing);
+            return;
+        }
+        $lines = array_slice($lines, 0, $maxLines);
+        if (count($lines) > 0 && count($lines) >= $maxLines) {
+            $lastIdx = count($lines) - 1;
+            $last = $lines[$lastIdx];
+            while ($last !== "" && $this->measureTextWidth($last, $font) > $maxWidth) {
+                $last = substr($last, 0, -1);
+            }
+            $lines[$lastIdx] = rtrim($last);
+        }
+        foreach ($lines as $i => $line) {
+            $y = $y1 + ($i * $lineHeight);
+            $this->drawTextInBox($img, $x1, $y, $x2, $y + $lineHeight, $line, $font, $color, false);
+        }
+    }
+
+    private function drawMetricsPanel($img, $x, $y, $w, $h, $title, $titleColor, $rows, $line, $dark, $panelIconText)
+    {
+        $white = imagecolorallocate($img, 255, 255, 255);
+        imagefilledrectangle($img, $x, $y, $x + $w, $y + $h, $white);
+        imagerectangle($img, $x, $y, $x + $w, $y + $h, $line);
+        imagefilledrectangle($img, $x, $y, $x + $w, $y + 50, $titleColor);
+        $this->drawIconBadge($img, $x + 30, $y + 29, imagecolorallocate($img, 255, 255, 255), $panelIconText, $titleColor, 14);
+        $this->drawCenterText($img, $x + 60, $y + 6, $x + $w - 14, $y + 46, $title, 5, imagecolorallocate($img, 255, 255, 255));
+
+        $contentTop = $y + 60;
+        $contentBottom = $y + $h - 12;
+        $count = count($rows) > 0 ? count($rows) : 1;
+        $availableHeight = max(10, ($contentBottom - $contentTop));
+        $weights = array();
+        $totalWeight = 0;
+        for ($i = 0; $i < $count; $i++) {
+            $note = isset($rows[$i][3]) ? trim((string) $rows[$i][3]) : "";
+            $weight = $note === "" ? 1 : 2;
+            $weights[$i] = $weight;
+            $totalWeight += $weight;
+        }
+        if ($totalWeight <= 0) {
+            $totalWeight = $count;
+        }
+        $midX = $x + (int) floor($w * 0.58);
+        imageline($img, $midX, $contentTop, $midX, $contentBottom, $line);
+        $rowBoundaries = array();
+        $cursor = $contentTop;
+        for ($i = 0; $i < $count; $i++) {
+            $rowHeight = (int) floor(($availableHeight * $weights[$i]) / $totalWeight);
+            if ($i === $count - 1) {
+                $rowBottom = $contentBottom;
+            } else {
+                $rowBottom = $cursor + max(28, $rowHeight);
+            }
+            $rowBoundaries[$i] = array($cursor, $rowBottom);
+            if ($i < $count - 1) {
+                imageline($img, $x + 8, $rowBottom, $x + $w - 8, $rowBottom, $line);
+            }
+            $cursor = $rowBottom;
+        }
+        for ($i = 0; $i < $count; $i++) {
+            $row = $rows[$i];
+            $top = $rowBoundaries[$i][0];
+            $bottom = $rowBoundaries[$i][1];
+            $label = isset($row[0]) ? (string) $row[0] : "";
+            $value = isset($row[1]) ? (string) $row[1] : "";
+            $valueColor = isset($row[2]) ? $row[2] : $dark;
+            $note = isset($row[3]) ? (string) $row[3] : "";
+            $iconCx = $x + 24;
+            $iconCy = (int) (($top + $bottom) / 2);
+            $this->drawIconBadge($img, $iconCx, $iconCy, $valueColor, "", imagecolorallocate($img, 255, 255, 255), 15);
+            $this->drawCenterText($img, $x + 44, $top + 2, $midX - 10, $bottom - 2, $label, 4, $dark);
+            if ($note === "") {
+                $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $bottom - 2, $value, 5, $valueColor);
+            } else {
+                $midY = (int) ($top + (($bottom - $top) * 0.42));
+                $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $midY, $value, 5, $valueColor);
+                $this->drawWrappedTextInBox($img, $midX + 10, $midY, $x + $w - 14, $bottom - 2, $note, 4, $dark, 1);
+            }
+        }
+    }
+
+    private function drawIconBadge($img, $cx, $cy, $bgColor, $text = "", $textColor = null, $radius = 10)
+    {
+        if ($textColor === null) {
+            $textColor = imagecolorallocate($img, 255, 255, 255);
+        }
+        imagefilledellipse($img, $cx, $cy, $radius * 2, $radius * 2, $bgColor);
+        if ($text !== "") {
+            $font = 4;
+            $textWidth = imagefontwidth($font) * strlen($text);
+            $textHeight = imagefontheight($font);
+            $tx = (int) ($cx - ($textWidth / 2));
+            $ty = (int) ($cy - ($textHeight / 2));
+            imagestring($img, $font, $tx, $ty, $text, $textColor);
+        }
+    }
+
+    //  drawTextAtCenter
+    // private function drawTextAtCenter($img, $xCenter, $yCenter, $text, $font, $color)
+    // {
+    //     $x1 = (int) ($xCenter - 300);
+    //     $x2 = (int) ($xCenter + 300);
+    //     $y1 = (int) ($yCenter - 18);
+    //     $y2 = (int) ($yCenter + 18);
+    //     $this->drawTextInBox($img, $x1, $y1, $x2, $y2, (string) $text, $font, $color, false);
+    // }
+
+    private function drawCenterText($img, $x1, $y1, $x2, $y2, $text, $font, $color)
+    {
+        $this->drawTextInBox($img, (int) $x1, (int) $y1, (int) $x2, (int) $y2, (string) $text, $font, $color, false);
+    }
+
+    private function drawTextInBox($img, $x1, $y1, $x2, $y2, $text, $font, $color, $bold = false)
+    {
+        $text = (string) $text;
+        $font = $this->getScaledFont($font);
+        $ttf = $this->getReadableSansFont();
+        if ($ttf !== "" && function_exists('imagettftext') && function_exists('imagettfbbox')) {
+            $size = $this->mapGdToTtfSize($font);
+            $bbox = imagettfbbox($size, 0, $ttf, $text);
+            if (is_array($bbox)) {
+                $txtWidth = abs($bbox[2] - $bbox[0]);
+                $txtHeight = abs($bbox[7] - $bbox[1]);
+                $x = (int) (($x1 + $x2 - $txtWidth) / 2);
+                $y = (int) (($y1 + $y2 + $txtHeight) / 2) - 2;
+                imagettftext($img, $size, 0, $x, $y, $color, $ttf, $text);
+                return;
+            }
+        }
+        $txtWidth = imagefontwidth($font) * strlen($text);
+        $txtHeight = imagefontheight($font);
+        $x = (int) (($x1 + $x2 - $txtWidth) / 2);
+        $y = (int) (($y1 + $y2 - $txtHeight) / 2);
+        $x = max($x1 + 2, $x);
+        $y = max($y1 + 2, $y);
+        imagestring($img, $font, $x, $y, $text, $color);
+        if ($bold) {
+            imagestring($img, $font, $x + 1, $y, $text, $color);
+        }
+    }
+
+    private function getReadableSansFont()
+    {
+        $candidates = array(
+            "C:/Windows/Fonts/arial.ttf",
+            "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+        );
+        foreach ($candidates as $path) {
+            if (file_exists($path)) {
+                return $path;
+            }
+        }
+        return "";
+    }
+
+    private function mapGdToTtfSize($font)
+    {
+        $font = (int) $font;
+        if ($font <= 1) {
+            return 10;
+        }
+        if ($font === 2) {
+            return 12;
+        }
+        if ($font === 3) {
+            return 15;
+        }
+        if ($font === 4) {
+            return 18;
+        }
+        return 22;
+    }
+
+    private function getLineHeightForFont($font)
+    {
+        $font = $this->getScaledFont($font);
+        $ttf = $this->getReadableSansFont();
+        if ($ttf !== "" && function_exists('imagettfbbox')) {
+            $size = $this->mapGdToTtfSize($font);
+            $bbox = imagettfbbox($size, 0, $ttf, "Ag");
+            if (is_array($bbox)) {
+                return max(1, (int) ceil(abs($bbox[7] - $bbox[1]) * 1.15));
+            }
+        }
+        return imagefontheight($font);
+    }
+
+    private function measureTextWidth($text, $font)
+    {
+        $font = $this->getScaledFont($font);
+        $ttf = $this->getReadableSansFont();
+        if ($ttf !== "" && function_exists('imagettfbbox')) {
+            $size = $this->mapGdToTtfSize($font);
+            $bbox = imagettfbbox($size, 0, $ttf, (string) $text);
+            if (is_array($bbox)) {
+                return abs($bbox[2] - $bbox[0]);
+            }
+        }
+        return imagefontwidth($font) * strlen((string) $text);
+    }
+
+    private function getScaledFont($font)
+    {
+        $font = (int) $font;
+        $scaled = $font;
+        if ($scaled < 1) {
+            $scaled = 1;
+        }
+        if ($scaled > 5) {
+            $scaled = 5;
+        }
+        return $scaled;
+    }
+
+    private function formatCompactNumber($value)
+    {
+        if ($value === null || $value === "") {
+            return "0";
+        }
+        if (!is_numeric($value)) {
+            return (string) $value;
+        }
+
+        $formatted = number_format((float) $value, 2, ".", "");
+        $formatted = rtrim(rtrim($formatted, "0"), ".");
+        return $formatted === "" ? "0" : $formatted;
+    }
+
+    private function sanitizeFileName($name)
+    {
+        $safeName = preg_replace('/[^a-zA-Z0-9_\-]/', '_', $name);
+        return trim($safeName, '_');
+    }
+
+    private function getTeamStrengthData($aeNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec)
+    {
+        $qualified = 0;
+        $presentTeams = array();
+        $unqualifiedTeams = array();
+        foreach ($dailyRows as $row) {
+            $teamName = isset($row["team_name"]) ? trim((string) $row["team_name"]) : "";
+            $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
+            $teamId = isset($row["team_id"]) ? trim((string) $row["team_id"]) : "";
+            if ($teamId !== "" && $teamName !== "") {
+                $presentTeams[$teamId] = $teamName . ($wdCode !== "" ? " (" . $wdCode . ")" : "");
+            }
+            if ($this->isQualified($row, $minTotalShops, $minQualifiedAttendanceTimeInSec)) {
+                $qualified++;
+            } elseif ($teamName !== "") {
+                $key = $teamId !== "" ? $teamId : ($teamName . "|" . $wdCode);
+                $unqualifiedTeams[$key] = $teamName . ($wdCode !== "" ? " (" . $wdCode . ")" : "");
+            }
+        }
+
+        $present = count($dailyRows);
+        $unqualified = max(0, $present - $qualified);
+        $absent = max(0, $totalSalesmen - $present);
+        $allTeams = $this->getSectionTeamDetails($aeNumber, $section);
+        $absentTeams = array();
+        foreach ($allTeams as $team) {
+            $teamId = isset($team["team_id"]) ? trim((string) $team["team_id"]) : "";
+            $entry = isset($team["entry"]) ? trim((string) $team["entry"]) : "";
+            if ($teamId !== "" && $entry !== "" && !isset($presentTeams[$teamId])) {
+                $absentTeams[$teamId] = $entry;
+            }
+        }
+
+        return array(
+            "total" => $totalSalesmen,
+            "qualified" => $qualified,
+            "unqualified" => $unqualified,
+            "absent" => $absent,
+            "unqualified_names" => $this->formatTeamNames(array_values($unqualifiedTeams)),
+            "absent_names" => $this->formatTeamNames(array_values($absentTeams))
+        );
+    }
+
+    private function getSnapshotTodayData($dailyRows, $teamType, $infraLimit, $teamDetails = array())
+    {
+        $rows = $this->filterByType($dailyRows, $teamType);
+        $count = count($rows);
+        if ($count === 0) {
+            return $this->emptyTodaySnapshot();
+        }
+
+        $sumVisited = 0.0;
+        $sumBilled = 0.0;
+        $sumStrikeRate = 0.0;
+        $sumInfraVolume = 0.0;
+        $sumLineCut = 0.0;
+        $sumMarketMins = 0.0;
+        $infraBelow = 0;
+        $below6Hours = 0;
+        $infraBelowNames = array();
+        $below6HoursNames = array();
+        $lowestStrikeRate = null;
+        $lowestTeamName = "";
+
+        foreach ($rows as $row) {
+            $visited = (float) $row["total_sales_deliveries"] + (float) $row["total_other_shops"];
+            $billed = (float) $row["total_sellin_shops"];
+            $strike = $visited > 0 ? ($billed / $visited) * 100 : 0;
+            $infraVolume = (float) $row["infra_volume"];
+            $lineCut = $visited > 0 ? ($billed / $visited) : 0;
+            $marketMins = (float) getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
+
+            $sumVisited += $visited;
+            $sumBilled += $billed;
+            $sumStrikeRate += $strike;
+            $sumInfraVolume += $infraVolume;
+            $sumLineCut += $lineCut;
+            $sumMarketMins += $marketMins;
+
+            if ($infraVolume < $infraLimit) {
+                $infraBelow++;
+                $entry = trim((string) $row["team_name"]);
+                $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
+                $teamId = isset($row["team_id"]) ? trim((string) $row["team_id"]) : "";
+                $display = $this->buildTeamDisplay($entry, $wdCode, $teamId, $teamDetails);
+                if ($display !== "") {
+                    $infraBelowNames[$display] = true;
+                }
+            }
+            if ($marketMins < 360) {
+                $below6Hours++;
+                $entry = trim((string) $row["team_name"]);
+                $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
+                $teamId = isset($row["team_id"]) ? trim((string) $row["team_id"]) : "";
+                $display = $this->buildTeamDisplay($entry, $wdCode, $teamId, $teamDetails);
+                if ($display !== "") {
+                    $below6HoursNames[$display] = true;
+                }
+            }
+
+            if ($lowestStrikeRate === null || $strike < $lowestStrikeRate) {
+                $lowestStrikeRate = $strike;
+                $lowestTeamName = $row["team_name"];
+            }
+        }
+
+        return array(
+            "avg_outlets_visited" => $this->formatNumber($sumVisited / $count, 2),
+            "avg_outlets_billed" => $this->formatNumber($sumBilled / $count, 2),
+            "avg_strike_rate" => $this->formatNumber($sumStrikeRate / $count, 2) . "%",
+            "lowest_strike_rate" => $this->formatNumber((float) $lowestStrikeRate, 2) . "%",
+            "lowest_strike_team" => $lowestTeamName,
+            "infra_volume" => $this->formatNumber($sumInfraVolume / $count, 2) . " Ms",
+            "infra_below_limit" => (string) $infraBelow,
+            "infra_below_limit_names" => $this->formatTeamNames(array_keys($infraBelowNames)),
+            "avg_line_cut" => $this->formatNumber($sumLineCut / $count, 2),
+            "avg_time_spent" => $this->formatDurationFromMinutes($sumMarketMins / $count),
+            "below_6_hours" => (string) $below6Hours,
+            "below_6_hours_names" => $this->formatTeamNames(array_keys($below6HoursNames))
+        );
+    }
+
+    private function getSnapshotMtdData($mtdRows, $teamType)
+    {
+        $rows = $this->filterByType($mtdRows, $teamType);
+        if (count($rows) === 0) {
+            return array(
+                "avg_daily_outlets_billed" => "0",
+                "avg_daily_volume" => "0 Ms",
+                "incentive_brand_1" => "0%",
+                "incentive_brand_2" => "0%"
+            );
+        }
+
+        $dailyBilled = array();
+        $dailyVolume = array();
+        foreach ($rows as $row) {
+            $date = $row["activity_date"];
+            if (!isset($dailyBilled[$date])) {
+                $dailyBilled[$date] = 0;
+                $dailyVolume[$date] = 0;
+            }
+            $dailyBilled[$date] += (float) $row["total_sellin_shops"];
+            $dailyVolume[$date] += (float) $row["infra_volume"];
+        }
+
+        $days = count($dailyBilled);
+        $avgDailyBilled = $days > 0 ? array_sum($dailyBilled) / $days : 0;
+        $avgDailyVolume = $days > 0 ? array_sum($dailyVolume) / $days : 0;
+
+        return array(
+            "avg_daily_outlets_billed" => $this->formatNumber($avgDailyBilled, 2),
+            "avg_daily_volume" => $this->formatNumber($avgDailyVolume, 2) . " Ms",
+            "incentive_brand_1" => "NA",
+            "incentive_brand_2" => "NA"
+        );
+    }
+
+    private function getAeSummaryRows($aeNumber, $section, $dateFrom, $dateTo)
+    {
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
+        $formula = $this->_productSaleVolumeFormula;
+        $summaryAction = null;
+        $summaryRows = 0;
+        $query = "SELECT a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.dayend_datetime, a.total_sales_deliveries, a.total_sellin_shops, a.total_other_shops, a.is_qualified, " .
+            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = 99" .
+            " AND b.ae_number = '$aeNumber' AND b.section = '$section' AND a.activity_date BETWEEN '$dateFrom' AND '$dateTo'";
+        $this->_dbConn->ExecuteSelectQuery($query, $summaryAction, $summaryRows);
+
+        $rows = array();
+        if ($summaryRows > 0) {
+            while ($summaryRow = $this->_dbConn->GetData($summaryAction)) {
+                $rows[] = $summaryRow;
+            }
+        }
+        return $rows;
+    }
+
+    private function getSectionTeamDetails($aeNumber, $section)
+    {
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $action = null;
+        $rows = 0;
+        $query = "SELECT DISTINCT team_id, team_name, wd_code FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section'";
+        $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
+        $teams = array();
+        if ($rows > 0) {
+            while ($row = $this->_dbConn->GetData($action)) {
+                $teamId = isset($row["team_id"]) ? trim((string) $row["team_id"]) : "";
+                $name = isset($row["team_name"]) ? trim((string) $row["team_name"]) : "";
+                $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
+                if ($teamId !== "" && $name !== "") {
+                    $teams[$teamId] = array(
+                        "team_id" => $teamId,
+                        "team_name" => $name,
+                        "wd_code" => $wdCode,
+                        "entry" => $name . ($wdCode !== "" ? " (" . $wdCode . ")" : "")
+                    );
+                }
+            }
+        }
+        return array_values($teams);
+    }
+
+    private function getSectionTypeFlags($aeNumber, $section)
+    {
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $action = null;
+        $rows = 0;
+        $query = "SELECT DISTINCT is_type FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section'";
+        $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
+        $hasNpsr = false;
+        $hasVan = false;
+        if ($rows > 0) {
+            while ($row = $this->_dbConn->GetData($action)) {
+                $type = isset($row["is_type"]) ? (int) $row["is_type"] : -1;
+                if ($type === 5) {
+                    $hasNpsr = true;
+                } elseif ($type === 0) {
+                    $hasVan = true;
+                }
+            }
+        }
+        return array(
+            "has_npsr" => $hasNpsr,
+            "has_van" => $hasVan
+        );
+    }
+
+    private function formatTeamNames($names)
+    {
+        if (!is_array($names) || count($names) === 0) {
+            return "";
+        }
+        $names = array_values(array_unique(array_filter($names)));
+        return implode(", ", $names);
+    }
+
+    private function buildTeamDisplay($teamName, $wdCode, $teamId, $teamDetails)
+    {
+        $teamName = trim((string) $teamName);
+        $wdCode = trim((string) $wdCode);
+        $teamId = trim((string) $teamId);
+        if ($wdCode !== "" && $teamName !== "") {
+            return $teamName . " (" . $wdCode . ")";
+        }
+        if ($teamId !== "" && is_array($teamDetails)) {
+            foreach ($teamDetails as $team) {
+                if ((string) $team["team_id"] === $teamId) {
+                    $fallbackName = isset($team["team_name"]) ? trim((string) $team["team_name"]) : "";
+                    $fallbackWd = isset($team["wd_code"]) ? trim((string) $team["wd_code"]) : "";
+                    if ($fallbackName !== "") {
+                        return $fallbackName . ($fallbackWd !== "" ? " (" . $fallbackWd . ")" : "");
+                    }
+                }
+            }
+        }
+        return $teamName;
+    }
+
+    private function filterByType($rows, $teamType)
+    {
+        $result = array();
+        foreach ($rows as $row) {
+            if ((int) $row["is_type"] === (int) $teamType) {
+                $result[] = $row;
+            }
+        }
+        return $result;
+    }
+
+    private function isQualified($row, $minTotalShops, $minQualifiedAttendanceTimeInSec)
+    {
+        if (isset($row["is_qualified"]) && $row["is_qualified"] !== "" && $row["is_qualified"] !== null) {
+            return (string) $row["is_qualified"] === "1";
+        }
+        $totalShopsDone = (float) $row["total_sales_deliveries"] + (float) $row["total_other_shops"];
+        $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], true);
+        return ($totalShopsDone >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec);
+    }
+
+    private function buildProductSaleVolumeFormula()
+    {
+        $formulaParts = array();
+        for ($index = 1; $index <= 130; $index++) {
+            $formulaParts[] = "COALESCE(a.total_sale_product$index,0)";
+        }
+        return implode(" + ", $formulaParts);
+    }
+
+    private function formatNumber($value, $decimals = 2)
+    {
+        return number_format((float) $value, $decimals, '.', '');
+    }
+
+    private function formatDurationFromMinutes($minutes)
+    {
+        $minutes = (int) round($minutes);
+        $hours = floor($minutes / 60);
+        $remMinutes = $minutes % 60;
+        return $hours . "h " . $remMinutes . "m";
+    }
+
+    private function emptyTodaySnapshot()
+    {
+        return array(
+            "avg_outlets_visited" => "0",
+            "avg_outlets_billed" => "0",
+            "avg_strike_rate" => "0%",
+            "lowest_strike_rate" => "0%",
+            "lowest_strike_team" => "",
+            "infra_volume" => "0 Ms",
+            "infra_below_limit" => "0",
+            "infra_below_limit_names" => "",
+            "avg_line_cut" => "0",
+            "avg_time_spent" => "0h 0m",
+            "below_6_hours" => "0",
+            "below_6_hours_names" => ""
+        );
     }
 }
 
