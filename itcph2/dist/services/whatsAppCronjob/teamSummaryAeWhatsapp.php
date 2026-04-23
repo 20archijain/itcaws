@@ -525,7 +525,11 @@ class VanDswhatsAppSummary
     private function getReadableSansFont()
     {
         $candidates = array(
+            // Prefer modern clean sans fonts similar to shared sample.
+            "C:/Windows/Fonts/segoeui.ttf",
+            "C:/Windows/Fonts/calibri.ttf",
             "C:/Windows/Fonts/arial.ttf",
+            "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
             "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
         );
