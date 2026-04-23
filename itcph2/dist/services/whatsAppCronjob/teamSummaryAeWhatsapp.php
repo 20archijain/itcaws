@@ -28,8 +28,9 @@ class VanDswhatsAppSummary
 
     public function sendTeamSummary()
     {
-        // $currentDate = currentDate();
-        $currentDate = "2026-02-05"; // For testing
+        $currentDate = currentDate();
+        // $currentDate = "2026-02-08"; // For testing
+        $this->clearOldImageDateFolders($currentDate);
         $monthStartDate = date("Y-m-01", strtotime($currentDate));
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $constantsTable = $this->_tables["CONSTANTS_TABLE"];
@@ -104,12 +105,85 @@ class VanDswhatsAppSummary
             updateRecord($this->_dbConn, $projectTeamTable, "summary_sent = 1, summary_sent_date = '$currentDate'", "dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)");
         }
 
+        // If nothing is pending now, remove all generated images for this date.
+        $pendingCount = (int) getRowColumn(
+            $this->_dbConn,
+            $projectTeamTable,
+            "COUNT(DISTINCT section)",
+            "dstatus = 0 AND s_id = 99 AND section IS NOT NULL AND section != '' " .
+            "AND (COALESCE(summary_sent, 0) = 0 OR summary_sent_date IS NULL OR summary_sent_date != '$currentDate')"
+        );
+        if ($pendingCount === 0) {
+            $this->clearGeneratedImagesForDate($currentDate);
+        }
+
         echo json_encode(array(
             "status" => 1,
             "capture_date" => $currentDate,
             "total_images" => count($createdImages),
             "images" => $createdImages
         ));
+    }
+
+    private function clearGeneratedImagesForDate($currentDate)
+    {
+        $targetDir = $GLOBALS["CUST_FOLDER_PATH"] . "/ae_summary_images/" . $currentDate;
+        if (!is_dir($targetDir)) {
+            return;
+        }
+        $files = @glob($targetDir . "/*.png");
+        if (!is_array($files)) {
+            return;
+        }
+        foreach ($files as $filePath) {
+            if (is_file($filePath)) {
+                @unlink($filePath);
+            }
+        }
+        $remaining = @glob($targetDir . "/*");
+        if (is_array($remaining) && count($remaining) === 0) {
+            @rmdir($targetDir);
+        }
+    }
+
+    private function clearOldImageDateFolders($currentDate)
+    {
+        $baseDir = $GLOBALS["CUST_FOLDER_PATH"] . "/ae_summary_images";
+        if (!is_dir($baseDir)) {
+            return;
+        }
+        $entries = @glob($baseDir . "/*");
+        if (!is_array($entries)) {
+            return;
+        }
+        foreach ($entries as $entryPath) {
+            if (!is_dir($entryPath)) {
+                continue;
+            }
+            $entryName = basename($entryPath);
+            if ($entryName === $currentDate) {
+                continue;
+            }
+            $this->deleteDirectoryRecursive($entryPath);
+        }
+    }
+
+    private function deleteDirectoryRecursive($dirPath)
+    {
+        if (!is_dir($dirPath)) {
+            return;
+        }
+        $items = @glob($dirPath . "/*");
+        if (is_array($items)) {
+            foreach ($items as $itemPath) {
+                if (is_dir($itemPath)) {
+                    $this->deleteDirectoryRecursive($itemPath);
+                } elseif (is_file($itemPath)) {
+                    @unlink($itemPath);
+                }
+            }
+        }
+        @rmdir($dirPath);
     }
 
     private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = array())
