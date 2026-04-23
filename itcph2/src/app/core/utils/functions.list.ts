@@ -102,7 +102,7 @@ export class Functions {
     return monthNames[nextMonthIndex];
   }
 
-  static currentDate(customDate?: string, firstDay?: boolean): FormattedDate<number> {
+  static currentDate(customDate?: string | null, firstDay?: boolean): FormattedDate<number> {
     let date = new Date();
     if (customDate) {
       date = new Date(customDate);
@@ -200,7 +200,10 @@ export class Functions {
 
     colorSets.forEach((set: Color) => {
       sets[set.name.toUpperCase() as ChartColorSchemeNames] = {
-        domain: set.domain
+        domain: set.domain,
+        name: '',
+        selectable: true,
+        group: ScaleType.Linear,
       };
     });
 

@@ -12,25 +12,24 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    templateUrl: './sku-pickup.component.html',
-    styleUrls: ['./sku-pickup.component.scss'],
-    standalone: false
+  templateUrl: './sku-pickup.component.html',
+  styleUrls: ['./sku-pickup.component.scss'],
+  standalone: false,
 })
 export class SkuPickupComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   body: string[] = [];
   url = environment.viewSkuPickupUrl;
-  group: UntypedFormGroup;
-  totalPresent: string;
-  totalTeams: string;
+  group!: UntypedFormGroup;
+  totalPresent: string | null = '';
+  totalTeams: string | null = '';
   skupickupList: SkuPickUpList[] = [];
 
   errorMessages = {
     // dateFrom: COMMON_VALIDATORS.messages.date('From'),
     // dateTo: COMMON_VALIDATORS.messages.date('To'),
   };
-  date: number;
-  isDisabled: boolean;
+  isDisabled = false;
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private loaderService: LoaderService) { }
 
@@ -59,7 +58,7 @@ export class SkuPickupComponent implements OnDestroy, OnInit {
             finalize(() => this.loaderService.stopLoader()),
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               this.skupickupList = resp.data.SkuPickUpList;
               this.totalPresent = resp.data.totalPresent;
               this.totalTeams = resp.data.totalTeams;
@@ -106,7 +105,7 @@ export class SkuPickupComponent implements OnDestroy, OnInit {
           }),
         )
         .subscribe(response => {
-          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+          if (response && response.status === REQUEST_STATUS.SUCCESS && response.data) {
             Functions.downloadFile(response.data.filePath, response.data.fileName);
           }
         })

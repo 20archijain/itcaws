@@ -8,16 +8,16 @@ import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-    selector: 'app-captcha',
-    styleUrls: ['./captcha.component.scss'],
-    templateUrl: './captcha.component.html',
-    standalone: false
+  selector: 'app-captcha',
+  styleUrls: ['./captcha.component.scss'],
+  templateUrl: './captcha.component.html',
+  standalone: false,
 })
 export class CaptchaComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  @Input() group: UntypedFormGroup;
-  @Input() controlName: string;
-  @Input() errorMessages: FormControlErrorMessage[];
+  @Input() group!: UntypedFormGroup;
+  @Input() controlName!: string;
+  @Input() errorMessages: FormControlErrorMessage[] = [];
   captchaImage = '';
 
   constructor(private formService: FormService) {
@@ -32,7 +32,7 @@ export class CaptchaComponent implements OnDestroy, OnInit {
   }
 
   getCaptcha() {
-    this.captchaImage = null;
+    this.captchaImage = '';
 
     this.subscription.push(
       this.formService.customActionCall<string>(STATIC_MODULES.custom.getCaptcha, ['getCaptcha'], null,

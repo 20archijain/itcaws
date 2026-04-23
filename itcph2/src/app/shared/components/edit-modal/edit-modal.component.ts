@@ -16,24 +16,24 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-    selector: 'app-edit-modal',
-    templateUrl: './edit-modal.component.html',
-    standalone: false
+  selector: 'app-edit-modal',
+  templateUrl: './edit-modal.component.html',
+  standalone: false,
 })
 export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
-  @ViewChild('editModal', { static: false }) private editModal: ModalComponent;
+  @ViewChild('editModal', { static: false }) private editModal!: ModalComponent;
   @Output() private onEdit = new EventEmitter<EditModalOutput>();
   private subscription: Subscription[] = [];
-  private logo: File = null;
+  private logo: File | null | undefined = null;
   @Input() modalSize = 'modal-xl';
   @Input() editLabel = '';
   @Input() url = '';
   @Input() editConfig: EditConfig[] = [];
   show = false;
   typeConfig = CONTROL_CONFIG;
-  group: UntypedFormGroup;
-  defaultImage: string = null;
-  editResponse: HttpRequestResponse = null;
+  group!: UntypedFormGroup;
+  defaultImage?: string;
+  editResponse: HttpRequestResponse | null = null;
   list: any[] = [];
   isFormLoaded = false;
   isDisabled = false;
@@ -99,7 +99,6 @@ export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
 
   reset() {
     this.isFormLoaded = false;
-    this.group = null;
     this.group = this.fb.group({
     });
   }
@@ -145,7 +144,7 @@ export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
     this.logo = $event && $event.files && $event.files[0];
   }
 
-  onChange(index: number, controlName: string, onDropdownChange: number, isPreDefinedCall: boolean) {
+  onChange(index: number, controlName: string, onDropdownChange: number, isPreDefinedCall: boolean | undefined) {
     if (onDropdownChange) {
       // Call one of the methods defined here
       if (isPreDefinedCall) {
@@ -155,30 +154,30 @@ export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
           if (this.list[index + 1]) {
             this.list[index + 1]['options'] = [];
             if (this.editConfig[index + 1] && this.group.get(this.editConfig[index + 1].controlName)) {
-              this.group.get(this.editConfig[index + 1].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 1].controlName)?.setValue([]);
             }
           }
           if (this.list[index + 2]) {
             this.list[index + 2]['options'] = [];
             if (this.editConfig[index + 2] && this.group.get(this.editConfig[index + 2].controlName)) {
-              this.group.get(this.editConfig[index + 2].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 2].controlName)?.setValue([]);
             }
           }
           if (this.list[index + 3]) {
             this.list[index + 3]['options'] = [];
             if (this.editConfig[index + 3] && this.group.get(this.editConfig[index + 3].controlName)) {
-              this.group.get(this.editConfig[index + 3].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 3].controlName)?.setValue([]);
             }
           }
 
-          if (this.group.get(controlName) && this.group.get(controlName).value &&
+          if (this.group.get(controlName) && this.group.get(controlName)?.value &&
             ((this.editConfig[index].multiple &&
-              this.group.get(controlName).value.length) || !this.editConfig[index].multiple)) {
+              this.group.get(controlName)?.value.length) || !this.editConfig[index].multiple)) {
             // setTimeout is used to prevent ExpressionChangedAfterItHasBeenCheckedError warning
             this.loaderService.startLoader();
             setTimeout(() => {
               this.subscription.push(
-                this.formService.getProjects(environment.getUserDataUrl, this.group.get(controlName).value)
+                this.formService.getProjects(environment.getUserDataUrl, this.group.get(controlName)?.value)
                   .pipe(
                     finalize(() => this.loaderService.stopLoader())
                   )
@@ -195,27 +194,27 @@ export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
           if (this.list[index + 1]) {
             this.list[index + 1]['options'] = [];
             if (this.editConfig[index + 1] && this.group.get(this.editConfig[index + 1].controlName)) {
-              this.group.get(this.editConfig[index + 1].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 1].controlName)?.setValue([]);
             }
           }
           if (this.list[index + 2]) {
             this.list[index + 2]['options'] = [];
             if (this.editConfig[index + 2] && this.group.get(this.editConfig[index + 2].controlName)) {
-              this.group.get(this.editConfig[index + 2].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 2].controlName)?.setValue([]);
             }
           }
 
-          if (this.group.get(controlName) && this.group.get(controlName).value &&
+          if (this.group.get(controlName) && this.group.get(controlName)?.value &&
             ((this.editConfig[index].multiple &&
-              this.group.get(controlName).value.length) || !this.editConfig[index].multiple)) {
+              this.group.get(controlName)?.value.length) || !this.editConfig[index].multiple)) {
             // setTimeout is used to prevent ExpressionChangedAfterItHasBeenCheckedError warning
             this.loaderService.startLoader();
             setTimeout(() => {
               this.subscription.push(
                 this.formService.getCity(environment.getUserDataUrl,
                   {
-                    client: this.group.get(this.editConfig[index - 1].controlName).value,
-                    project: this.group.get(controlName).value
+                    client: this.group.get(this.editConfig[index - 1].controlName)?.value,
+                    project: this.group.get(controlName)?.value
                   })
                   .pipe(
                     finalize(() => this.loaderService.stopLoader())
@@ -233,22 +232,22 @@ export class EditModalComponent implements AfterViewInit, OnInit, OnDestroy {
           if (this.list[index + 1]) {
             this.list[index + 1]['options'] = [];
             if (this.editConfig[index + 1] && this.group.get(this.editConfig[index + 1].controlName)) {
-              this.group.get(this.editConfig[index + 1].controlName).setValue([]);
+              this.group.get(this.editConfig[index + 1].controlName)?.setValue([]);
             }
           }
 
-          if (this.group.get(controlName) && this.group.get(controlName).value &&
+          if (this.group.get(controlName) && this.group.get(controlName)?.value &&
             ((this.editConfig[index].multiple &&
-              this.group.get(controlName).value.length) || !this.editConfig[index].multiple)) {
+              this.group.get(controlName)?.value.length) || !this.editConfig[index].multiple)) {
             // setTimeout is used to prevent ExpressionChangedAfterItHasBeenCheckedError warning
             this.loaderService.startLoader();
             setTimeout(() => {
               this.subscription.push(
                 this.formService.getTeams(environment.getUserDataUrl,
                   {
-                    city: this.group.get(controlName).value,
-                    client: this.group.get(this.editConfig[index - 2].controlName).value,
-                    project: this.group.get(this.editConfig[index - 1].controlName).value,
+                    city: this.group.get(controlName)?.value,
+                    client: this.group.get(this.editConfig[index - 2].controlName)?.value,
+                    project: this.group.get(this.editConfig[index - 1].controlName)?.value,
                   })
                   .pipe(
                     finalize(() => this.loaderService.stopLoader())

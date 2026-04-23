@@ -4,10 +4,11 @@ import { Color } from '@swimlane/ngx-charts';
 import { LineChartComponent } from '../line/line-chart.component';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { ChartColorSchemeNames } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-    selector: 'app-advance-pie-chart',
-    template: `
+  selector: 'app-advance-pie-chart',
+  template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-advanced-pie-chart
@@ -20,20 +21,20 @@ import { Functions } from 'src/app/core/utils/functions.list';
     </ngx-charts-advanced-pie-chart>
   </div>
   `,
-    standalone: false
+  standalone: false,
 })
 export class AdvancePieChartComponent extends LineChartComponent implements OnChanges {
-  view = undefined;
+  view: [number, number] | undefined = undefined;
   @Input() height = CHART_DEFAULTS.HEIGHT;
   @Input() data = [];
-  @Input() graphMaxHeight: number;
+  @Input() graphMaxHeight?: number;
   @Input() scheme = null;
   @Input() customColors = [];
   @Input() gradient = false;
   @Input() advancedPieChartTotalLabel = '';
   @Input() tooltipDisabled = false;
   style: any;
-  themeScheme: string | Color = null;
+  themeScheme: string | Color | null = null;
 
   ngOnChanges() {
     if (this.graphMaxHeight && !this.style) {
@@ -43,7 +44,8 @@ export class AdvancePieChartComponent extends LineChartComponent implements OnCh
       };
     }
 
-    this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
+    const colorScheme = this.scheme || CHART_DEFAULTS.DEFAULT_THEME as ChartColorSchemeNames;
+    this.themeScheme = Functions.getChartColorsScheme()[colorScheme];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
       (this.themeScheme as Color).domain = this.customColors;

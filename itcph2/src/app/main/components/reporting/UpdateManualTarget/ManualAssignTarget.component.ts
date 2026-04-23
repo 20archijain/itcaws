@@ -30,7 +30,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   product3 = '';
   url = environment.getActiveVariantsDataUrl;
 
-  errorMessages = {
+  errorMessages: { [key: string]: any } = {
     branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
   };
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
@@ -75,7 +75,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
       this.formService.customActionCall<ManualAssignTargetResponse>(STATIC_MODULES.custom.getproduct, { branch: this.form?.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.productOptions = resp.data.productList;
             this.form.removeControl('quantity');
             this.form.addControl('quantity', new UntypedFormGroup({}));

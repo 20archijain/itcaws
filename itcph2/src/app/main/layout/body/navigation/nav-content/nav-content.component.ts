@@ -7,14 +7,14 @@ import { NavigationItem } from '../navigation';
 import { NextConfig } from 'src/app/app-config';
 
 @Component({
-    selector: 'app-nav-content',
-    templateUrl: './nav-content.component.html',
-    standalone: false
+  selector: 'app-nav-content',
+  templateUrl: './nav-content.component.html',
+  standalone: false,
 })
 export class NavContentComponent implements OnDestroy, OnInit, AfterViewInit {
   @Output() private onNavMobCollapse = new EventEmitter();
-  @ViewChild('navbarContent', { static: false }) private navbarContent: ElementRef;
-  @ViewChild('navbarWrapper', { static: false }) private navbarWrapper: ElementRef;
+  @ViewChild('navbarContent', { static: false }) private navbarContent!: ElementRef;
+  @ViewChild('navbarWrapper', { static: false }) private navbarWrapper!: ElementRef;
   private subscription: Subscription[] = [];
   private contentWidth: number;
   private wrapperWidth: any;
@@ -40,7 +40,7 @@ export class NavContentComponent implements OnDestroy, OnInit, AfterViewInit {
     if (this.windowWidth < 992) {
       // this.nextConfig['layout'] = 'vertical';
       setTimeout(() => {
-        document.querySelector('.pcoded-navbar').classList.add('menupos-static');
+        document.querySelector('.pcoded-navbar')?.classList.add('menupos-static');
         if ((document.querySelector('#nav-ps-next') as HTMLElement)?.style) {
           (document.querySelector('#nav-ps-next') as HTMLElement).style.maxHeight = '100%';
         }
@@ -109,44 +109,44 @@ export class NavContentComponent implements OnDestroy, OnInit, AfterViewInit {
     });
 
     let current_url = this.location.path();
-    if (this.location['_baseHref']) {
-      current_url = this.location['_baseHref'] + this.location.path();
+    if ((this.location as any)['_baseHref']) {
+      current_url = (this.location as any)['_baseHref'] + this.location.path();
     }
     current_url = current_url ? current_url.split('/').slice(0, 4).join('/') : current_url;
     const link = 'a.nav-link[ href=\'#' + current_url + '\' ]';
     const ele = document.querySelector(link);
     if (ele !== null && ele !== undefined) {
       const parent = ele.parentElement;
-      const up_parent = parent.parentElement.parentElement;
-      const last_parent = up_parent.parentElement;
-      if (parent.classList.contains('pcoded-hasmenu')) {
+      const up_parent = parent?.parentElement?.parentElement;
+      const last_parent = up_parent?.parentElement;
+      if (parent?.classList.contains('pcoded-hasmenu')) {
         parent.classList.add('active');
-      } else if (up_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (up_parent?.classList.contains('pcoded-hasmenu')) {
         up_parent.classList.add('active');
-      } else if (last_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (last_parent?.classList.contains('pcoded-hasmenu')) {
         last_parent.classList.add('active');
       }
     }
   }
 
   navMob() {
-    if (this.windowWidth < 992 && document.querySelector('app-navigation.pcoded-navbar').classList.contains('mob-open')) {
+    if (this.windowWidth < 992 && document.querySelector('app-navigation.pcoded-navbar')?.classList.contains('mob-open')) {
       this.onNavMobCollapse.emit();
     }
   }
 
   fireOutClick() {
     let current_url = this.location.path();
-    if (this.location['_baseHref']) {
-      current_url = this.location['_baseHref'] + this.location.path();
+    if ((this.location as any)['_baseHref']) {
+      current_url = (this.location as any)['_baseHref'] + this.location.path();
     }
     current_url = current_url ? current_url.split('/').slice(0, 4).join('/') : current_url;
     const link = 'a.nav-link[ href=\'#' + current_url + '\' ]';
     const ele = document.querySelector(link);
     if (ele !== null && ele !== undefined) {
       const parent = ele.parentElement;
-      const up_parent = parent.parentElement.parentElement;
-      const last_parent = up_parent.parentElement;
+      const up_parent = parent?.parentElement?.parentElement;
+      const last_parent = up_parent?.parentElement;
 
       // remove active class from all opened collapse
       const sections = document.querySelectorAll('.pcoded-hasmenu');
@@ -155,17 +155,17 @@ export class NavContentComponent implements OnDestroy, OnInit, AfterViewInit {
         section.classList.remove('pcoded-trigger');
       });
 
-      if (parent.classList.contains('pcoded-hasmenu')) {
+      if (parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           parent.classList.add('pcoded-trigger');
         }
         parent.classList.add('active');
-      } else if (up_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (up_parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           up_parent.classList.add('pcoded-trigger');
         }
         up_parent.classList.add('active');
-      } else if (last_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (last_parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           last_parent.classList.add('pcoded-trigger');
         }

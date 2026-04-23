@@ -8,17 +8,17 @@ import { environment } from 'src/environments/environment';
 import { REQUEST_STATUS, STATIC_MODULES } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
-import { DropdownList, GetProductiveReportDataResponse, GetDownloadFileDetails  } from 'src/app/core/interfaces/http-response.interface';
+import { DropdownList, GetProductiveReportDataResponse, GetDownloadFileDetails } from 'src/app/core/interfaces/http-response.interface';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-    selector: 'app-productivity-report',
-    templateUrl: './productivity-report.component.html',
-    standalone: false
+  selector: 'app-productivity-report',
+  templateUrl: './productivity-report.component.html',
+  standalone: false,
 })
 export class ProductivityReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   yearList: DropdownList<number, number>[] = [];
   monthList: DropdownList[] = [];
   errorMessages = {
@@ -45,9 +45,9 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.monthList = resp.data.monthList;
-            this.yearList = resp.data.yearList;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.monthList = resp.data.monthList ?? [];
+            this.yearList = resp.data.yearList ?? [];
           }
         })
     );
@@ -71,8 +71,8 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
       );
@@ -80,4 +80,3 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
   }
 
 }
-

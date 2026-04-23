@@ -13,12 +13,12 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ToastrService } from 'src/app/core/services/toastr.service';
 
 @Component({
-    templateUrl: './line-cut-report.component.html',
-    standalone: false
+  templateUrl: './line-cut-report.component.html',
+  standalone: false,
 })
 export class LineCutReportComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   branchOptions: DropdownList[] = [];
   productOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
@@ -63,7 +63,7 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.monthOptions = resp.data.monthList;
             this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
@@ -85,7 +85,7 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
   }
 
   download() {
-    const reportType = this.group.get('reportType').value;
+    const reportType = this.group.get('reportType')?.value;
     if (reportType == '1') {
       if (!this.isDisabled && this.group.valid) {
         this.isDisabled = true;
@@ -100,14 +100,14 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
               })
             )
             .subscribe(resp => {
-              if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
                 Functions.downloadFile(resp.data.filePath, resp.data.fileName);
               }
             })
         );
       }
     } else {
-      if (this.group.get('month').value.length < 2) {
+      if (this.group.get('month')?.value.length < 2) {
         if (!this.isDisabled && this.group.valid) {
           this.isDisabled = true;
           this.loaderService.startLoader();
@@ -121,7 +121,7 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
                 })
               )
               .subscribe(resp => {
-                if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+                if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
                   Functions.downloadFile(resp.data.filePath, resp.data.fileName);
                 }
               })
@@ -148,10 +148,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -176,10 +176,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.productValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -202,10 +202,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -225,10 +225,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
@@ -244,10 +244,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
           }
@@ -259,10 +259,10 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
@@ -286,45 +286,44 @@ export class LineCutReportComponent implements OnDestroy, OnInit {
   // }
 
   get branchValue() {
-    return this.group && this.group.get('branch').value;
+    return this.group && this.group.get('branch')?.value;
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.group.get('branch')?.setValue(value);
   }
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.group.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.group.get('wdMarket').setValue(value);
+    this.group.get('wdMarket')?.setValue(value);
   }
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.group.get('wdPopGroup').setValue(value);
+    this.group.get('wdPopGroup')?.setValue(value);
   }
-  set productValue(value: string) {
+  set productValue(value: string | null) {
     this.productOptions = [];
-    this.group.get('product').setValue(value);
+    this.group.get('product')?.setValue(value);
   }
-
 }
 

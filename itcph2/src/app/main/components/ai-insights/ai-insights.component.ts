@@ -15,16 +15,16 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-    templateUrl: './ai-insights.component.html',
-    styleUrls: ['./ai-insights.component.scss'],
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  templateUrl: './ai-insights.component.html',
+  styleUrls: ['./ai-insights.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  standalone: false,
 })
 export class AiInsightsComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   url = environment.aiInsightsUrl;
-  result: AiInsightsResponse = null;
+  result: AiInsightsResponse | null = null;
   errorMessage = '';
   clarifyingMessage = '';
   clarifyingSuggestions: string[] = [];
@@ -89,14 +89,14 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
   // ── Outlet Visit Frequency charts ──
   showOutletVisitFrequency = false;
   outletVisitFrequencyChart: Array<{ name: string; value: number }> = [];
-  private outletVisitMap: L.Map = null;
+  private outletVisitMap: L.Map | null = null;
 
-  private dsMap: L.Map = null;
-  private heatMap: L.Map = null;
-  private comparisonMap: L.Map = null;
-  private todaySummaryMap: L.Map = null;
-  private hierarchyHeatMap: L.Map = null;
-  private anomalyMap: L.Map = null;
+  private dsMap: L.Map | null = null;
+  private heatMap: L.Map | null = null;
+  private comparisonMap: L.Map | null = null;
+  private todaySummaryMap: L.Map | null = null;
+  private hierarchyHeatMap: L.Map | null = null;
+  private anomalyMap: L.Map | null = null;
   selectedAnomalyKey = '';
 
   // ── Loading state ──
@@ -1714,7 +1714,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
         `<b>${p.branch}</b><br>` +
         `${label} <span style="color:${color};font-weight:600">${p.urgency.charAt(0).toUpperCase() + p.urgency.slice(1)}</span><br>` +
         `${p.anomalyCount} anomal${p.anomalyCount === 1 ? 'y' : 'ies'} detected`
-      ).addTo(this.anomalyMap);
+      ).addTo(this.anomalyMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1748,7 +1748,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
         `<b>${p.name}</b><br>` +
         `DS: ${p.dsName || 'N/A'}<br>` +
         `Visits: <b style="color:${color}">${visits}</b>`
-      ).addTo(this.outletVisitMap);
+      ).addTo(this.outletVisitMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1804,7 +1804,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
     outletPts.forEach(p => {
       L.circleMarker([p.lat, p.lng], { radius: 5, fillColor: '#10b981', color: '#fff', weight: 1.5, fillOpacity: 0.85 })
         .bindPopup(`<b>${p.name}</b><br><small>${p.route}<br>${p.shopType} | ${p.type}</small>`)
-        .addTo(this.dsMap);
+        .addTo(this.dsMap as L.Map);
     });
 
     const routeCoords: L.LatLngExpression[] = [];
@@ -1812,11 +1812,11 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       routeCoords.push([p.lat, p.lng]);
       L.circleMarker([p.lat, p.lng], { radius: 6, fillColor: '#3b82f6', color: '#fff', weight: 2, fillOpacity: 0.9 })
         .bindPopup(`<b>Check-in</b><br>${p.date} ${p.time?.split(' ')[1] || ''}<br><small>${p.route}</small>`)
-        .addTo(this.dsMap);
+        .addTo(this.dsMap as L.Map);
     });
 
     if (routeCoords.length > 1) {
-      L.polyline(routeCoords, { color: '#3b82f6', weight: 2.5, opacity: 0.5, dashArray: '6, 8' }).addTo(this.dsMap);
+      L.polyline(routeCoords, { color: '#3b82f6', weight: 2.5, opacity: 0.5, dashArray: '6, 8' }).addTo(this.dsMap as L.Map);
     }
 
     const allPts = [...attendancePts.map(p => [p.lat, p.lng] as L.LatLngTuple), ...outletPts.map(p => [p.lat, p.lng] as L.LatLngTuple)];
@@ -1844,7 +1844,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const color = intensity > 0.7 ? '#ef4444' : intensity > 0.4 ? '#f59e0b' : intensity > 0.15 ? '#3b82f6' : '#94a3b8';
       L.circleMarker([p.lat, p.lng], { radius, fillColor: color, color: '#fff', weight: 1.5, opacity: 0.9, fillOpacity: 0.7 })
         .bindPopup(`<b>${p.region}</b><br>Sales: ${p.sales.toLocaleString()}<br>DS: ${p.dsCount}<br><small>${p.district} | ${p.circle}</small>`)
-        .addTo(this.heatMap);
+        .addTo(this.heatMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1869,7 +1869,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const color = intensity > 0.7 ? '#ef4444' : intensity > 0.4 ? '#f59e0b' : intensity > 0.15 ? '#3b82f6' : '#94a3b8';
       L.circleMarker([p.lat, p.lng], { radius, fillColor: color, color: '#fff', weight: 1.5, opacity: 0.9, fillOpacity: 0.7 })
         .bindPopup(`<b>${p.region}</b><br>Sales: ${p.sales.toLocaleString()}<br>DS: ${p.dsCount}<br><small>${p.district} | ${p.circle}</small>`)
-        .addTo(this.comparisonMap);
+        .addTo(this.comparisonMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1894,7 +1894,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const color = intensity > 0.7 ? '#ef4444' : intensity > 0.4 ? '#f59e0b' : intensity > 0.15 ? '#3b82f6' : '#94a3b8';
       L.circleMarker([p.lat, p.lng], { radius, fillColor: color, color: '#fff', weight: 1.5, opacity: 0.9, fillOpacity: 0.7 })
         .bindPopup(`<b>${p.region}</b><br>Sales: ${p.sales.toLocaleString()}<br>DS: ${p.dsCount}<br><small>${p.district} | ${p.circle}</small>`)
-        .addTo(this.hierarchyHeatMap);
+        .addTo(this.hierarchyHeatMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1918,7 +1918,7 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const color = intensity > 0.7 ? '#ef4444' : intensity > 0.4 ? '#f59e0b' : intensity > 0.15 ? '#3b82f6' : '#94a3b8';
       L.circleMarker([p.lat, p.lng], { radius, fillColor: color, color: '#fff', weight: 1.5, opacity: 0.9, fillOpacity: 0.7 })
         .bindPopup(`<b>${p.region}</b><br>Sales: ${p.sales?.toLocaleString?.() ?? p.sales}<br>DS: ${p.dsCount ?? ''}<br><small>${p.district ?? ''} | ${p.circle ?? ''}</small>`)
-        .addTo(this.todaySummaryMap);
+        .addTo(this.todaySummaryMap as L.Map);
     });
 
     setTimeout(() => {
@@ -1982,8 +1982,13 @@ export class AiInsightsComponent implements OnInit, OnDestroy {
       const h2Match = !h4Match && !h3Match && processed.match(/^#\s+(.*)$/);
 
       if (h4Match || h3Match || h2Match) {
-        if (inList) { html += '</ul>'; inList = false; }
-        const title = (h4Match || h3Match || h2Match)[1].trim();
+        if (inList) {
+          html += '</ul>'; inList = false;
+        }
+        let title = '';
+        if (h4Match) title = h4Match[1].trim();
+        else if (h3Match) title = h3Match[1].trim();
+        else if (h2Match) title = h2Match[1].trim();
         html += `<div class="ai-section-heading">${title}</div>`;
         continue;
       }

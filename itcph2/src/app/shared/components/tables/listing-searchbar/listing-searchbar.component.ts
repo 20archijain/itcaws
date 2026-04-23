@@ -6,16 +6,16 @@ import { ListingActions, ListingBulkActionOutput } from 'src/app/core/interfaces
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-    selector: 'app-listing-searchbar',
-    templateUrl: './listing-searchbar.component.html',
-    standalone: false
+  selector: 'app-listing-searchbar',
+  templateUrl: './listing-searchbar.component.html',
+  standalone: false,
 })
 export class ListingSearchbarComponent implements OnInit {
   @Output() private onAction = new EventEmitter<ListingBulkActionOutput>();
   limitOptions = LISTING.display;
-  @Input() group: UntypedFormGroup = null;
-  @Input() searchTemplate: TemplateRef<any> = null;
-  @Input() searchGroup: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
+  @Input() searchTemplate?: TemplateRef<any>;
+  @Input() searchGroup!: UntypedFormGroup;
   @Input() showPagination = true;
   @Input() sortOptions: DropdownList[] = [];
   @Input() actions: ListingActions[] = [];

@@ -13,8 +13,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-    templateUrl: './view.client.component.html',
-    standalone: false
+  templateUrl: './view.client.component.html',
+  standalone: false,
 })
 export class ViewClientComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
@@ -22,7 +22,7 @@ export class ViewClientComponent implements OnDestroy, OnInit {
   body: string[] = [];
   url = environment.viewClientsUrl;
   sortOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   editConfig: EditConfig[] = [
     {
       controlName: 'id', label: '', type: CONTROL_CONFIG.REC_ID,
@@ -57,10 +57,10 @@ export class ViewClientComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sortOptions = resp.data.sortOptions;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader ?? [];
+            this.body = resp.data.viewBody ?? [];
           } else {
             this.sortOptions = [];
           }

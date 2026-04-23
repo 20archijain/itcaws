@@ -14,12 +14,12 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 
 @Component({
-    templateUrl: './attendance-tracker.component.html',
-    standalone: false
+  templateUrl: './attendance-tracker.component.html',
+  standalone: false,
 })
 export class AttendanceTrackerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   totalPresent = 0;
   totalTeams = 0;
   images: GalleryImagesList[] = [];
@@ -40,7 +40,7 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     team: COMMON_VALIDATORS.messages.dropdownAllOptional('Team Name'),
     // teamType: COMMON_VALIDATORS.messages.dropdownAllOptional('Team Type'),
   };
-  cgConfig: CustomGalleryConfig;
+  cgConfig: CustomGalleryConfig | null = null;
   deleteUrl = environment.deleteDataUrl;
   isDisabled = false;
   showAsUserCard = false;
@@ -71,20 +71,20 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.showAsUserCard = resp.data.showAsUserCard;
-            this.cgConfig = resp.data.cgConfig;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.showAsUserCard = resp.data.showAsUserCard ?? false;
+            this.cgConfig = resp.data.cgConfig ?? null;
             this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
-            this.circleOptions = resp.data.circleList;
-            this.sectionOptions = resp.data.sectionList;
-            this.wdCodeOptions = resp.data.wdCodeList;
-            this.monthList = resp.data.monthList;
-            this.yearList = resp.data.yearList;
-            this.teamOptions = resp.data.teamList;
-            this.teamTypeOptions = resp.data.teamType;
-            this.attendanceTimeOptions = resp.data.attendanceTimeList;
-            this.branchFilter = resp.data.branchFilter
+            this.circleOptions = resp.data.circleList ?? [];
+            this.sectionOptions = resp.data.sectionList ?? [];
+            this.wdCodeOptions = resp.data.wdCodeList ?? [];
+            this.monthList = resp.data.monthList ?? [];
+            this.yearList = resp.data.yearList ?? [];
+            this.teamOptions = resp.data.teamList ?? [];
+            this.teamTypeOptions = resp.data.teamType ?? [];
+            this.attendanceTimeOptions = resp.data.attendanceTimeList ?? [];
+            this.branchFilter = resp.data.branchFilter ?? false;
           }
         })
     );
@@ -111,7 +111,7 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               this.totalPresent = resp.data.totalPresent;
               this.totalTeams = resp.data.totalTeams;
               this.images = resp.data.images;
@@ -135,7 +135,7 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.createCSV(resp.data);
             }
           })
@@ -152,10 +152,10 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, environment.getAttendanceDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -175,11 +175,11 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value },
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value },
         null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -197,11 +197,11 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value },
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value },
         null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -217,11 +217,11 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value },
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value },
         null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
@@ -235,11 +235,11 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value },
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value },
         null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
           }
@@ -251,49 +251,44 @@ export class AttendanceTrackerComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, teamType: this.group.get('teamType').value },
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, teamType: this.group.get('teamType')?.value },
         null, environment.getAttendanceDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
     );
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.group.get('branch')?.setValue(value);
   }
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('teamType').setValue(value);
+    this.group.get('teamType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
 
-  set teamTypeValue(value: string) {
+  set teamTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('teamType').setValue(value);
+    this.group.get('teamType')?.setValue(value);
   }
-
-  // set teamValue(value: string[]) {
-  //   this.teamOptions = [];
-  //   this.group.get('team').setValue(value);
-  // }
 }

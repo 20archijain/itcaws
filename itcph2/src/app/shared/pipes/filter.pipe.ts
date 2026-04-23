@@ -2,12 +2,12 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { filter } from 'ramda';
 
 @Pipe({
-    name: 'filter',
-    standalone: false
+  name: 'filter',
+  standalone: false,
 })
 export class FilterPipe implements PipeTransform {
 
-  private getValues(object: any, allValues = []) {
+  private getValues(object: any, allValues: any[] = []) {
     if (object && typeof object === 'object') {
       // if array
       if (Array.isArray(object) && object.length > 0) {

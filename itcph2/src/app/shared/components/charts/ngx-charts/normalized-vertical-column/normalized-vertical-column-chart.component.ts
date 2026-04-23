@@ -4,10 +4,11 @@ import { Color } from '@swimlane/ngx-charts';
 import { LineChartComponent } from '../line/line-chart.component';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { ChartColorSchemeNames } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-    selector: 'app-normalized-vertical-column-chart',
-    template: `
+  selector: 'app-normalized-vertical-column-chart',
+  template: `
   <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
   <div [ngStyle]="style">
     <ngx-charts-bar-vertical-normalized
@@ -45,12 +46,12 @@ import { Functions } from 'src/app/core/utils/functions.list';
     </ngx-charts-bar-vertical-normalized>
   </div>
   `,
-    standalone: false
+  standalone: false,
 })
 export class NormalizedVerticalColumnChartComponent extends LineChartComponent implements OnChanges {
-  view = undefined;
+  view: [number, number] | undefined = undefined;
   @Input() height = CHART_DEFAULTS.HEIGHT;
-  @Input() graphMaxHeight: number;
+  @Input() graphMaxHeight?: number;
   @Input() data = [];
   @Input() scheme = null;
   @Input() customColors = [];
@@ -73,7 +74,7 @@ export class NormalizedVerticalColumnChartComponent extends LineChartComponent i
   @Input() barPadding = 8;
   @Input() tooltipDisabled = false;
   style: any;
-  themeScheme: string | Color = null;
+  themeScheme: string | Color | null = null;
   xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
   yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
@@ -85,7 +86,8 @@ export class NormalizedVerticalColumnChartComponent extends LineChartComponent i
       };
     }
 
-    this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
+    const colorScheme = this.scheme || CHART_DEFAULTS.DEFAULT_THEME as ChartColorSchemeNames;
+    this.themeScheme = Functions.getChartColorsScheme()[colorScheme];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
       (this.themeScheme as Color).domain = this.customColors;

@@ -5,8 +5,8 @@ import { curveMonotoneX } from 'd3-shape'; // Import the curve function from d3-
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
-    selector: 'app-line-chart',
-    template: `
+  selector: 'app-line-chart',
+  template: `
     <h4 class="chart-title mt-4" style="text-align: center;">{{ heading }}</h4>
     <div [ngStyle]="{height: '225px'}">
       <ngx-charts-line-chart
@@ -27,20 +27,20 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
       </ngx-charts-line-chart>
     </div>
   `,
-    styles: [`
+  styles: [`
     ngx-charts-line-chart {
       display: block;
       width: 100%;
     }
   `],
-    standalone: false
+  standalone: false,
 })
 export class LineChartComponent {
   @Input() lineChartData: any[] = []; // Holds the transformed chart data
-  @Input() xAxisLabel: string; // Set to 'Date'
-  @Input() yAxisLabel: string;
-  @Input() heading: string;
-  @Input() width: number;
+  @Input() xAxisLabel?: string; // Set to 'Date'
+  @Input() yAxisLabel?: string;
+  @Input() heading?: string;
+  @Input() width?: number;
   legendPosition: LegendPosition = CHART_DEFAULTS.LEGEND_POSITION;
 
   // Import curveMonotoneX and apply it in the chart via the [curve] binding

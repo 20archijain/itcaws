@@ -18,16 +18,16 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
 
 @Component({
-    templateUrl: './mdo-route-upload.component.html',
-    standalone: false
+  templateUrl: './mdo-route-upload.component.html',
+  standalone: false,
 })
 export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
-  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;
+  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent!: FileUploadComponent;
   private subscription: Subscription[] = [];
-  private excelFile: File = null;
+  private excelFile: File | null | undefined = null;
   isDisabled = false;
-  form: UntypedFormGroup;
-  excelData: RouteDataUploadExcelData = null;
+  form!: UntypedFormGroup;
+  excelData: RouteDataUploadExcelData | null = null;
   excelHeader: string[] = [];
   tableColumns: string[] = [];
   excel = UPLOAD_FILES.fileTypes.excel.mimeTypes.join(',');
@@ -38,7 +38,11 @@ export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
   atleastOneColumnError = 'app.routeData.atleastOneColumnError';
   duplicateColumnError = 'app.routeData.duplicateColumnError';
   noHeaderFoundError = 'app.routeData.noHeaderFoundError';
-  columnErrors = [this.atleastOneColumnError, this.duplicateColumnError, this.noHeaderFoundError];
+  columnErrors = {
+    [this.atleastOneColumnError]: this.atleastOneColumnError,
+    [this.duplicateColumnError]: this.duplicateColumnError,
+    [this.noHeaderFoundError]: this.noHeaderFoundError
+  };
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService,
     private canGoBackGuard: CanGoBackGuard, private toast: ToastrService, private loaderService: LoaderService,
@@ -51,7 +55,7 @@ export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
     });
 
     this.subscription.push(
-      this.translate.get(this.columnErrors)
+      this.translate.get(Object.keys(this.columnErrors))
         .subscribe(translatedMsg => {
           this.columnErrors = translatedMsg;
         })
@@ -106,7 +110,7 @@ export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               this.excelHeader = this.filterNullAndEmpty(resp.data.excelHeader);
               this.tableColumns = resp.data.tableColumns;
               this.excelData = resp.data.excelData;
@@ -139,15 +143,15 @@ export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
   }
 
   addData() {
-    if (this.form.get('columns').valid && !this.isDisabled) {
+    if (this.form.get('columns')?.valid && !this.isDisabled) {
       this.confirmationModalService.show('modal.confirmation.add');
-    } else if (this.form.get('columns').hasError(CUSTOM_VALIDATOR_KEYS.ATLEAST_ONE_VALUE_REQUIRED)) {
+    } else if (this.form.get('columns')?.hasError(CUSTOM_VALIDATOR_KEYS.ATLEAST_ONE_VALUE_REQUIRED)) {
       this.toast.toastr({ type: 'error', msg: this.columnErrors[this.atleastOneColumnError] });
     }
   }
 
   confirmAddData() {
-    const columnNames = this.form.get('columns').value;
+    const columnNames = this.form.get('columns')?.value;
 
     const errorMessage = this.getDuplicateErrorMessage(columnNames);
     if (errorMessage) {
@@ -179,7 +183,7 @@ export class MDORouteDataUploadComponent implements OnInit, OnDestroy {
   }
 
   getDuplicateErrorMessage(columnNames: string[]) {
-    const seen = {};
+    const seen: any = {};
 
     for (let i = 0; i < Object.values(columnNames).length; i++) {
       const item = Object.values(columnNames)[i];

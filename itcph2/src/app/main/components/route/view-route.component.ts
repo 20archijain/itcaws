@@ -12,8 +12,8 @@ import { REQUEST_STATUS, STATIC_MODULES, CONTROL_CONFIG } from 'src/app/app.cons
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-    templateUrl: './view-route.component.html',
-    standalone: false
+  templateUrl: './view-route.component.html',
+  standalone: false,
 })
 export class ViewRouteComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
@@ -27,8 +27,8 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   routeOptions: DropdownList[] = [];
   statusOptions: DropdownList[] = [];
   editRouteOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
-  editRouteForm: UntypedFormGroup;
+  form!: UntypedFormGroup;
+  editRouteForm!: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
   deleteCondition: [string, number] = ['dstatus', 0];
@@ -70,14 +70,14 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions ?? [];
             this.branchOptions = resp.data.branchList;
             this.teamOptions = resp.data.teamList;
             this.routeOptions = resp.data.routeList;
             this.statusOptions = resp.data.statusList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader ?? [];
+            this.body = resp.data.viewBody ?? [];
 
             this.editConfig = [
               {
@@ -118,20 +118,20 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   }
 
   getTeamNames() {
-    this.form.get("team").setValue("");
+    this.form.get("team")?.setValue("");
     this.teamOptions = [];
     this.loaderService.startLoader();
     this.subscription.push(
       this.formService
         .customActionCall<teams>(
           STATIC_MODULES.custom.getTeamsList,
-          { branch: this.form.get("branch").value },
+          { branch: this.form.get("branch")?.value },
           null,
           this.url
         )
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
@@ -139,20 +139,20 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   }
 
   getRouteNames() {
-    this.form.get("routeName").setValue("");
+    this.form.get("routeName")?.setValue("");
     this.routeOptions = [];
     this.loaderService.startLoader();
     this.subscription.push(
       this.formService
         .customActionCall<teams>(
           STATIC_MODULES.custom.getRouteList,
-          { team: this.form.get("team").value },
+          { team: this.form.get("team")?.value },
           null,
           this.url
         )
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.routeOptions = resp.data.routeList;
           }
         })
@@ -160,9 +160,9 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
   }
 
   getRouteNamesForModal() {
-    this.editRouteForm.get("routeName").setValue(null);
+    this.editRouteForm.get("routeName")?.setValue(null);
     this.editRouteOptions = [];
-    const teamValue = this.editRouteForm.get("teamName").value;
+    const teamValue = this.editRouteForm.get("teamName")?.value;
 
     if (!teamValue) {
       return;
@@ -179,7 +179,7 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
         )
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.editRouteOptions = resp.data.routeList;
           }
         })
@@ -221,19 +221,19 @@ export class ViewRouteComponent implements OnInit, OnDestroy {
           null,
           this.url
         )
-        .pipe(finalize(() => this.loaderService.stopLoader()))
-        .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.closeEditRouteModal();
-            this.getInitialData();
-          }
-        })
+          .pipe(finalize(() => this.loaderService.stopLoader()))
+          .subscribe((resp) => {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+              this.closeEditRouteModal();
+              this.getInitialData();
+            }
+          })
       );
 
       this.closeEditRouteModal();
     } else {
       Object.keys(this.editRouteForm.controls).forEach(key => {
-        this.editRouteForm.get(key).markAsTouched();
+        this.editRouteForm.get(key)?.markAsTouched();
       });
     }
   }

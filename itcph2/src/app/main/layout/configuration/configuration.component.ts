@@ -3,26 +3,30 @@ import { Location } from '@angular/common';
 
 import { NextConfig } from 'src/app/app-config';
 
+type ThemeLayoutType = 'menu-light' | 'dark' | 'menu-dark' | 'reset';
+type ThemeHeaderBackColor = 'header-default' | 'header-blue' | 'header-red' | 'header-purple' | 'header-info' | 'header-dark';
+type ThemeNavBrandColor = 'brand-default' | 'brand-blue' | 'brand-red' | 'brand-purple' | 'brand-info' | 'brand-dark';
+
 @Component({
-    encapsulation: ViewEncapsulation.None,
-    selector: 'app-configuration',
-    styleUrls: ['./configuration.component.scss'],
-    template: ``,
-    standalone: false
+  encapsulation: ViewEncapsulation.None,
+  selector: 'app-configuration',
+  styleUrls: ['./configuration.component.scss'],
+  template: ``,
+  standalone: false,
 })
 export class ConfigurationComponent implements OnInit {
-  public layoutType: string; // layout type
+  public layoutType!: ThemeLayoutType; // layout type
   public rtlLayout: any; // rtl type
   public menuFixedLayout: any; // menu/navbar fixed flag
   public headerFixedLayout: any; // header fixed flag
   public boxLayout: any; // box layout flag
-  public headerBackgroundColor: string; // header background color
-  public brandBackgroundColor: string; // brand/logo background color
+  public headerBackgroundColor!: ThemeHeaderBackColor; // header background color
+  public brandBackgroundColor!: ThemeNavBrandColor; // brand/logo background color
 
-  public headerBackColor: string;
+  // public headerBackColor: string;
 
-  public nextConfig: any;
-  public isConfig: boolean;
+  public nextConfig: typeof NextConfig.config;
+  // public isConfig: boolean;
 
   constructor(private location: Location) {
     this.nextConfig = NextConfig.config;
@@ -31,11 +35,11 @@ export class ConfigurationComponent implements OnInit {
 
   ngOnInit() {
     setTimeout(() => {
-      this.layoutType = this.nextConfig.layoutType;
+      this.layoutType = this.nextConfig.layoutType as ThemeLayoutType;
       this.setLayout(this.layoutType);
 
-      this.headerBackgroundColor = this.nextConfig.headerBackColor;
-      this.brandBackgroundColor = this.nextConfig.navBrandColor;
+      this.headerBackgroundColor = this.nextConfig.headerBackColor as ThemeHeaderBackColor;
+      this.brandBackgroundColor = this.nextConfig.navBrandColor as ThemeNavBrandColor;
 
       this.setHeaderBackground(this.headerBackgroundColor);
       this.setBrandBackground(this.brandBackgroundColor);
@@ -73,14 +77,14 @@ export class ConfigurationComponent implements OnInit {
           el.style.marginTop = '60px';
         }
       }
-    } else if (document.querySelector('.pcoded-navbar') && document.querySelector('.pcoded-navbar').hasAttribute('style')) {
-      document.querySelector('.pcoded-navbar.menupos-fixed').removeAttribute('style');
+    } else if (document.querySelector('.pcoded-navbar') && document.querySelector('.pcoded-navbar')?.hasAttribute('style')) {
+      document.querySelector('.pcoded-navbar.menupos-fixed')?.removeAttribute('style');
     }
   }
 
   setThemeLayout() {
     let currentURL = this.location.path();
-    const baseHref = this.location['_baseHref'];
+    const baseHref = (this.location as any)['_baseHref'];
     if (baseHref) {
       currentURL = baseHref + this.location.path();
     }
@@ -156,40 +160,40 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  setHeaderBackColor(color) {
-    this.headerBackColor = color;
-    (document.querySelector('body') as HTMLElement).style.background = color;
-  }
+  // setHeaderBackColor(color) {
+  //   this.headerBackColor = color;
+  //   (document.querySelector('body') as HTMLElement).style.background = color;
+  // }
 
   // change main layout
-  setLayout(layout) {
-    this.isConfig = true;
-    this.setBrandBackground(this.nextConfig.navBrandColor);
+  setLayout(layout: ThemeLayoutType) {
+    // this.isConfig = true;
+    this.setBrandBackground(this.nextConfig.navBrandColor as ThemeNavBrandColor);
     if (document.querySelector('.pcoded-navbar')) {
-      document.querySelector('.pcoded-navbar').classList.remove('menu-light');
-      document.querySelector('.pcoded-navbar').classList.remove('menu-dark');
-      document.querySelector('.pcoded-navbar').classList.remove('navbar-dark');
-      document.querySelector('.pcoded-navbar').classList.remove('brand-dark');
+      document.querySelector('.pcoded-navbar')?.classList.remove('menu-light');
+      document.querySelector('.pcoded-navbar')?.classList.remove('menu-dark');
+      document.querySelector('.pcoded-navbar')?.classList.remove('navbar-dark');
+      document.querySelector('.pcoded-navbar')?.classList.remove('brand-dark');
     }
-    document.querySelector('body').classList.remove('next-dark');
+    document.querySelector('body')?.classList.remove('next-dark');
 
     this.layoutType = layout;
     if (layout === 'menu-light') {
       this.setBrandBackground(this.brandBackgroundColor);
       if (document.querySelector('.pcoded-navbar')) {
-        document.querySelector('.pcoded-navbar').classList.add(layout);
+        document.querySelector('.pcoded-navbar')?.classList.add(layout);
       }
     }
     if (layout === 'dark') {
       if (document.querySelector('.pcoded-navbar')) {
-        document.querySelector('.pcoded-navbar').classList.add('navbar-dark');
-        document.querySelector('.pcoded-navbar').classList.add('brand-dark');
+        document.querySelector('.pcoded-navbar')?.classList.add('navbar-dark');
+        document.querySelector('.pcoded-navbar')?.classList.add('brand-dark');
       }
 
       this.setBrandBackground('brand-blue');
       this.setHeaderBackground('header-blue');
 
-      document.querySelector('body').classList.add('next-dark');
+      document.querySelector('body')?.classList.add('next-dark');
     }
     if (layout === 'reset') {
       this.reset();
@@ -198,35 +202,35 @@ export class ConfigurationComponent implements OnInit {
 
   reset() {
     if (document.querySelector('.pcoded-navbar')) {
-      document.querySelector('.pcoded-navbar').classList.remove('icon-colored');
+      document.querySelector('.pcoded-navbar')?.classList.remove('icon-colored');
     }
     this.ngOnInit();
   }
 
-  setRtlLayout(e) {
+  setRtlLayout(e: any) {
     const flag = !!(e.target.checked);
     this.changeRtlLayout(flag);
   }
 
-  changeRtlLayout(flag) {
+  changeRtlLayout(flag: boolean) {
     if (flag) {
-      document.querySelector('body').classList.add('next-rtl');
+      document.querySelector('body')?.classList.add('next-rtl');
     } else {
-      document.querySelector('body').classList.remove('next-rtl');
+      document.querySelector('body')?.classList.remove('next-rtl');
     }
   }
 
-  setMenuFixedLayout(e) {
+  setMenuFixedLayout(e: any) {
     const flag = !!(e.target.checked);
     this.changeMenuFixedLayout(flag);
   }
 
-  changeMenuFixedLayout(flag) {
+  changeMenuFixedLayout(flag: boolean) {
     setTimeout(() => {
       if (flag) {
         if (document.querySelector('.pcoded-navbar')) {
-          document.querySelector('.pcoded-navbar').classList.remove('menupos-static');
-          document.querySelector('.pcoded-navbar').classList.add('menupos-fixed');
+          document.querySelector('.pcoded-navbar')?.classList.remove('menupos-static');
+          document.querySelector('.pcoded-navbar')?.classList.add('menupos-fixed');
         }
         if (this.nextConfig.layout === 'vertical' && document.querySelector('#nav-ps-next')) {
           (document.querySelector('#nav-ps-next') as HTMLElement).style.maxHeight = 'calc(100vh - 60px)'; // calc(100vh - 70px) amit
@@ -235,8 +239,8 @@ export class ConfigurationComponent implements OnInit {
         window.scrollTo(0, 0);
       } else {
         if (document.querySelector('.pcoded-navbar')) {
-          document.querySelector('.pcoded-navbar').classList.add('menupos-static');
-          document.querySelector('.pcoded-navbar').classList.remove('menupos-fixed');
+          document.querySelector('.pcoded-navbar')?.classList.add('menupos-static');
+          document.querySelector('.pcoded-navbar')?.classList.remove('menupos-fixed');
         }
         if (this.nextConfig.layout === 'vertical' && document.querySelector('#nav-ps-next')) {
           (document.querySelector('#nav-ps-next') as HTMLElement).style.maxHeight = 'calc(100%)'; // calc(100% - 70px) amit
@@ -249,19 +253,19 @@ export class ConfigurationComponent implements OnInit {
     }, 100);
   }
 
-  setHeaderFixedLayout(e) {
+  setHeaderFixedLayout(e: any) {
     const flag = !!(e.target.checked);
     this.changeHeaderFixedLayout(flag);
   }
 
-  changeHeaderFixedLayout(flag) {
+  changeHeaderFixedLayout(flag: boolean) {
     if (flag) {
       if (document.querySelector('.pcoded-header')) {
-        document.querySelector('.pcoded-header').classList.add('headerpos-fixed');
+        document.querySelector('.pcoded-header')?.classList.add('headerpos-fixed');
       }
     } else {
       if (document.querySelector('.pcoded-header')) {
-        document.querySelector('.pcoded-header').classList.remove('headerpos-fixed');
+        document.querySelector('.pcoded-header')?.classList.remove('headerpos-fixed');
       }
       // static
       if (this.nextConfig.layout === 'vertical' && this.menuFixedLayout) {
@@ -273,48 +277,48 @@ export class ConfigurationComponent implements OnInit {
     }
   }
 
-  setBoxLayout(e) {
+  setBoxLayout(e: any) {
     const flag = !!(e.target.checked);
     this.changeBoxLayout(flag);
   }
 
-  changeBoxLayout(flag) {
+  changeBoxLayout(flag: boolean) {
     if (flag) {
-      document.querySelector('body').classList.add('container');
-      document.querySelector('body').classList.add('box-layout');
+      document.querySelector('body')?.classList.add('container');
+      document.querySelector('body')?.classList.add('box-layout');
     } else {
-      document.querySelector('body').classList.remove('box-layout');
-      document.querySelector('body').classList.remove('container');
+      document.querySelector('body')?.classList.remove('box-layout');
+      document.querySelector('body')?.classList.remove('container');
     }
   }
 
-  setHeaderBackground(background) {
+  setHeaderBackground(background: ThemeHeaderBackColor) {
     this.headerBackgroundColor = background;
     this.nextConfig.headerBackColor = background;
     if (document.querySelector('.pcoded-header')) {
-      document.querySelector('.pcoded-header').classList.remove('header-blue');
-      document.querySelector('.pcoded-header').classList.remove('header-red');
-      document.querySelector('.pcoded-header').classList.remove('header-purple');
-      document.querySelector('.pcoded-header').classList.remove('header-info');
-      document.querySelector('.pcoded-header').classList.remove('header-dark');
+      document.querySelector('.pcoded-header')?.classList.remove('header-blue');
+      document.querySelector('.pcoded-header')?.classList.remove('header-red');
+      document.querySelector('.pcoded-header')?.classList.remove('header-purple');
+      document.querySelector('.pcoded-header')?.classList.remove('header-info');
+      document.querySelector('.pcoded-header')?.classList.remove('header-dark');
 
       if (background !== 'header-default' && document.querySelector('.pcoded-header')) {
-        document.querySelector('.pcoded-header').classList.add(background);
+        document.querySelector('.pcoded-header')?.classList.add(background);
       }
     }
   }
 
-  setBrandBackground(background) {
+  setBrandBackground(background: ThemeNavBrandColor) {
     this.brandBackgroundColor = background;
     this.nextConfig.navBrandColor = background;
     if (document.querySelector('.pcoded-header')) {
-      document.querySelector('.pcoded-header').classList.remove('brand-blue');
-      document.querySelector('.pcoded-header').classList.remove('brand-red');
-      document.querySelector('.pcoded-header').classList.remove('brand-purple');
-      document.querySelector('.pcoded-header').classList.remove('brand-info');
-      document.querySelector('.pcoded-header').classList.remove('brand-dark');
-      document.querySelector('.pcoded-header').classList.remove('brand-default');
-      document.querySelector('.pcoded-header').classList.add(background);
+      document.querySelector('.pcoded-header')?.classList.remove('brand-blue');
+      document.querySelector('.pcoded-header')?.classList.remove('brand-red');
+      document.querySelector('.pcoded-header')?.classList.remove('brand-purple');
+      document.querySelector('.pcoded-header')?.classList.remove('brand-info');
+      document.querySelector('.pcoded-header')?.classList.remove('brand-dark');
+      document.querySelector('.pcoded-header')?.classList.remove('brand-default');
+      document.querySelector('.pcoded-header')?.classList.add(background);
     }
   }
 

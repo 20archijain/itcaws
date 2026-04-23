@@ -14,13 +14,13 @@ import { CsvDataFormat } from 'src/app/core/interfaces/helpers.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    templateUrl: './route-data-download.component.html',
-    styleUrls: ["./route-data.component.scss"],
-    standalone: false
+  templateUrl: './route-data-download.component.html',
+  styleUrls: ["./route-data.component.scss"],
+  standalone: false,
 })
 export class RouteDataDownloadComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   columnSize = 12;
@@ -77,19 +77,19 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.branchOptions = resp.data.branchList;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.branchOptions = resp.data.branchList ?? [];
             this.yearList = resp.data.yearList;
-            this.monthList = resp.data.monthList;
-            this.branchFilter = resp.data.branchFilter
-            this.circleOptions = resp.data.circleList;
-            this.sectionOptions = resp.data.sectionList;
-            this.wdCodeOptions = resp.data.wdCodeList;
-            this.teamTypeOptions = resp.data.teamType;
-            this.teamOptions = resp.data.teamList;
-            this.districtOptions = resp.data.districtList;
-            this.wdMarketOptions = resp.data.wdMarketList;
-            this.wdPopGroupOptions = resp.data.wdPopGroupList;
+            this.monthList = resp.data.monthList ?? [];
+            this.branchFilter = resp.data.branchFilter ?? false;
+            this.circleOptions = resp.data.circleList ?? [];
+            this.sectionOptions = resp.data.sectionList ?? [];
+            this.wdCodeOptions = resp.data.wdCodeList ?? [];
+            this.teamTypeOptions = resp.data.teamType ?? [];
+            this.teamOptions = resp.data.teamList ?? [];
+            this.districtOptions = resp.data.districtList ?? [];
+            this.wdMarketOptions = resp.data.wdMarketList ?? [];
+            this.wdPopGroupOptions = resp.data.wdPopGroupList ?? [];
           }
         })
     );
@@ -110,7 +110,7 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               if ((resp?.data as GetDownloadFileDetails)?.filePath) {
                 Functions.downloadFile((resp.data as GetDownloadFileDetails).filePath, resp.data.fileName);
               } else {
@@ -133,10 +133,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -160,10 +160,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -185,10 +185,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -208,10 +208,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
@@ -227,10 +227,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
           }
@@ -242,10 +242,10 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
@@ -253,39 +253,39 @@ export class RouteDataDownloadComponent implements OnDestroy, OnInit {
   }
 
   get branchValue() {
-    return this.group && this.group.get('branch').value;
+    return this.group && this.group.get('branch')?.value;
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.group.get('branch')?.setValue(value);
   }
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.group.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.group.get('wdMarket').setValue(value);
+    this.group.get('wdMarket')?.setValue(value);
   }
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.group.get('wdPopGroup').setValue(value);
+    this.group.get('wdPopGroup')?.setValue(value);
   }
 }

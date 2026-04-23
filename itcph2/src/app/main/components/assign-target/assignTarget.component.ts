@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { ToastrService } from "src/app/core/services/toastr.service";
 import { REQUEST_STATUS } from 'src/app/app.constants';
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
-import { ReadyStockPickupResponse, StockProduct } from 'src/app/core/interfaces/http-response.interface';
+import { DropdownList, ReadyStockPickupResponse, StockProduct } from 'src/app/core/interfaces/http-response.interface';
 import { ConfirmationModalService } from 'src/app/core/services/confirmation-modal.service';
 import { FormService } from 'src/app/core/services/form.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
@@ -16,13 +16,13 @@ import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 import { environment } from 'src/environments/environment';
 
 @Component({
-    templateUrl: './assignTarget.component.html',
-    styleUrls: ['./assignTarget.component.scss'],
-    standalone: false
+  templateUrl: './assignTarget.component.html',
+  styleUrls: ['./assignTarget.component.scss'],
+  standalone: false,
 })
 export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   tabCondition = false;
   stockProductsList: StockProduct[] = [];
   previousMonth = Functions.previousMonth();
@@ -44,7 +44,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   //   { label: 'November', value: '11' },
   //   { label: 'December', value: '12' }
   // ];
-  teamsList = [];
+  teamsList: DropdownList[] = [];
   errorMessages = {
     qty: COMMON_VALIDATORS.messages.zeroAndFloatQtyStock,
   };
@@ -52,16 +52,16 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   rowClasses: { [key: string]: string } = {};
   currentColorIndex = 0;
   colors = ['bg-light-gray', 'bg-white'];
-  previousMonthProduct1: string;
-  previousMonthProduct2: string;
-  nextMonthProduct1: string;
-  nextMonthProduct2: string;
-  product1: string;
-  product2: string;
+  previousMonthProduct1 = '';
+  previousMonthProduct2 = '';
+  nextMonthProduct1 = '';
+  nextMonthProduct2 = '';
+  product1 = '';
+  product2 = '';
   tableColumnCondition = false;
   showMonth = "";
   enableTargetFiled = false;
-  loopWithoutTeam: number;
+  loopWithoutTeam = 0;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private toastrService: ToastrService, private confirmationModalService: ConfirmationModalService) { }
@@ -116,15 +116,15 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
           })
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.stockProductsList = resp.data.stockProductsList;
             this.teamsList = resp.data.teamsList;
-            this.previousMonthProduct1 = resp.data.previousMonthProduct1;
-            this.previousMonthProduct2 = resp.data.previousMonthProduct2;
-            this.nextMonthProduct1 = resp.data.nextMonthProduct1;
-            this.nextMonthProduct2 = resp.data.nextMonthProduct2;
-            this.product1 = resp.data.product1;
-            this.product2 = resp.data.product2;
+            this.previousMonthProduct1 = resp.data.previousMonthProduct1 || '';
+            this.previousMonthProduct2 = resp.data.previousMonthProduct2 || '';
+            this.nextMonthProduct1 = resp.data.nextMonthProduct1 || '';
+            this.nextMonthProduct2 = resp.data.nextMonthProduct2 || '';
+            this.product1 = resp.data.product1 || '';
+            this.product2 = resp.data.product2 || '';
 
             if (this.teamsList.length > 0) {
               if (this.stockProductsList.length > 0) {
@@ -153,12 +153,12 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
   }
 
   get numbers() {
-  return Array.from({ length: this.stockProductsList.length }, (_, i) => i + 1);
-}
+    return Array.from({ length: this.stockProductsList.length }, (_, i) => i + 1);
+  }
 
 
   getButtonCondition(): boolean {
-    if (this.group.get('monthCheck').value === 2) {
+    if (this.group.get('monthCheck')?.value === 2) {
       if (this.currentDate['day'] > 21 || this.currentDate['day'] < 13) {
         return true;
       } else {
@@ -177,36 +177,35 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
     if (this.currentDate['day'] > 21) {
       this.tableColumnCondition = true;
       this.showMonth = this.nextMonth;
-      this.group.get('monthCheck').setValue(2);
+      this.group.get('monthCheck')?.setValue(2);
       this.enableTargetFiled = true;
     } else if (this.currentDate['day'] < 13) {
       this.tableColumnCondition = false;
       this.showMonth = this.currentMonth;
-      this.group.get('monthCheck').setValue(null);
+      this.group.get('monthCheck')?.setValue(null);
       this.enableTargetFiled = true;
     } else {
       this.tableColumnCondition = false;
       this.showMonth = this.currentMonth;
-      this.group.get('monthCheck').setValue(null);
+      this.group.get('monthCheck')?.setValue(null);
       this.enableTargetFiled = false;
     }
   }
 
   onTypeChange(monthCheck: number) {
     if (monthCheck === 2) {
-      this.group.get('monthCheck').setValue(monthCheck);
+      this.group.get('monthCheck')?.setValue(monthCheck);
     } else {
-      this.group.get('monthCheck').setValue(null);
+      this.group.get('monthCheck')?.setValue(null);
     }
     this.resetDynamicForm();
     this.initialData();
   }
 
   createDynamicGroup() {
-
     if (!Functions.isEmptyArray(this.teamsList)) {
       this.stockProductsList.forEach(product => {
-        const controls = [];
+        const controls: Record<string, [string, any]> = {};
         this.teamsList.forEach(team => {
           controls[`qty-${team.value}-${product.value}`] = ["", COMMON_VALIDATORS.validators.zeroAndFloatQtyMax3Stock];
         });
@@ -267,7 +266,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
   getTeamTotalQty(teamId: string): number {
     let sum = 0;
-    if (this.stockProductsList?.length && this.group.get('qty') && this.group.get('qty')["controls"]) {
+    if (this.stockProductsList?.length && this.group.get('qty') && (this.group.get('qty') as UntypedFormArray).controls) {
       this.stockProductsList.forEach((product, productIndex) => {
         const qty = (this.group.get('qty') as UntypedFormArray).controls[productIndex]?.get(`qty-${teamId}-${product.value}`)?.value;
         sum += +qty;

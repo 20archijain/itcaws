@@ -1,10 +1,10 @@
-import { LegendPosition } from "@swimlane/ngx-charts";
+import { Color, LegendPosition } from "@swimlane/ngx-charts";
 
 export type ChartColorSchemeNames = 'VIVID' | 'NATURAL' | 'COOL' | 'FIRE' | 'SOLAR' | 'AIR' |
   'AQUA' | 'FLAME' | 'OCEAN' | 'FOREST' | 'HORIZON' | 'NEONS' | 'PICNIC' | 'NIGHT' | 'NIGHTLIGHTS';
 
 export type ThemeMap = {
-  [key in ChartColorSchemeNames]: ThemeDomainColorList;
+  [key in ChartColorSchemeNames]: Color;
 };
 
 export interface HttpRequestParamsModuleInfo {
@@ -85,6 +85,13 @@ export interface AsideItem {
   name: string;
   pmodc?: string;
   submodules?: AsideItem[];
+}
+
+export interface Breadcrumb {
+  title: string;
+  url: string | boolean;
+  breadcrumbs: boolean;
+  type: string;
 }
 
 export interface MapConfig {
@@ -206,10 +213,6 @@ export interface StatisticsConfig extends ServerStatisticsConfig {
   advancedPieChartTotalLabel?: string;
   apexColors?: string[];
   apexChartID?: string;
-}
-
-export interface ThemeDomainColorList {
-  domain: string[];
 }
 
 export interface EditData {

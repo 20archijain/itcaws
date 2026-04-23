@@ -4,9 +4,9 @@ import { MapConfig } from 'src/app/core/interfaces/common.interface';
 import { MAP_DEFAULTS, mapPath } from 'src/app/app.constants';
 
 @Component({
-    selector: 'app-area-map',
-    templateUrl: './area-map.component.html',
-    standalone: false
+  selector: 'app-area-map',
+  templateUrl: './area-map.component.html',
+  standalone: false,
 })
 export class AreaMapComponent implements OnChanges {
   @Input() markers: MapConfig[] = [];
@@ -20,7 +20,7 @@ export class AreaMapComponent implements OnChanges {
   @Input() betweenMarkerUrl = `${mapPath}${MAP_DEFAULTS.icons.BETWEEN}`;
   @Input() lastMarkerUrl = `${mapPath}${MAP_DEFAULTS.icons.END}`;
   paths: google.maps.LatLngLiteral[] = [];
-  center: google.maps.LatLngLiteral;
+  center!: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     zoomControl: true,
     scrollwheel: true,

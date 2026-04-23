@@ -34,7 +34,7 @@ export class HttpService {
     } as HttpRequestPayload;
   }
 
-  private makeRequest<T>(url: string, formData: FormData | HttpRequestPayload, headers: HttpHeaders): Observable<HttpRequestResponse<T>> {
+  private makeRequest<T>(url: string | undefined, formData: FormData | HttpRequestPayload, headers: HttpHeaders): Observable<HttpRequestResponse<T>> {
     if (environment.production) {
       return this.http.post<HttpRequestResponse<T>>(environment.apiUrl, formData, { headers });
     }
@@ -54,7 +54,7 @@ export class HttpService {
     return headers;
   }
 
-  request<T>(url: string, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
+  request<T>(url: string | undefined, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
     const requestPayload = this.createRequestPayload(params);
     const headers = this.getHeaders();
 

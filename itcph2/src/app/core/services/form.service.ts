@@ -134,7 +134,7 @@ export class FormService implements OnDestroy {
     }
   }
 
-  deleteData<T = any>(url: string, id: any,
+  deleteData<T = any>(url: string | undefined, id: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService
       .request<T>(url, { action: STATIC_MODULES.listing.deleteData, data: { id }, moduleName, staticModule });
@@ -153,7 +153,7 @@ export class FormService implements OnDestroy {
       .request<T>(url, { action: STATIC_MODULES.listing.deleteImage, data, moduleName, staticModule });
   }
 
-  editData<T = any>(form: UntypedFormGroup, file: File, url = environment.apiUrl,
+  editData<T = any>(form: UntypedFormGroup, file: File | null | undefined, url = environment.apiUrl,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.uploadData<T>({ action: STATIC_MODULES.listing.editData, moduleName, staticModule }, form, file, url);
   }
@@ -175,7 +175,7 @@ export class FormService implements OnDestroy {
     return this.getDropdownListOnChange<T>(STATIC_MODULES.custom.getTeamsList, id, url);
   }
 
-  restoreData<T = any>(url: string, id: any,
+  restoreData<T = any>(url: string | undefined, id: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService
       .request<T>(url, { action: STATIC_MODULES.listing.restoreData, data: { id }, moduleName, staticModule });

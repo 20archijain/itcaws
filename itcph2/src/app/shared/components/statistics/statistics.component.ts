@@ -6,18 +6,18 @@ import { StatisticsConfig } from 'src/app/core/interfaces/common.interface';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    selector: 'app-statistics',
-    templateUrl: './statistics.component.html',
-    standalone: false
+  selector: 'app-statistics',
+  templateUrl: './statistics.component.html',
+  standalone: false,
 })
 export class StatisticsComponent {
   @Output() private onFilter = new EventEmitter();
   typeConfig = CHART_CONFIG;
   @Input() headerTitle = '';
   @Input() statsConfig: StatisticsConfig[] = [];
-  @Input() searchTemplate: TemplateRef<any> = null;
-  @Input() extraTemplate: TemplateRef<any> = null;
-  @Input() searchForm: UntypedFormGroup;
+  @Input() searchTemplate?: TemplateRef<any>;
+  @Input() extraTemplate?: TemplateRef<any>;
+  @Input() searchForm!: UntypedFormGroup;
   @Input() sizeGraph = false;
   legendPosition = CHART_DEFAULTS.LEGEND_POSITION;
   colorsScheme = Functions.getChartColorsScheme();
@@ -27,6 +27,6 @@ export class StatisticsComponent {
   }
 
   get scheme() {
-    return this.searchForm && this.searchForm.get('theme') && this.searchForm.get('theme').value;
+    return this.searchForm && this.searchForm.get('theme') && this.searchForm.get('theme')?.value;
   }
 }

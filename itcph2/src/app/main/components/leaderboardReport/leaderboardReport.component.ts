@@ -13,12 +13,12 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    templateUrl: './leaderboardReport.component.html',
-    standalone: false
+  templateUrl: './leaderboardReport.component.html',
+  standalone: false,
 })
 export class LeaderBoardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   branchOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   columnSize = 12;
@@ -67,9 +67,9 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
-            this.branchFilter = resp.data.branchFilter
+            this.branchFilter = resp.data.branchFilter ?? false;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -92,7 +92,7 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
@@ -108,11 +108,11 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value },
+      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value },
         null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -130,11 +130,11 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value },
+      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value },
         null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -150,11 +150,11 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value },
+      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value },
         null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.dsType;
@@ -168,11 +168,11 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value },
+      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value },
         null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.dsType;
             this.teamOptions = resp.data.teamList;
           }
@@ -184,11 +184,11 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value },
+      this.formService.customActionCall<GetDownloadLeaderboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value },
         null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
@@ -196,29 +196,27 @@ export class LeaderBoardComponent implements OnDestroy, OnInit {
   }
 
   get branchValue() {
-    return this.group && this.group.get('branch').value;
+    return this.group && this.group.get('branch')?.value;
   }
 
-
-
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.group.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
 }

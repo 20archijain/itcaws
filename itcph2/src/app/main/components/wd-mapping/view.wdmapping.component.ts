@@ -12,8 +12,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    templateUrl: './view.wdmapping.component.html',
-    standalone: false
+  templateUrl: './view.wdmapping.component.html',
+  standalone: false,
 })
 export class ViewWdMappingComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
@@ -27,7 +27,7 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
   wdCodeOptions: DropdownList[] = [];
   wdMarketOptions: DropdownList[] = [];
   wdPopGroupOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   editConfig: EditConfig[] = [];
   isExportBtnDisabled = false;
 
@@ -56,7 +56,7 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
@@ -64,8 +64,8 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader || [];
+            this.body = resp.data.viewBody || [];
           }
         })
     );
@@ -80,10 +80,10 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getBranch, { district: this.form.get('district').value }, null, this.url)
+      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getBranch, { district: this.form.get('district')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -103,10 +103,10 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch').value }, null, this.url)
+      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -124,10 +124,10 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getSection, { circle: this.form.get('circle').value }, null, this.url)
+      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getSection, { circle: this.form.get('circle')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.wdMarketOptions = resp.data.wdMarketList;
@@ -143,10 +143,10 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getWDList, { section: this.form.get('section').value }, null, this.url)
+      this.formService.customActionCall<ViewWdMappingResponse>(STATIC_MODULES.custom.getWDList, { section: this.form.get('section')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
@@ -170,7 +170,7 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.createCSV(resp.data);
             }
           })
@@ -178,34 +178,34 @@ export class ViewWdMappingComponent implements OnDestroy, OnInit {
     }
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.form.get('branch').setValue(value);
+    this.form.get('branch')?.setValue(value);
   }
 
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.form.get('circle').setValue(value);
+    this.form.get('circle')?.setValue(value);
   }
 
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.form.get('section').setValue(value);
+    this.form.get('section')?.setValue(value);
   }
 
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.form.get('wdCode').setValue(value);
+    this.form.get('wdCode')?.setValue(value);
   }
 
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.form.get('wdMarket').setValue(value);
+    this.form.get('wdMarket')?.setValue(value);
   }
 
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.form.get('wdPopGroup').setValue(value);
+    this.form.get('wdPopGroup')?.setValue(value);
   }
 
   ngOnDestroy() {

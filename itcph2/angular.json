@@ -49,7 +49,7 @@
               "ifvisible.js",
               "file-saver",
               "moment",
-              "apexcharts/dist/apexcharts.common.js",
+              "apexcharts",
               "highcharts",
               "core-js",
               "raf",

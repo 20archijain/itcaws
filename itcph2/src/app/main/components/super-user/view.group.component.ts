@@ -10,15 +10,15 @@ import { DropdownList, GroupDataResponse } from 'src/app/core/interfaces/http-re
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-    templateUrl: './view.group.component.html',
-    standalone: false
+  templateUrl: './view.group.component.html',
+  standalone: false,
 })
 export class ViewGroupComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  sortOptions: DropdownList[];
-  group: UntypedFormGroup;
+  sortOptions: DropdownList[] = [];
+  group!: UntypedFormGroup;
   url = environment.viewGroupUrl;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
@@ -49,7 +49,7 @@ export class ViewGroupComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sortOptions = resp.data.sortOptions;
           }
         })

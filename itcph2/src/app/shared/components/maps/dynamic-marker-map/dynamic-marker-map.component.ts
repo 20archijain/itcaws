@@ -6,16 +6,16 @@ import { mapPath, MAP_DEFAULTS, MAP_STYLES } from 'src/app/app.constants';
 import { DropdownList } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-    selector: 'app-dynamic-marker-map',
-    templateUrl: './dynamic-marker-map.component.html',
-    standalone: false
+  selector: 'app-dynamic-marker-map',
+  templateUrl: './dynamic-marker-map.component.html',
+  standalone: false,
 })
 export class HeatMapComponent implements OnChanges, OnInit {
-  @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow;
-  @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
+  @ViewChild(MapInfoWindow, { static: false }) infoWindow!: MapInfoWindow;
+  @ViewChild(GoogleMap, { static: false }) map!: GoogleMap;
   selectedMapStyle: keyof typeof MAP_STYLES = 'UBER_STYLE';
   mapStyleKeys = Object.keys(MAP_STYLES) as (keyof typeof MAP_STYLES)[];
-  @Input() options: string[];
+  @Input() options: string[] = [];
   @Output() onChange = new EventEmitter<string>();
   @Input() showMapStyleDropdown = false;
   @Input() markers: MapConfig[] = [];
@@ -25,11 +25,10 @@ export class HeatMapComponent implements OnChanges, OnInit {
   private customMarkers: google.maps.Marker[] = [];
   private markerMap = new Map();
 
-  center: google.maps.LatLngLiteral;
+  center!: google.maps.LatLngLiteral;
   markerData: google.maps.LatLng[] = [];
-  heatmapLayer: google.maps.visualization.HeatmapLayer;
   infoWindowContent = ''; // Store the HTML content
-  mapOptions: google.maps.MapOptions;
+  mapOptions!: google.maps.MapOptions;
 
   ngOnInit(): void {
     this.setMapOptions();
@@ -77,7 +76,7 @@ export class HeatMapComponent implements OnChanges, OnInit {
       const marker = new google.maps.Marker({
         position,
         map,
-        icon: this.getCustomMarkerIcon(markerData, map.getZoom()),
+        icon: this.getCustomMarkerIcon(markerData, map.getZoom() as number),
         // title: markerData.windowTitle || ''
       });
 
@@ -86,7 +85,7 @@ export class HeatMapComponent implements OnChanges, OnInit {
 
       // Add listeners for hover
       marker.addListener('mouseover', () => {
-        this.infoWindowContent = markerData.windowTitle;
+        this.infoWindowContent = markerData.windowTitle ?? '';
         this.infoWindow.close();
         this.infoWindow.options = { position };
         this.infoWindow.open();
@@ -119,7 +118,7 @@ export class HeatMapComponent implements OnChanges, OnInit {
       this.customMarkers.forEach(marker => {
         const markerData = this.markerMap.get(marker);
         if (markerData) {
-          marker.setIcon(this.getCustomMarkerIcon(markerData, zoom));
+          marker.setIcon(this.getCustomMarkerIcon(markerData, zoom as number));
         }
       });
     });

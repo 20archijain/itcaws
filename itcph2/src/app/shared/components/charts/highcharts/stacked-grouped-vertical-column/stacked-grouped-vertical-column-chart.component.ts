@@ -5,8 +5,8 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { StackedGroupedColumnChartData } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-    selector: 'app-stacked-grouped-vertical-column-chart',
-    template: `
+  selector: 'app-stacked-grouped-vertical-column-chart',
+  template: `
     <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
     <highcharts-chart
       [Highcharts]="Highcharts"
@@ -14,15 +14,15 @@ import { StackedGroupedColumnChartData } from 'src/app/core/interfaces/http-resp
       style="{{ style }}">
     </highcharts-chart>
   `,
-    standalone: false
+  standalone: false,
 })
 export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnChanges {
   @Input() width = CHART_DEFAULTS.WIDTH;
   @Input() height = CHART_DEFAULTS.HEIGHT;
   @Input() heading = '';
-  @Input() data: StackedGroupedColumnChartData | any[];
+  @Input() data: StackedGroupedColumnChartData | any[] = [];
   Highcharts = Highcharts;
-  stackGroupedColumnChartOptions: Highcharts.Options;
+  stackGroupedColumnChartOptions!: Highcharts.Options;
   style: any = {
     display: 'block',
   };

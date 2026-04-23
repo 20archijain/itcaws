@@ -1,29 +1,29 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-    selector: 'app-apex-pie-chart',
-    template: `
+  selector: 'app-apex-pie-chart',
+  template: `
     <blockquote class="text-info" *ngIf="heading"><p>{{ heading }}</p></blockquote>
     <app-apex-chart
       [chartID]="chartID || defaultChartID"
       [chartConfig]="piechartConfig">
     </app-apex-chart>
   `,
-    standalone: false
+  standalone: false,
 })
 export class ApexPieChartComponent implements OnInit {
   @Input() heading = '';
   @Input() height = 320;
-  @Input() data = [];
+  @Input() data: any[] = [];
   @Input() colors = [];
-  @Input() chartID: string;
+  @Input() chartID!: string;
   defaultChartID = 'pc-1';
-  piechartConfig = null;
+  piechartConfig: any = null;
 
   ngOnInit() {
     if (this.data) {
-      const labels = [];
-      const series = [];
+      const labels: any[] = [];
+      const series: any[] = [];
       let colors = ['#4680ff', '#0e9e4a'];
       let height = 320;
       this.data.forEach(d => {

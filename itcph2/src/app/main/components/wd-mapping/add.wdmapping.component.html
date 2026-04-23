@@ -2,63 +2,55 @@
   <form (ngSubmit)="addProject()" [formGroup]="form" novalidate>
     <div class="row">
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-select [group]="form" controlName="district" label="app.team.add.district"
-          [options]="districtOptions" [errorMessages]="errorMessages.district" [isRequired]="true"
+        <app-select [group]="form" controlName="district" label="app.team.add.district" [options]="districtOptions"
+          [errorMessages]="errorMessages.district" [isRequired]="true"
           placeholder="{{ 'app.team.add.district' | translate}}">
         </app-select>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-select [group]="form" controlName="branch" label="app.team.add.branch"
-          [options]="branchOptions" [errorMessages]="errorMessages.branch" [isRequired]="true"
+        <app-select [group]="form" controlName="branch" label="app.team.add.branch" [options]="branchOptions"
+          [errorMessages]="errorMessages.branch" [isRequired]="true"
           placeholder="{{ 'app.team.add.branch' | translate}}">
         </app-select>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
         <app-input label="app.team.add.circle" placeholder="{{ 'app.team.add.circle' | translate }}" [group]="form"
-          controlName="circle"
-          [autocompleteOff]="true">
+          controlName="circle" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-input label="app.team.add.circle_name" placeholder="{{ 'app.team.add.circle_name' | translate }}" [group]="form"
-          controlName="circle_name"
-          [autocompleteOff]="true">
+        <app-input label="app.team.add.circle_name" placeholder="{{ 'app.team.add.circle_name' | translate }}"
+          [group]="form" controlName="circle_name" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
         <app-input label="app.team.add.section" placeholder="{{ 'app.team.add.section' | translate }}" [group]="form"
-          controlName="section"
-          [autocompleteOff]="true">
+          controlName="section" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-input label="app.team.add.section_name" placeholder="{{ 'app.team.add.section_name' | translate }}" [group]="form"
-          controlName="section_name"
-          [autocompleteOff]="true">
+        <app-input label="app.team.add.section_name" placeholder="{{ 'app.team.add.section_name' | translate }}"
+          [group]="form" controlName="section_name" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
         <app-input label="app.team.add.wdCode" placeholder="{{ 'app.team.add.wdCode' | translate }}" [group]="form"
-          controlName="wd_code"
-          [autocompleteOff]="true" [errorMessages]="errorMessages.wd_code" [isRequired]="true">
+          controlName="wd_code" [autocompleteOff]="true" [errorMessages]="errorMessages.wd_code" [isRequired]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-input label="app.team.add.wd_firm_name" placeholder="{{ 'app.team.add.wd_firm_name' | translate }}" [group]="form"
-          controlName="wd_firm_name"
-          [autocompleteOff]="true">
+        <app-input label="app.team.add.wd_firm_name" placeholder="{{ 'app.team.add.wd_firm_name' | translate }}"
+          [group]="form" controlName="wd_firm_name" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-input label="app.team.add.wd_market" placeholder="{{ 'app.team.add.wd_market' | translate }}" [group]="form"
-          controlName="wd_market"
-          [autocompleteOff]="true">
+        <app-input label="app.team.add.wd_market" placeholder="{{ 'app.team.add.wd_market' | translate }}"
+          [group]="form" controlName="wd_market" [autocompleteOff]="true">
         </app-input>
       </div>
       <div class="col-10 col-sm-6 col-md-4 col-xl-3">
-        <app-input label="app.team.add.wd_pop_group" placeholder="{{ 'app.team.add.wd_pop_group' | translate }}" [group]="form"
-          controlName="wd_pop_group"
-          [autocompleteOff]="true">
+        <app-input label="app.team.add.wd_pop_group" placeholder="{{ 'app.team.add.wd_pop_group' | translate }}"
+          [group]="form" controlName="wd_pop_group" [autocompleteOff]="true">
         </app-input>
       </div>
     </div>

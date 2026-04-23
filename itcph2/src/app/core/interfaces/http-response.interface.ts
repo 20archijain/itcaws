@@ -487,8 +487,8 @@ export interface SalesDashboardData {
   currentAndLastMonthFocusData: any;
   currentMonthVsLastYearMonthFocusSales: any;
   currentYearLastYearMonthlyFocusSales: any;
-  branchFilter?: boolean
-  showMapStyleDropdown?: boolean
+  branchFilter?: boolean;
+  showMapStyleDropdown?: boolean;
 }
 
 export interface AttendanceDetails {

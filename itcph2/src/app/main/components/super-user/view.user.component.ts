@@ -14,8 +14,8 @@ import { DropdownList, GetUserDataResponse } from 'src/app/core/interfaces/http-
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-    templateUrl: './view.user.component.html',
-    standalone: false
+  templateUrl: './view.user.component.html',
+  standalone: false,
 })
 export class ViewUserComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
@@ -25,9 +25,9 @@ export class ViewUserComponent implements OnDestroy, OnInit {
   sortOptions: DropdownList[] = [];
   groupOptions: DropdownList[] = [];
   loginOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   url = environment.viewUsersUrl;
-  unlockCondition: [string, boolean];
+  unlockCondition!: [string, boolean];
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
@@ -54,12 +54,12 @@ export class ViewUserComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sortOptions = resp.data.sortOptions || [];
             this.groupOptions = resp.data.groupList;
             this.loginOptions = resp.data.loginTypeList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader || [];
+            this.body = resp.data.viewBody || [];
             this.unlockCondition = resp.data.unlockCondition;
 
             this.editConfig = [
@@ -152,7 +152,7 @@ export class ViewUserComponent implements OnDestroy, OnInit {
   }
 
   onUserTypeChange(form: UntypedFormGroup) {
-    const type = form.get('type').value;
+    const type = form.get('type')?.value;
 
     switch (+type) {
       case 1:

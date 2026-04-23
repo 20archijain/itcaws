@@ -4,21 +4,21 @@ import * as XLSX from 'xlsx';
 import * as FileSaver from 'file-saver';
 
 @Component({
-    selector: 'app-productive-accordion',
-    templateUrl: './productive-accordion.component.html',
-    styleUrls: ['./productive-accordion.component.scss'],
-    animations: [
-        trigger('columnAnimation', [
-            transition(':enter', [
-                style({ opacity: 0, transform: 'translateX(50px)' }),
-                animate('300ms ease-out', style({ opacity: 1, transform: 'translateX(0)' })),
-            ]),
-            transition(':leave', [
-                animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
-            ]),
-        ]),
-    ],
-    standalone: false
+  selector: 'app-productive-accordion',
+  templateUrl: './productive-accordion.component.html',
+  styleUrls: ['./productive-accordion.component.scss'],
+  animations: [
+    trigger('columnAnimation', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateX(50px)' }),
+        animate('300ms ease-out', style({ opacity: 1, transform: 'translateX(0)' })),
+      ]),
+      transition(':leave', [
+        animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
+      ]),
+    ]),
+  ],
+  standalone: false,
 })
 export class ProductiveAccordionComponent implements OnChanges {
   @Input() monthlySalesData: any;
@@ -228,7 +228,7 @@ export class ProductiveAccordionComponent implements OnChanges {
             circle.sectionData.forEach((section: any) => {
               section.wdData.forEach((wd: any) => {
                 wd.teamData.forEach((team: any) => {
-                  rows.push(this.createRow({ district: district.district, branch: branch.branch_name, circle: circle.circle, section: section.section, wd: wd.wd_code, dsType : team.team_type, dsId : team.team_id, dsName: team.team_name }, team.teamLevelSale));
+                  rows.push(this.createRow({ district: district.district, branch: branch.branch_name, circle: circle.circle, section: section.section, wd: wd.wd_code, dsType: team.team_type, dsId: team.team_id, dsName: team.team_name }, team.teamLevelSale));
                 });
               });
             });

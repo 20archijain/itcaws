@@ -18,19 +18,19 @@ import { Functions } from 'src/app/core/utils/functions.list';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-    styleUrls: [
-        './add.group.component.scss',
-    ],
-    templateUrl: './add.group.component.html',
-    standalone: false
+  styleUrls: [
+    './add.group.component.scss',
+  ],
+  templateUrl: './add.group.component.html',
+  standalone: false,
 })
 export class AddGroupComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private emptyListError = 'err.emptyModuleList';
-  private editId: number = null;
-  group: UntypedFormGroup;
+  private editId: number | null = null;
+  group!: UntypedFormGroup;
   moduleList: AddGroup[][] = [];
-  selectedRecords = [];
+  selectedRecords: any[][] = [];
   errorMessages = {
     name: GROUP_VALIDATORS.messages.name,
   };
@@ -60,10 +60,10 @@ export class AddGroupComponent implements OnDestroy, OnInit {
     this.subscription.push(
       this.route.paramMap
         .subscribe(params => {
-          const id = +params.get(URL_PARAMS_KEYS.id);
+          const id = params.get(URL_PARAMS_KEYS.id);
           if (id) {
             this.isEdit = true;
-            this.editId = id;
+            this.editId = +id;
           }
         })
     );
@@ -82,15 +82,15 @@ export class AddGroupComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.moduleList = resp.data.modulesList;
             this.emptyModules();
 
             // if edit, set record details
             if (this.isEdit) {
               const editData = resp.data?.groupData;
-              this.group.get('name').setValue(editData?.name || '');
-              this.group.get('id').setValue(this.editId);
+              this.group.get('name')?.setValue(editData?.name || '');
+              this.group.get('id')?.setValue(this.editId);
 
               const selectedRecords: string[] = editData?.items.split(',');
 
@@ -104,7 +104,7 @@ export class AddGroupComponent implements OnDestroy, OnInit {
                   }
                 });
               }
-              this.group.get('items').setValue(this.selectedModules);
+              this.group.get('items')?.setValue(this.selectedModules);
               this.canGoBackGuard.markAsPristine();
             }
           } else {
@@ -171,19 +171,19 @@ export class AddGroupComponent implements OnDestroy, OnInit {
 
   isChecked(module: AddGroup, moduleIndex: number) {
     return this.selectedRecords[moduleIndex] ?
-      this.selectedRecords[moduleIndex].indexOf(module[this.checkKey]) > -1 : false;
+      this.selectedRecords[moduleIndex].indexOf((module as any)[this.checkKey]) > -1 : false;
   }
 
   emitSelectedRecords($event: ChekboxOutput, moduleIndex: number, checkAll = false) {
     this.selectedRecords[moduleIndex] = $event.selectedRecords;
-    this.group.get('items').setValue(this.selectedModules);
+    this.group.get('items')?.setValue(this.selectedModules);
 
     // If user clicked on All checkbox of any module
     if (checkAll) {
       this.moduleList[moduleIndex][0]['isChecked'] = true;
       (this.moduleList[moduleIndex] as AddGroup[]).forEach(mod => {
         // uncheck Main module if checked and any of sub module is not checked
-        if (this.moduleList[moduleIndex][0]['isChecked'] && this.selectedRecords[moduleIndex].indexOf(mod[this.checkKey]) === -1) {
+        if (this.moduleList[moduleIndex][0]['isChecked'] && this.selectedRecords[moduleIndex].indexOf((mod as any)[this.checkKey]) === -1) {
           this.moduleList[moduleIndex][0]['isChecked'] = false;
         }
       });
@@ -191,7 +191,6 @@ export class AddGroupComponent implements OnDestroy, OnInit {
   }
 
   get selectedModules() {
-    // eslint-disable-next-line prefer-spread
-    return [].concat.apply([], this.selectedRecords);
+    return [...this.selectedRecords];
   }
 }

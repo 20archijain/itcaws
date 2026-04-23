@@ -5,7 +5,8 @@ import { finalize } from 'rxjs/operators';
 
 import { FormService } from 'src/app/core/services/form.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
-import { GetProductSelectorDataResponse,
+import {
+  GetProductSelectorDataResponse,
   ProductItem
 } from 'src/app/core/interfaces/http-response.interface';
 import { REQUEST_STATUS } from 'src/app/app.constants';
@@ -18,18 +19,17 @@ export interface CategoryGroup {
 }
 
 @Component({
-    templateUrl: './allocationReport.component.html',
-    standalone: false
+  templateUrl: './allocationReport.component.html',
+  standalone: false,
 })
 export class AllocationReportComponent implements OnInit {
 
   private subscription: Subscription[] = [];
 
-  form: UntypedFormGroup;
-  tableData = [];
+  form!: UntypedFormGroup;
+  tableData: any[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: boolean;
   statusFlagCond = false;
   defaultDspm = false;
   submittedDataList = [];
@@ -56,16 +56,16 @@ export class AllocationReportComponent implements OnInit {
   }
 
   getDefaultData() {
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.getData<GetProductSelectorDataResponse>(this.url, this.form.getRawValue())
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.tableData = resp.data.tableData;
-            }
-          })
-      );
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.getData<GetProductSelectorDataResponse>(this.url, this.form.getRawValue())
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.tableData = resp.data.tableData;
+          }
+        })
+    );
 
   }
 }

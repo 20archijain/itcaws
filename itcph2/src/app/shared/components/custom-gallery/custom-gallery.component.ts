@@ -17,15 +17,15 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-    selector: 'app-custom-gallery',
-    templateUrl: './custom-gallery.component.html',
-    standalone: false
+  selector: 'app-custom-gallery',
+  templateUrl: './custom-gallery.component.html',
+  standalone: false,
 })
 export class CustomGalleryComponent implements OnDestroy, OnInit {
-  @ViewChild('previewContainer', { static: false }) private previewContainer: ElementRef;
+  @ViewChild('previewContainer', { static: false }) private previewContainer!: ElementRef;
   @Output() private onDelete = new EventEmitter();
   private subscription: Subscription[] = [];
-  private actionData: number = null;
+  private actionData: number | undefined;
   private previewStyleParams: GalleryPreviewStyleConfig = {};
   private defaultConfig: CustomGalleryConfig = {
     closePreviewOnEsc: true,
@@ -55,22 +55,22 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
     zoom: 0,
   };
   @Input() private url = environment.apiUrl;
-  @Input() private cgConfig: CustomGalleryConfig = null;
+  @Input() private cgConfig?: CustomGalleryConfig | null = null;
   @Input() images: GalleryImagesList[] = [];
-  @Input() actions: ListingActions[] = [];
+  @Input() actions: (ListingActions | undefined)[] = [];
   @Input() thumbnailNoWrap = false;
   @Input() showAsCard = false;
   @Input() showAsUserCard = false;
   @Input() thumbnailClass = '';
-  @Input() group: UntypedFormGroup = null;
+  @Input() group?: UntypedFormGroup;
   @Input() limitWidth = false;
-  config: CustomGalleryConfig = null;
+  config!: CustomGalleryConfig;
   isPreviewOpen = false;
-  currentImageIndex = 0;
-  currentImage: GalleryImagesList = null;
-  previewStyle: GalleryPreviewStyle = null;
+  currentImageIndex: number | undefined = 0;
+  currentImage: GalleryImagesList | null = null;
+  previewStyle: GalleryPreviewStyle | null = null;
   userAction = USER_ACTION;
-  hasDeletePermission = null;
+  hasDeletePermission: ListingActions | undefined;
 
   constructor(private galleryService: GalleryService, private listingService: ListingService,
     private confirmationModalService: ConfirmationModalService, private formService: FormService,
@@ -86,7 +86,7 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
     this.config = { ...this.defaultConfig, ...customConfig };
 
     this.actions = this.listingService.getModuleActions();
-    this.hasDeletePermission = this.actions.find(action => action.id === this.userAction.DEL_IMG);
+    this.hasDeletePermission = this.actions.find(action => action?.id === this.userAction.DEL_IMG);
 
     // on delete confirm
     this.subscription.push(
@@ -164,13 +164,13 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
             currentStyle['rotate'] = `rotate(${this.previewCurrentStyle.rotate}deg)`;
             break;
           case 'zoomOut':
-            if (this.previewCurrentStyle.zoom >= this.config.previewActions.minZoom) {
+            if (this.config.previewActions?.minZoom && this.previewCurrentStyle.zoom >= this.config.previewActions.minZoom) {
               this.previewCurrentStyle.zoom--;
             }
             currentStyle['scale'] = `scale(1.${this.previewCurrentStyle.zoom})`;
             break;
           case 'zoomIn':
-            if (this.previewCurrentStyle.zoom < this.config.previewActions.maxZoom) {
+            if (this.config.previewActions?.maxZoom && this.previewCurrentStyle.zoom < this.config.previewActions.maxZoom) {
               this.previewCurrentStyle.zoom++;
             }
             currentStyle['scale'] = `scale(1.${this.previewCurrentStyle.zoom})`;
@@ -199,7 +199,7 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
 
   showNext() {
     const totalImages = this.totalImages;
-    let nextImageIndex = this.currentImageIndex + 1;
+    let nextImageIndex = (this.currentImageIndex as number) + 1;
 
     if (nextImageIndex >= totalImages) {
       nextImageIndex = 0;
@@ -210,7 +210,7 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
 
   showPrevious() {
     const totalImages = this.totalImages;
-    let previousImageIndex = this.currentImageIndex - 1;
+    let previousImageIndex = (this.currentImageIndex as number) - 1;
 
     if (previousImageIndex < 0) {
       previousImageIndex = totalImages - 1;
@@ -219,9 +219,9 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
     this.setCurrentImage(previousImageIndex);
   }
 
-  setCurrentImage(imageIndex: number) {
+  setCurrentImage(imageIndex: number | undefined) {
     this.currentImageIndex = imageIndex;
-    this.currentImage = this.images[this.currentImageIndex];
+    this.currentImage = this.images[this.currentImageIndex as number];
     this.previewCurrentStyle = {
       rotate: 0,
       zoom: 0
@@ -234,7 +234,7 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
 
     const payload = {
       data: this.group ? this.group.getRawValue() : null,
-      id: this.actionData !== null ? this.images[this.actionData].id : null,
+      id: this.actionData !== null ? this.images[this.actionData as number].id : null,
     };
 
     this.subscription.push(
@@ -244,19 +244,20 @@ export class CustomGalleryComponent implements OnDestroy, OnInit {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.images.splice(this.actionData, 1);
+            this.images.splice(this.actionData as number, 1);
             this.togglePreview(false);
             this.onDelete.emit();
-            this.actionData = null;
+            this.actionData = undefined;
           }
         })
     );
   }
 
   downloadImage() {
-    if (this.currentImage && this.currentImage[this.config.previewImageKey]) {
-      Functions.downloadFile(this.currentImage[this.config.previewImageKey],
-        this.currentImage[this.config.previewImageDwnKey]);
+    const imgKey = this.config.previewImageKey as keyof GalleryImagesList;
+    const dwnKey = this.config.previewImageDwnKey as keyof GalleryImagesList;
+    if (this.currentImage && this.currentImage[imgKey]) {
+      Functions.downloadFile(this.currentImage[imgKey] as string, this.currentImage[dwnKey] as string);
     }
   }
 
