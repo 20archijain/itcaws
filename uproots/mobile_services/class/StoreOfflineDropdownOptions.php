@@ -289,17 +289,14 @@ class StoreOfflineDropdownOptions
                                             $routeItem['isRoutePending'] = $routeInfo['isRoutePending'];
                                             $routeItem['routeInfo'] = [
                                                 [
-                                                    "show_outside" => 0,
                                                     'label' => 'Last Mkt Visit',
                                                     'value' => $routeInfo['lastMarketVisit'],
                                                 ],
                                                 [
-                                                    "show_outside" => 1,
                                                     'label' => 'Avg Sale/OL',
                                                     'value' => $routeInfo['avgSalePerOutlet'],
                                                 ],
                                                 [
-                                                    "show_outside" => 0,
                                                     'label' => 'Avg ULC/OL',
                                                     'value' => $routeInfo['avgUlcPerOutlet'],
                                                 ],
@@ -327,9 +324,9 @@ class StoreOfflineDropdownOptions
                 "team_id = ?",
                 array($teamId)
             );
-            $allowedBranchIds = [100];
-            // $allowedBranchIds = [1, 2, 3, 4, 5, 30, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 20];
-               $allowedBranchIds = [3, 30, 44, 45, 46, 47, 48, 49];
+
+            $allowedBranchIds = [1, 2, 3, 4, 5, 6, 20, 30, 40, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 17];
+            //   $allowedBranchIds = [3, 30, 44, 45, 46, 47, 48, 49];
             if (in_array($branchId, $allowedBranchIds) && isset($arrOptions[0])) {
                 $arrOptions[0]["allowed_distance_in_mtr"] = 700;
             }
@@ -389,7 +386,7 @@ class StoreOfflineDropdownOptions
         $iNoRows = 0;
         $sQuery = "SELECT db_name, client_id, project_id, team_id FROM {$this->cloudTable} WHERE" .
             " dstatus = 0 AND db_name = ? $condition AND team_id NOT IN (SELECT DISTINCT team_id" .
-            " FROM $dbName.{$this->offlineDropdownTable} WHERE dstatus = 0)";
+            " FROM $dbName.{$this->offlineDropdownTable} WHERE dstatus = 0) AND team_id NOT IN (SELECT team_id FROM $dbName.tblproject_team WHERE branch_id = 40)";
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsRes, $iNoRows, array($dbName));
 
         if ($iNoRows > 0) {

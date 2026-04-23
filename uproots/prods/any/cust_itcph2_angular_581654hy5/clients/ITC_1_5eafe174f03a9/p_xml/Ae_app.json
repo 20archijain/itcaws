@@ -55,7 +55,9 @@
         "getStockProductsSellingPriceApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_stock_products_selling_price.php",
         "getNotificationApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_notification.php",
         "getRouteTrackerApi": "https://upimg.radardashboard.com/mobile_services/api/custom/get_route_tracker_data.php",
-        "getMasterRouteApi": "https://upimg.radardashboard.com/mobile_services/api/custom/ae_app_master_data.php"
+        "getMasterRouteApi": "https://upimg.radardashboard.com/mobile_services/api/custom/ae_app_master_data.php",
+        "getDsSummaryDataApi": "http://upimg.radardashboard.com/mobile_services/api/custom/ds_management_summary_data.php",
+        "getDeleteRouteDataApi": "http://upimg.radardashboard.com/mobile_services/api/custom/delete_master_data.php"
       }
     }
   },

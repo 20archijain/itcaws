@@ -57,7 +57,7 @@ import { FocusBrandDataListingComponent } from './reporting/FocusBrandData/Focus
 import { MdoDownloadRouteComponent } from './route-data/mdo-route-download.component';
 import { DownloadDBTableComponent } from './download-db-table/download-db-table.component';
 import { FSOTrackerDataUploadComponent } from './fso-tracker-upload/fso-tracker-upload.component';
-import { NpsrDashboardComponent2 } from './npsr-dashboard/npsr-dashboard.component2';
+import { NpsrDashboard2Component } from './npsr-dashboard/npsr-dashboard2.component';
 import { PDFAccessReportComponent } from './pdf-access-report/pdf-access-report.component';
 import { LineCutReportComponent } from './line-cut/line-cut-report.component';
 import { OrderListingComponent } from './reporting/order-report/order-listing.component';
@@ -66,7 +66,8 @@ import { DistrictProductAllocationComponent } from './reporting/skuSetting/distr
 import { AllocationReportComponent } from './reporting/skuSetting/allocationReport.component';
 import { BreezeDashboardComponent } from './breeze-dashboard/breeze-dashboard.component';
 import { AiInsightsComponent } from './ai-insights/ai-insights.component';
-
+import { MDOReportComponent } from './reporting/mdo/mdo-report.component';
+import { ManualAssignTargetComponent } from './reporting/UpdateManualTarget/ManualAssignTarget.component';
 
 export const MAIN_COMPONENTS = [
   AttendanceLocatorComponent,
@@ -126,7 +127,7 @@ export const MAIN_COMPONENTS = [
   FocusBrandDataListingComponent,
   DownloadDBTableComponent,
   FSOTrackerDataUploadComponent,
-  NpsrDashboardComponent2,
+  NpsrDashboard2Component,
   PDFAccessReportComponent,
   LineCutReportComponent,
   OrderListingComponent,
@@ -135,6 +136,8 @@ export const MAIN_COMPONENTS = [
   AllocationReportComponent,
   BreezeDashboardComponent,
   AiInsightsComponent,
+  MDOReportComponent,
+  ManualAssignTargetComponent,
 ];
 
 export const MAP_MAIN_COMPONENTS = {
@@ -195,7 +198,7 @@ export const MAP_MAIN_COMPONENTS = {
   FocusBrandDataListingComponent,
   DownloadDBTableComponent,
   FSOTrackerDataUploadComponent,
-  NpsrDashboardComponent2,
+  NpsrDashboard2Component,
   PDFAccessReportComponent,
   LineCutReportComponent,
   OrderListingComponent,
@@ -204,4 +207,6 @@ export const MAP_MAIN_COMPONENTS = {
   AllocationReportComponent,
   BreezeDashboardComponent,
   AiInsightsComponent,
+  MDOReportComponent,
+  ManualAssignTargetComponent,
 };

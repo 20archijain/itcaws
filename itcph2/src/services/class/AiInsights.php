@@ -1,14 +1,10 @@
 <?php
 
 /**
- * DEPRECATED: This class has been replaced by the scalable AI Insights framework:
- * - AiInsightsService.php (entry point)
- * - InsightsExecutor.php (query execution + OpenAI)
- * - QueryBuilder.php (config-driven SQL builder)
- * - config/ai-insights-queries.json (query definitions)
+ * ARIA AI Insights - Controller
  *
- * This stub is kept only for backward compatibility.
- * All new development should use AiInsightsService.
+ * Entry point for AI insights requests. Handles request parsing, context filter
+ * resolution, and ACL before delegating to AiInsightsService for execution.
  */
 
 require_once $include_path . 'defined_index.php';
@@ -430,14 +426,22 @@ class AiInsights
     private function mapTypeToFilter(string $type, string $value): array
     {
         switch ($type) {
-            case 'branch':   return ['main_branch' => $value];
-            case 'region':   return ['region'      => [$value]];
-            case 'circle':   return ['circle'      => [$value]];
-            case 'section':  return ['section'     => [$value]];
-            case 'district': return ['district'    => [$value]];
-            case 'wd_code':  return ['wd_code'     => [$value]];
-            case 'ds':       return ['ds_name'     => $value];
-            default:         return [];
+            case 'branch':
+                return ['main_branch' => $value];
+            case 'region':
+                return ['region'      => [$value]];
+            case 'circle':
+                return ['circle'      => [$value]];
+            case 'section':
+                return ['section'     => [$value]];
+            case 'district':
+                return ['district'    => [$value]];
+            case 'wd_code':
+                return ['wd_code'     => [$value]];
+            case 'ds':
+                return ['ds_name'     => $value];
+            default:
+                return [];
         }
     }
 

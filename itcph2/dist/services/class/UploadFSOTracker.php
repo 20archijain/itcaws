@@ -152,14 +152,15 @@ class UploadFSOTracker
             $expectedHeaders = [
                 'D' => 'FSO Name',
                 'E' => 'FSO Id',
+                'F' => 'WD Code',
                 'G' => 'Parameters',
-                'H' => 'Target Dec\'25 (Lacs)',
-                'I' => 'MTD Ach (Lacs)',
+                'H' => 'Target Mar\'26 (Lacs)',
+                'I' => 'MTD Ach',
                 'J' => 'Ach %',
             ];
 
 
-            $headerRow = $data[3];
+            $headerRow = $data[1];
             // print_r($data);die;
             foreach ($expectedHeaders as $col => $expectedHeader) {
                 // print_r($col);die;
@@ -187,6 +188,7 @@ class UploadFSOTracker
                     // Extract basic fields
                     $fso_name = trim($row['D'] ?? '');
                     $fso_id = trim($row['E'] ?? '');
+                    $wdCode = trim($row['F'] ?? '');
                     $parameter = trim($row['G'] ?? '');
                     $target = trim($row['H'] ?? '');
                     $mtd = trim($row['I'] ?? '');
@@ -196,7 +198,7 @@ class UploadFSOTracker
                     $rowErrors = [];
 
                     // Validate required fields
-                    $allowedParameters = ['Business', 'Market Coverage', 'UOB ( 150 Outlets / WD)'];
+                    $allowedParameters = ['Business', 'Market Coverage', 'UOB ( 150 Outlets / WD)', 'Gate Working Days'];
 
                     // Validate parameter field - must exactly match one of the allowed values
                     if (!in_array($parameter, $allowedParameters, true)) {
@@ -223,9 +225,9 @@ class UploadFSOTracker
                         $rcdOld = getRowColumn($this->_dbConn, "tbl_fso_tracker", "rcd", "fso_id = '$fso_id'");
                         updateRecord($this->_dbConn, "tbl_fso_tracker", "dstatus = ?", "fso_id = '$fso_id' AND rcd = '$rcdOld'", $arrUpdateParams);
                     }
-                    $columns = "fso_id, fso_name, parameters, target, mtd_ach, ach_per, rcd";
-                    $values = " ?, ?, ?, ?, ?, ?, ?";
-                    $arrParams = [$fso_id, $fso_name, $parameter, $target, $mtd, $ach, $rcd];
+                    $columns = "fso_id, fso_name, wd_code, parameters, target, mtd_ach, ach_per, rcd";
+                    $values = " ?, ?, ?, ?, ?, ?, ?, ?";
+                    $arrParams = [$fso_id, $fso_name, $wdCode, $parameter, $target, $mtd, $ach, $rcd];
                     // Insert record
                     $res = addRecord($this->_dbConn, "tbl_fso_tracker", $columns, $values, $arrParams);
 

@@ -1,13 +1,10 @@
 <?php
+
 /**
- * ============================================================================
- * SCALABLE AI INSIGHTS FRAMEWORK - Query Executor & Response Formatter
- * ============================================================================
+ * ARIA AI Insights - Executor
  *
- * Executes configuration-based queries and formats responses for frontend
- * Integrates with OpenAI for intelligent insights and recommendations
- *
- * ============================================================================
+ * Handles query routing, SQL execution via QueryBuilder, and OpenAI response
+ * generation. Also formats chart and map data returned to the frontend.
  */
 
 namespace AiInsights;
@@ -19,7 +16,7 @@ class InsightsExecutor
     private $queryBuilder;
     private $config;
     private $pdo;
-    private $openAiClient;
+    private $openAiApiKey;
     private $arrAccessInfo = [];
     private $detectedFilters = [];
     private $entityCache = null;                 // request-level entity cache
@@ -185,7 +182,8 @@ class InsightsExecutor
             $queryLower = strtolower($query);
 
             // Breeze override: any mention of "breeze", "RMD", "stockist DS", "MDO"
-            if (preg_match('/\bbreeze\b/i', $queryLower)
+            if (
+                preg_match('/\bbreeze\b/i', $queryLower)
                 || preg_match('/\bRMD\b/i', $queryLower)
                 || preg_match('/\bstockist\s*ds\b/i', $queryLower)
                 || preg_match('/\bMDO\b/i', $queryLower)
@@ -195,7 +193,8 @@ class InsightsExecutor
             }
 
             // Anomaly override: "anomaly", "anomalies", or "unusual pattern(s)" → anomaly_detection
-            if (preg_match('/\banomal(?:y|ies)\b/i', $queryLower)
+            if (
+                preg_match('/\banomal(?:y|ies)\b/i', $queryLower)
                 || preg_match('/\bunusual\s+(pattern|patterns|trend|trends|activity|activities)\b/i', $queryLower)
             ) {
                 $matchedQueryName = 'anomaly_detection';
@@ -216,7 +215,8 @@ class InsightsExecutor
 
             // Scorecard override: any explicit "scorecard" intent bypasses ambiguity check.
             // The detailed DS vs hierarchy routing happens later (lines 232+) after filters are applied.
-            if (preg_match('/\bscore\s*card\b/i', $queryLower)
+            if (
+                preg_match('/\bscore\s*card\b/i', $queryLower)
                 || preg_match('/\bprofile\s+(?:of|for)\b/i', $queryLower)
                 || preg_match('/\breport\s+card\b/i', $queryLower)
             ) {
@@ -257,13 +257,14 @@ class InsightsExecutor
             ];
             $isGenericDsListQuery = in_array($matchedQueryName, ['ds_performance']) &&
                 (strpos($queryLower, 'best') !== false || strpos($queryLower, 'worst') !== false ||
-                 strpos($queryLower, 'top') !== false || strpos($queryLower, 'bottom') !== false);
+                    strpos($queryLower, 'top') !== false || strpos($queryLower, 'bottom') !== false);
             // Also protect explicit product/location intent from DS scorecard hijack
             $hasExplicitProductIntent = preg_match(
                 '/\b(best|top|worst|bottom|highest|lowest)\s+(selling\s+)?(product|brand|sku|item)\b/i',
                 $queryLower
             ) || preg_match('/\bproduct\s+(sales|ranking|analysis|performance|breakdown|report|wise)\b/i', $queryLower);
-            if (!empty($extractedFilters['ds_name'])
+            if (
+                !empty($extractedFilters['ds_name'])
                 && !$isGenericDsListQuery
                 && !$hasExplicitProductIntent
                 && !in_array($matchedQueryName, $neverDsScorecardTypes)
@@ -301,8 +302,10 @@ class InsightsExecutor
                 $matchedQueryName = 'focus_brand_analysis';
             } elseif (!empty($extractedFilters['product']) && $hasComparisonIntent) {
                 $matchedQueryName = 'product_comparison';
-            } elseif (!empty($extractedFilters['category']) &&
-                in_array($matchedQueryName, ['product_sales', 'executive_summary', 'period_comparison'])) {
+            } elseif (
+                !empty($extractedFilters['category']) &&
+                in_array($matchedQueryName, ['product_sales', 'executive_summary', 'period_comparison'])
+            ) {
                 if ($hasComparisonIntent) {
                     $matchedQueryName = 'product_comparison';
                 } else {
@@ -394,7 +397,6 @@ class InsightsExecutor
                 'date_range' => $this->getDateRange($extractedFilters),
                 'timestamp' => date('Y-m-d H:i:s')
             ];
-
         } catch (\Exception $e) {
             error_log("AI Insights Error: " . $e->getMessage() . " | File: " . $e->getFile() . ":" . $e->getLine());
             return [
@@ -468,7 +470,9 @@ class InsightsExecutor
     private function detectAllEntities($queryLower, &$filters)
     {
         $entities = $this->loadEntityCache();
-        if (empty($entities)) return;
+        if (empty($entities)) {
+            return;
+        }
 
         // 1. Product detection (longest match)
         if (!isset($filters['product']) && !empty($entities['product'])) {
@@ -524,7 +528,8 @@ class InsightsExecutor
                         $filters['branch_id'] = intval($branchRow['branch_id']);
                         $filters['branch_name'] = $regions[0];
                     }
-                } catch (\Exception $e) {}
+                } catch (\Exception $e) {
+                }
                 $this->detectedFilters[] = "Region: " . implode(', ', $regions);
             }
         }
@@ -562,7 +567,8 @@ class InsightsExecutor
         $isGenericDsListIntent = preg_match('/\b(best|top|worst|bottom)\s+ds\b/i', $queryLower);
         $isProductMetricQuery  = preg_match('/\b(product|sku|brand|item|selling|coverage|outlet|revenue|sales|category|growth|anomal|trend)\b/i', $queryLower)
             && !preg_match('/\bds\b/i', $queryLower);
-        if (!isset($filters['ds_name']) && !empty($entities['ds_name'])
+        if (
+            !isset($filters['ds_name']) && !empty($entities['ds_name'])
             && !$isGenericDsListIntent && !$isProductMetricQuery
         ) {
             $dsName = $this->findBestMatch($queryLower, $entities['ds_name']);
@@ -640,7 +646,9 @@ class InsightsExecutor
     {
         try {
             $stmt = $this->pdo->query("SELECT DISTINCT product_name FROM tblbranch_pickupstock_products WHERE dstatus = 0 AND json_id = 99 AND team_type = 0 AND product_name IS NOT NULL AND product_name != ''");
-            if (!$stmt) return null;
+            if (!$stmt) {
+                return null;
+            }
             $products = $stmt->fetchAll(\PDO::FETCH_COLUMN);
             return $this->findBestMatch($queryLower, $products);
         } catch (\Exception $e) {
@@ -655,7 +663,9 @@ class InsightsExecutor
     {
         try {
             $stmt = $this->pdo->query($sql);
-            if (!$stmt) return null;
+            if (!$stmt) {
+                return null;
+            }
             $values = $stmt->fetchAll(\PDO::FETCH_COLUMN);
             return $this->findBestMatch($queryLower, $values);
         } catch (\Exception $e) {
@@ -711,8 +721,10 @@ class InsightsExecutor
         }
 
         // Short generic questions that don't look like analytics (2–6 words, no business keywords)
-        $businessKeywords = ['sales', 'product', 'ds', 'region', 'branch', 'district', 'trend', 'score', 'performance',
-            'compare', 'top', 'worst', 'best', 'anomal', 'summary', 'attendance', 'qualif', 'outlet', 'route', 'wd'];
+        $businessKeywords = [
+            'sales', 'product', 'ds', 'region', 'branch', 'district', 'trend', 'score', 'performance',
+            'compare', 'top', 'worst', 'best', 'anomal', 'summary', 'attendance', 'qualif', 'outlet', 'route', 'wd'
+        ];
         $hasBusiness = false;
         foreach ($businessKeywords as $kw) {
             if (strpos($lower, $kw) !== false) {
@@ -771,8 +783,12 @@ class InsightsExecutor
             $foundLeft = null;
             $foundRight = null;
             foreach ($regions as $r) {
-                if (strtolower($r) === $leftLower) $foundLeft = $r;
-                if (strtolower($r) === $rightLower) $foundRight = $r;
+                if (strtolower($r) === $leftLower) {
+                    $foundLeft = $r;
+                }
+                if (strtolower($r) === $rightLower) {
+                    $foundRight = $r;
+                }
             }
             if ($foundLeft && $foundRight && $foundLeft !== $foundRight) {
                 return ['left' => $foundLeft, 'right' => $foundRight, 'level' => 'region'];
@@ -786,8 +802,12 @@ class InsightsExecutor
             $foundLeft = null;
             $foundRight = null;
             foreach ($branches as $b) {
-                if (strtolower($b) === $leftLower) $foundLeft = $b;
-                if (strtolower($b) === $rightLower) $foundRight = $b;
+                if (strtolower($b) === $leftLower) {
+                    $foundLeft = $b;
+                }
+                if (strtolower($b) === $rightLower) {
+                    $foundRight = $b;
+                }
             }
             if ($foundLeft && $foundRight && $foundLeft !== $foundRight) {
                 return ['left' => $foundLeft, 'right' => $foundRight, 'level' => 'branch'];
@@ -842,9 +862,9 @@ class InsightsExecutor
             . "Right ($rightName): " . ($cardRight ? "Sales {$cardRight['totalSales']}, Qual {$cardRight['qualificationRate']}%, DS {$cardRight['totalDsCount']}" : "No data");
         $aiText = $this->callOpenAi(
             "User asked: \"$queryText\"\n"
-            . "IMPORTANT: All sales figures are in UNITS (sticks/packs), not currency. Do not use \$ or any currency symbol.\n"
-            . $aiContext . "\n\n"
-            . "Provide a short comparison: (1) Which entity is ahead on sales and qualification, (2) One key difference, (3) One recommendation. Use #### headings."
+                . "IMPORTANT: All sales figures are in UNITS (sticks/packs), not currency. Do not use \$ or any currency symbol.\n"
+                . $aiContext . "\n\n"
+                . "Provide a short comparison: (1) Which entity is ahead on sales and qualification, (2) One key difference, (3) One recommendation. Use #### headings."
         );
 
         return [
@@ -874,7 +894,9 @@ class InsightsExecutor
         $anyChange = false;
 
         $entityMap = $this->loadEntityCache();
-        if (empty($entityMap)) return $query;
+        if (empty($entityMap)) {
+            return $query;
+        }
 
         // Flatten to a single list for fuzzy matching (branches, regions, districts, products)
         $spellCheckTypes = ['region', 'main_branch', 'district', 'product'];
@@ -905,8 +927,12 @@ class InsightsExecutor
         ];
 
         foreach ($words as $word) {
-            if (strlen($word) < 3) continue;
-            if (in_array(strtolower($word), $skipWords)) continue;
+            if (strlen($word) < 3) {
+                continue;
+            }
+            if (in_array(strtolower($word), $skipWords)) {
+                continue;
+            }
             $best = $this->findFuzzyMatch($word, array_column($allEntities, 'entity_value'), 2);
             if ($best !== null) {
                 $corrected = preg_replace('/\b' . preg_quote($word, '/') . '\b/ui', $best, $corrected, 1);
@@ -922,14 +948,20 @@ class InsightsExecutor
     private function findFuzzyMatch($input, $candidates, $maxDistance = 2)
     {
         $inputLen = strlen($input);
-        if ($inputLen < 3) return null;
+        if ($inputLen < 3) {
+            return null;
+        }
         $threshold = $inputLen <= 5 ? 1 : ($inputLen <= 8 ? 2 : 3);
-        if ($maxDistance !== null) $threshold = min($threshold, $maxDistance);
+        if ($maxDistance !== null) {
+            $threshold = min($threshold, $maxDistance);
+        }
 
         $best = null;
         $bestDist = PHP_INT_MAX;
         foreach ($candidates as $c) {
-            if (empty($c) || strlen($c) < 3) continue;
+            if (empty($c) || strlen($c) < 3) {
+                continue;
+            }
             $dist = levenshtein($input, strtolower($c));
             if ($dist <= $threshold && $dist < $bestDist) {
                 $bestDist = $dist;
@@ -962,13 +994,23 @@ class InsightsExecutor
             || preg_match('/\btrend\b/i', $query)
             || preg_match('/\bheatmap\b/i', $query);
         $needsDisambiguation = (!$contextResolved && $wordCount <= 3 && $hasEntity && !$hasClearIntent) || ($isAmbiguous && !$contextResolved);
-        if (!$needsDisambiguation) return null;
+        if (!$needsDisambiguation) {
+            return null;
+        }
 
         $entities = [];
-        if (!empty($extractedFilters['region'])) $entities[] = is_array($extractedFilters['region']) ? implode(', ', $extractedFilters['region']) : $extractedFilters['region'];
-        if (!empty($extractedFilters['district'])) $entities[] = is_array($extractedFilters['district']) ? implode(', ', $extractedFilters['district']) : $extractedFilters['district'];
-        if (!empty($extractedFilters['main_branch'])) $entities[] = $extractedFilters['main_branch'];
-        if (!empty($extractedFilters['product'])) $entities[] = $extractedFilters['product'];
+        if (!empty($extractedFilters['region'])) {
+            $entities[] = is_array($extractedFilters['region']) ? implode(', ', $extractedFilters['region']) : $extractedFilters['region'];
+        }
+        if (!empty($extractedFilters['district'])) {
+            $entities[] = is_array($extractedFilters['district']) ? implode(', ', $extractedFilters['district']) : $extractedFilters['district'];
+        }
+        if (!empty($extractedFilters['main_branch'])) {
+            $entities[] = $extractedFilters['main_branch'];
+        }
+        if (!empty($extractedFilters['product'])) {
+            $entities[] = $extractedFilters['product'];
+        }
 
         $questions = $this->queryBuilder->getClarifyingQuestions(
             $query,
@@ -996,10 +1038,14 @@ class InsightsExecutor
         $bestMatch = null;
         $bestLen = 0;
         foreach ($candidates as $candidate) {
-            if (empty($candidate)) continue;
+            if (empty($candidate)) {
+                continue;
+            }
             $candidateLower = strtolower(trim($candidate));
             // Only match candidates with 2+ chars to avoid false positives
-            if (strlen($candidateLower) < 2) continue;
+            if (strlen($candidateLower) < 2) {
+                continue;
+            }
             // Use word-boundary matching to prevent "Test" matching inside "best",
             // "in" matching inside "selling", etc. (?<![a-z0-9]) and (?![a-z0-9])
             // act as portable word boundaries without requiring \b on special chars.
@@ -1050,7 +1096,9 @@ class InsightsExecutor
                     AND a.wd_code IS NOT NULL AND a.wd_code != ''
                     GROUP BY a.wd_code ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         } elseif (!empty($filters['circle'])) {
             $scope = is_array($filters['circle']) ? $filters['circle'][0] : $filters['circle'];
             $cVal = str_replace("'", "''", $scope);
@@ -1060,7 +1108,9 @@ class InsightsExecutor
                     AND a.section IS NOT NULL AND a.section != ''
                     GROUP BY a.section ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         } elseif (!empty($filters['region'])) {
             $scope = is_array($filters['region']) ? $filters['region'][0] : $filters['region'];
             $breakdownLabel = 'Circle';
@@ -1069,7 +1119,9 @@ class InsightsExecutor
                     AND a.circle IS NOT NULL AND a.circle != ''
                     GROUP BY a.circle ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         } elseif (!empty($filters['main_branch'])) {
             $scope = is_array($filters['main_branch']) ? $filters['main_branch'][0] : $filters['main_branch'];
             $breakdownLabel = 'Region';
@@ -1079,7 +1131,9 @@ class InsightsExecutor
                     WHERE $baseCond
                     GROUP BY d.branch_name ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         } elseif (!empty($filters['district'])) {
             $scope = is_array($filters['district']) ? $filters['district'][0] : $filters['district'];
             $breakdownLabel = 'Branch';
@@ -1089,7 +1143,9 @@ class InsightsExecutor
                     WHERE $baseCond
                     GROUP BY d.main_branch ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         } else {
             $breakdownLabel = 'District';
             $sql = "SELECT d.district AS name, COUNT(DISTINCT a.team_id) AS ds_count
@@ -1098,7 +1154,9 @@ class InsightsExecutor
                     WHERE $baseCond
                     GROUP BY d.district ORDER BY ds_count DESC";
             $stmt = $this->pdo->query($sql);
-            if ($stmt) $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            if ($stmt) {
+                $breakdown = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            }
         }
 
         $breakdownFormatted = [];
@@ -1176,22 +1234,22 @@ class InsightsExecutor
 
         // Circle filter
         if (!empty($filters['circle']) && is_array($filters['circle'])) {
-            $names = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['circle']));
+            $names = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['circle']));
             $conditions[] = "a.circle IN ($names)";
         }
         // Section filter
         if (!empty($filters['section']) && is_array($filters['section'])) {
-            $names = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['section']));
+            $names = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['section']));
             $conditions[] = "a.section IN ($names)";
         }
         // WD Code filter
         if (!empty($filters['wd_code']) && is_array($filters['wd_code'])) {
-            $codes = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['wd_code']));
+            $codes = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['wd_code']));
             $conditions[] = "a.wd_code IN ($codes)";
         }
 
         $sql = 'SELECT COUNT(DISTINCT a.team_id) AS total_ds FROM tblproject_team a'
-             . ' WHERE ' . implode(' AND ', $conditions);
+            . ' WHERE ' . implode(' AND ', $conditions);
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
@@ -1230,9 +1288,9 @@ class InsightsExecutor
         $endDate = $filters['date_to'] ?? date('Y-m-d');
         $queryLower = strtolower($queryText);
         $showWorst = (strpos($queryLower, 'worst') !== false ||
-                      strpos($queryLower, 'bottom') !== false ||
-                      strpos($queryLower, 'lowest') !== false ||
-                      strpos($queryLower, 'poor') !== false);
+            strpos($queryLower, 'bottom') !== false ||
+            strpos($queryLower, 'lowest') !== false ||
+            strpos($queryLower, 'poor') !== false);
 
         $productFilter = $this->buildProductTableFilter($filters);
 
@@ -1318,7 +1376,7 @@ class InsightsExecutor
             }
 
             // Sort by totalSales
-            usort($topProducts, function($a, $b) use ($showWorst) {
+            usort($topProducts, function ($a, $b) use ($showWorst) {
                 return $showWorst
                     ? ($a['totalSales'] <=> $b['totalSales'])
                     : ($b['totalSales'] <=> $a['totalSales']);
@@ -1378,9 +1436,9 @@ class InsightsExecutor
         $endDate = $filters['date_to'] ?? date('Y-m-d');
         $queryLower = strtolower($queryText);
         $showWorst = (strpos($queryLower, 'worst') !== false ||
-                      strpos($queryLower, 'bottom') !== false ||
-                      strpos($queryLower, 'lowest') !== false ||
-                      strpos($queryLower, 'poor') !== false);
+            strpos($queryLower, 'bottom') !== false ||
+            strpos($queryLower, 'lowest') !== false ||
+            strpos($queryLower, 'poor') !== false);
 
         // Use the pre-computed total_sales_deliveries column directly
         // IMPORTANT: Avoid summing 78 individual product columns (SUM(col1)+SUM(col2)+...)
@@ -1731,10 +1789,10 @@ class InsightsExecutor
         }
 
         $totalSalesAll = array_sum(array_column($records, 'totalSales'));
-        $bestDay = !empty($records) ? array_reduce($records, function($carry, $item) {
+        $bestDay = !empty($records) ? array_reduce($records, function ($carry, $item) {
             return ($carry === null || $item['avgSales'] > $carry['avgSales']) ? $item : $carry;
         }) : null;
-        $worstDay = !empty($records) ? array_reduce($records, function($carry, $item) {
+        $worstDay = !empty($records) ? array_reduce($records, function ($carry, $item) {
             return ($carry === null || $item['avgSales'] < $carry['avgSales']) ? $item : $carry;
         }) : null;
 
@@ -1842,11 +1900,20 @@ class InsightsExecutor
         }
 
         // Separate growing and declining
-        $growing = array_filter($records, function($r) { return $r['direction'] === 'growing'; });
-        $declining = array_filter($records, function($r) { return $r['direction'] === 'declining'; });
+        $growing = array_filter($records, function ($r) {
+            return $r['direction'] === 'growing';
+        });
+        $declining = array_filter($records, function ($r) {
+            return $r['direction'] === 'declining';
+        });
 
-        $aiText = $this->generateAiForData('growth_decline', $queryText, $records, 0,
-            "Growing: " . count($growing) . " | Declining: " . count($declining) . " | Dimension: $dimLabel");
+        $aiText = $this->generateAiForData(
+            'growth_decline',
+            $queryText,
+            $records,
+            0,
+            "Growing: " . count($growing) . " | Declining: " . count($declining) . " | Dimension: $dimLabel"
+        );
 
         return [
             'query_name' => 'Growth & Decline Analysis',
@@ -1967,7 +2034,7 @@ class InsightsExecutor
             $records[] = [
                 'name'           => $label,
                 'firstHalfSales' => round($first, 2),
-                'secondHalfSales'=> round($second, 2),
+                'secondHalfSales' => round($second, 2),
                 'changePercent'  => $change,
                 'direction'      => $change > 5 ? 'growing' : ($change < -5 ? 'declining' : 'stable'),
                 'trend'          => $change > 0 ? 'up' : ($change < 0 ? 'down' : 'flat'),
@@ -1975,14 +2042,25 @@ class InsightsExecutor
         }
 
         // Sort by change descending (growers first)
-        usort($records, function($a, $b) { return $b['changePercent'] <=> $a['changePercent']; });
+        usort($records, function ($a, $b) {
+            return $b['changePercent'] <=> $a['changePercent'];
+        });
 
-        $growing  = array_values(array_filter($records, function($r) { return $r['direction'] === 'growing'; }));
-        $declining = array_values(array_filter($records, function($r) { return $r['direction'] === 'declining'; }));
+        $growing  = array_values(array_filter($records, function ($r) {
+            return $r['direction'] === 'growing';
+        }));
+        $declining = array_values(array_filter($records, function ($r) {
+            return $r['direction'] === 'declining';
+        }));
         $dimLabel  = $granularity === 'product' ? 'product' : 'category';
 
-        $aiText = $this->generateAiForData('growth_decline', $queryText, $records, 0,
-            ucfirst($dimLabel) . " growth analysis. Growing: " . count($growing) . " | Declining: " . count($declining));
+        $aiText = $this->generateAiForData(
+            'growth_decline',
+            $queryText,
+            $records,
+            0,
+            ucfirst($dimLabel) . " growth analysis. Growing: " . count($growing) . " | Declining: " . count($declining)
+        );
 
         return [
             'query_name'   => ucfirst($dimLabel) . ' Growth & Decline',
@@ -1990,7 +2068,7 @@ class InsightsExecutor
             'records'      => $records,
             'metrics'      => [
                 'growing_count'  => count($growing),
-                'declining_count'=> count($declining),
+                'declining_count' => count($declining),
                 'stable_count'   => count($records) - count($growing) - count($declining),
                 'dimension'      => $dimLabel,
             ],
@@ -2044,18 +2122,31 @@ class InsightsExecutor
             ];
         }
 
-        $growing  = array_filter($records, function($r) { return $r['direction'] === 'growing'; });
-        $declining = array_filter($records, function($r) { return $r['direction'] === 'declining'; });
-        $aiText = $this->generateAiForData('growth_decline', $queryText, $records, 0,
-            "Growing: " . count($growing) . " | Declining: " . count($declining) . " | Dimension: region");
+        $growing  = array_filter($records, function ($r) {
+            return $r['direction'] === 'growing';
+        });
+        $declining = array_filter($records, function ($r) {
+            return $r['direction'] === 'declining';
+        });
+        $aiText = $this->generateAiForData(
+            'growth_decline',
+            $queryText,
+            $records,
+            0,
+            "Growing: " . count($growing) . " | Declining: " . count($declining) . " | Dimension: region"
+        );
 
         return [
             'query_name' => 'Growth & Decline Analysis', 'record_count' => count($records),
             'records' => $records,
-            'metrics' => ['growing_count' => count($growing), 'declining_count' => count($declining),
-                'stable_count' => count($records) - count($growing) - count($declining), 'dimension' => 'region'],
-            'period' => ['first_half' => ['start' => $startDate, 'end' => date('Y-m-d', strtotime($midDate . ' -1 day'))],
-                'second_half' => ['start' => $midDate, 'end' => $endDate]],
+            'metrics' => [
+                'growing_count' => count($growing), 'declining_count' => count($declining),
+                'stable_count' => count($records) - count($growing) - count($declining), 'dimension' => 'region'
+            ],
+            'period' => [
+                'first_half' => ['start' => $startDate, 'end' => date('Y-m-d', strtotime($midDate . ' -1 day'))],
+                'second_half' => ['start' => $midDate, 'end' => $endDate]
+            ],
             'ai_text' => $aiText,
         ];
     }
@@ -2261,7 +2352,8 @@ class InsightsExecutor
                 . ($isSingleDay ? "This is a SINGLE-DAY (today) summary: focus on what happened today - DS who marked attendance, qualified count, sales so far, and actionable insights.\n" : '')
                 . ($isMorningBriefing ? "This is a MORNING BRIEFING: be concise but comprehensive. Include specific, actionable next steps managers can take today.\n" : '')
                 . $aiContext . "\n\n"
-                . "Provide a comprehensive " . ($isMorningBriefing ? 'morning briefing ' : ($isSingleDay ? 'daily ' : '')) . "summary covering: (1) Overall health, (2) Key metrics (DS marked attendance, qualified, sales), (3) Top & bottom performers, (4) Areas of concern, (5) 3–5 specific, actionable recommendations (what to do today / this week to improve).";
+                . "Provide a comprehensive " . ($isMorningBriefing ? 'morning briefing ' : ($isSingleDay ? 'daily ' : '')) .
+                "summary covering: (1) Overall health, (2) Key metrics (DS marked attendance, qualified, sales), (3) Top & bottom performers, (4) Areas of concern, (5) 3–5 specific, actionable recommendations (what to do today / this week to improve).";
             $aiText = $this->callOpenAi($prompt);
         } catch (\Exception $e) {
             $aiText = $queryLabel . ": Total Sales " . round($totalSales) . " units, {$qualRate}% qualification, " . intval($overall['activeDsCount']) . " DS marked attendance.";
@@ -2328,7 +2420,9 @@ class InsightsExecutor
             $stmt = $this->pdo->prepare($sql);
             $stmt->execute([':start' => $startDate, ':end' => $endDate]);
             $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-            if (!$row) return [];
+            if (!$row) {
+                return [];
+            }
             $productTotals = [];
             foreach ($productCol as $col) {
                 $productTotal = floatval($row[$col] ?? 0);
@@ -2339,7 +2433,9 @@ class InsightsExecutor
             $out = [];
             $i = 0;
             foreach ($productTotals as $name => $total) {
-                if ($i >= $limit) break;
+                if ($i >= $limit) {
+                    break;
+                }
                 $out[] = ['productName' => $name, 'totalSales' => round($total, 0)];
                 $i++;
             }
@@ -2405,7 +2501,9 @@ class InsightsExecutor
         $dowNames  = [2 => 'Mon', 3 => 'Tue', 4 => 'Wed', 5 => 'Thu', 6 => 'Fri', 7 => 'Sat'];
 
         foreach ($branchData as $branch => $dailyData) {
-            if (count($dailyData) < 3) continue;
+            if (count($dailyData) < 3) {
+                continue;
+            }
 
             // ── Step 1: Build per-weekday baseline (mean + stdDev for sales and DS count) ──
             $dowGroups = [];
@@ -2420,7 +2518,9 @@ class InsightsExecutor
                 $n     = count($g['sales']);
                 $sMean = array_sum($g['sales']) / $n;
                 $sVar  = $n >= 2
-                    ? array_sum(array_map(function ($v) use ($sMean) { return pow($v - $sMean, 2); }, $g['sales'])) / $n
+                    ? array_sum(array_map(function ($v) use ($sMean) {
+                        return pow($v - $sMean, 2);
+                    }, $g['sales'])) / $n
                     : 0;
                 $dowBaseline[$d] = [
                     'mean'   => $sMean,
@@ -2433,7 +2533,9 @@ class InsightsExecutor
             // Overall fallback — used when a weekday has fewer than 2 data points
             $allSales      = array_column($dailyData, 'sales');
             $overallMean   = array_sum($allSales) / count($allSales);
-            $overallVar    = array_sum(array_map(function ($v) use ($overallMean) { return pow($v - $overallMean, 2); }, $allSales)) / count($allSales);
+            $overallVar    = array_sum(array_map(function ($v) use ($overallMean) {
+                return pow($v - $overallMean, 2);
+            }, $allSales)) / count($allSales);
             $overallStdDev = sqrt($overallVar);
             $overallDsMean = array_sum(array_column($dailyData, 'dsCount')) / count($dailyData);
 
@@ -2447,10 +2549,14 @@ class InsightsExecutor
                 $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
                 $expectedDs = $useWeekday ? $bl['dsMean'] : $overallDsMean;
 
-                if ($stdDev == 0) continue;
+                if ($stdDev == 0) {
+                    continue;
+                }
 
                 $zScore = ($day['sales'] - $mean) / $stdDev;
-                if (abs($zScore) <= 2.0) continue;
+                if (abs($zScore) <= 2.0) {
+                    continue;
+                }
 
                 // ── Step 3: Auto-tag root cause ──
                 $dsDropPct = $expectedDs > 0 ? (($expectedDs - $day['dsCount']) / $expectedDs) * 100 : 0;
@@ -2500,13 +2606,15 @@ class InsightsExecutor
         }
         $regionalEvents = [];
         foreach ($dropsByDistrictDate as $key => $indices) {
-            if (count($indices) < 3) continue;
+            if (count($indices) < 3) {
+                continue;
+            }
             [$rDate, $rDistrict] = explode('||', $key, 2);
             foreach ($indices as $idx) {
                 $anomalies[$idx]['isRegional'] = true;
             }
-            $branchList = array_values(array_map(fn($i) => $anomalies[$i]['branch'], $indices));
-            $avgZ        = array_sum(array_map(fn($i) => abs($anomalies[$i]['zScore']), $indices)) / count($indices);
+            $branchList = array_values(array_map(fn ($i) => $anomalies[$i]['branch'], $indices));
+            $avgZ        = array_sum(array_map(fn ($i) => abs($anomalies[$i]['zScore']), $indices)) / count($indices);
             $uRank       = ['critical' => 0, 'warning' => 1, 'watch' => 2];
             $worstU      = 'watch';
             foreach ($indices as $i) {
@@ -2523,7 +2631,7 @@ class InsightsExecutor
                 'urgency'          => $worstU,
             ];
         }
-        usort($regionalEvents, fn($a, $b) => $b['branchCount'] <=> $a['branchCount']);
+        usort($regionalEvents, fn ($a, $b) => $b['branchCount'] <=> $a['branchCount']);
         $regionalEventCount = count($regionalEvents);
 
         // ── Phase 3: Urgency sort (critical → warning → watch → |z-score|) ──
@@ -2531,28 +2639,30 @@ class InsightsExecutor
         usort($anomalies, function ($a, $b) use ($urgencyOrder) {
             $ua = $urgencyOrder[$a['urgency']] ?? 3;
             $ub = $urgencyOrder[$b['urgency']] ?? 3;
-            if ($ua !== $ub) return $ua <=> $ub;
+            if ($ua !== $ub) {
+                return $ua <=> $ub;
+            }
             return abs($b['zScore']) <=> abs($a['zScore']);
         });
 
         // Compute metrics from the full anomaly list (before slicing) so summary cards are accurate
-        $spikes           = count(array_filter($anomalies, fn($a) => $a['type'] === 'spike'));
-        $drops            = count(array_filter($anomalies, fn($a) => $a['type'] === 'drop'));
-        $highSeverity     = count(array_filter($anomalies, fn($a) => $a['severity'] === 'high'));
-        $attendanceIssues = count(array_filter($anomalies, fn($a) => $a['cause'] === 'attendance_issue'));
-        $marketIssues     = count(array_filter($anomalies, fn($a) => $a['cause'] === 'market_issue'));
-        $noDs             = count(array_filter($anomalies, fn($a) => $a['cause'] === 'no_ds_in_field'));
-        $criticalCount    = count(array_filter($anomalies, fn($a) => $a['urgency'] === 'critical'));
-        $warningCount     = count(array_filter($anomalies, fn($a) => $a['urgency'] === 'warning'));
-        $watchCount       = count(array_filter($anomalies, fn($a) => $a['urgency'] === 'watch'));
+        $spikes           = count(array_filter($anomalies, fn ($a) => $a['type'] === 'spike'));
+        $drops            = count(array_filter($anomalies, fn ($a) => $a['type'] === 'drop'));
+        $highSeverity     = count(array_filter($anomalies, fn ($a) => $a['severity'] === 'high'));
+        $attendanceIssues = count(array_filter($anomalies, fn ($a) => $a['cause'] === 'attendance_issue'));
+        $marketIssues     = count(array_filter($anomalies, fn ($a) => $a['cause'] === 'market_issue'));
+        $noDs             = count(array_filter($anomalies, fn ($a) => $a['cause'] === 'no_ds_in_field'));
+        $criticalCount    = count(array_filter($anomalies, fn ($a) => $a['urgency'] === 'critical'));
+        $warningCount     = count(array_filter($anomalies, fn ($a) => $a['urgency'] === 'warning'));
+        $watchCount       = count(array_filter($anomalies, fn ($a) => $a['urgency'] === 'watch'));
 
         // Limit to 200 for the response payload (charts + table) — enough for 3-month ranges
         $anomalies = array_slice($anomalies, 0, 200);
 
         // ── Phase 2: Focus brand anomalies ──
         $focusBrandAnomalies = $this->detectFocusBrandAnomalies($filters, $startDate, $endDate, $baseWhere);
-        $fbDrops  = count(array_filter($focusBrandAnomalies, fn($a) => $a['type'] === 'drop'));
-        $fbSpikes = count(array_filter($focusBrandAnomalies, fn($a) => $a['type'] === 'spike'));
+        $fbDrops  = count(array_filter($focusBrandAnomalies, fn ($a) => $a['type'] === 'drop'));
+        $fbSpikes = count(array_filter($focusBrandAnomalies, fn ($a) => $a['type'] === 'spike'));
 
         // ── Phase 3: Streak detection ──
         $streaks     = $this->detectStreaks(array_merge($anomalies, $focusBrandAnomalies));
@@ -2563,9 +2673,13 @@ class InsightsExecutor
             $anomalyBranches = array_values(array_unique(array_column($anomalies, 'branch')));
             $anomalyDates    = array_values(array_unique(array_column($anomalies, 'date')));
             $bParams = [];
-            foreach ($anomalyBranches as $i => $b) $bParams[":ab$i"] = $b;
+            foreach ($anomalyBranches as $i => $b) {
+                $bParams[":ab$i"] = $b;
+            }
             $dParams = [];
-            foreach ($anomalyDates as $i => $d) $dParams[":ad$i"] = $d;
+            foreach ($anomalyDates as $i => $d) {
+                $dParams[":ad$i"] = $d;
+            }
             $bIn = implode(',', array_keys($bParams));
             $dIn = implode(',', array_keys($dParams));
 
@@ -2592,7 +2706,9 @@ class InsightsExecutor
 
             // ── Phase 4b: Anomaly map points (avg branch lat/lng coloured by worst urgency) ──
             $mbParams = [];
-            foreach ($anomalyBranches as $i => $b) $mbParams[":mb$i"] = $b;
+            foreach ($anomalyBranches as $i => $b) {
+                $mbParams[":mb$i"] = $b;
+            }
             $mbIn = implode(',', array_keys($mbParams));
 
             $mapSql = "SELECT d.branch_name,
@@ -2620,7 +2736,9 @@ class InsightsExecutor
             $branchSummary = [];
             foreach ($anomalies as $a) {
                 $br = $a['branch'];
-                if (!isset($branchSummary[$br])) $branchSummary[$br] = ['count' => 0, 'urgency' => 'watch'];
+                if (!isset($branchSummary[$br])) {
+                    $branchSummary[$br] = ['count' => 0, 'urgency' => 'watch'];
+                }
                 $branchSummary[$br]['count']++;
                 if (($urgencyRank[$a['urgency']] ?? 2) < ($urgencyRank[$branchSummary[$br]['urgency']] ?? 2)) {
                     $branchSummary[$br]['urgency'] = $a['urgency'];
@@ -2629,7 +2747,9 @@ class InsightsExecutor
 
             $anomalyMapPoints = [];
             foreach ($branchSummary as $br => $info) {
-                if (!isset($branchCoords[$br])) continue;
+                if (!isset($branchCoords[$br])) {
+                    continue;
+                }
                 $anomalyMapPoints[] = [
                     'branch'       => $br,
                     'lat'          => $branchCoords[$br]['lat'],
@@ -2667,14 +2787,14 @@ class InsightsExecutor
 
         $aiText = $this->callOpenAi(
             "User asked: \"$queryText\"\n"
-            . "IMPORTANT: All sales figures are in UNITS (sticks/packs), not currency. Do not use \$ or any currency symbol.\n"
-            . "Context: Anomaly detection. Sundays excluded. Day-of-week adjusted baseline used. Anomalies are urgency-triaged (critical/warning/watch).\n"
-            . "Each anomaly has a pre-tagged cause: attendance_issue (DS count dropped ≥30%), market_issue (DS normal but sales dropped), no_ds_in_field (zero DS), demand_spike (organic surge), extra_ds_deployed (extra DS drove spike).\n"
-            . ($regionalEventCount > 0 ? "REGIONAL CONTAGION DETECTED: $regionalEventCount district(s) had 3+ branches dropping on the same day — this is likely an external/market-wide event, NOT individual branch failure. Do NOT blame branch managers for these.\n" : '')
-            . (!empty($streaks) ? "STREAKS DETECTED: Some branches have consecutive anomaly days — these compound into serious business risk.\n" : '')
-            . (!empty($focusBrandAnomalies) ? "Focus brand anomalies are listed separately — treat these as HIGHEST PRIORITY.\n" : '')
-            . $aiContext . "\n\n"
-            . "Provide: (1) CRITICAL items first — regional events, streaks, focus brand drops. (2) For regional events, suggest external cause investigation (holidays, competition, weather). (3) Summary by urgency level. (4) Root cause breakdown with actions. Use #### headings."
+                . "IMPORTANT: All sales figures are in UNITS (sticks/packs), not currency. Do not use \$ or any currency symbol.\n"
+                . "Context: Anomaly detection. Sundays excluded. Day-of-week adjusted baseline used. Anomalies are urgency-triaged (critical/warning/watch).\n"
+                . "Each anomaly has a pre-tagged cause: attendance_issue (DS count dropped ≥30%), market_issue (DS normal but sales dropped), no_ds_in_field (zero DS), demand_spike (organic surge), extra_ds_deployed (extra DS drove spike).\n"
+                . ($regionalEventCount > 0 ? "REGIONAL CONTAGION DETECTED: $regionalEventCount district(s) had 3+ branches dropping on the same day — this is likely an external/market-wide event, NOT individual branch failure. Do NOT blame branch managers for these.\n" : '')
+                . (!empty($streaks) ? "STREAKS DETECTED: Some branches have consecutive anomaly days — these compound into serious business risk.\n" : '')
+                . (!empty($focusBrandAnomalies) ? "Focus brand anomalies are listed separately — treat these as HIGHEST PRIORITY.\n" : '')
+                . $aiContext . "\n\n"
+                . "Provide: (1) CRITICAL items first — regional events, streaks, focus brand drops. (2) For regional events, suggest external cause investigation (holidays, competition, weather). (3) Summary by urgency level. (4) Root cause breakdown with actions. Use #### headings."
         );
 
         return [
@@ -2724,22 +2844,28 @@ class InsightsExecutor
         $mappingStmt->execute();
         $mappings = $mappingStmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (empty($mappings)) return [];
+        if (empty($mappings)) {
+            return [];
+        }
 
         // Validate column names — whitelist only total_sale_productN (prevents SQL injection)
         $validColPattern = '/^total_sale_product\d+$/';
         $uniqueCols = array_values(array_unique(array_filter(
             array_column($mappings, 'summary_column_name'),
-            fn($col) => preg_match($validColPattern, $col)
+            fn ($col) => preg_match($validColPattern, $col)
         )));
 
-        if (empty($uniqueCols)) return [];
+        if (empty($uniqueCols)) {
+            return [];
+        }
 
         // Build branch → [col → product info] lookup
         $branchProducts = [];
         foreach ($mappings as $m) {
             $col = $m['summary_column_name'];
-            if (!preg_match($validColPattern, $col)) continue;
+            if (!preg_match($validColPattern, $col)) {
+                continue;
+            }
             $branchProducts[$m['branch_name']][$col] = [
                 'productName'  => $m['product_name'],
                 'categoryName' => $m['category_name'],
@@ -2747,7 +2873,7 @@ class InsightsExecutor
         }
 
         // One dynamic query for all focus brand columns
-        $colSelects = array_map(fn($col) => "SUM(a.$col) AS $col", $uniqueCols);
+        $colSelects = array_map(fn ($col) => "SUM(a.$col) AS $col", $uniqueCols);
         $sql = "SELECT d.branch_name, a.activity_date AS sale_date,
                     DAYOFWEEK(a.activity_date) AS dow,
                     COUNT(DISTINCT a.team_id) AS activeDsCount,
@@ -2764,13 +2890,17 @@ class InsightsExecutor
         $stmt->execute([':start' => $startDate, ':end' => $endDate]);
         $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        if (empty($rows)) return [];
+        if (empty($rows)) {
+            return [];
+        }
 
         // Group daily data by (branch, product_column)
         $productData = [];
         foreach ($rows as $row) {
             $branchName = $row['branch_name'] ?? 'Unknown';
-            if (!isset($branchProducts[$branchName])) continue;
+            if (!isset($branchProducts[$branchName])) {
+                continue;
+            }
 
             $dow     = intval($row['dow']);
             $dsCount = intval($row['activeDsCount']);
@@ -2792,8 +2922,12 @@ class InsightsExecutor
 
         foreach ($productData as $branchName => $productCols) {
             foreach ($productCols as $col => $dailyData) {
-                if (count($dailyData) < 3) continue;
-                if (array_sum(array_column($dailyData, 'sales')) == 0) continue; // product not active
+                if (count($dailyData) < 3) {
+                    continue;
+                }
+                if (array_sum(array_column($dailyData, 'sales')) == 0) {
+                    continue;
+                } // product not active
 
                 $info = $branchProducts[$branchName][$col];
 
@@ -2810,7 +2944,7 @@ class InsightsExecutor
                     $n     = count($g['sales']);
                     $sMean = array_sum($g['sales']) / $n;
                     $sVar  = $n >= 2
-                        ? array_sum(array_map(fn($v) => pow($v - $sMean, 2), $g['sales'])) / $n
+                        ? array_sum(array_map(fn ($v) => pow($v - $sMean, 2), $g['sales'])) / $n
                         : 0;
                     $dowBaseline[$d] = [
                         'mean'   => $sMean,
@@ -2822,7 +2956,7 @@ class InsightsExecutor
 
                 $allSales      = array_column($dailyData, 'sales');
                 $overallMean   = array_sum($allSales) / count($allSales);
-                $overallVar    = array_sum(array_map(fn($v) => pow($v - $overallMean, 2), $allSales)) / count($allSales);
+                $overallVar    = array_sum(array_map(fn ($v) => pow($v - $overallMean, 2), $allSales)) / count($allSales);
                 $overallStdDev = sqrt($overallVar);
                 $overallDsMean = array_sum(array_column($dailyData, 'dsCount')) / count($dailyData);
 
@@ -2835,10 +2969,14 @@ class InsightsExecutor
                     $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
                     $expectedDs = $useWeekday ? $bl['dsMean'] : $overallDsMean;
 
-                    if ($stdDev == 0) continue;
+                    if ($stdDev == 0) {
+                        continue;
+                    }
 
                     $zScore = ($day['sales'] - $mean) / $stdDev;
-                    if (abs($zScore) <= 2.0) continue;
+                    if (abs($zScore) <= 2.0) {
+                        continue;
+                    }
 
                     $dsDropPct = $expectedDs > 0 ? (($expectedDs - $day['dsCount']) / $expectedDs) * 100 : 0;
 
@@ -2880,7 +3018,9 @@ class InsightsExecutor
         usort($anomalies, function ($a, $b) use ($urgencyOrder) {
             $ua = $urgencyOrder[$a['urgency']] ?? 3;
             $ub = $urgencyOrder[$b['urgency']] ?? 3;
-            if ($ua !== $ub) return $ua <=> $ub;
+            if ($ua !== $ub) {
+                return $ua <=> $ub;
+            }
             return abs($b['zScore']) <=> abs($a['zScore']);
         });
         return array_slice($anomalies, 0, 20);
@@ -2895,12 +3035,22 @@ class InsightsExecutor
         $absZ   = abs($zScore);
         $isDrop = $zScore < 0;
 
-        if ($absZ > 3.5) return 'critical';
-        if ($isFocusBrand && $isDrop && $absZ > 2.0) return 'critical';
-        if ($cause === 'no_ds_in_field' && $absZ > 2.5) return 'critical';
+        if ($absZ > 3.5) {
+            return 'critical';
+        }
+        if ($isFocusBrand && $isDrop && $absZ > 2.0) {
+            return 'critical';
+        }
+        if ($cause === 'no_ds_in_field' && $absZ > 2.5) {
+            return 'critical';
+        }
 
-        if ($absZ > 2.5) return 'warning';
-        if (in_array($cause, ['attendance_issue', 'market_issue', 'no_ds_in_field'], true)) return 'warning';
+        if ($absZ > 2.5) {
+            return 'warning';
+        }
+        if (in_array($cause, ['attendance_issue', 'market_issue', 'no_ds_in_field'], true)) {
+            return 'warning';
+        }
 
         return 'watch';
     }
@@ -2929,7 +3079,7 @@ class InsightsExecutor
                 }
             }
             $items = $unique;
-            usort($items, fn($a, $b) => strcmp($a['date'], $b['date']));
+            usort($items, fn ($a, $b) => strcmp($a['date'], $b['date']));
             $n = count($items);
             $i = 0;
             while ($i < $n) {
@@ -2938,14 +3088,16 @@ class InsightsExecutor
                 $j        = $i + 1;
                 while ($j < $n && $items[$j]['type'] === $type) {
                     $curr = new \DateTime($items[$j]['date']);
-                    if ($prevDate->diff($curr)->days > 2) break;
+                    if ($prevDate->diff($curr)->days > 2) {
+                        break;
+                    }
                     $prevDate = $curr;
                     $j++;
                 }
                 $len = $j - $i;
                 if ($len >= 3) {
                     $slice  = array_slice($items, $i, $len);
-                    $avgZ   = array_sum(array_map(fn($a) => abs($a['zScore']), $slice)) / $len;
+                    $avgZ   = array_sum(array_map(fn ($a) => abs($a['zScore']), $slice)) / $len;
                     $streaks[] = [
                         'branch'    => $branch,
                         'type'      => $type,
@@ -2960,7 +3112,7 @@ class InsightsExecutor
             }
         }
 
-        usort($streaks, fn($a, $b) => $b['days'] <=> $a['days']);
+        usort($streaks, fn ($a, $b) => $b['days'] <=> $a['days']);
         return $streaks;
     }
 
@@ -2984,15 +3136,23 @@ class InsightsExecutor
         $dimLabel = 'Region';
         $limit = 10;
         if (preg_match('/\bsection\b/', $queryLower)) {
-            $groupCol = 'b.section'; $dimLabel = 'Section'; $limit = 15;
+            $groupCol = 'b.section';
+            $dimLabel = 'Section';
+            $limit = 15;
         } elseif (preg_match('/\bcircle\b/', $queryLower)) {
-            $groupCol = 'b.circle'; $dimLabel = 'Circle'; $limit = 15;
+            $groupCol = 'b.circle';
+            $dimLabel = 'Circle';
+            $limit = 15;
         } elseif (preg_match('/\bwd[\s_]?code\b|\bwdcode\b/', $queryLower)) {
-            $groupCol = 'b.wd_code'; $dimLabel = 'WD Code'; $limit = 25;
+            $groupCol = 'b.wd_code';
+            $dimLabel = 'WD Code';
+            $limit = 25;
         } elseif (preg_match('/\bbranch\b/', $queryLower) && !preg_match('/\bregion\b/', $queryLower)) {
-            $groupCol = 'd.main_branch'; $dimLabel = 'Branch';
+            $groupCol = 'd.main_branch';
+            $dimLabel = 'Branch';
         } elseif (preg_match('/\bdistrict\b/', $queryLower)) {
-            $groupCol = 'd.district'; $dimLabel = 'District';
+            $groupCol = 'd.district';
+            $dimLabel = 'District';
         }
 
         $sql = "SELECT $groupCol AS dimName, d.district,
@@ -3068,18 +3228,26 @@ class InsightsExecutor
         $dimension = 'd.district';
         $dimLabel = 'district';
         if (strpos($queryLower, 'section') !== false) {
-            $dimension = 'b.section'; $dimLabel = 'section';
+            $dimension = 'b.section';
+            $dimLabel = 'section';
         } elseif (strpos($queryLower, 'circle') !== false) {
-            $dimension = 'b.circle'; $dimLabel = 'circle';
+            $dimension = 'b.circle';
+            $dimLabel = 'circle';
         } elseif (strpos($queryLower, 'wd code') !== false || strpos($queryLower, 'wd_code') !== false || strpos($queryLower, 'wdcode') !== false) {
-            $dimension = 'b.wd_code'; $dimLabel = 'wd_code';
+            $dimension = 'b.wd_code';
+            $dimLabel = 'wd_code';
         } elseif (strpos($queryLower, 'region') !== false) {
-            $dimension = 'd.branch_name'; $dimLabel = 'region';
-        } elseif (preg_match('/\bbranch(es)?\s+(performance|comparison|wise|ranking|breakdown)\b/', $queryLower) ||
-                  preg_match('/\bcompare\s+branch/', $queryLower)) {
-            $dimension = 'd.main_branch'; $dimLabel = 'branch';
+            $dimension = 'd.branch_name';
+            $dimLabel = 'region';
+        } elseif (
+            preg_match('/\bbranch(es)?\s+(performance|comparison|wise|ranking|breakdown)\b/', $queryLower) ||
+            preg_match('/\bcompare\s+branch/', $queryLower)
+        ) {
+            $dimension = 'd.main_branch';
+            $dimLabel = 'branch';
         } elseif (strpos($queryLower, 'district') !== false) {
-            $dimension = 'd.district'; $dimLabel = 'district';
+            $dimension = 'd.district';
+            $dimLabel = 'district';
         }
 
         $limit = ($dimLabel === 'wd_code') ? 25 : 20;
@@ -3157,19 +3325,19 @@ class InsightsExecutor
                 $baseWhere .= " AND br.main_branch = '" . str_replace("'", "''", $val) . "'";
             }
             if (!empty($filters['region']) && is_array($filters['region'])) {
-                $regionNames = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['region']));
+                $regionNames = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['region']));
                 $baseWhere .= " AND br.branch_name IN ($regionNames)";
             }
             if (!empty($filters['district']) && is_array($filters['district'])) {
-                $districtNames = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['district']));
+                $districtNames = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['district']));
                 $baseWhere .= " AND br.district IN ($districtNames)";
             }
             if (!empty($filters['circle']) && is_array($filters['circle'])) {
-                $circleNames = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['circle']));
+                $circleNames = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['circle']));
                 $baseWhere .= " AND b.circle IN ($circleNames)";
             }
             if (!empty($filters['section']) && is_array($filters['section'])) {
-                $sectionNames = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['section']));
+                $sectionNames = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['section']));
                 $baseWhere .= " AND b.section IN ($sectionNames)";
             }
 
@@ -3201,7 +3369,8 @@ class InsightsExecutor
                     'dsCount' => intval($p['dsCount'])
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
         return $points;
     }
 
@@ -3533,7 +3702,8 @@ class InsightsExecutor
                 $district = $bRow['district'];
                 $mainBranch = $bRow['main_branch'] ?? '';
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         $baseWhere = "a.dstatus = 0 AND a.team_id = :tid AND a.activity_date BETWEEN :start AND :end";
 
@@ -3598,7 +3768,7 @@ class InsightsExecutor
         $stmt->execute([':tid' => $teamId, ':start' => $startDate, ':end' => $endDate]);
         $dailyTrend = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
-        $trendRecords = array_map(function($r) {
+        $trendRecords = array_map(function ($r) {
             return [
                 'date' => $r['actDate'],
                 'sales' => floatval($r['sales']),
@@ -3631,7 +3801,9 @@ class InsightsExecutor
             $seen = [];
             foreach ($prodCols as $pc) {
                 $col = $pc['summary_column_name'];
-                if (isset($seen[$col])) continue;
+                if (isset($seen[$col])) {
+                    continue;
+                }
                 $seen[$col] = true;
                 $sumParts[] = "SUM(a.$col) AS `$col`";
                 $colMap[$col] = $pc['product_name'];
@@ -3647,8 +3819,11 @@ class InsightsExecutor
                     $prodTotals = [];
                     foreach ($colMap as $col => $name) {
                         $val = floatval($ppRow[$col] ?? 0);
-                        if (isset($prodTotals[$name])) { $prodTotals[$name] += $val; }
-                        else { $prodTotals[$name] = $val; }
+                        if (isset($prodTotals[$name])) {
+                            $prodTotals[$name] += $val;
+                        } else {
+                            $prodTotals[$name] = $val;
+                        }
                     }
                     arsort($prodTotals);
                     foreach (array_slice($prodTotals, 0, 8, true) as $name => $val) {
@@ -3720,10 +3895,15 @@ class InsightsExecutor
         // Compute performance rating
         $salesVsPeer = $peerAvgSales > 0 ? round(($totalSales / $peerAvgSales) * 100, 0) : 0;
         $rating = 'Average';
-        if ($qualRate >= 90 && $salesVsPeer >= 120) $rating = 'Excellent';
-        elseif ($qualRate >= 80 && $salesVsPeer >= 100) $rating = 'Good';
-        elseif ($qualRate < 60 || $salesVsPeer < 60) $rating = 'Needs Improvement';
-        elseif ($qualRate < 75 || $salesVsPeer < 80) $rating = 'Below Average';
+        if ($qualRate >= 90 && $salesVsPeer >= 120) {
+            $rating = 'Excellent';
+        } elseif ($qualRate >= 80 && $salesVsPeer >= 100) {
+            $rating = 'Good';
+        } elseif ($qualRate < 60 || $salesVsPeer < 60) {
+            $rating = 'Needs Improvement';
+        } elseif ($qualRate < 75 || $salesVsPeer < 80) {
+            $rating = 'Below Average';
+        }
 
         $scorecard = [
             'dsName' => $dsDisplayName,
@@ -3918,7 +4098,7 @@ class InsightsExecutor
                      GROUP BY a.activity_date ORDER BY a.activity_date";
         $stmt = $this->pdo->prepare($trendSql);
         $stmt->execute([':start' => $startDate, ':end' => $endDate]);
-        $trendRecords = array_map(function($r) {
+        $trendRecords = array_map(function ($r) {
             return [
                 'date' => $r['actDate'],
                 'sales' => floatval($r['sales']),
@@ -3960,14 +4140,20 @@ class InsightsExecutor
                     'dsCount' => intval($p['dsCount'])
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         // Rating
         $rating = 'Average';
-        if ($qualRate >= 85 && $adherenceRate >= 85) $rating = 'Excellent';
-        elseif ($qualRate >= 75 && $adherenceRate >= 75) $rating = 'Good';
-        elseif ($qualRate < 55 || $adherenceRate < 55) $rating = 'Needs Improvement';
-        elseif ($qualRate < 65 || $adherenceRate < 65) $rating = 'Below Average';
+        if ($qualRate >= 85 && $adherenceRate >= 85) {
+            $rating = 'Excellent';
+        } elseif ($qualRate >= 75 && $adherenceRate >= 75) {
+            $rating = 'Good';
+        } elseif ($qualRate < 55 || $adherenceRate < 55) {
+            $rating = 'Needs Improvement';
+        } elseif ($qualRate < 65 || $adherenceRate < 65) {
+            $rating = 'Below Average';
+        }
 
         $scorecard = [
             'level' => $level,
@@ -4117,7 +4303,8 @@ class InsightsExecutor
                     $info['childLabel'] = 'DS';
                     break;
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
         return $info;
     }
 
@@ -4157,7 +4344,9 @@ class InsightsExecutor
                 break;
         }
 
-        if (empty($groupCol)) return $breakdown;
+        if (empty($groupCol)) {
+            return $breakdown;
+        }
 
         try {
             $sql = "SELECT $groupCol AS subEntity,
@@ -4184,7 +4373,8 @@ class InsightsExecutor
                     'dsCount' => intval($r['dsCount'])
                 ];
             }
-        } catch (\Exception $e) {}
+        } catch (\Exception $e) {
+        }
 
         return ['label' => $groupLabel, 'data' => $breakdown];
     }
@@ -4278,7 +4468,9 @@ class InsightsExecutor
                 ];
             }
             $grandTotal += $catTotal;
-            usort($catProducts, function($a, $b) { return $b['totalSales'] <=> $a['totalSales']; });
+            usort($catProducts, function ($a, $b) {
+                return $b['totalSales'] <=> $a['totalSales'];
+            });
 
             $categoryResults[] = [
                 'categoryName' => $catName,
@@ -4302,7 +4494,7 @@ class InsightsExecutor
         }
         unset($catResult);
 
-        usort($categoryResults, function($a, $b) use ($showWorst) {
+        usort($categoryResults, function ($a, $b) use ($showWorst) {
             return $showWorst
                 ? ($a['totalSales'] <=> $b['totalSales'])
                 : ($b['totalSales'] <=> $a['totalSales']);
@@ -4315,7 +4507,7 @@ class InsightsExecutor
             . "Total Sales (all products): $totalSales units\n"
             . "Avg Daily: $avgDailySales units\n"
             . ($specificCategory ? "Focused on category: $specificCategory\n" : '')
-            . "Categories:\n" . json_encode(array_map(function($c) {
+            . "Categories:\n" . json_encode(array_map(function ($c) {
                 return ['category' => $c['categoryName'], 'sales' => $c['totalSales'], 'share' => $c['sharePercent'] . '%', 'products' => count($c['products'])];
             }, $categoryResults), JSON_PRETTY_PRINT);
         if ($specificCategory && !empty($productBreakdown)) {
@@ -4446,7 +4638,9 @@ class InsightsExecutor
                 'direction' => $change > 5 ? 'up' : ($change < -5 ? 'down' : 'flat')
             ];
         }
-        usort($productComparison, function($a, $b) { return $b['currentSales'] <=> $a['currentSales']; });
+        usort($productComparison, function ($a, $b) {
+            return $b['currentSales'] <=> $a['currentSales'];
+        });
 
         $branchSql = "SELECT d.branch_name, ($totalExpr) AS totalSales"
             . " FROM tblvands_summary a"
@@ -4463,7 +4657,9 @@ class InsightsExecutor
         $prevBranches = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
         $prevBranchMap = [];
-        foreach ($prevBranches as $pb) { $prevBranchMap[$pb['branch_name']] = $pb; }
+        foreach ($prevBranches as $pb) {
+            $prevBranchMap[$pb['branch_name']] = $pb;
+        }
 
         $branchComparison = [];
         foreach ($currentBranches as $cb) {
@@ -4544,7 +4740,9 @@ class InsightsExecutor
         $seenCols = [];
         foreach ($productRows as $row) {
             $col = $row['summary_column_name'];
-            if (isset($seenCols[$col])) continue;
+            if (isset($seenCols[$col])) {
+                continue;
+            }
             $seenCols[$col] = true;
             $colToProduct[$col] = $row['product_name'];
             $colToCategory[$col] = $row['category_name'];
@@ -4599,8 +4797,12 @@ class InsightsExecutor
             ];
         }
 
-        usort($focusProducts, function($a, $b) { return $b['totalSales'] <=> $a['totalSales']; });
-        usort($nonFocusProducts, function($a, $b) { return $b['totalSales'] <=> $a['totalSales']; });
+        usort($focusProducts, function ($a, $b) {
+            return $b['totalSales'] <=> $a['totalSales'];
+        });
+        usort($nonFocusProducts, function ($a, $b) {
+            return $b['totalSales'] <=> $a['totalSales'];
+        });
 
         $grandTotal = $focusTotal + $nonFocusTotal;
         $focusShare = $grandTotal > 0 ? round(($focusTotal / $grandTotal) * 100, 2) : 0;
@@ -4837,12 +5039,17 @@ class InsightsExecutor
                 $ph[] = $key;
                 $params[$key] = $v;
             }
-            if (!empty($ph)) $whereParts[] = "br.district IN (" . implode(',', $ph) . ")";
+            if (!empty($ph)) {
+                $whereParts[] = "br.district IN (" . implode(',', $ph) . ")";
+            }
         }
         // Branch filter (tblbranch.main_branch like EGAU/EPAT/...)
         if (!empty($filters['main_branch'])) {
             $val = is_array($filters['main_branch']) ? ($filters['main_branch'][0] ?? '') : $filters['main_branch'];
-            if ($val !== '') { $whereParts[] = "br.main_branch = :mainBranch"; $params[':mainBranch'] = $val; }
+            if ($val !== '') {
+                $whereParts[] = "br.main_branch = :mainBranch";
+                $params[':mainBranch'] = $val;
+            }
         }
         // Region filter (tblbranch.branch_name like Bihar/Assam/...)
         if (!empty($filters['region']) && is_array($filters['region'])) {
@@ -4852,7 +5059,9 @@ class InsightsExecutor
                 $ph[] = $key;
                 $params[$key] = $v;
             }
-            if (!empty($ph)) $whereParts[] = "br.branch_name IN (" . implode(',', $ph) . ")";
+            if (!empty($ph)) {
+                $whereParts[] = "br.branch_name IN (" . implode(',', $ph) . ")";
+            }
         }
         if (!empty($filters['branch_name'])) {
             $whereParts[] = "br.branch_name = :branchName";
@@ -4866,7 +5075,9 @@ class InsightsExecutor
                 $ph[] = $key;
                 $params[$key] = $v;
             }
-            if (!empty($ph)) $whereParts[] = "b.circle IN (" . implode(',', $ph) . ")";
+            if (!empty($ph)) {
+                $whereParts[] = "b.circle IN (" . implode(',', $ph) . ")";
+            }
         }
         if (!empty($filters['section']) && is_array($filters['section'])) {
             $ph = [];
@@ -4875,7 +5086,9 @@ class InsightsExecutor
                 $ph[] = $key;
                 $params[$key] = $v;
             }
-            if (!empty($ph)) $whereParts[] = "b.section IN (" . implode(',', $ph) . ")";
+            if (!empty($ph)) {
+                $whereParts[] = "b.section IN (" . implode(',', $ph) . ")";
+            }
         }
         if (!empty($filters['wd_code']) && is_array($filters['wd_code'])) {
             $ph = [];
@@ -4884,7 +5097,9 @@ class InsightsExecutor
                 $ph[] = $key;
                 $params[$key] = $v;
             }
-            if (!empty($ph)) $whereParts[] = "b.wd_code IN (" . implode(',', $ph) . ")";
+            if (!empty($ph)) {
+                $whereParts[] = "b.wd_code IN (" . implode(',', $ph) . ")";
+            }
         }
 
         $where = implode(' AND ', $whereParts);
@@ -4943,7 +5158,9 @@ class InsightsExecutor
 
         foreach ($points as $p) {
             $sales = floatval($p['totalSales']);
-            if ($sales > $maxSales) $maxSales = $sales;
+            if ($sales > $maxSales) {
+                $maxSales = $sales;
+            }
             $mainBranch = $p['mainBranch'] ?? '';
             $regionName = $p['regionName'] ?? '';
             $district = $p['district'] ?? '';
@@ -4996,21 +5213,29 @@ class InsightsExecutor
 
         $grandTotal = array_sum(array_column($heatmapPoints, 'sales'));
 
-        foreach ($districtSummary as &$d) { $d['regions'] = count($d['regions']); }
-        foreach ($branchSummary as &$d) { $d['regions'] = count($d['regions']); }
-        foreach ($regionSummary as &$d) { $d['districts'] = count($d['districts']); }
-        foreach ($circleSummary as &$d) { $d['regions'] = count($d['regions']); }
+        foreach ($districtSummary as &$d) {
+            $d['regions'] = count($d['regions']);
+        }
+        foreach ($branchSummary as &$d) {
+            $d['regions'] = count($d['regions']);
+        }
+        foreach ($regionSummary as &$d) {
+            $d['districts'] = count($d['districts']);
+        }
+        foreach ($circleSummary as &$d) {
+            $d['regions'] = count($d['regions']);
+        }
 
-        $addShare = function(&$arr) use ($grandTotal) {
+        $addShare = function (&$arr) use ($grandTotal) {
             foreach ($arr as &$r) {
                 $r['totalSales'] = round($r['totalSales'], 0);
                 $r['sharePercent'] = $grandTotal > 0 ? round(($r['totalSales'] / $grandTotal) * 100, 1) : 0;
             }
         };
-        usort($districtSummary, fn($a, $b) => $b['totalSales'] <=> $a['totalSales']);
-        usort($branchSummary, fn($a, $b) => $b['totalSales'] <=> $a['totalSales']);
-        usort($regionSummary, fn($a, $b) => $b['totalSales'] <=> $a['totalSales']);
-        usort($circleSummary, fn($a, $b) => $b['totalSales'] <=> $a['totalSales']);
+        usort($districtSummary, fn ($a, $b) => $b['totalSales'] <=> $a['totalSales']);
+        usort($branchSummary, fn ($a, $b) => $b['totalSales'] <=> $a['totalSales']);
+        usort($regionSummary, fn ($a, $b) => $b['totalSales'] <=> $a['totalSales']);
+        usort($circleSummary, fn ($a, $b) => $b['totalSales'] <=> $a['totalSales']);
         $addShare($districtSummary);
         $addShare($branchSummary);
         $addShare($regionSummary);
@@ -5035,7 +5260,8 @@ class InsightsExecutor
                 $row = $cs->fetch(\PDO::FETCH_ASSOC);
                 $sectionCount = intval($row['sec'] ?? 0);
                 $wdCount = intval($row['wd'] ?? 0);
-            } catch (\Exception $e) { /* ignore */ }
+            } catch (\Exception $e) { /* ignore */
+            }
         }
 
         // Section summary (only when needed)
@@ -5059,7 +5285,9 @@ class InsightsExecutor
                     $r['dsCount'] = intval($r['dsCount'] ?? 0);
                     $r['sharePercent'] = $grandTotal > 0 ? round(($r['totalSales'] / $grandTotal) * 100, 1) : 0;
                 }
-            } catch (\Exception $e) { $sectionSummary = []; }
+            } catch (\Exception $e) {
+                $sectionSummary = [];
+            }
         }
 
         // WD summary (only when needed)
@@ -5084,7 +5312,9 @@ class InsightsExecutor
                     $r['dsCount'] = intval($r['dsCount'] ?? 0);
                     $r['sharePercent'] = $grandTotal > 0 ? round(($r['totalSales'] / $grandTotal) * 100, 1) : 0;
                 }
-            } catch (\Exception $e) { $wdSummary = []; }
+            } catch (\Exception $e) {
+                $wdSummary = [];
+            }
         }
 
         // Only return the summaries relevant to the scope (plus the next levels)
@@ -5177,7 +5407,7 @@ class InsightsExecutor
 
         // District filter
         if (!empty($filters['district']) && is_array($filters['district'])) {
-            $districtNames = implode(',', array_map(function($v) {
+            $districtNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['district']));
             $conditions[] = "d.district IN ($districtNames)";
@@ -5191,7 +5421,7 @@ class InsightsExecutor
 
         // Region filter (branch_name, e.g. Bihar, UP East)
         if (!empty($filters['region']) && is_array($filters['region'])) {
-            $regionNames = implode(',', array_map(function($v) {
+            $regionNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['region']));
             $conditions[] = "d.branch_name IN ($regionNames)";
@@ -5203,7 +5433,7 @@ class InsightsExecutor
 
         // Circle filter
         if (!empty($filters['circle']) && is_array($filters['circle'])) {
-            $circleNames = implode(',', array_map(function($v) {
+            $circleNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['circle']));
             $conditions[] = "b.circle IN ($circleNames)";
@@ -5211,7 +5441,7 @@ class InsightsExecutor
 
         // Section filter
         if (!empty($filters['section']) && is_array($filters['section'])) {
-            $sectionNames = implode(',', array_map(function($v) {
+            $sectionNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['section']));
             $conditions[] = "b.section IN ($sectionNames)";
@@ -5219,7 +5449,7 @@ class InsightsExecutor
 
         // WD Code filter
         if (!empty($filters['wd_code']) && is_array($filters['wd_code'])) {
-            $wdCodes = implode(',', array_map(function($v) {
+            $wdCodes = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['wd_code']));
             $conditions[] = "b.wd_code IN ($wdCodes)";
@@ -5235,7 +5465,7 @@ class InsightsExecutor
     {
         $sql = '';
         if (!empty($filters['region']) && is_array($filters['region'])) {
-            $regionNames = implode(',', array_map(function($v) {
+            $regionNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['region']));
             $sql .= " AND d.branch_name IN ($regionNames)";
@@ -5244,19 +5474,19 @@ class InsightsExecutor
             $sql .= " AND d.main_branch = '" . str_replace("'", "''", $filters['main_branch']) . "'";
         }
         if (!empty($filters['district']) && is_array($filters['district'])) {
-            $districtNames = implode(',', array_map(function($v) {
+            $districtNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['district']));
             $sql .= " AND d.district IN ($districtNames)";
         }
         if (!empty($filters['circle']) && is_array($filters['circle'])) {
-            $circleNames = implode(',', array_map(function($v) {
+            $circleNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['circle']));
             $sql .= " AND b.circle IN ($circleNames)";
         }
         if (!empty($filters['section']) && is_array($filters['section'])) {
-            $sectionNames = implode(',', array_map(function($v) {
+            $sectionNames = implode(',', array_map(function ($v) {
                 return "'" . str_replace("'", "''", $v) . "'";
             }, $filters['section']));
             $sql .= " AND b.section IN ($sectionNames)";
@@ -5290,7 +5520,7 @@ class InsightsExecutor
         $conditions = ["dstatus = 0"];
 
         if (!empty($filters['region']) && is_array($filters['region'])) {
-            $names = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['region']));
+            $names = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['region']));
             $conditions[] = "branch_name IN ($names)";
         }
         if (!empty($filters['main_branch'])) {
@@ -5298,7 +5528,7 @@ class InsightsExecutor
             $conditions[] = "main_branch = '" . str_replace("'", "''", $val) . "'";
         }
         if (!empty($filters['district']) && is_array($filters['district'])) {
-            $names = implode(',', array_map(fn($v) => "'" . str_replace("'", "''", $v) . "'", $filters['district']));
+            $names = implode(',', array_map(fn ($v) => "'" . str_replace("'", "''", $v) . "'", $filters['district']));
             $conditions[] = "district IN ($names)";
         }
 
@@ -5417,16 +5647,20 @@ class InsightsExecutor
         }
 
         // "last month"
-        if (strpos($queryLower, 'last month') !== false && strpos($queryLower, 'vs') === false
-            && strpos($queryLower, 'compare') === false && strpos($queryLower, 'and last') === false) {
+        if (
+            strpos($queryLower, 'last month') !== false && strpos($queryLower, 'vs') === false
+            && strpos($queryLower, 'compare') === false && strpos($queryLower, 'and last') === false
+        ) {
             $start = date('Y-m-01', strtotime('first day of last month'));
             $end = date('Y-m-t', strtotime('last day of last month'));
             return ['from' => $start, 'to' => $end, 'label' => 'Last month'];
         }
 
         // "this month"
-        if (strpos($queryLower, 'this month') !== false && strpos($queryLower, 'vs') === false
-            && strpos($queryLower, 'compare') === false && strpos($queryLower, 'and last') === false) {
+        if (
+            strpos($queryLower, 'this month') !== false && strpos($queryLower, 'vs') === false
+            && strpos($queryLower, 'compare') === false && strpos($queryLower, 'and last') === false
+        ) {
             $start = date('Y-m-01');
             return ['from' => $start, 'to' => $today, 'label' => 'This month'];
         }
@@ -5434,7 +5668,10 @@ class InsightsExecutor
         // "last quarter"
         if (strpos($queryLower, 'last quarter') !== false) {
             $qtr = ceil($month / 3) - 1;
-            if ($qtr <= 0) { $qtr = 4; $year--; }
+            if ($qtr <= 0) {
+                $qtr = 4;
+                $year--;
+            }
             $start = date('Y-m-d', mktime(0, 0, 0, ($qtr - 1) * 3 + 1, 1, $year));
             $end = date('Y-m-t', mktime(0, 0, 0, $qtr * 3, 1, $year));
             return ['from' => $start, 'to' => $end, 'label' => "Q$qtr $year"];
@@ -5466,7 +5703,9 @@ class InsightsExecutor
                 $y = !empty($m[1]) ? intval($m[1]) : intval($year);
                 $start = sprintf('%04d-%02d-01', $y, $num);
                 $end = date('Y-m-t', mktime(0, 0, 0, $num, 1, $y));
-                if ($end > $today) $end = $today;
+                if ($end > $today) {
+                    $end = $today;
+                }
                 $ucName = ucfirst($name);
                 return ['from' => $start, 'to' => $end, 'label' => "$ucName $y"];
             }
@@ -5481,9 +5720,9 @@ class InsightsExecutor
     private function isWorstQuery($queryLower)
     {
         return (strpos($queryLower, 'worst') !== false ||
-                strpos($queryLower, 'bottom') !== false ||
-                strpos($queryLower, 'lowest') !== false ||
-                strpos($queryLower, 'poor') !== false);
+            strpos($queryLower, 'bottom') !== false ||
+            strpos($queryLower, 'lowest') !== false ||
+            strpos($queryLower, 'poor') !== false);
     }
 
     /**
@@ -5671,7 +5910,6 @@ class InsightsExecutor
             $response = $this->callOpenAi($fullPrompt);
 
             return $response;
-
         } catch (\Exception $e) {
             return "Unable to generate AI insights: " . $e->getMessage();
         }
@@ -5690,7 +5928,9 @@ class InsightsExecutor
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => 'You are a senior business analyst providing concise, actionable insights on sales and team performance data for ITC cigarette distribution. IMPORTANT RULES: (1) All sales figures are in UNITS (sticks/packs), NOT currency - never use $ or ₹ symbols. (2) Tailor your headings and tone to match the user query - if they ask for "worst" or "bottom", use headings like "Weakest Performers", not "Top Performers". (3) Keep analysis concise: 2-3 bullet points per section. (4) Always complete your response - do not leave sentences unfinished.'
+                    'content' => 'You are a senior business analyst providing concise, actionable insights on sales and team performance data for ITC cigarette distribution. IMPORTANT RULES: (1) All sales figures are in UNITS (sticks/packs), NOT currency - never use $ or ₹ symbols.' .
+                        ' (2) Tailor your headings and tone to match the user query - if they ask for "worst" or "bottom", use headings like "Weakest Performers", not "Top Performers". (3) Keep analysis concise: 2-3 bullet points per section. ' .
+                        '(4) Always complete your response - do not leave sentences unfinished.'
                 ],
                 [
                     'role' => 'user',
@@ -5893,7 +6133,7 @@ class InsightsExecutor
             $d['totalTimeMin'] += $timeMin;
             $d['totalOutlets'] += $outlets;
             $d['totalKm']      += $km;
-            $d['records']      ++;
+            $d['records']++;
             unset($d);
 
             // Daily trend (all types combined by date)
@@ -5929,7 +6169,7 @@ class InsightsExecutor
                 'avgOutlets'   => round($data['totalOutlets'] / $n, 1),
             ];
         }
-        usort($summaryRows, fn($a, $b) => $b['totalSalesM'] <=> $a['totalSalesM']);
+        usort($summaryRows, fn ($a, $b) => $b['totalSalesM'] <=> $a['totalSalesM']);
 
         ksort($dailyTotals);
         $breezeDailyTrend = array_values($dailyTotals);
@@ -5939,24 +6179,28 @@ class InsightsExecutor
         $breezeAnomalies = [];
 
         foreach ($branchDailyAnomaly as $key => $dayList) {
-            if (count($dayList) < 3) continue;
+            if (count($dayList) < 3) {
+                continue;
+            }
             [$branchCode, $teamType] = explode('||', $key, 2);
 
             $dowGroups = [];
-            foreach ($dayList as $day) { $dowGroups[$day['dow']][] = $day['sales']; }
+            foreach ($dayList as $day) {
+                $dowGroups[$day['dow']][] = $day['sales'];
+            }
 
             $dowBaseline = [];
             foreach ($dowGroups as $d => $vals) {
                 $n    = count($vals);
                 $mean = array_sum($vals) / $n;
                 $var  = $n >= 2
-                    ? array_sum(array_map(fn($v) => pow($v - $mean, 2), $vals)) / $n
+                    ? array_sum(array_map(fn ($v) => pow($v - $mean, 2), $vals)) / $n
                     : 0;
                 $dowBaseline[$d] = ['mean' => $mean, 'stdDev' => sqrt($var), 'count' => $n];
             }
             $allSales      = array_column($dayList, 'sales');
             $overallMean   = array_sum($allSales) / count($allSales);
-            $overallVar    = array_sum(array_map(fn($v) => pow($v - $overallMean, 2), $allSales)) / count($allSales);
+            $overallVar    = array_sum(array_map(fn ($v) => pow($v - $overallMean, 2), $allSales)) / count($allSales);
             $overallStdDev = sqrt($overallVar);
 
             foreach ($dayList as $day) {
@@ -5965,10 +6209,14 @@ class InsightsExecutor
                 $useWeekday = $bl && $bl['count'] >= 2 && $bl['stdDev'] > 0;
                 $mean       = $useWeekday ? $bl['mean']   : $overallMean;
                 $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
-                if ($stdDev == 0) continue;
+                if ($stdDev == 0) {
+                    continue;
+                }
 
                 $zScore = ($day['sales'] - $mean) / $stdDev;
-                if (abs($zScore) <= 2.0) continue;
+                if (abs($zScore) <= 2.0) {
+                    continue;
+                }
 
                 $breezeAnomalies[] = [
                     'branch'           => $branchCode,
@@ -5984,7 +6232,7 @@ class InsightsExecutor
                 ];
             }
         }
-        usort($breezeAnomalies, fn($a, $b) => abs($b['zScore']) <=> abs($a['zScore']));
+        usort($breezeAnomalies, fn ($a, $b) => abs($b['zScore']) <=> abs($a['zScore']));
         $breezeAnomalies = array_slice($breezeAnomalies, 0, 100);
 
         // ── Overall metrics ──
@@ -6018,17 +6266,17 @@ class InsightsExecutor
         // ── AI narrative ──
         $aiText = $this->callOpenAi(
             "User asked: \"$queryText\"\n"
-            . "IMPORTANT: Sales figures are in M (millions/units). Do NOT use Rs/₹ or currency symbols.\n"
-            . "Context: Breeze field-force data. RMD = Route Market Developer. Stockist DS = Stockist Direct Seller. "
-            . "This data is manually filled and is typically one day behind.\n"
-            . "Date range: $startDate → $endDate\n"
-            . "Summary: Present=$allPresent, Qualified=$allQualified, Qual Rate={$metrics['qualRate']}%, "
-            . "Total Sales={$metrics['totalSalesM']}M, Distinct RMD DS=$rmdCount, Distinct Stockist DS=$stockistCount\n"
-            . "Anomalies: " . count($breezeAnomalies) . "\n"
-            . "Top branches by sales:\n" . json_encode(array_slice($summaryRows, 0, 10), JSON_PRETTY_PRINT)
-            . (!empty($breezeAnomalies) ? "\nTop anomalies:\n" . json_encode(array_slice($breezeAnomalies, 0, 5), JSON_PRETTY_PRINT) : '')
-            . "\n\nProvide: (1) Overall performance summary. (2) RMD vs Stockist DS comparison. "
-            . "(3) Top and bottom performers. (4) Attendance analysis. (5) Any anomalies or concerns. Use #### headings."
+                . "IMPORTANT: Sales figures are in M (millions/units). Do NOT use Rs/₹ or currency symbols.\n"
+                . "Context: Breeze field-force data. RMD = Route Market Developer. Stockist DS = Stockist Direct Seller. "
+                . "This data is manually filled and is typically one day behind.\n"
+                . "Date range: $startDate → $endDate\n"
+                . "Summary: Present=$allPresent, Qualified=$allQualified, Qual Rate={$metrics['qualRate']}%, "
+                . "Total Sales={$metrics['totalSalesM']}M, Distinct RMD DS=$rmdCount, Distinct Stockist DS=$stockistCount\n"
+                . "Anomalies: " . count($breezeAnomalies) . "\n"
+                . "Top branches by sales:\n" . json_encode(array_slice($summaryRows, 0, 10), JSON_PRETTY_PRINT)
+                . (!empty($breezeAnomalies) ? "\nTop anomalies:\n" . json_encode(array_slice($breezeAnomalies, 0, 5), JSON_PRETTY_PRINT) : '')
+                . "\n\nProvide: (1) Overall performance summary. (2) RMD vs Stockist DS comparison. "
+                . "(3) Top and bottom performers. (4) Attendance analysis. (5) Any anomalies or concerns. Use #### headings."
         );
 
         return [
@@ -6086,7 +6334,7 @@ class InsightsExecutor
         }
 
         // ── Previous period (same WHERE but different dates) ──
-        $prevConditions = array_map(function($c) use ($startDate, $endDate, $prevStart, $prevEnd) {
+        $prevConditions = array_map(function ($c) use ($startDate, $endDate, $prevStart, $prevEnd) {
             return str_replace(
                 ["'$startDate'", "'$endDate'"],
                 ["'$prevStart'", "'$prevEnd'"],
@@ -6136,7 +6384,7 @@ class InsightsExecutor
                 'totalSales'       => round(floatval($row['totalSales'] ?? 0), 2),
                 'qualifiedDays'    => $qualDays,
                 'totalDays'        => $totalDays,
-                'qualificationRate'=> $totalDays > 0 ? round(($qualDays / $totalDays) * 100, 1) : 0,
+                'qualificationRate' => $totalDays > 0 ? round(($qualDays / $totalDays) * 100, 1) : 0,
             ];
         }
 
@@ -6149,18 +6397,18 @@ class InsightsExecutor
 
         $aiText = $this->callOpenAi(
             "User asked: \"$queryText\"\n"
-            . "IMPORTANT: Sales figures are in UNITS (sticks/packs). Do NOT use Rs/₹ or currency symbols.\n"
-            . "Date range: $startDate → $endDate  |  Previous period: $prevStart → $prevEnd\n"
-            . "Total DS in ranking: $totalDs  |  Grand total sales: $grandTotal  |  Avg sales/DS: $avgSales\n"
-            . "Top 10 DS:\n" . json_encode($top10, JSON_PRETTY_PRINT) . "\n"
-            . "Bottom 10 DS:\n" . json_encode($bottom10, JSON_PRETTY_PRINT) . "\n\n"
-            . "Provide: (1) Summary of top performers with rank changes. (2) Bottom performers and concerns. "
-            . "(3) Notable movers (biggest rank jumps/drops). (4) Actionable recommendations. Use #### headings."
+                . "IMPORTANT: Sales figures are in UNITS (sticks/packs). Do NOT use Rs/₹ or currency symbols.\n"
+                . "Date range: $startDate → $endDate  |  Previous period: $prevStart → $prevEnd\n"
+                . "Total DS in ranking: $totalDs  |  Grand total sales: $grandTotal  |  Avg sales/DS: $avgSales\n"
+                . "Top 10 DS:\n" . json_encode($top10, JSON_PRETTY_PRINT) . "\n"
+                . "Bottom 10 DS:\n" . json_encode($bottom10, JSON_PRETTY_PRINT) . "\n\n"
+                . "Provide: (1) Summary of top performers with rank changes. (2) Bottom performers and concerns. "
+                . "(3) Notable movers (biggest rank jumps/drops). (4) Actionable recommendations. Use #### headings."
         );
 
         return [
             'query_name'     => 'DS Leaderboard',
-            'isDsLeaderboard'=> true,
+            'isDsLeaderboard' => true,
             'top_10'         => $top10,
             'bottom_10'      => $bottom10,
             'record_count'   => $totalDs,
@@ -6285,11 +6533,17 @@ class InsightsExecutor
             $lng    = floatval($o['lng'] ?? 0);
 
             // Bucket by distinct visit-days
-            if ($visits <= 1)       $visitBuckets['1 day']++;
-            elseif ($visits === 2)  $visitBuckets['2 days']++;
-            elseif ($visits <= 5)   $visitBuckets['3-5 days']++;
-            elseif ($visits <= 12)  $visitBuckets['6-12 days']++;
-            else                    $visitBuckets['13+ days']++;
+            if ($visits <= 1) {
+                $visitBuckets['1 day']++;
+            } elseif ($visits === 2) {
+                $visitBuckets['2 days']++;
+            } elseif ($visits <= 5) {
+                $visitBuckets['3-5 days']++;
+            } elseif ($visits <= 12) {
+                $visitBuckets['6-12 days']++;
+            } else {
+                $visitBuckets['13+ days']++;
+            }
 
             $records[] = [
                 'outletId'      => $o['outlet_id'] ?? '',
@@ -6301,8 +6555,8 @@ class InsightsExecutor
                 'region'        => $o['region'] ?? '',
                 'visitCount'    => $visits,
                 'lastVisitDate' => $o['lastVisitDate'] ?? '',
-                'firstVisitDate'=> $o['firstVisitDate'] ?? '',
-                'daysSinceVisit'=> !empty($o['lastVisitDate']) ? (int) round((time() - strtotime($o['lastVisitDate'])) / 86400) : null,
+                'firstVisitDate' => $o['firstVisitDate'] ?? '',
+                'daysSinceVisit' => !empty($o['lastVisitDate']) ? (int) round((time() - strtotime($o['lastVisitDate'])) / 86400) : null,
                 'lat'           => $lat,
                 'lng'           => $lng,
             ];
@@ -6324,18 +6578,18 @@ class InsightsExecutor
 
         $aiText = $this->callOpenAi(
             "User asked: \"$queryText\"\n"
-            . "Date range: $startDate → $endDate  ($periodDays days)  |  Expected visit frequency: ~$expectedVisits visits\n"
-            . "Total outlets in scope: $totalOutlets  |  Showing 50 least-visited outlets\n"
-            . "Never visited: $neverVisited  |  Visited only 1-2 times: $lowVisited  |  Avg visits: $avgVisits\n"
-            . "Frequency distribution: " . json_encode($visitBuckets) . "\n"
-            . "Sample under-visited outlets:\n" . json_encode(array_slice($records, 0, 10), JSON_PRETTY_PRINT) . "\n\n"
-            . "Provide: (1) Summary of outlet coverage gaps. (2) Most neglected outlets/areas. "
-            . "(3) Which DS has the most under-visited outlets. (4) Actionable recommendations to improve visit frequency. Use #### headings."
+                . "Date range: $startDate → $endDate  ($periodDays days)  |  Expected visit frequency: ~$expectedVisits visits\n"
+                . "Total outlets in scope: $totalOutlets  |  Showing 50 least-visited outlets\n"
+                . "Never visited: $neverVisited  |  Visited only 1-2 times: $lowVisited  |  Avg visits: $avgVisits\n"
+                . "Frequency distribution: " . json_encode($visitBuckets) . "\n"
+                . "Sample under-visited outlets:\n" . json_encode(array_slice($records, 0, 10), JSON_PRETTY_PRINT) . "\n\n"
+                . "Provide: (1) Summary of outlet coverage gaps. (2) Most neglected outlets/areas. "
+                . "(3) Which DS has the most under-visited outlets. (4) Actionable recommendations to improve visit frequency. Use #### headings."
         );
 
         return [
             'query_name'            => 'Outlet Visit Frequency',
-            'isOutletVisitFrequency'=> true,
+            'isOutletVisitFrequency' => true,
             'records'               => $records,
             'outlet_visit_map_points' => $mapPoints,
             'visit_buckets'         => $visitBuckets,
@@ -6353,5 +6607,3 @@ class InsightsExecutor
         ];
     }
 }
-
-?>

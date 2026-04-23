@@ -43,259 +43,6 @@ class GetMdoNotification extends Utilities
         $getTeams = [];
         $arrTeams = [];
 
-        // ✅ Date filter: last 3 months
-        $dateFrom = date("Y-m-d", strtotime("-3 months"));
-        $dateTo = date("Y-m-d");
-        $firstDayLastMonth = date("Y-m-01", strtotime("first day of -1 month"));
-        $lastDayThisMonth = date("Y-m-t");
-
-        // ðŸ”¹ Collect all route names (from tblroute_details or tblroute_details_breeze)
-        foreach ($arrTeamIds as $dsId) {
-            // Try fetching from tblroute_details first
-            $routes = $this->tableUtil->getRowsColumn(
-                "$dbName.tblmdo_offline_data",
-                "route_name",
-                "ds_id = '$dsId' AND dstatus = 0",
-                array(),
-                true
-            );
-
-            // ðŸ§¹ Filter out empty or null route names
-            $routes = array_filter($routes, function ($r) {
-                return $r !== null && trim($r) !== '';
-            });
-
-            // Merge the routes
-            if (!empty($routes)) {
-                $getRoutes[] = $routes;
-            }
-
-            // Try fetching from project team table first
-            $teamName = $this->tableUtil->getRowColumn(
-                "$dbName.tblproject_team",
-                "team_name",
-                "team_id = '$dsId'"
-            );
-
-            // If not found, check in breeze team
-            if (empty($teamName)) {
-                $teamName = $this->tableUtil->getRowColumn(
-                    "$dbName.tblbreeze_team",
-                    "team_name",
-                    "team_id = '$dsId'"
-                );
-            }
-
-            if (!empty($teamName)) {
-                $getTeams[] = $teamName;
-            }
-        }
-        // ✅ Flatten $getRoutes into one single array & clean it
-        $allRoutes = [];
-
-        foreach ($getRoutes as $routes) {
-            foreach ($routes as $r) {
-                if (!empty($r) && strtoupper($r) !== 'NA') {
-                    $allRoutes[] = $r;
-                }
-            }
-        }
-
-        // After the loop, process all collected routes
-        if (!empty($allRoutes) && $mdoType == 7) {
-            // Build comma-separated route list for SQL IN()
-            $routeList = "'" . implode("','", $allRoutes) . "'";
-
-            // Fetch routes present in tblmdo_summary (last 3 months)
-            $query = "SELECT DISTINCT route_name FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND route_name IN ($routeList) AND ds_id IN ($accessTeamList) AND capture_date BETWEEN '$dateFrom' AND '$dateTo'";
-            $rsAction = [];
-            $iRows = 0;
-            $this->dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
-
-            $arrRespRoutes = [];
-            if ($iRows > 0) {
-                while ($row = $this->dbConn->GetData($rsAction)) {
-                    $arrRespRoutes[] = $row['route_name'];
-                }
-            }
-
-            // 🔸 Find missing routes
-            $missingRoutes = array_diff($allRoutes, $arrRespRoutes);
-
-            if (!empty($missingRoutes)) {
-                // For each missing route, get wd_code & ds_name
-                foreach ($missingRoutes as $route) {
-                    // 1️⃣ Try finding from tblroute_details
-                    $queryRoute = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
-                    $rsActionRoute = [];
-                    $rowsRoute = 0;
-                    $this->dbConn->ExecuteSelectQuery($queryRoute, $rsActionRoute, $rowsRoute);
-
-                    if ($rowsRoute > 0) {
-                        while ($rowRoute = $this->dbConn->GetData($rsActionRoute)) {
-                            $vandDsId = $rowRoute['team_id'];
-                            $dsName = $this->tableUtil->getRowColumn(
-                                "$dbName.tblproject_team",
-                                "team_name",
-                                "team_id = '$vandDsId'"
-                            );
-                            $arrRoutes[] = [
-                                "route_name" => $rowRoute['route_name'],
-                                "wd_code" => $rowRoute['wd_code'],
-                                "ds_name" => $dsName
-                            ];
-                        }
-                    } else {
-                        // 2️⃣ If not found in tblroute_details, try tblroute_details_breeze
-                        $queryRouteBreeze = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details_breeze rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
-                        $rsActionRoute2 = [];
-                        $rowsRoute2 = 0;
-                        $this->dbConn->ExecuteSelectQuery($queryRouteBreeze, $rsActionRoute2, $rowsRoute2);
-
-                        if ($rowsRoute2 > 0) {
-                            while ($rowRoute2 = $this->dbConn->GetData($rsActionRoute2)) {
-                                $vandDsId = $rowRoute2['team_id'];
-                                $dsName = $this->tableUtil->getRowColumn(
-                                    "$dbName.tblbreeze_team",
-                                    "team_name",
-                                    "team_id = '$vandDsId'"
-                                );
-                                $arrRoutes[] = [
-                                    "route_name" => $rowRoute2['route_name'],
-                                    "wd_code" => $rowRoute2['wd_code'],
-                                    "ds_name" => $dsName
-                                ];
-                            }
-                        }
-                    }
-                }
-
-                $arrAllRouteDetails = array();
-
-                foreach ($arrRoutes as $index => $details) {
-                    $arrAllRouteDetails[] = array(
-                        "cardHeading" => "Pending Route " . $index + 1,
-                        "kpis" => array(
-                            array(
-                                "label" => "Route",
-                                "value" => $details['route_name'],
-                            ),
-                            array(
-                                "label" => "WD Code",
-                                "value" => $details['wd_code'],
-                            ),
-                            array(
-                                "label" => "DS Name",
-                                "value" => $details['ds_name'],
-                            ),
-                        ),
-                    );
-                }
-
-                $arrNotifications[] = [
-                    "id" => 1,
-                    "title" => "Pending Routes",
-                    "shortMessage" => "Last 3 Months Pending Routes",
-                    "fullMessage" => null,
-                    // phpcs:ignore
-                    "metadata" => $arrAllRouteDetails
-                ];
-            }
-        }
-
-        if (!empty($getTeams) && $mdoType == 7) {
-            // Build comma-separated team list for SQL IN()
-            $dsList = "'" . implode("','", $getTeams) . "'";
-
-            // Fetch teams present in tblsurvey_response_details_mdo (last month and current month)
-            $query = "SELECT DISTINCT ds_name, ds_id FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND ds_name IN ($dsList) AND capture_date BETWEEN '$firstDayLastMonth' AND '$lastDayThisMonth'";
-
-            $rsAction = [];
-            $iRows = 0;
-            $this->dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
-
-            $arrRespTeams = [];
-            $arrRespTeamIds = [];
-            if ($iRows > 0) {
-                while ($row = $this->dbConn->GetData($rsAction)) {
-                    $arrRespTeams[] = $row['ds_name'];
-                    $arrRespTeamIds[] = $row['ds_id'];
-                }
-            }
-
-            // Find missing routes (not yet in response table)
-            $missingTeams = array_diff($getTeams, $arrRespTeams);
-
-            if (!empty($missingTeams)) {
-                $arrType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-                // For each missing team, get wd_code & type
-                foreach ($arrRespTeamIds as $team) {
-                    // 1️⃣ Try finding from tblroute_details
-                    $queryTeam = "SELECT team_name, wd_code, is_type FROM $dbName.tblproject_team WHERE team_id = '$team'";
-                    $rsActionTeam = [];
-                    $rowsTeam = 0;
-                    $this->dbConn->ExecuteSelectQuery($queryTeam, $rsActionTeam, $rowsTeam);
-
-                    if ($rowsTeam > 0) {
-                        while ($rowTeam = $this->dbConn->GetData($rsActionTeam)) {
-                            $arrTeams[] = [
-                                "ds_name" => $rowTeam['team_name'],
-                                "wd_code" => $rowTeam['wd_code'],
-                                "ds_type" => $arrType[$rowTeam['is_type']],
-                            ];
-                        }
-                    } else {
-                        // 2️⃣ If not found in tblproject_team, try tblbreeze_team
-                        $queryTeamBreeze = "SELECT team_name, wd_code, is_type FROM $dbName.tblbreeze_team WHERE team_id = '$team'";
-                        $rsActionTeam2 = [];
-                        $rowsTeam2 = 0;
-                        $this->dbConn->ExecuteSelectQuery($queryTeamBreeze, $rsActionTeam2, $rowsTeam2);
-
-                        if ($rowsTeam2 > 0) {
-                            while ($rowTeam2 = $this->dbConn->GetData($rsActionTeam2)) {
-                                $arrTeams[] = [
-                                    "ds_name" => $rowTeam2['team_name'],
-                                    "wd_code" => $rowTeam2['wd_code'],
-                                    "ds_type" => $arrType[$rowTeam2['is_type']],
-                                ];
-                            }
-                        }
-                    }
-                }
-
-                $arrAllTeamsDetails = array();
-
-                foreach ($arrTeams as $index => $details) {
-                    $arrAllTeamsDetails[] = array(
-                        "cardHeading" => "Pending DS " . $index + 1,
-                        "kpis" => array(
-                            array(
-                                "label" => "WD Code",
-                                "value" => $details['wd_code'],
-                            ),
-                            array(
-                                "label" => "DS Name",
-                                "value" => $details['ds_name'],
-                            ),
-                            array(
-                                "label" => "DS Type",
-                                "value" => $details['ds_type'],
-                            ),
-                        ),
-                    );
-                }
-
-                $arrNotifications[] = [
-                    "id" => 2,
-                    "title" => "Pending DS",
-                    "shortMessage" => "Last Months & Current Month Pending DS",
-                    "fullMessage" => null,
-                    // phpcs:ignore
-                    "metadata" => $arrAllTeamsDetails
-                ];
-            }
-        }
-
         if ($mdoType == 10) {
             // if ($teamId == 22701) {
             //     $bustarget = 40.00;
@@ -340,18 +87,18 @@ class GetMdoNotification extends Utilities
             // }
             $arrTrackerDetails =  $this->tableUtil->getRowsColumns(
                 "$dbName.tbl_fso_tracker",
-                "parameters, target, mtd_ach, ach_per",
-                "fso_id = $teamId AND dstatus = 0"
+                "parameters, target, mtd_ach, ach_per, wd_code",
+                "fso_id = $teamId AND dstatus = 0 ORDER BY wd_code"
             );
 
             $arrProductivityDetails = array();
             foreach ($arrTrackerDetails as $trackerData) {
                 $arrProductivityDetails[] = array(
-                    "cardHeading" => $trackerData[0],
+                    "cardHeading" => $trackerData[0] . " (" . $trackerData[4] . ")",
                     "kpis" => array(
-                        array("label" => "Target", "value" => (string)$trackerData[1]),
-                        array("label" => "MTD Ach", "value" => (string)$trackerData[2]),
-                        array("label" => "Ach%", "value" => $trackerData[3]),
+                        array("key" => "Target", "value" => (string)$trackerData[1]),
+                        array("key" => "MTD Ach", "value" => (string)$trackerData[2]),
+                        array("key" => "Ach%", "value" => $trackerData[3]),
                     )
                 );
             }
@@ -363,8 +110,260 @@ class GetMdoNotification extends Utilities
                 "fullMessage" => null,
                 "metadata" => $arrProductivityDetails
             ];
-        }
+        } else {
+            // ✅ Date filter: last 3 months
+            $dateFrom = date("Y-m-d", strtotime("-3 months"));
+            $dateTo = date("Y-m-d");
+            $firstDayLastMonth = date("Y-m-01", strtotime("first day of -1 month"));
+            $lastDayThisMonth = date("Y-m-t");
 
+            // ðŸ”¹ Collect all route names (from tblroute_details or tblroute_details_breeze)
+            foreach ($arrTeamIds as $dsId) {
+                // Try fetching from tblroute_details first
+                $routes = $this->tableUtil->getRowsColumn(
+                    "$dbName.tblmdo_offline_data",
+                    "route_name",
+                    "ds_id = '$dsId' AND dstatus = 0",
+                    array(),
+                    true
+                );
+
+                // ðŸ§¹ Filter out empty or null route names
+                $routes = array_filter($routes, function ($r) {
+                    return $r !== null && trim($r) !== '';
+                });
+
+                // Merge the routes
+                if (!empty($routes)) {
+                    $getRoutes[] = $routes;
+                }
+
+                // Try fetching from project team table first
+                $teamName = $this->tableUtil->getRowColumn(
+                    "$dbName.tblproject_team",
+                    "team_name",
+                    "team_id = '$dsId'"
+                );
+
+                // If not found, check in breeze team
+                if (empty($teamName)) {
+                    $teamName = $this->tableUtil->getRowColumn(
+                        "$dbName.tblbreeze_team",
+                        "team_name",
+                        "team_id = '$dsId'"
+                    );
+                }
+
+                if (!empty($teamName)) {
+                    $getTeams[] = $teamName;
+                }
+            }
+            // ✅ Flatten $getRoutes into one single array & clean it
+            $allRoutes = [];
+
+            foreach ($getRoutes as $routes) {
+                foreach ($routes as $r) {
+                    if (!empty($r) && strtoupper($r) !== 'NA') {
+                        $allRoutes[] = $r;
+                    }
+                }
+            }
+
+            // After the loop, process all collected routes
+            if (!empty($allRoutes) && $mdoType == 7) {
+                // Build comma-separated route list for SQL IN()
+                $routeList = "'" . implode("','", $allRoutes) . "'";
+
+                // Fetch routes present in tblmdo_summary (last 3 months)
+                $query = "SELECT DISTINCT route_name FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND route_name IN ($routeList) AND ds_id IN ($accessTeamList) AND type = 'VAN DS' AND capture_date BETWEEN '$dateFrom' AND '$dateTo'";
+                $rsAction = [];
+                $iRows = 0;
+                $this->dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
+
+                $arrRespRoutes = [];
+                if ($iRows > 0) {
+                    while ($row = $this->dbConn->GetData($rsAction)) {
+                        $arrRespRoutes[] = $row['route_name'];
+                    }
+                }
+
+                // 🔸 Find missing routes
+                $missingRoutes = array_diff($allRoutes, $arrRespRoutes);
+
+                if (!empty($missingRoutes)) {
+                    // For each missing route, get wd_code & ds_name
+                    foreach ($missingRoutes as $route) {
+                        // 1️⃣ Try finding from tblroute_details
+                        $queryRoute = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
+                        $rsActionRoute = [];
+                        $rowsRoute = 0;
+                        $this->dbConn->ExecuteSelectQuery($queryRoute, $rsActionRoute, $rowsRoute);
+
+                        if ($rowsRoute > 0) {
+                            while ($rowRoute = $this->dbConn->GetData($rsActionRoute)) {
+                                $vandDsId = $rowRoute['team_id'];
+                                $dsName = $this->tableUtil->getRowColumn(
+                                    "$dbName.tblproject_team",
+                                    "team_name",
+                                    "team_id = '$vandDsId'"
+                                );
+                                $arrRoutes[] = [
+                                    "route_name" => $rowRoute['route_name'],
+                                    "wd_code" => $rowRoute['wd_code'],
+                                    "ds_name" => $dsName
+                                ];
+                            }
+                        } else {
+                            // 2️⃣ If not found in tblroute_details, try tblroute_details_breeze
+                            $queryRouteBreeze = "SELECT DISTINCT route_name, wd_code, team_id FROM $dbName.tblroute_details_breeze rd WHERE rd.route_name = '" . addslashes($route) . "' AND rd.team_id IN ($accessTeamList)";
+                            $rsActionRoute2 = [];
+                            $rowsRoute2 = 0;
+                            $this->dbConn->ExecuteSelectQuery($queryRouteBreeze, $rsActionRoute2, $rowsRoute2);
+
+                            if ($rowsRoute2 > 0) {
+                                while ($rowRoute2 = $this->dbConn->GetData($rsActionRoute2)) {
+                                    $vandDsId = $rowRoute2['team_id'];
+                                    $dsName = $this->tableUtil->getRowColumn(
+                                        "$dbName.tblbreeze_team",
+                                        "team_name",
+                                        "team_id = '$vandDsId'"
+                                    );
+                                    $arrRoutes[] = [
+                                        "route_name" => $rowRoute2['route_name'],
+                                        "wd_code" => $rowRoute2['wd_code'],
+                                        "ds_name" => $dsName
+                                    ];
+                                }
+                            }
+                        }
+                    }
+
+                    $arrAllRouteDetails = array();
+
+                    foreach ($arrRoutes as $index => $details) {
+                        $arrAllRouteDetails[] = array(
+                            "cardHeading" => "Pending Route " . $index + 1,
+                            "kpis" => array(
+                                array(
+                                    "key" => "Route",
+                                    "value" => $details['route_name'],
+                                ),
+                                array(
+                                    "key" => "WD Code",
+                                    "value" => $details['wd_code'],
+                                ),
+                                array(
+                                    "key" => "DS Name",
+                                    "value" => $details['ds_name'],
+                                ),
+                            ),
+                        );
+                    }
+
+                    $arrNotifications[] = [
+                        "id" => 1,
+                        "title" => "Pending Routes",
+                        "shortMessage" => "Last 3 Months Pending Routes",
+                        "fullMessage" => null,
+                        // phpcs:ignore
+                        "metadata" => $arrAllRouteDetails
+                    ];
+                }
+            }
+
+            if (!empty($getTeams) && $mdoType == 7) {
+                // Build comma-separated team list for SQL IN()
+                $dsList = "'" . implode("','", $getTeams) . "'";
+
+                // Fetch teams present in tblsurvey_response_details_mdo (last month and current month)
+                $query = "SELECT DISTINCT ds_name, ds_id FROM $dbName.tblmdo_summary WHERE mdo_id = $teamId AND ds_name IN ($dsList) AND type = 'VAN DS' AND capture_date BETWEEN '$firstDayLastMonth' AND '$lastDayThisMonth'";
+
+                $rsAction = [];
+                $iRows = 0;
+                $this->dbConn->ExecuteSelectQuery($query, $rsAction, $iRows);
+
+                $arrRespTeams = [];
+                $arrRespTeamIds = [];
+                if ($iRows > 0) {
+                    while ($row = $this->dbConn->GetData($rsAction)) {
+                        $arrRespTeams[] = $row['ds_name'];
+                        $arrRespTeamIds[] = $row['ds_id'];
+                    }
+                }
+
+                // Find missing routes (not yet in response table)
+                $missingTeams = array_diff($getTeams, $arrRespTeams);
+
+                if (!empty($missingTeams)) {
+                    $arrType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+                    // For each missing team, get wd_code & type
+                    foreach ($missingTeams as $team) {
+                        // 1️⃣ Try finding from tblroute_details
+                        $queryTeam = "SELECT team_name, wd_code, is_type FROM $dbName.tblproject_team WHERE team_id = '$team'";
+                        $rsActionTeam = [];
+                        $rowsTeam = 0;
+                        $this->dbConn->ExecuteSelectQuery($queryTeam, $rsActionTeam, $rowsTeam);
+
+                        if ($rowsTeam > 0) {
+                            while ($rowTeam = $this->dbConn->GetData($rsActionTeam)) {
+                                $arrTeams[] = [
+                                    "ds_name" => $rowTeam['team_name'],
+                                    "wd_code" => $rowTeam['wd_code'],
+                                    "ds_type" => $arrType[$rowTeam['is_type']],
+                                ];
+                            }
+                        } else {
+                            // 2️⃣ If not found in tblproject_team, try tblbreeze_team
+                            $queryTeamBreeze = "SELECT team_name, wd_code, is_type FROM $dbName.tblbreeze_team WHERE team_id = '$team'";
+                            $rsActionTeam2 = [];
+                            $rowsTeam2 = 0;
+                            $this->dbConn->ExecuteSelectQuery($queryTeamBreeze, $rsActionTeam2, $rowsTeam2);
+
+                            if ($rowsTeam2 > 0) {
+                                while ($rowTeam2 = $this->dbConn->GetData($rsActionTeam2)) {
+                                    $arrTeams[] = [
+                                        "ds_name" => $rowTeam2['team_name'],
+                                        "wd_code" => $rowTeam2['wd_code'],
+                                        "ds_type" => $arrType[$rowTeam2['is_type']],
+                                    ];
+                                }
+                            }
+                        }
+                    }
+
+                    $arrAllTeamsDetails = array();
+
+                    foreach ($arrTeams as $index => $details) {
+                        $arrAllTeamsDetails[] = array(
+                            "cardHeading" => "Pending DS " . $index + 1,
+                            "kpis" => array(
+                                array(
+                                    "key" => "WD Code",
+                                    "value" => $details['wd_code'],
+                                ),
+                                array(
+                                    "key" => "DS Name",
+                                    "value" => $details['ds_name'],
+                                ),
+                                array(
+                                    "key" => "DS Type",
+                                    "value" => $details['ds_type'],
+                                ),
+                            ),
+                        );
+                    }
+
+                    $arrNotifications[] = [
+                        "id" => 2,
+                        "title" => "Pending DS",
+                        "shortMessage" => "Last Months & Current Month Pending DS",
+                        "fullMessage" => null,
+                        // phpcs:ignore
+                        "metadata" => $arrAllTeamsDetails
+                    ];
+                }
+            }
+        }
 
         $response = $this->response->sendResponse(array("message" => "", "response" => $arrNotifications ? $arrNotifications : array()), 1);
         $this->logOutput($response, $this->sExtraLogData);

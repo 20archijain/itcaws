@@ -370,6 +370,7 @@ class RouteManagement
 
         // Check if the old route exists and is active (dstatus = 0)
         $where = "team_id = '$teamId' AND route_name = '" . addslashes($oldRouteName) . "' AND dstatus = 0";
+        // print_r($where);die;
         $existingRoute = getRowsColumn(
             $this->_dbConn,
             $this->_tables['ROUTE_DETAILS_TABLE'],

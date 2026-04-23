@@ -455,7 +455,6 @@ class generatePDFCronjob
         $this->_dbConn->ExecuteSelectQuery($ProductQueryVarient, $varAction, $varRows);
 
         if ($varRows > 0) {
-
             $pdf->AddPage();
 
             $pdf->SetFont('Arial', 'B', 9);
@@ -480,7 +479,6 @@ class generatePDFCronjob
             $pdf->SetFont('Arial', '', 7);
 
             while ($rowVar = $this->_dbConn->GetData($varAction)) {
-
                 $variantName = $rowVar['product_name'];
                 $col = $rowVar['summary_column_name'];
 

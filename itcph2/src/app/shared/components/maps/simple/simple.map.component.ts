@@ -122,7 +122,7 @@ export class SimpleMapComponent implements OnChanges {
     }
   }
 
-  onMapReady(map: google.maps.Map) {
+  onMapReady() {
     if (this.useHeatMap && this.heatMapData.length > 0) {
       // Use setTimeout to ensure map is fully initialized
       setTimeout(() => {

@@ -306,7 +306,10 @@ class LineCutReport
 
 
         $arrExcelData = [];
-        $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Total SKU Mapped", "Total Line Cut", "Total Outlet Mapped",  "Total Outlet Visited", "Unique Billed Outlet", "ALC", "ULC/Month"];
+        $arrExcelData[] = [
+            "Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market",
+            "DS Type", "DS Id", "DS Name", "Total SKU Mapped", "Total Line Cut", "Total Outlet Mapped",  "Total Outlet Visited", "Unique Billed Outlet", "ALC", "ULC/Month"
+        ];
 
         // $branchCond = "";
         if ($branch) {
@@ -370,15 +373,25 @@ class LineCutReport
                     $skuForQuery = "";
                     if (!empty($arrProductColumnsAllProduct)) {
                         $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
+                        $skuForQuery = $skuForQuery . ", ";
                     }
 
 
-                    $allShops = getRowColumn(
-                        $this->_dbConn,
-                        "tblroute_details",
-                        "COUNT(rec_id) AS total",
-                        "dstatus = 0 AND team_id = $team_id"
-                    );
+                    if ($branchId == 40) {
+                        $allShops = getRowColumn(
+                            $this->_dbConn,
+                            "tblroute_details_delhi",
+                            "COUNT(rec_id) AS total",
+                            "dstatus = 0 AND team_id = $team_id"
+                        );
+                    } else {
+                        $allShops = getRowColumn(
+                            $this->_dbConn,
+                            "tblroute_details",
+                            "COUNT(rec_id) AS total",
+                            "dstatus = 0 AND team_id = $team_id"
+                        );
+                    }
 
                     $showTeamType = "";
                     if ($row4['is_type'] == 0) {
@@ -402,7 +415,7 @@ class LineCutReport
                         $lastDate  = date('Y-m-t', strtotime($month));
 
 
-                        $queryNew = "SELECT $skuForQuery, a.pro_id, a.ques_3, a.team_id FROM tblsurvey_response_details AS a" .
+                        $queryNew = "SELECT $skuForQuery a.pro_id, a.ques_3, a.team_id FROM tblsurvey_response_details AS a" .
                             " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
                             "";
                         // echo $queryNew;die;
@@ -416,7 +429,6 @@ class LineCutReport
 
                         if ($iActionRows1 > 0) {
                             while ($row1 = $this->_dbConn->GetData($rsAction1)) {
-
                                 $pro_id = $row1['pro_id'];
                                 $shopID = $row1['ques_3'];
 
@@ -436,7 +448,7 @@ class LineCutReport
                         $totalVisitedShop = 0;
                         $totalLineCut = 0;
                         if (isset($extractedData) && !empty($extractedData)) {
-                            foreach ($extractedData as  $shop => $shopArr) {
+                            foreach ($extractedData as $shop => $shopArr) {
                                 foreach ($shopArr as $pro => $proArr) {
                                     $totalVisitedShop++;
                                     foreach ($proArr as $index => $lastData) {
@@ -451,7 +463,7 @@ class LineCutReport
 
                         $shopCount = 0;
                         if (isset($extractedData) && !empty($extractedData)) {
-                            foreach ($extractedData as  $shop => $shopArr) {
+                            foreach ($extractedData as $shop => $shopArr) {
                                 $hasSale = false;
                                 foreach ($shopArr as $pro => $proArr) {
                                     foreach ($proArr as $index => $lastData) {
@@ -553,7 +565,6 @@ class LineCutReport
         }
 
         foreach ($branchIds as $branchId) {
-
             //Team Query
             $sAction4 = null;
             $iRows4 = 0;
@@ -652,7 +663,6 @@ class LineCutReport
 
                             if ($iActionRows1 > 0) {
                                 while ($row1 = $this->_dbConn->GetData($rsAction1)) {
-
                                     $pro_id = $row1['pro_id'];
                                     $shopID = $row1['shop_uniq_code'];
                                     $outlet_name = $row1['outlet_name'];
@@ -677,15 +687,16 @@ class LineCutReport
                             $productsWithSales = array();
 
                             if (isset($extractedData) && !empty($extractedData)) {
-                                foreach ($extractedData as  $shop => $shopArr) {
+                                foreach ($extractedData as $shop => $shopArr) {
                                     $totalLineCut = 0;
                                     foreach ($shopArr as $pro => $proArr) {
-                                        foreach ($proArr as $index => $lastData)
+                                        foreach ($proArr as $index => $lastData) {
                                             if ($lastData > 0) {
                                                 $totalLineCut++;
                                                 $totalLineCutArr[$shop] = $totalLineCut;
                                                 $productsWithSales[$shop][$index] = true;
                                             }
+                                        }
                                     }
                                 }
                             }
@@ -827,7 +838,8 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-    final public function getCircle($branch = "branch_id"){
+    final public function getCircle($branch = "branch_id")
+    {
         $branch = $this->_data['branch'];
         $branchCond = "";
         if ($branch) {
@@ -867,7 +879,8 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-    final public function getSection($circle = "circle"){
+    final public function getSection($circle = "circle")
+    {
         $circle = $this->_data['circle'];
         $circleCond = "";
         if ($circle) {

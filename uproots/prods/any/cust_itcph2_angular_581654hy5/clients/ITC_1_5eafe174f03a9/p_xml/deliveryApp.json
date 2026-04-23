@@ -1,0 +1,13 @@
+{
+  "appConfig": {
+    "id": 15,
+    "apiUrls": {
+      "surveyUploadUrl": "https://upimg.radardashboard.com/mobile_services/api/data.php",
+      "imageUploadUrl": "https://upimg.radardashboard.com/mobile_services/api/file.php",
+      "statsUrl": "https://upimg.radardashboard.com/mobile_services/api/summary.php",
+      "validateOtpUrl": "https://upimg.radardashboard.com/mobile_services/api/otp_validate.php",
+      "sendOtpUrl": "https://upimg.radardashboard.com/mobile_services/api/send_otp.php",
+      "getOrderDetails": "https://upimg2.radardashboard.com/mobile_services/api/custom/get_products_delivered_data.php"
+    }
+  }
+}

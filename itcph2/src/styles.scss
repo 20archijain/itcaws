@@ -1,43 +1,63 @@
 // You can add global styles to this file, and also import other style files */
 @import 'scss/style';
 
+$black1: rgba(0, 0, 0, .2);
+$black2: rgba(0, 0, 0, .15);
+$leaflet-control-zoom-link: #374151;
+$leaflet-popup-title: #1e293b;
+$leaflet-popup-text: #64748b;
+
 // ── Leaflet + Bootstrap compatibility ──
 .leaflet-container {
   img {
-    max-width: none !important;
+    border: 0 !important;
     max-height: none !important;
-    border: none !important;
+    max-width: none !important;
     padding: 0 !important;
   }
+
   svg {
     max-width: none !important;
     overflow: visible !important;
   }
-  .leaflet-tile-pane img {
-    display: block;
-  }
-  .leaflet-control-zoom {
-    border: none;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-    border-radius: 6px;
-    margin: 8px;
-    a {
-      width: 26px;
-      height: 26px;
-      line-height: 26px;
-      font-size: 13px;
-      color: #374151;
+
+  .leaflet-tile-pane {
+    img {
+      display: block;
     }
   }
+
+  .leaflet-control-zoom {
+    border: 0;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px $black1;
+    margin: 8px;
+
+    a {
+      color: $leaflet-control-zoom-link;
+      font-size: 13px;
+      height: 26px;
+      line-height: 26px;
+      width: 26px;
+    }
+  }
+
   .leaflet-popup-content-wrapper {
     border-radius: 8px;
-    font-size: 0.75rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px $black2;
+    font-size: .75rem;
   }
+
   .leaflet-popup-content {
-    margin: 8px 12px;
     line-height: 1.4;
-    b { color: #1e293b; }
-    small { color: #64748b; }
+    margin: 8px 12px;
+
+    b {
+      color: $leaflet-popup-title;
+    }
+
+    small {
+      color: $leaflet-popup-text;
+    }
   }
 }

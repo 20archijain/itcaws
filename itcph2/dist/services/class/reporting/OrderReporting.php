@@ -5,9 +5,6 @@ require $PHP_SPREADSHEET_PATH;
 
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\Style\Fill;
-use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Style\Border;
 
 // phpcs:ignore
 class OrderReporting
@@ -771,7 +768,8 @@ class OrderReporting
         $sQuery = "SELECT a.pro_id $partialQuery AND a.pro_id > 0";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
 
-        $sQuery = "SELECT a.pro_id, a.uni_id, a.team_id, a.s_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, b.team_id, b.team_name, b.circle, b.section, b.branch_id, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
+        $sQuery = "SELECT a.pro_id, a.uni_id, a.team_id, a.s_id, a.capture_datetime, a.lt, a.lg, a.ques_0, a.ques_1, a.ques_2, a.ques_3, a.ques_4, a.ques_5, a.ques_6, a.ques_7, a.ques_8, a.ques_9, a.ques_10, b.team_id, b.team_name" .
+            ", b.circle, b.section, b.branch_id, b.wd_code, c.branch_name $partialQuery ORDER BY capture_datetime DESC";
         $sQuery .= " " . $limit["limit"];
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 

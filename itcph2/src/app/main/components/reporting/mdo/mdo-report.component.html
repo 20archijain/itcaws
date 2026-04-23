@@ -1,0 +1,75 @@
+<app-card cardTitle="{{ 'app.download.mdoTargetReport' | translate }}" [options]="false">
+  <div class="row">
+    <!-- Searchbar -->
+    <div class="col-sm-12">
+      <form (ngSubmit)="download()" [formGroup]="group" novalidate>
+        <div class="row">
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="month" [options]="monthOptions"
+          placeholder="{{ 'app.team.add.month' | translate }}" [multiple]="true" [errorMessages]="errorMessages.month" >
+        </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="district" groupClassName="row" sizeClass="col-sm-12"
+              [options]="districtOptions" [isHorizontalForm]="true"
+              placeholder="{{ 'app.team.add.district' | translate }}" [multiple]="true" (onChange)="getBranch()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="branch" groupClassName="row" sizeClass="col-sm-12"
+              [options]="branchOptions" [isHorizontalForm]="true" placeholder="{{ 'app.team.add.branch' | translate }}"
+              [isRequired]="true" [errorMessages]="errorMessages.branch" (onChange)="getCircle()" [multiple]="true"
+              groupBy="mainBranch">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="circle" [options]="circleOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.circle' | translate }}" (onChange)="getSection()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="section" [options]="sectionOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.section' | translate }}" (onChange)="getWDCode()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdCode" [options]="wdCodeOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.wdCode' | translate }}" (onChange)="getTeamsType()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdMarket" [options]="wdMarketOptions" [multiple]="true"
+              placeholder="{{ 'app.wdMapping.wd_market' | translate }}">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="wdPopGroup" [options]="wdPopGroupOptions" [multiple]="true"
+              placeholder="{{ 'app.wdMapping.wd_pop_group' | translate }}">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="dsType" [options]="teamTypeOptions"
+              placeholder="{{ 'app.team.add.dsType' | translate }}" (onChange)="getTeamsName()">
+            </app-select>
+          </div>
+          <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="dsName" [options]="teamOptions" [multiple]="true"
+              placeholder="{{ 'app.team.add.dsName' | translate }}">
+            </app-select>
+          </div>
+          <!-- <div class="col-sm-6 col-lg-2 col-xl-2">
+            <app-select [group]="group" controlName="product" placeholder="{{ 'app.download.products' | translate }}"
+             [options]="productOptions" [multiple]="true">
+            </app-select>
+          </div> -->
+          <div class="col-sm-3 col-md-2">
+            <app-button [isFaIcon]="true" iconName="fa fa-file-excel" [showIconInButton]="true"
+              btnTitle="button.download" [isDisabled]="isDisabled" [appScrollToFirstInvalidInput]="group"
+              btnClass="float-right float-sm-none" (onClick)="download()">
+            </app-button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</app-card>

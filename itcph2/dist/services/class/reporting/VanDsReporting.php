@@ -528,8 +528,8 @@ class VanDsReporting
             "branchFilter" => true,
             "userBranch" => $userBranch,
             "binderReportDownloadDays" => 5,
-            "transactionReportDownloadDays" => 20,
-            "summaryReportDownloadDays" => 30,
+            "transactionReportDownloadDays" => 31,
+            "summaryReportDownloadDays" => 31,
         );
 
         $arrMessage = responseMessage(array(), 1, $arrResult, true);
@@ -1382,7 +1382,7 @@ class VanDsReporting
                                     // get index of product and insert sale
                                     $iProductIndex = $arrProductIndex[$productName];
                                     if ($currentBranchId == 40) {
-                                        $arrDownload["sale"][$index][$iProductIndex] = round(floatval($iSale) / $pktSize, 2);
+                                        $arrDownload["sale"][$index][$iProductIndex] = $pktSize ? round(floatval($iSale) / $pktSize, 2) : floatval($iSale);
                                     } else {
                                         $arrDownload["sale"][$index][$iProductIndex] = floatval($iSale);
                                     }
@@ -2505,11 +2505,9 @@ class VanDsReporting
                     $images = array();
 
                     if (isset($shopFrontPicture) && $shopFrontPicture) {
-
                         $storePhoto = $getCorrectImage($arrImages2, $shopFrontPicture);
 
                         if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
-
                             if ($captureDate >= '2026-03-14') {
                                 $imageUrl = $storePhoto['file_domain']
                                     . PRODS_ANY_FOLDER

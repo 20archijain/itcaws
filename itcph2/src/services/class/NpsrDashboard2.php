@@ -1025,9 +1025,9 @@ class NpsrDashboard2
                         }
                         $sIndividualColumns = implode(", ", $columnSelections);
 
-                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, $sIndividualColumns, e.circle, e.section, b.wd_code, b.team_name, c.outlet_name, c.route_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblroute_details as c, tblbranch as d, tblmapping_wd as e" .
-                            " WHERE a.team_id = b.team_id AND a.ques_3 = c.rec_id AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code AND b.s_id = 99 AND d.main_branch = '$main_branch' AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0 $where $cond" .
-                            " GROUP BY c.rec_id, c.route_name, b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name, c.sort_order";
+                        $queryNew = "SELECT SUM($sSalesColumns) as totalSales, $sIndividualColumns, e.circle, e.section, b.wd_code, b.team_name, c.outlet_name, c.route_name, d.district, d.main_branch FROM tblsurvey_response_details AS a, tblproject_team AS b, tblroute_details as c" .
+                            ", tblbranch as d, tblmapping_wd as e WHERE a.team_id = b.team_id AND a.ques_3 = c.rec_id AND b.branch_id = d.branch_id AND b.wd_code = e.wd_code AND b.s_id = 99 AND d.main_branch = '$main_branch' AND a.dstatus = 0 AND b.dstatus = 0 AND d.dstatus = 0 AND e.dstatus = 0" .
+                            " $where $cond GROUP BY c.rec_id, c.route_name, b.team_id, d.main_branch, e.circle, e.section, b.wd_code ORDER BY d.district, d.main_branch, e.circle, e.section, b.wd_code, b.team_name, c.sort_order";
                         // echo $queryNew;die;
                         $rsAction1 = null;
                         $iActionRows1 = 0;
@@ -1180,14 +1180,17 @@ class NpsrDashboard2
                                         // Get product name for the column
                                         $productName = $arrSalesColumnsName[$main_branch][$col] ?? $col;
 
+                                        // phpcs:ignore
                                         if (!isset($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear])) {
-                                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear] = 0;
+                                            $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear] = 0; // phpcs:ignore
                                         }
 
-                                        $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear] += $value;
+                                        $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear] += $value; // phpcs:ignore
 
                                         // Round the final value
+                                        // phpcs:ignore
                                         $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear] = round(
+                                            // phpcs:ignore
                                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][$outletIndex]["outletLevelSaleByColumn"][$productName][$monthYear],
                                             2
                                         );
