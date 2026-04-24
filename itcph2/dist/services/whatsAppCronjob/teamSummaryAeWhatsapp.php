@@ -53,7 +53,7 @@ class VanDswhatsAppSummary
 
             $debugStep = "fetch_sections";
             $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
-            "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' " .
+            "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' AND b.is_type IN (0,2,5) " .
             "AND COALESCE(b.summary_sent, 0) = 0 GROUP BY b.section ORDER BY b.section LIMIT 15";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
@@ -65,7 +65,7 @@ class VanDswhatsAppSummary
                 $phoneNumber = $row["ae_number"];
                 $wdCode = $row["wd_code"];
                 $section = $row["section"];
-                $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section'";
+                $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section' AND is_type IN (0,2,5)";
                 $totalSalesmen = (int) getRowColumn($this->_dbConn, $projectTeamTable, "COUNT(team_id)", $aeCondition);
 
                 $dailyRows = $this->getAeSummaryRows($phoneNumber, $section, $currentDate, $currentDate);
@@ -73,6 +73,7 @@ class VanDswhatsAppSummary
 
                 $teamDetails = $this->getSectionTeamDetails($phoneNumber, $section);
                 $sectionTypeFlags = $this->getSectionTypeFlags($phoneNumber, $section);
+                $typeBifurcation = $this->getSectionTypeBifurcationCounts($phoneNumber, $section);
                 $teamStrength = $this->getTeamStrengthData($phoneNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec);
                 $npsrToday = $this->getSnapshotTodayData($dailyRows, 5, 2, $teamDetails);
                 $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5, $currentDate, $phoneNumber, $section);
@@ -89,7 +90,8 @@ class VanDswhatsAppSummary
                         $npsrMtd,
                         $vanDsToday,
                         $vanDsMtd,
-                        $sectionTypeFlags
+                        $sectionTypeFlags,
+                        $typeBifurcation
                     );
                     if ($imagePath) {
                         $processedSections[$section] = true;
@@ -208,7 +210,7 @@ class VanDswhatsAppSummary
         @rmdir($dirPath);
     }
 
-    private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = array())
+    private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = array(), $typeBifurcation = array())
     {
         if (!function_exists('imagecreatetruecolor')) {
             return "";
@@ -258,10 +260,13 @@ class VanDswhatsAppSummary
         // Header
         imagefilledrectangle($img, 12, 12, $canvasW - 12, 100, $blue);
         $this->drawCenterText($img, 12, 20, $canvasW - 12, 94, "TEAM SUMMARY", 5, $white);
-        $this->drawHeaderMeta($img, $aeName, $section, $currentDate, $dark);
+        $this->drawHeaderMeta($img, $aeName, $section, $currentDate, $dark, $typeBifurcation);
 
         // Team strength cards in mobile-friendly 2x2 grid
-        $this->drawStrengthCard($img, 16, 150, 514, 180, "TOTAL SALESMEN", (string) $teamStrength["total"], $blue, "T", "");
+        $vanCount = isset($typeBifurcation["van_ds_count"]) ? (int) $typeBifurcation["van_ds_count"] : 0;
+        $npsrCount = isset($typeBifurcation["npsr_count"]) ? (int) $typeBifurcation["npsr_count"] : 0;
+        $totalSalesmenNote = "VAN DS: " . $vanCount . " | NPSR: " . $npsrCount;
+        $this->drawStrengthCard($img, 16, 150, 514, 180, "TOTAL SALESMEN", (string) $teamStrength["total"], $blue, "T", $totalSalesmenNote);
         $this->drawStrengthCard($img, 550, 150, 514, 180, "QUALIFIED TODAY", (string) $teamStrength["qualified"], $green, "Q", "");
         $this->drawStrengthCard($img, 16, 344, 514, 230, "UNQUALIFIED", (string) $teamStrength["unqualified"], $orange, "U", $teamStrength["unqualified_names"]);
         $this->drawStrengthCard($img, 550, 344, 514, 230, "ABSENT", (string) $teamStrength["absent"], $red, "A", $teamStrength["absent_names"]);
@@ -274,7 +279,7 @@ class VanDswhatsAppSummary
             array("Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), $blue),
             array("Average Strike Rate", $npsrToday["avg_strike_rate"], $blue),
             array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], $orange, $npsrToday["lowest_strike_team"]),
-            array("Infra Volume", $npsrToday["infra_volume"], $purple),
+            array("Total Infra Volume", $npsrToday["infra_volume"], $purple),
             array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], $red, $npsrToday["infra_below_limit_names"]),
             array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), $green),
             array("Average Time Spent", $npsrToday["avg_time_spent"], $blue),
@@ -302,7 +307,7 @@ class VanDswhatsAppSummary
             array("Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), $blue),
             array("Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), $blue),
             array("Average Strike Rate", $vanDsToday["avg_strike_rate"], $blue),
-            array("Infra Volume", $vanDsToday["infra_volume"], $purple),
+            array("Total Infra Volume", $vanDsToday["infra_volume"], $purple),
             array("Infra Below 20 Ms", $vanDsToday["infra_below_limit"], $red, $vanDsToday["infra_below_limit_names"]),
             array("Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), $green),
             array("Average Time Spent", $vanDsToday["avg_time_spent"], $blue),
@@ -337,11 +342,21 @@ class VanDswhatsAppSummary
         } else {
             $strikeText = "NA";
         }
-        $infraText = $hasVan ? $vanDsToday["infra_volume"] : "NA";
+        $npsrInfraValue = $hasNpsr ? $this->extractNumericValue($npsrToday["infra_volume"]) : null;
+        $vanInfraValue = $hasVan ? $this->extractNumericValue($vanDsToday["infra_volume"]) : null;
+        if ($npsrInfraValue !== null && $vanInfraValue !== null) {
+            $infraText = (string) round(($npsrInfraValue + $vanInfraValue) / 2) . " Ms";
+        } elseif ($vanInfraValue !== null) {
+            $infraText = (string) round($vanInfraValue) . " Ms";
+        } elseif ($npsrInfraValue !== null) {
+            $infraText = (string) round($npsrInfraValue) . " Ms";
+        } else {
+            $infraText = "NA";
+        }
         $timeText = $hasVan ? $vanDsToday["avg_time_spent"] : "NA";
         $belowText = $hasVan ? $vanDsToday["infra_below_limit"] : "NA";
         $insightText = "Overall Strike: " . $strikeText .
-            "  |  Infra Volume: " . $infraText .
+            "  |  Avg Infra Volume: " . $infraText .
             "  |  Avg Time: " . $timeText .
             "  |  Infra Below Target: " . $belowText;
         $this->drawCenterText($img, 24, $footerY1 + 4, $canvasW - 24, $footerY2 - 4, $insightText, 4, $muted);
@@ -351,9 +366,11 @@ class VanDswhatsAppSummary
         return $absolutePath;
     }
 
-    private function drawHeaderMeta($img, $aeName, $section, $currentDate, $color)
+    private function drawHeaderMeta($img, $aeName, $section, $currentDate, $color, $typeBifurcation = array())
     {
-        $meta = "AE: " . strtoupper($aeName) . " | SEC: " . strtoupper($section) . " | DATE: " . $currentDate;
+        $aeNameText = isset($aeName) ? strtoupper(trim((string) $aeName)) : "";
+        $sectionText = isset($section) ? strtoupper(trim((string) $section)) : "";
+        $meta = "AE: " . $aeNameText . " | SEC: " . $sectionText . " | DATE: " . (string) $currentDate;
         $this->drawCenterText($img, 12, 102, 1068, 140, $meta, 4, $color);
     }
 
@@ -654,10 +671,7 @@ class VanDswhatsAppSummary
         if (!is_numeric($value)) {
             return (string) $value;
         }
-
-        $formatted = number_format((float) $value, 2, ".", "");
-        $formatted = rtrim(rtrim($formatted, "0"), ".");
-        return $formatted === "" ? "0" : $formatted;
+        return (string) round((float) $value);
     }
 
     private function sanitizeFileName($name)
@@ -773,15 +787,15 @@ class VanDswhatsAppSummary
         }
 
         return array(
-            "avg_outlets_visited" => $this->formatNumber($sumVisited / $count, 2),
-            "avg_outlets_billed" => $this->formatNumber($sumBilled / $count, 2),
-            "avg_strike_rate" => $this->formatNumber($sumStrikeRate / $count, 2) . "%",
+            "avg_outlets_visited" => (string) round($sumVisited / $count),
+            "avg_outlets_billed" => (string) round($sumBilled / $count),
+            "avg_strike_rate" => (string) round($sumStrikeRate / $count) . "%",
             "lowest_strike_rate" => $this->formatNumber((float) $lowestStrikeRate, 2) . "%",
             "lowest_strike_team" => $lowestTeamName,
-            "infra_volume" => $this->formatNumber($sumInfraVolume / $count, 2) . " Ms",
+            "infra_volume" => (string) round($sumInfraVolume / $count) . " Ms",
             "infra_below_limit" => (string) $infraBelow,
             "infra_below_limit_names" => $this->formatTeamNames(array_keys($infraBelowNames)),
-            "avg_line_cut" => $this->formatNumber($sumLineCut / $count, 2),
+            "avg_line_cut" => (string) round($sumLineCut / $count),
             "avg_time_spent" => $this->formatDurationFromMinutes($sumMarketMins / $count),
             "below_6_hours" => (string) $below6Hours,
             "below_6_hours_names" => $this->formatTeamNames(array_keys($below6HoursNames))
@@ -827,8 +841,8 @@ class VanDswhatsAppSummary
         $avgDailyBilled = $days > 0 ? array_sum($dailyBilled) / $days : 0;
         $avgDailyVolume = $days > 0 ? array_sum($dailyVolume) / $days : 0;
         return array(
-            "avg_daily_outlets_billed" => $this->formatNumber($avgDailyBilled, 2),
-            "avg_daily_volume" => $this->formatNumber($avgDailyVolume, 2) . " Ms",
+            "avg_daily_outlets_billed" => (string) round($avgDailyBilled),
+            "avg_daily_volume" => (string) round($avgDailyVolume) . " Ms",
             "incentive_brand_1_label" => $brandMeta1["label"],
             "incentive_brand_1" => $incentiveBrand1Percent,
             "incentive_brand_2_label" => $brandMeta2["label"],
@@ -930,7 +944,7 @@ class VanDswhatsAppSummary
                 if (!preg_match('/^total_sale_product[0-9]+$/i', $col)) {
                     continue;
                 }
-                $label = $name !== "" ? $name : $col;
+                $label = $name !== "" ? ($name . " (Incentive Brand) ") : "NA";
                 if (!isset($products[$label])) {
                     $products[$label] = array("columns" => array(), "label" => $label);
                 }
@@ -1091,7 +1105,7 @@ class VanDswhatsAppSummary
         $summaryAction = null;
         $summaryRows = 0;
         $query = "SELECT a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.dayend_datetime, a.total_sales_deliveries, a.total_sellin_shops, a.total_other_shops, a.is_qualified, " .
-            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type, b.branch_id FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = 99" .
+            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type, b.branch_id FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.is_type IN (0,2,5)" .
             " AND b.ae_number = '$aeNumber' AND b.section = '$section' AND a.activity_date BETWEEN '$dateFrom' AND '$dateTo'";
         $this->_dbConn->ExecuteSelectQuery($query, $summaryAction, $summaryRows);
 
@@ -1109,7 +1123,7 @@ class VanDswhatsAppSummary
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $action = null;
         $rows = 0;
-        $query = "SELECT DISTINCT team_id, team_name, wd_code FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section'";
+        $query = "SELECT DISTINCT team_id, team_name, wd_code FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND is_type IN (0,2,5)";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
         $teams = array();
         if ($rows > 0) {
@@ -1135,7 +1149,7 @@ class VanDswhatsAppSummary
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $action = null;
         $rows = 0;
-        $query = "SELECT DISTINCT is_type FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section'";
+        $query = "SELECT DISTINCT is_type FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND is_type IN (0,2,5)";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
         $hasNpsr = false;
         $hasVan = false;
@@ -1144,7 +1158,7 @@ class VanDswhatsAppSummary
                 $type = isset($row["is_type"]) ? (int) $row["is_type"] : -1;
                 if ($type === 5) {
                     $hasNpsr = true;
-                } elseif ($type === 0) {
+                } elseif ($type === 0 || $type === 2) {
                     $hasVan = true;
                 }
             }
@@ -1153,6 +1167,25 @@ class VanDswhatsAppSummary
             "has_npsr" => $hasNpsr,
             "has_van" => $hasVan
         );
+    }
+
+    private function getSectionTypeBifurcationCounts($aeNumber, $section)
+    {
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $action = null;
+        $rows = 0;
+        $query = "SELECT " .
+            "COUNT(DISTINCT CASE WHEN is_type IN (0,2) THEN team_id END) AS van_ds_count, " .
+            "COUNT(DISTINCT CASE WHEN is_type = 5 THEN team_id END) AS npsr_count " .
+            "FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND is_type IN (0,2,5)";
+        $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
+        $result = array("van_ds_count" => 0, "npsr_count" => 0);
+        if ($rows > 0) {
+            $data = $this->_dbConn->GetData($action);
+            $result["van_ds_count"] = isset($data["van_ds_count"]) ? (int) $data["van_ds_count"] : 0;
+            $result["npsr_count"] = isset($data["npsr_count"]) ? (int) $data["npsr_count"] : 0;
+        }
+        return $result;
     }
 
     private function formatTeamNames($names)
@@ -1190,7 +1223,12 @@ class VanDswhatsAppSummary
     {
         $result = array();
         foreach ($rows as $row) {
-            if ((int) $row["is_type"] === (int) $teamType) {
+            $type = isset($row["is_type"]) ? (int) $row["is_type"] : -1;
+            if ((int) $teamType === 0) {
+                if ($type === 0 || $type === 2) {
+                    $result[] = $row;
+                }
+            } elseif ($type === (int) $teamType) {
                 $result[] = $row;
             }
         }
@@ -1227,6 +1265,18 @@ class VanDswhatsAppSummary
         $hours = floor($minutes / 60);
         $remMinutes = $minutes % 60;
         return $hours . "h " . $remMinutes . "m";
+    }
+
+    private function extractNumericValue($value)
+    {
+        $text = trim((string) $value);
+        if ($text === "" || strtoupper($text) === "NA") {
+            return null;
+        }
+        if (preg_match('/-?\d+(\.\d+)?/', $text, $matches)) {
+            return (float) $matches[0];
+        }
+        return null;
     }
 
     private function emptyTodaySnapshot()
