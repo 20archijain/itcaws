@@ -8,14 +8,15 @@ import { Functions } from 'src/app/core/utils/functions.list';
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
+  standalone: false,
 })
 export class NavBarComponent implements OnInit {
   nextConfig: any;
   menuClass: boolean;
   collapseStyle: string;
   windowWidth: number;
-  clientInfo: LoginDataClient;
-  homePage: string;
+  clientInfo!: LoginDataClient;
+  homePage = '';
 
   @Output() onNavCollapse = new EventEmitter();
   @Output() onNavHeaderMobCollapse = new EventEmitter();
@@ -28,9 +29,9 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.clientInfo = JSON.parse(SessionUtil.getItem('client'));
-    const params = Functions.getHomeLocation();
-    if (params) {
+    this.clientInfo = JSON.parse(SessionUtil.getItem('client') || '{}');
+    const params = Functions.getHomeLocation() ?? [];
+    if (params.length) {
       this.homePage = `/app/${params[0]}/${params[1]}`;
     }
   }

@@ -7,7 +7,8 @@ import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
   selector: 'app-dropdown',
-  templateUrl: './dropdown.component.html'
+  templateUrl: './dropdown.component.html',
+  standalone: false,
 })
 export class DropdownComponent implements OnChanges, OnInit {
   @Input() private validators = null;
@@ -23,7 +24,7 @@ export class DropdownComponent implements OnChanges, OnInit {
   @Input() isRequired = false;
   @Input() showValidationState = true;
   @Input() hide = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() isHorizontalForm = false;
   @Input() groupClassName = '';
   @Input() labelClassName = 'form-label';
@@ -54,9 +55,9 @@ export class DropdownComponent implements OnChanges, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
   }
@@ -67,7 +68,7 @@ export class DropdownComponent implements OnChanges, OnInit {
         [this.controlName]: [],
       });
     } else if (this.group.get(this.controlName) &&
-      !(this.group.get(this.controlName).value === null || this.group.get(this.controlName).value === '')) {
+      !(this.group.get(this.controlName)?.value === null || this.group.get(this.controlName)?.value === '')) {
       this.onChange.emit(null);
     }
   }
@@ -78,7 +79,7 @@ export class DropdownComponent implements OnChanges, OnInit {
 
         // used to show the label instead of value in brick container
         if (this.valueKey) {
-          const foundOption = this.options ? find(list => list[this.valueKey] === option)(this.options) : '';
+          const foundOption = this.options ? find((list: any) => list[this.valueKey] === option)(this.options) : '';
           if (foundOption) {
             return foundOption[this.labelKey];
           }

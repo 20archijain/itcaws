@@ -1,10 +1,6 @@
 import { SeriesOptionsType } from 'highcharts';
 
-import { CustomGalleryConfig, GalleryImagesList, MapConfig, StatisticsConfig } from './common.interface';
-
-export interface GenericObject {
-  [key: string]: GenericObject;
-}
+import { CustomGalleryConfig, GalleryImagesList, HttpRequestModuleCodes, MapConfig, SessionModuleObject, StatisticsConfig } from './common.interface';
 
 export interface DropdownList<V = string, L = string> {
   label: L;
@@ -14,12 +10,12 @@ export interface DropdownList<V = string, L = string> {
 
 // Login Data Interface
 export interface LoginDataResponse {
-  enableTwoWayAuth: boolean;
+  enableTwoWayAuth?: boolean;
   user: LoginDataUser;
-  landing: LoginDataLanding;
+  landing: HttpRequestModuleCodes;
   client: LoginDataClient;
   token: string;
-  modules: GenericObject;
+  modules: SessionModuleObject;
 }
 
 export interface LoginDataUser {
@@ -27,11 +23,6 @@ export interface LoginDataUser {
   mobile?: string;
   name: string;
   email: string;
-}
-
-export interface LoginDataLanding {
-  modc: string;
-  pmodc: string;
 }
 
 export interface LoginDataClient {
@@ -496,8 +487,8 @@ export interface SalesDashboardData {
   currentAndLastMonthFocusData: any;
   currentMonthVsLastYearMonthFocusSales: any;
   currentYearLastYearMonthlyFocusSales: any;
-  branchFilter?: boolean
-  showMapStyleDropdown?: boolean
+  branchFilter?: boolean;
+  showMapStyleDropdown?: boolean;
 }
 
 export interface AttendanceDetails {
@@ -611,7 +602,7 @@ export interface ProductItem {
 // Each item in the submit payload — includes checkbox flags
 export interface ProductItemWithFlags extends ProductItem {
   dspmBrand: boolean;   // firstCheckbox  — max 2 across all selected products
-  isFocusBrand:   boolean;   // secondCheckbox — unlimited, any/all can be checked
+  isFocusBrand: boolean;   // secondCheckbox — unlimited, any/all can be checked
 }
 
 export interface SubmitSelectedProductsResponse {

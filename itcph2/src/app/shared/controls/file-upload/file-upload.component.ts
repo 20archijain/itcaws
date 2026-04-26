@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges, TemplateRef } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup, ValidatorFn } from '@angular/forms';
-import { DomSanitizer } from '@angular/platform-browser';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 
 import { FormService } from 'src/app/core/services/form.service';
@@ -12,7 +12,8 @@ import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interfac
 
 @Component({
   selector: 'app-file-upload',
-  templateUrl: './file-upload.component.html'
+  templateUrl: './file-upload.component.html',
+  standalone: false,
 })
 export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   private subscription: Subscription[] = [];
@@ -24,7 +25,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   @Input() private addFileTypeValidation = true;
   @Input() private errorMessages: FormControlErrorMessage[] = [];
   @Input() label = '';
-  @Input() labelTemplate: TemplateRef<any> = null;
+  @Input() labelTemplate?: TemplateRef<any>;
   @Input() showPreview = true;
   @Input() showDummyImageIfNoImageSelected = true;
   @Input() chooseLabel = 'button.choose';
@@ -33,9 +34,9 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   @Input() multiple = false;
   @Input() controlName = 'file';
   @Input() hide = false;
-  @Input() group: UntypedFormGroup;
+  @Input() group!: UntypedFormGroup;
   @Input() smallSizeThumbnail = false;
-  @Input() defaultSelected: string = null;
+  @Input() defaultSelected: string | null = null;
   @Input() groupClassName = '';
   @Input() labelClassName = 'form-label';
   @Input() sizeClass = 'col-sm-8 col-xl-9';
@@ -45,9 +46,9 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   errorMessage = '';
   isInvalid = false;
   files: any[] = [];
-  selectedFile = null;
-  oldFileSizeValidator: ValidatorFn;
-  oldFileTypeValidator: ValidatorFn;
+  selectedFile: SafeUrl | null = null;
+  oldFileSizeValidator: ValidatorFn | null = null;
+  oldFileTypeValidator: ValidatorFn | null = null;
 
   constructor(private formService: FormService, private sanitizer: DomSanitizer,
     private listingService: ListingService) { }
@@ -97,7 +98,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
       this.files = [];
     }
 
-    const files: FileList = ($event as DragEvent)?.dataTransfer ?
+    const files: FileList | null | undefined = ($event as DragEvent)?.dataTransfer ?
       ($event as DragEvent).dataTransfer?.files : ($event.target as HTMLInputElement)?.files;
     if (files && files.length) {
       for (let i = 0; i < files.length; i++) {
@@ -126,16 +127,16 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
     if (this.addMaxFileSizeValidation && this.maxFileSize) {
       this.removeFileSizeValidator();
       this.oldFileSizeValidator = FILE_SIZE_VALIDATOR(this.maxFileSize, file.size);
-      this.inputField.addValidators(this.oldFileSizeValidator);
-      this.inputField.updateValueAndValidity();
+      this.inputField?.addValidators(this.oldFileSizeValidator);
+      this.inputField?.updateValueAndValidity();
     }
 
     // Add file type validation
     if (this.addFileTypeValidation && this.accept) {
       this.removeFileTypeValidator();
       this.oldFileTypeValidator = FILE_TYPE_VALIDATOR(this.accept, file);
-      this.inputField.addValidators(this.oldFileTypeValidator);
-      this.inputField.updateValueAndValidity();
+      this.inputField?.addValidators(this.oldFileTypeValidator);
+      this.inputField?.updateValueAndValidity();
     }
 
     return !this.hasFileSizeOrFileTypeError;
@@ -151,20 +152,20 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
 
   removeFileSizeValidator() {
     if (this.oldFileSizeValidator) {
-      this.inputField.removeValidators(this.oldFileSizeValidator);
+      this.inputField?.removeValidators(this.oldFileSizeValidator);
       this.oldFileSizeValidator = null;
     }
   }
 
   removeFileTypeValidator() {
     if (this.oldFileTypeValidator) {
-      this.inputField.removeValidators(this.oldFileTypeValidator);
+      this.inputField?.removeValidators(this.oldFileTypeValidator);
       this.oldFileTypeValidator = null;
     }
   }
 
   get hasFileSizeOrFileTypeError() {
-    return this.inputField.hasError(CUSTOM_VALIDATOR_KEYS.FILE_SIZE) || this.inputField.hasError(CUSTOM_VALIDATOR_KEYS.FILE_TYPE)
+    return this.inputField?.hasError(CUSTOM_VALIDATOR_KEYS.FILE_SIZE) || this.inputField?.hasError(CUSTOM_VALIDATOR_KEYS.FILE_TYPE)
   }
 
   get inputField() {
@@ -172,7 +173,7 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   get errors() {
-    return this.group.get(this.controlName) && this.group.get(this.controlName).errors;
+    return this.group.get(this.controlName) && this.group.get(this.controlName)?.errors;
   }
 
   get isTouched() {
@@ -184,18 +185,18 @@ export class FileUploadComponent implements OnChanges, OnDestroy, OnInit {
     this.isInvalid = false;
     this.selectedFile = null;
     this.defaultSelected = null;
-    this.inputField.setValue(null);
+    this.inputField?.setValue(null);
     // Remove File size and File type error on clear
     this.removeFileSizeValidator();
     this.removeFileTypeValidator();
-    this.inputField.updateValueAndValidity();
+    this.inputField?.updateValueAndValidity();
     this.checkError();
     this.onSelect.emit({ originalEvent: null, files: null, invalid: this.isInvalid });
   }
 
   checkError() {
     // This is used when clicking "Choose" Btn to mark file control as touched
-    this.inputField.markAsTouched();
+    this.inputField?.markAsTouched();
     const resp = this.formService.getValidationError(this.inputField, this.errorMessages);
     this.isInvalid = resp.isInvalid;
     this.errorMessage = resp.errorMessage;

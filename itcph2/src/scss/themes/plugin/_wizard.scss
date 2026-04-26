@@ -1,10 +1,14 @@
+@use "sass:map";
+@use "sass:color";
+@use "../../settings/custom-variables" as *;
+
 .bt-wizard {
   .nav {
     background: $body-bg;
 
     .nav-link {
       &.active {
-        box-shadow: 0 0 5px 2px transparentize(map-get($theme-colors, "primary"), 0.7);
+        box-shadow: 0 0 5px 2px color.adjust(map.get($theme-colors, "primary"), $alpha: -0.7);
       }
     }
   }

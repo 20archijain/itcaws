@@ -36,6 +36,7 @@ module.exports = tseslint.config(
       "@typescript-eslint/consistent-indexed-object-style": "off",
       "@typescript-eslint/no-explicit-any": "off",
       "@angular-eslint/no-output-on-prefix": "off",
+      "@angular-eslint/prefer-standalone": "off",
     },
   },
   {

@@ -7,10 +7,11 @@ import { NextConfig } from 'src/app/app-config';
 @Component({
   selector: 'app-nav-group',
   templateUrl: './nav-group.component.html',
+  standalone: false,
 })
 export class NavGroupComponent implements OnInit {
   private nextConfig: any;
-  @Input() item: INavigationItem;
+  @Input() item!: INavigationItem;
 
   constructor(private location: Location) {
     this.nextConfig = NextConfig.config;
@@ -19,27 +20,27 @@ export class NavGroupComponent implements OnInit {
   ngOnInit() {
     // at reload time active and trigger link
     let current_url = this.location.path();
-    if (this.location['_baseHref']) {
-      current_url = this.location['_baseHref'] + this.location.path();
+    if (this.location as any['_baseHref']) {
+      current_url = (this.location as any)['_baseHref'] + this.location.path();
     }
     current_url = current_url ? current_url.split('/').slice(0, 4).join('/') : current_url;
     const link = 'a.nav-link[ href=\'#' + current_url + '\' ]';
     const ele = document.querySelector(link);
     if (ele !== null && ele !== undefined) {
       const parent = ele.parentElement;
-      const up_parent = parent.parentElement.parentElement;
-      const last_parent = up_parent.parentElement;
-      if (parent.classList.contains('pcoded-hasmenu')) {
+      const up_parent = parent?.parentElement?.parentElement;
+      const last_parent = up_parent?.parentElement;
+      if (parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           parent.classList.add('pcoded-trigger');
         }
         parent.classList.add('active');
-      } else if (up_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (up_parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           up_parent.classList.add('pcoded-trigger');
         }
         up_parent.classList.add('active');
-      } else if (last_parent.classList.contains('pcoded-hasmenu')) {
+      } else if (last_parent?.classList.contains('pcoded-hasmenu')) {
         if (this.nextConfig['layout'] === 'vertical') {
           last_parent.classList.add('pcoded-trigger');
         }

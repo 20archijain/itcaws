@@ -11,6 +11,7 @@ import { SpinnerService } from '../../services/spinner.service';
     './spinkit-css/sk-line-material.scss'
   ],
   templateUrl: './spinner.component.html',
+  standalone: false,
 })
 export class SpinnerComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];

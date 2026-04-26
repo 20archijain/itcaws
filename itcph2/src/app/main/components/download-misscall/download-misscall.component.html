@@ -1,6 +1,7 @@
 <app-card [options]="false">
   <app-table-listing checkKey="id" [header]="header" [body]="body" [url]="url" [searchGroup]="form"
-    [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false" deleteKey="id" [deleteWithFormData]="true">
+    [searchTemplate]="searchTemplate" [getListingOnInit]="false" [isSelectable]="false" deleteKey="id"
+    [deleteWithFormData]="true">
   </app-table-listing>
 </app-card>
 <ng-template #searchTemplate>
@@ -16,13 +17,11 @@
         [errorMessages]="errorMessages.project"></app-select>
     </div>
     <div class="col-xxl-2 col-md-2">
-      <app-date [group]="form" controlName="dateFrom"  [showValidationState]="false"
-        label="app.missCall.from">
+      <app-date [group]="form" controlName="dateFrom" [showValidationState]="false" label="app.missCall.from">
       </app-date>
     </div>
     <div class="col-xxl-2 col-md-2">
-      <app-date [group]="form" controlName="dateTo" label="app.missCall.to"
-        [showValidationState]="false">
+      <app-date [group]="form" controlName="dateTo" label="app.missCall.to" [showValidationState]="false">
       </app-date>
     </div>
     <div class="col-xxl-2 col-md-2">
@@ -32,8 +31,8 @@
     </div>
     <div class="col-xxl-2 col-md-1 d-flex align-items-center">
       <div class="me-1 mt-4">
-        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [appScrollToFirstInvalidInput]="form" btnClass="w-100"
-          [showIconInButton]="true" spinnerText="spinnerText.searching">
+        <app-button type="submit" [isFaIcon]="true" iconName="fa fa-search" [appScrollToFirstInvalidInput]="form"
+          btnClass="w-100" [showIconInButton]="true" spinnerText="spinnerText.searching">
         </app-button>
       </div>
       <div class="me-1 mt-4">

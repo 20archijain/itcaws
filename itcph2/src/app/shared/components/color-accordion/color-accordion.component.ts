@@ -15,7 +15,8 @@ import { trigger, style, transition, animate } from '@angular/animations';
         animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
       ]),
     ]),
-  ]
+  ],
+  standalone: false,
 })
 export class ColorAccordionComponent {
   @Input() monthlySalesData: any;

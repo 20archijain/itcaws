@@ -11,12 +11,13 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  templateUrl: './system-offline.component.html'
+  templateUrl: './system-offline.component.html',
+  standalone: false,
 })
 export class SystemOfflineComponent implements OnInit {
   private subscription: Subscription[] = [];
   private endError = '';
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   projectOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   errorMessages = {
@@ -41,7 +42,7 @@ export class SystemOfflineComponent implements OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.projectOptions = resp.data.projectList;
           }
         })
@@ -52,11 +53,11 @@ export class SystemOfflineComponent implements OnInit {
     this.teamValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getTeamsList, { project: this.form.get('project').value },
+      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getTeamsList, { project: this.form.get('project')?.value },
         null, environment.getTeamDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
@@ -83,9 +84,9 @@ export class SystemOfflineComponent implements OnInit {
     window.open('https://radardashboard.com/uproots/mobile_services/cronjob/store_offline_dropdown_options_new_setups.php', '_blank', 'noopener,noreferrer');
   }
 
-  set teamValue(value: string) {
+  set teamValue(value: string | null) {
     this.teamOptions = [];
-    this.form.get('team').setValue(value);
+    this.form.get('team')?.setValue(value);
   }
 
 }

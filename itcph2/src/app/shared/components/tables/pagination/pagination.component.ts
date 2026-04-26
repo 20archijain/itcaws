@@ -5,12 +5,13 @@ import { LISTING } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-pagination',
-  templateUrl: './pagination.component.html'
+  templateUrl: './pagination.component.html',
+  standalone: false,
 })
 export class PaginationComponent implements OnChanges, OnInit {
   @Input() private noOfTotalLinks = 7;
   @Output() private onPageChange = new EventEmitter<number>();
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'page';
   @Input() totalRecords = 0;
   @Input() limit = LISTING.display[0];
@@ -36,8 +37,8 @@ export class PaginationComponent implements OnChanges, OnInit {
   }
 
   getPagination() {
-    let start: number;
-    let end: number;
+    let start = 0;
+    let end = 0;
     this.lastPage = Math.ceil(this.totalRecords / this.limit);
     // no of links on each side of active page
     const noOfAdjacentLinks = Math.floor(this.noOfTotalLinks / 2);
@@ -139,10 +140,10 @@ export class PaginationComponent implements OnChanges, OnInit {
   }
 
   get currentPage() {
-    return this.group.get(this.controlName).value;
+    return this.group.get(this.controlName)?.value;
   }
 
   set currentPage(page) {
-    this.group.get(this.controlName).setValue(page);
+    this.group.get(this.controlName)?.setValue(page);
   }
 }

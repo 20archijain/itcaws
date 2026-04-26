@@ -6,7 +6,7 @@ import {
   OnDestroy,
   AfterViewInit,
 } from '@angular/core';
-import ApexCharts from 'apexcharts/dist/apexcharts.common.js';
+import ApexCharts from 'apexcharts';
 
 /** Input item: { name: string, series: { name: string, value: number }[] } */
 export interface GroupedBarCategory {
@@ -41,6 +41,7 @@ export interface GroupedBarCategory {
       }
     `,
   ],
+  standalone: false,
 })
 export class ApexGroupedBarChartComponent implements OnChanges, AfterViewInit, OnDestroy {
   @Input() transformedChartData: GroupedBarCategory[] = [];

@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'slice'
+  name: 'slice',
+  standalone: false,
 })
 export class SlicePipe implements PipeTransform {
 
@@ -10,7 +11,6 @@ export class SlicePipe implements PipeTransform {
       return [];
     }
 
-    return items.slice(startIndex, endIndex + 1);
+    return endIndex ? items.slice(startIndex, endIndex + 1) : items.slice(startIndex);
   }
-
 }

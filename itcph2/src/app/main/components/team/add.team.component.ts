@@ -17,26 +17,27 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
-  templateUrl: './add.team.component.html'
+  templateUrl: './add.team.component.html',
+  standalone: false,
 })
 export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   private addMethodOptions = ['app.team.add.usingNames', 'app.team.add.usingIndex', 'app.team.add.endError'];
   private endError = '';
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   projectOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   circleOptions: DropdownList[] = [];
   sectionOptions: DropdownList[] = [];
   wdCodeOptions: DropdownList[] = [];
   aeNameOptions: DropdownList[] = [];
-  jsonName: string;
+  jsonName!: string | undefined;
   amNameOptions: DropdownList[] = [];
   dsTypeOptions: DropdownList[] = [];
   jsonIdOptions: DropdownList[] = [];
   addMethodList: DropdownList<number>[] = [];
   separatorList: DropdownList[] = [];
-  addResponse: HttpRequestResponse = null;
+  addResponse: HttpRequestResponse<string> | null = null;
   passwordTooltip = CONSTANTS.STRONG_PASSWORD_FUNC ? 'tooltip.strongPasswordBody' : 'tooltip.password';
   errorMessages = {
     branch: COMMON_VALIDATORS.messages.dropdown('Branch'),
@@ -129,7 +130,7 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.projectOptions = resp.data.projectList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
@@ -139,7 +140,7 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
             // this.amNameOptions = resp.data.amNameList;
             this.dsTypeOptions = resp.data.dsTypeList;
             this.jsonIdOptions = resp.data.jsonIdList;
-            this.separatorList = resp.data.separatorList;
+            this.separatorList = resp.data.separatorList || [];
           }
         })
     );
@@ -164,11 +165,11 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
     this.aeNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch').value },
+      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch')?.value },
         null, environment.getTeamDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
           }
@@ -181,11 +182,11 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
     this.aeNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getSection, { branch: this.form.get('branch').value, circle: this.form.get('circle').value },
+      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getSection, { branch: this.form.get('branch')?.value, circle: this.form.get('circle')?.value },
         null, environment.getTeamDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
           }
         })
@@ -195,11 +196,11 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   getAeName() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getAeName, { section: this.form.get('section').value },
+      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getAeName, { section: this.form.get('section')?.value },
         null, environment.getTeamDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.aeNameOptions = resp.data.aeNameList;
           }
         })
@@ -209,14 +210,14 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   getJsonName() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getJson, { jsonId: this.form.get('jsonId').value },
+      this.formService.customActionCall<GetAddTeamDataResponse>(STATIC_MODULES.custom.getJson, { jsonId: this.form.get('jsonId')?.value },
         null, environment.getTeamDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.jsonName = resp.data.jsonName;
             if (this.jsonName) {
-              this.form.get('json').setValue(this.jsonName);
+              this.form.get('json')?.setValue(this.jsonName);
             }
           }
         })
@@ -242,24 +243,24 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
           })
       );
     } else {
-      if (this.type === 2 && this.form.get('endIndex').value < this.form.get('startIndex').value) {
+      if (this.type === 2 && this.form.get('endIndex')?.value < this.form.get('startIndex')?.value) {
         this.toastr.toastr({ type: 'error', msg: this.endError });
       }
     }
   }
 
 
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.form.get('circle').setValue(value);
+    this.form.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.form.get('section').setValue(value);
+    this.form.get('section')?.setValue(value);
   }
-  set aeNameValue(value: string) {
+  set aeNameValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.form.get('aeName').setValue(value);
+    this.form.get('aeName')?.setValue(value);
   }
 
   resetControls(type: OnRadioChangeEvent) {
@@ -282,6 +283,6 @@ export class AddTeamComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   get type() {
-    return this.form.get('addMethodType').value;
+    return this.form.get('addMethodType')?.value;
   }
 }

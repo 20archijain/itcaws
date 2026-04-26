@@ -11,12 +11,13 @@ import { MAP_MAIN_COMPONENTS } from '../../components';
 
 @Component({
   selector: 'app-body',
-  templateUrl: './body.component.html'
+  templateUrl: './body.component.html',
+  standalone: false,
 })
 export class BodyComponent implements OnDestroy, OnInit {
-  @ViewChild(DynamicComponentDirective, { static: true }) private dynComp: DynamicComponentDirective;
+  @ViewChild(DynamicComponentDirective, { static: true }) private dynComp!: DynamicComponentDirective;
   private windowWidth: number;
-  private components: ComponentItem[];
+  private components: ComponentItem[] = [];
   private subscription: Subscription[] = [];
   nextConfig: any;
   navCollapsed: boolean;
@@ -40,7 +41,7 @@ export class BodyComponent implements OnDestroy, OnInit {
     if (this.windowWidth < 992) {
       // this.nextConfig.layout = 'vertical';
       setTimeout(() => {
-        document.querySelector('.pcoded-navbar').classList.add('menupos-static');
+        document.querySelector('.pcoded-navbar')?.classList.add('menupos-static');
         if ((document.querySelector('#nav-ps-next') as HTMLElement)?.style) {
           (document.querySelector('#nav-ps-next') as HTMLElement).style.maxHeight = '100%'; // 100%
         }
@@ -58,7 +59,7 @@ export class BodyComponent implements OnDestroy, OnInit {
 
   navMobClick() {
     if (this.windowWidth < 992) {
-      if (!(document.querySelector('app-navigation.pcoded-navbar').classList.contains('mob-open'))) {
+      if (!(document.querySelector('app-navigation.pcoded-navbar')?.classList.contains('mob-open'))) {
         this.navCollapsedMob = !this.navCollapsedMob;
         setTimeout(() => {
           this.navCollapsedMob = !this.navCollapsedMob;

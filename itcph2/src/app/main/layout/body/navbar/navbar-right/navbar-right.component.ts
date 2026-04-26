@@ -16,16 +16,17 @@ import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
   providers: [NgbDropdownConfig],
   selector: 'app-navbar-right',
   templateUrl: './navbar-right.component.html',
+  standalone: false,
 })
 export class NavbarRightComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private gaLabels = GA_ACTION_LIST.auth.logout;
-  userInfo: LoginDataUser;
+  userInfo!: LoginDataUser;
 
   constructor(private authService: AuthService, private routerService: RoutingService, private gaService: GAService) { }
 
   ngOnInit() {
-    this.userInfo = JSON.parse(SessionUtil.getItem('user'));
+    this.userInfo = JSON.parse(SessionUtil.getItem('user') || '{}');
   }
 
   ngOnDestroy() {

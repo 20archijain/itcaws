@@ -7,13 +7,16 @@
             <thead>
               <tr class="fixed-header">
                 <th class="f-12 fix-width text-center" [class.highlight]="true" colspan="2">Particulars</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target (in Ms)
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} : Target
+                  (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{previousMonth}} :
                   Achieved (in Ms)</th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target (in Ms)
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Target
+                  (in Ms)
                 </th>
-                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved (in Ms)
+                <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3">{{currentMonth}} : Achieved
+                  (in Ms)
                 </th>
                 <th class="f-12 fix-width2 text-center" [class.highlight]="true" colspan="3"
                   *ngIf="tableColumnCondition">{{nextMonth}} : Target (in Ms)
@@ -38,8 +41,10 @@
                 <th class="f-12 fix-width2 " [class.highlight]="true">{{product1}}</th>
                 <th class="f-12 fix-width2 " [class.highlight]="true">{{product2}}</th>
                 <th class="f-12 fix-width2 " [class.highlight]="true">Overall</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true" *ngIf="tableColumnCondition">{{nextMonthProduct1}}</th>
-                <th class="f-12 fix-width2 " [class.highlight]="true" *ngIf="tableColumnCondition">{{nextMonthProduct2}}</th>
+                <th class="f-12 fix-width2 " [class.highlight]="true" *ngIf="tableColumnCondition">{{nextMonthProduct1}}
+                </th>
+                <th class="f-12 fix-width2 " [class.highlight]="true" *ngIf="tableColumnCondition">{{nextMonthProduct2}}
+                </th>
                 <th class="f-12 fix-width2 " [class.highlight]="true" *ngIf="tableColumnCondition">Overall</th>
                 <ng-container *ngIf="enableTargetFiled">
                   <th class="f-12 text-center fix-width4" *ngFor="let team of teamsList" [class.highlight]="true">
@@ -53,64 +58,64 @@
               <ng-container>
                 <ng-container *ngIf="loopWithoutTeam > 0">
                   <tr *ngFor="let productControl of numbers; let pi = index;"
-                  [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
-                  <td>{{ stockProductsList[pi]?.wd_code }}</td>
-                  <td>
-                    <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
-                    {{ stockProductsList[pi]?.label }}
-                  </td>
-                  <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productOneNextMonthTarget }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productTwoNextMonthTarget }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.overAllNextMonthTarget }}</td>
-                </tr>
+                    [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
+                    <td>{{ stockProductsList[pi]?.wd_code }}</td>
+                    <td>
+                      <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
+                      {{ stockProductsList[pi]?.label }}
+                    </td>
+                    <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productOneNextMonthTarget }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productTwoNextMonthTarget }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.overAllNextMonthTarget }}</td>
+                  </tr>
                 </ng-container>
                 <ng-container *ngIf="loopWithoutTeam < 1">
                   <tr *ngFor="let productControl of group.get('qty')['controls']; let pi = index;"
-                  [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
-                  <td>{{ stockProductsList[pi]?.wd_code }}</td>
-                  <td>
-                    <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
-                    {{ stockProductsList[pi]?.label }}
-                  </td>
-                  <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
-                  <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
-                  <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productOneNextMonthTarget }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productTwoNextMonthTarget }}</td>
-                  <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.overAllNextMonthTarget }}</td>
-                  <ng-container *ngIf="enableTargetFiled">
-                    <td *ngFor="let team of teamsList" class="">
-                      <div class="d-flex justify-content-center fix-width4">
-                        <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
-                          [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
-                          placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
-                          [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
-                        </app-input>
-                      </div>
+                    [ngClass]="getRowClass(stockProductsList[pi]?.brand)">
+                    <td>{{ stockProductsList[pi]?.wd_code }}</td>
+                    <td>
+                      <span *ngIf="stockProductsList[pi]?.existTeamTableCond === 1" class="blink-dot"></span>
+                      {{ stockProductsList[pi]?.label }}
                     </td>
-                  </ng-container>
-                </tr>
+                    <td>{{ stockProductsList[pi]?.productOnePreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwoPreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.overAllPreMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productOnepreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwopreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.overallPreviousMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productOneCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwoCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.overallCurrentMonthTarget }}</td>
+                    <td>{{ stockProductsList[pi]?.productOnecurrentMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.productTwocurrentMonthAchieve }}</td>
+                    <td>{{ stockProductsList[pi]?.overallCurrentMonthAchieve }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productOneNextMonthTarget }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.productTwoNextMonthTarget }}</td>
+                    <td *ngIf="tableColumnCondition">{{ stockProductsList[pi]?.overAllNextMonthTarget }}</td>
+                    <ng-container *ngIf="enableTargetFiled">
+                      <td *ngFor="let team of teamsList" class="">
+                        <div class="d-flex justify-content-center fix-width4">
+                          <app-input maxLength="10" [group]="productControl" [id]="pi + ''"
+                            [controlName]="'qty-' + team.value + '-' + stockProductsList[pi]?.value"
+                            placeholder="{{ 'placeholder.qty' | translate }}" [errorMessages]="errorMessages.qty"
+                            [autocompleteOff]="true" groupClassName="wid-80" inputClass="fs-12">
+                          </app-input>
+                        </div>
+                      </td>
+                    </ng-container>
+                  </tr>
                 </ng-container>
               </ng-container>
             </tbody>

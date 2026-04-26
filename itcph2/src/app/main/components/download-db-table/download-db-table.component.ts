@@ -16,10 +16,11 @@ import { environment } from 'src/environments/environment';
     './download-db-table.component.scss',
   ],
   templateUrl: './download-db-table.component.html',
+  standalone: false,
 })
 export class DownloadDBTableComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   dataBaseListOptions: DropdownList[] = [];
   typeOptions: DropdownList[] = [];
   projectOptions: DropdownList[] = [];
@@ -75,7 +76,7 @@ export class DownloadDBTableComponent implements OnDestroy, OnInit {
         .getData<DownloadReports>(this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.dataBaseListOptions = resp.data.dataBaseList;
             this.typeOptions = resp.data.typeList;
             this.operatorOptions = resp.data.operatorList;
@@ -96,7 +97,7 @@ export class DownloadDBTableComponent implements OnDestroy, OnInit {
       )
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.tableOptions = resp.data.tableList;
             this.projectOptions = resp.data.projectList;
           }
@@ -140,7 +141,7 @@ export class DownloadDBTableComponent implements OnDestroy, OnInit {
       )
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.projectOptions = resp.data.projectList;
           }
         })
@@ -261,7 +262,7 @@ export class DownloadDBTableComponent implements OnDestroy, OnInit {
         )
           .pipe(finalize(() => this.loaderService.stopLoader()))
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })

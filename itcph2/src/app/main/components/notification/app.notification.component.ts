@@ -17,12 +17,12 @@ import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 @Component({
   templateUrl: './app.notification.component.html',
   styleUrls: ["./app.notification.component.scss"],
+  standalone: false,
 })
 export class AppNotificationComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   url = environment.viewSalesDashboardDataUrl;
-  group: UntypedFormGroup;
-  form: UntypedFormGroup;
+  group!: UntypedFormGroup;
   columnSize = 12;
   noOfMaps: string[] = [];
   categoryOptions: DropdownList[] = [];
@@ -97,14 +97,14 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
-            this.branchFilter = resp.data.branchFilter;
+            this.branchFilter = resp.data.branchFilter ?? false;
             this.teamTypeOptions = resp.data.teamType;
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
@@ -157,10 +157,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -179,10 +179,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
   getProduct() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getproduct, { category: this.group.get('category').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getproduct, { category: this.group.get('category')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.productOptions = resp.data.productList;
           }
         })
@@ -199,10 +199,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -226,10 +226,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -249,10 +249,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
@@ -268,10 +268,10 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
           }
@@ -283,56 +283,55 @@ export class AppNotificationComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value }, null, this.url)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
     );
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.group.get('branch')?.setValue(value);
   }
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.group.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.group.get('wdMarket').setValue(value);
+    this.group.get('wdMarket')?.setValue(value);
   }
 
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.group.get('wdPopGroup').setValue(value);
+    this.group.get('wdPopGroup')?.setValue(value);
   }
+
   clearForm() {
-    this.group.reset(
-      { month: '' }
-    );
+    this.group.reset({
+      month: '',
+    });
     this.initialData();
-
   }
-
 }
 

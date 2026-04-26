@@ -13,9 +13,7 @@
     "sourceMap": true,
     // Generates corresponding d.ts files.
     "declaration": false,
-    // Provide full support for iterables in 'for-of', spread, and destructuring when targeting 'ES5' or 'ES3'.
-    // Requires TypeScript version 2.3 or later.
-    "downlevelIteration": true,
+    "esModuleInterop": true,
     // Emit design-type metadata for decorated declarations in source.
     "emitDecoratorMetadata": true,
     // Enables experimental support for ES7 decorators.
@@ -24,7 +22,7 @@
     // "ES6" and "ES2015" values may be used when targeting "ES5" or lower.
     "module": "ES2022",
     // Determine how modules get resolved. Either "Node" for Node.js/io.js style resolution, or "Classic". (TypeScript pre 1.6) .
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     // Import emit helpers (e.g. '__extends', '__rest', etc..) from tslib. Requires TypeScript version 2.1 or later.
     "importHelpers": true,
     // pecify ECMAScript target version.

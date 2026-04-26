@@ -14,7 +14,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './mdoview.team.component.html'
+  templateUrl: './mdoview.team.component.html',
+  standalone: false,
 })
 export class MDOViewTeamComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
@@ -26,7 +27,7 @@ export class MDOViewTeamComponent implements OnInit, OnDestroy {
   branchOptions: DropdownList[] = [];
   statusOptions: DropdownList[] = [];
   accessOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
 
@@ -59,14 +60,14 @@ export class MDOViewTeamComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
-            this.branchOptions = resp.data.branchList;
-            this.mdoTypeOptions = resp.data.mdoTypeList;
-            this.statusOptions = resp.data.statusList;
-            this.accessOptions = resp.data.accessList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions || [];
+            this.branchOptions = resp.data.branchList || [];
+            this.mdoTypeOptions = resp.data.mdoTypeList || [];
+            this.statusOptions = resp.data.statusList || [];
+            this.accessOptions = resp.data.accessList || [];
+            this.header = resp.data.viewHeader || [];
+            this.body = resp.data.viewBody || [];
 
             this.editConfig = [
               {
@@ -134,7 +135,7 @@ export class MDOViewTeamComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.createCSV(resp.data);
             }
           })
@@ -143,7 +144,7 @@ export class MDOViewTeamComponent implements OnInit, OnDestroy {
   }
 
   onUserTypeChange(form: UntypedFormGroup) {
-    const type = form.get('type').value;
+    const type = form.get('type')?.value;
 
     switch (+type) {
       case 1:

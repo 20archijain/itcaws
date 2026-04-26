@@ -13,13 +13,14 @@ import { FileUploadEvent } from 'src/app/core/interfaces/helpers.interface';
 import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.list';
 
 @Component({
-  templateUrl: './add.client.component.html'
+  templateUrl: './add.client.component.html',
+  standalone: false,
 })
 export class AddClientComponent implements OnInit, OnDestroy {
-  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;
+  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent!: FileUploadComponent;
   private subscription: Subscription[] = [];
-  private logo: File = null;
-  form: UntypedFormGroup;
+  private logo: File | null | undefined = null;
+  form!: UntypedFormGroup;
   errorMessages = {
     desc: CLIENT_VALIDATORS.messages.desc,
     logo: COMMON_VALIDATORS.messages.file('Logo'),

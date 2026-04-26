@@ -34,7 +34,7 @@ export class HttpService {
     } as HttpRequestPayload;
   }
 
-  private makeRequest<T>(url: string, formData: FormData | HttpRequestPayload, headers: HttpHeaders): Observable<HttpRequestResponse<T>> {
+  private makeRequest<T>(url: string | undefined, formData: FormData | HttpRequestPayload, headers: HttpHeaders): Observable<HttpRequestResponse<T>> {
     if (environment.production) {
       return this.http.post<HttpRequestResponse<T>>(environment.apiUrl, formData, { headers });
     }
@@ -54,23 +54,23 @@ export class HttpService {
     return headers;
   }
 
-  request<T>(url: string, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
+  request<T>(url: string | undefined, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
     const requestPayload = this.createRequestPayload(params);
     const headers = this.getHeaders();
 
     return this.makeRequest<T>(url, requestPayload, headers);
   }
 
-  upload<T>(url: string, files: File | File[] | CustomFile[], params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
+  upload<T>(url: string, files: File | File[] | CustomFile[] | null, params: HttpRequestParams): Observable<HttpRequestResponse<T>> {
     if (files) {
       const requestPayload = this.createRequestPayload(params);
       const formData = new FormData();
       if (Array.isArray(files)) {
         files.forEach((file, index) => {
           if ((file as CustomFile)?.fileKey) {
-            formData.append((file as CustomFile).fileKey, file.file, file.file.name);
+            formData.append((file as CustomFile).fileKey, (file as CustomFile).file, (file as CustomFile).file.name);
           } else {
-            formData.append(`file${index}`, file, file.name);
+            formData.append(`file${index}`, file as File, (file as File).name);
           }
         });
       } else {

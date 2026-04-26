@@ -4,6 +4,7 @@ import { Color } from '@swimlane/ngx-charts';
 import { LineChartComponent } from '../line/line-chart.component';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { ChartColorSchemeNames } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-pie-grid-chart',
@@ -20,21 +21,22 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [minWidth]="pieGridMinEachGraphWidth">
     </ngx-charts-pie-grid>
   </div>
-  `
+  `,
+  standalone: false,
 })
 export class PieGridChartComponent extends LineChartComponent implements OnChanges {
   @Input() pieGridLabel = '';
-  @Input() pieGridDesignatedTotal: number;
-  @Input() pieGridMinEachGraphWidth: number;
+  @Input() pieGridDesignatedTotal?: number;
+  @Input() pieGridMinEachGraphWidth?: number;
   @Input() height = CHART_DEFAULTS.HEIGHT;
-  @Input() graphMaxHeight: number;
+  @Input() graphMaxHeight?: number;
   @Input() data = [];
   @Input() scheme = null;
   @Input() customColors = [];
   @Input() tooltipDisabled = false;
-  view = undefined;
+  view: [number, number] | undefined = undefined;
   style: any;
-  themeScheme: string | Color = null;
+  themeScheme: string | Color | null = null;
 
   ngOnChanges() {
     if (this.graphMaxHeight && !this.style) {
@@ -44,7 +46,8 @@ export class PieGridChartComponent extends LineChartComponent implements OnChang
       };
     }
 
-    this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
+    const colorScheme = this.scheme || CHART_DEFAULTS.DEFAULT_THEME as ChartColorSchemeNames;
+    this.themeScheme = Functions.getChartColorsScheme()[colorScheme];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
       (this.themeScheme as Color).domain = this.customColors;

@@ -2,20 +2,22 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 
+import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interface';
 import { FormService } from 'src/app/core/services/form.service';
 
 @Component({
   selector: 'app-time',
   templateUrl: './time.component.html',
+  standalone: false,
 })
 export class TimeComponent implements OnChanges, OnDestroy, OnInit {
-  private subscription: Subscription[] = [];
+  private subscription: (Subscription | undefined)[] = [];
   @Input() private validators = null;
   @Input() private defaultValue = '';
   @Output() private onChange = new EventEmitter();
-  @Input() protected errorMessages: string[] = [];
+  @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'time';
   @Input() isHorizontalForm = false;
   @Input() groupClassName = '';
@@ -49,9 +51,9 @@ export class TimeComponent implements OnChanges, OnDestroy, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
   }
@@ -65,7 +67,7 @@ export class TimeComponent implements OnChanges, OnDestroy, OnInit {
 
     if (this.group && this.group.get(this.controlName)) {
       this.subscription.push(
-        this.group.get(this.controlName).valueChanges
+        this.group.get(this.controlName)?.valueChanges
           .subscribe(() => {
             this.resetError();
             this.onChange.emit();
@@ -75,7 +77,7 @@ export class TimeComponent implements OnChanges, OnDestroy, OnInit {
   }
 
   ngOnDestroy() {
-    this.subscription.forEach(sub => sub.unsubscribe());
+    this.subscription.forEach(sub => sub?.unsubscribe());
   }
 
   get inputField() {

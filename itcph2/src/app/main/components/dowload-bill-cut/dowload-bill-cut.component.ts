@@ -12,11 +12,12 @@ import { DashboardData, DropdownList, GetDownloadBillCutResponse, GetDownloadFil
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './dowload-bill-cut.component.html'
+  templateUrl: './dowload-bill-cut.component.html',
+  standalone: false,
 })
 export class DowloadBillCutComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   branchOptions: DropdownList[] = [];
   productOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
@@ -60,7 +61,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader()),
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.districtOptions = resp.data.districtList;
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
@@ -93,7 +94,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
@@ -101,137 +102,137 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     }
   }
 
-    getBranch() {
-      this.branchValue = null;
-      this.circleValue = null;
-      this.sectionValue = null;
-      this.wdCodeValue = null;
-      this.dsTypeValue = null;
-      this.dsNameValue = null;
-      this.wdMarketValue = null;
-      this.wdPopGroupValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.branchOptions = resp.data.branchList;
-              this.circleOptions = resp.data.circleList;
-              this.sectionOptions = resp.data.sectionList;
-              this.wdCodeOptions = resp.data.wdCodeList;
-              this.teamOptions = resp.data.teamList;
-              this.teamTypeOptions = resp.data.teamType;
-              this.wdMarketOptions = resp.data.wdMarketList;
-              this.wdPopGroupOptions = resp.data.wdPopGroupList;
-            }
-          })
-      );
-    }
+  getBranch() {
+    this.branchValue = null;
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.wdMarketValue = null;
+    this.wdPopGroupValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.branchOptions = resp.data.branchList;
+            this.circleOptions = resp.data.circleList;
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+            this.wdMarketOptions = resp.data.wdMarketList;
+            this.wdPopGroupOptions = resp.data.wdPopGroupList;
+          }
+        })
+    );
+  }
 
-    getCircle() {
-      this.circleValue = null;
-      this.sectionValue = null;
-      this.wdCodeValue = null;
-      this.dsTypeValue = null;
-      this.dsNameValue = null;
-      this.wdMarketValue = null;
-      this.wdPopGroupValue = null;
-      this.productValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.circleOptions = resp.data.circleList;
-              this.sectionOptions = resp.data.sectionList;
-              this.wdCodeOptions = resp.data.wdCodeList;
-              this.teamOptions = resp.data.teamList;
-              this.teamTypeOptions = resp.data.teamType;
-              this.wdMarketOptions = resp.data.wdMarketList;
-              this.wdPopGroupOptions = resp.data.wdPopGroupList;
-              this.productOptions = resp.data.productList;
-            }
-          })
-      );
-    }
+  getCircle() {
+    this.circleValue = null;
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.wdMarketValue = null;
+    this.wdPopGroupValue = null;
+    this.productValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.circleOptions = resp.data.circleList;
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+            this.wdMarketOptions = resp.data.wdMarketList;
+            this.wdPopGroupOptions = resp.data.wdPopGroupList;
+            this.productOptions = resp.data.productList;
+          }
+        })
+    );
+  }
 
-    getSection() {
-      this.sectionValue = null;
-      this.wdCodeValue = null;
-      this.dsTypeValue = null;
-      this.dsNameValue = null;
-      this.wdMarketValue = null;
-      this.wdPopGroupValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch').value, circle: this.group.get('circle').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.sectionOptions = resp.data.sectionList;
-              this.wdCodeOptions = resp.data.wdCodeList;
-              this.teamOptions = resp.data.teamList;
-              this.teamTypeOptions = resp.data.teamType;
-              this.wdMarketOptions = resp.data.wdMarketList;
-              this.wdPopGroupOptions = resp.data.wdPopGroupList;
-            }
-          })
-      );
-    }
+  getSection() {
+    this.sectionValue = null;
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.wdMarketValue = null;
+    this.wdPopGroupValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sectionOptions = resp.data.sectionList;
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+            this.wdMarketOptions = resp.data.wdMarketList;
+            this.wdPopGroupOptions = resp.data.wdPopGroupList;
+          }
+        })
+    );
+  }
 
-    getWDCode() {
-      this.wdCodeValue = null;
-      this.dsTypeValue = null;
-      this.dsNameValue = null;
-      this.wdMarketValue = null;
-      this.wdPopGroupValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.wdCodeOptions = resp.data.wdCodeList;
-              this.teamOptions = resp.data.teamList;
-              this.teamTypeOptions = resp.data.teamType;
-              this.wdMarketOptions = resp.data.wdMarketList;
-              this.wdPopGroupOptions = resp.data.wdPopGroupList;
-            }
-          })
-      );
-    }
+  getWDCode() {
+    this.wdCodeValue = null;
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.wdMarketValue = null;
+    this.wdPopGroupValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.wdCodeOptions = resp.data.wdCodeList;
+            this.teamOptions = resp.data.teamList;
+            this.teamTypeOptions = resp.data.teamType;
+            this.wdMarketOptions = resp.data.wdMarketList;
+            this.wdPopGroupOptions = resp.data.wdPopGroupList;
+          }
+        })
+    );
+  }
 
-    getTeamsType() {
-      this.dsTypeValue = null;
-      this.dsNameValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.teamTypeOptions = resp.data.teamType;
-              this.teamOptions = resp.data.teamList;
-            }
-          })
-      );
-    }
+  getTeamsType() {
+    this.dsTypeValue = null;
+    this.dsNameValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.teamTypeOptions = resp.data.teamType;
+            this.teamOptions = resp.data.teamList;
+          }
+        })
+    );
+  }
 
-    getTeamsName() {
-      this.dsNameValue = null;
-      this.loaderService.startLoader();
-      this.subscription.push(
-        this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch').value, circle: this.group.get('circle').value, section: this.group.get('section').value, wdCode: this.group.get('wdCode').value, dsType: this.group.get('dsType').value }, null, this.url)
-          .pipe(finalize(() => this.loaderService.stopLoader()))
-          .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-              this.teamOptions = resp.data.teamList;
-            }
-          })
-      );
-    }
+  getTeamsName() {
+    this.dsNameValue = null;
+    this.loaderService.startLoader();
+    this.subscription.push(
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, this.url)
+        .pipe(finalize(() => this.loaderService.stopLoader()))
+        .subscribe(resp => {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.teamOptions = resp.data.teamList;
+          }
+        })
+    );
+  }
 
   // getProducts() {
   //   this.group.get('product').setValue('')
@@ -250,44 +251,44 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
   // }
 
   get branchValue() {
-    return this.group && this.group.get('branch').value;
+    return this.group && this.group.get('branch')?.value;
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.group.get('branch').setValue(value);
+    this.group.get('branch')?.setValue(value);
   }
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.group.get('circle').setValue(value);
+    this.group.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.group.get('section').setValue(value);
+    this.group.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.group.get('wdCode').setValue(value);
+    this.group.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.group.get('dsType').setValue(value);
+    this.group.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.group.get('dsName').setValue(value);
+    this.group.get('dsName')?.setValue(value);
   }
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.group.get('wdMarket').setValue(value);
+    this.group.get('wdMarket')?.setValue(value);
   }
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.group.get('wdPopGroup').setValue(value);
+    this.group.get('wdPopGroup')?.setValue(value);
   }
-  set productValue(value: string) {
+  set productValue(value: string | null) {
     this.productOptions = [];
-    this.group.get('product').setValue(value);
+    this.group.get('product')?.setValue(value);
   }
 
 }

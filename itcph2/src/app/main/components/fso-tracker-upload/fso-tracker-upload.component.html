@@ -17,28 +17,19 @@
               <!-- File Upload Section -->
               <div class="col-lg-6 col-md-12">
                 <label class="form-label fw-semibold mb-3">Upload Excel File</label>
-                <app-file-upload
-                  [group]="form"
-                  controlName="excelFile"
-                  [dummyImage]="dummyImage1"
-                  label=""
-                  [accept]="'.xlsx,.xls'"
-                  [errorMessages]="errorMessages.excelFile"
-                  (onSelect)="onSelect($event, 1)">
+                <app-file-upload [group]="form" controlName="excelFile" [dummyImage]="dummyImage1" label=""
+                  [accept]="'.xlsx,.xls'" [errorMessages]="errorMessages.excelFile" (onSelect)="onSelect($event, 1)">
                 </app-file-upload>
-                <button
-                    type="submit"
-                    class="btn btn-primary btn-sm"
-                    [disabled]="isDisabled">
-                    <span *ngIf="!isDisabled">
-                      <i class="las la-upload me-2"></i>
-                      Upload Excel
-                    </span>
-                    <span *ngIf="isDisabled">
-                      <span class="spinner-border spinner-border-sm me-2" role="status"></span>
-                      Uploading...
-                    </span>
-                  </button>
+                <button type="submit" class="btn btn-primary btn-sm" [disabled]="isDisabled">
+                  <span *ngIf="!isDisabled">
+                    <i class="las la-upload me-2"></i>
+                    Upload Excel
+                  </span>
+                  <span *ngIf="isDisabled">
+                    <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                    Uploading...
+                  </span>
+                </button>
                 <div class="mt-3">
                   <small class="text-muted">
                     <i class="las la-info-circle me-1"></i>

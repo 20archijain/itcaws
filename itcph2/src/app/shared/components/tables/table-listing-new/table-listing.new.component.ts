@@ -27,13 +27,14 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
   selector: 'app-new-table-listing',
-  templateUrl: './table-listing.new.component.html'
+  templateUrl: './table-listing.new.component.html',
+  standalone: false,
 })
 export class TableListingNewComponent implements OnInit, OnDestroy {
-  @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;
+  @ViewChild('pagination', { static: false }) private pagination!: PaginationComponent;
   @Input() private inlineEdit = true;
-  @Input() private editUrl: string = null;
-  private oldSortKey: string = null;
+  @Input() private editUrl?: string;
+  private oldSortKey?: string;
   private subscription: Subscription[] = [];
   private actionData: any = null;
   @Output() private onClear = new EventEmitter();
@@ -44,18 +45,18 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   @Input() showPagination = true;
   @Input() apiListingKey = 'data0';
   @Input() isSelectable = true;
-  @Input() url: string = null;
+  @Input() url?: string;
   @Input() checkKey = '';
   @Input() deleteKey = '';
   @Input() editKey = 'id';
-  @Input() private openListingKey = 'openListingUrl';
-  @Input() private openStatsUrl: string = null;
+  // @Input() private openListingKey = 'openListingUrl';
+  // @Input() private openStatsUrl: string = null;
   @Input() sortOptions: DropdownList[] = [];
   @Input() header: string[] = [];
   @Input() body: string[] = [];
   @Input() isSortable = true;
-  @Input() searchTemplate: TemplateRef<any> = null;
-  @Input() searchGroup: UntypedFormGroup = null;
+  @Input() searchTemplate?: TemplateRef<any>;
+  @Input() searchGroup?: UntypedFormGroup;
   @Input() fixedTableHeader = true;
   @Input() smallTable = false;
   @Input() columnWrap = false;
@@ -64,10 +65,10 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   @Input() timeColumnSortIndex: number[] = [];
   @Input() downloadColumnIndex: number[] = [];
   @Input() isExpandable = false;
-  @Input() expandableTemplate: TemplateRef<any> = null;
+  @Input() expandableTemplate?: TemplateRef<any>;
   @Input() gallery = false;
   @Input() galleryKey = 'images';
-  @Input() cgConfig: CustomGalleryConfig = null;
+  @Input() cgConfig?: CustomGalleryConfig | null = null;
   @Input() thumbnailNoWrap = false;
   @Input() editConfig: EditConfig[] = [];
   @Input() editLabel = '';
@@ -78,12 +79,12 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   @Input() isSkeletonModeOn = false;
   @Input() clickableTableColumns = {};
   @Input() editCondition = null;
-  @Input() unlockCondition: [string, boolean];
-  @Input() markCompleteCondition: [string, boolean];
-  @Input() deleteCondition: [string, number];
+  @Input() unlockCondition?: [string, boolean];
+  @Input() markCompleteCondition?: [string, boolean];
+  @Input() deleteCondition?: [string, number];
   @Input() getListingOnInit = true;
   @Input() extraButtons: ListingExtraButtons[] = [];
-  @Input() downloadTemplate: TemplateRef<any> = null;
+  @Input() downloadTemplate?: TemplateRef<any>;
   @Input() showDownloadDataBtn = false;
   @Input() showExportTableToXlsxBtn = true;
   @Input() showExportTableToPdfBtn = true;
@@ -99,15 +100,15 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   isDownloadDataBtnDisabled = false;
   isDownloadSummaryBtnDisabled = false;
   clickedIndex = -1;
-  actions: ListingActions[] = [];
-  singleActions: ListingActions[] = [];
-  multiActions: ListingActions[] = [];
+  actions: (ListingActions | undefined)[] = [];
+  singleActions: (ListingActions | undefined)[] = [];
+  multiActions: (ListingActions | undefined)[] = [];
   selectedRecords: any[] = [];
   isAllChecked = false;
   isSorted = false;
   sortOrder = false;
-  group: UntypedFormGroup;
-  searchbarGroup: UntypedFormGroup;
+  group!: UntypedFormGroup;
+  searchbarGroup?: UntypedFormGroup;
   sketetonList = Array(5);
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private listingService: ListingService,
@@ -159,7 +160,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
       this.confirmationModalService.modal()
         .subscribe(resp => {
           if (!resp.goBackGuard && !resp.show) {
-            this.group.get('action').setValue('');
+            this.group.get('action')?.setValue('');
 
             // Delete action chosen
             if (this.confirmationModalService.data === 'modal.confirmation.delete') {
@@ -297,7 +298,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   }
 
   get limit() {
-    return this.group.get('limit').value || LISTING.display[0];
+    return this.group.get('limit')?.value || LISTING.display[0];
   }
 
   get searchField() {
@@ -349,7 +350,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
       // on sebar search
       // eslint-disable-next-line no-fallthrough
       case ACTION.SEARCH:
-        if (this.searchTemplate && this.group && this.group.get('searchbar') && this.group.get('searchbar').valid) {
+        if (this.searchTemplate && this.group && this.group.get('searchbar') && this.group.get('searchbar')?.valid) {
           this.onSearch();
         }
         break;
@@ -431,7 +432,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
 
   onClearFilters() {
     if (this.group.get('searchbar')) {
-      this.group.get('searchbar').reset();
+      this.group.get('searchbar')?.reset();
       this.onClear.emit();
     }
   }
@@ -588,13 +589,13 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   }
 
   downloadData() {
-    if (!this.isDownloadDataBtnDisabled && this.group.get('searchbar').valid) {
+    if (!this.isDownloadDataBtnDisabled && this.group.get('searchbar')?.valid) {
       this.isDownloadDataBtnDisabled = true;
       this.loaderService.startLoader();
 
       this.subscription.push(
         this.formService.customActionCall<CsvDataFormat | GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData,
-          this.group.get('searchbar').getRawValue(), null, this.downloadDataUrl)
+          this.group.get('searchbar')?.getRawValue(), null, this.downloadDataUrl)
           .pipe(
             finalize(() => {
               this.loaderService.stopLoader();
@@ -602,7 +603,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               if ((resp?.data as GetDownloadFileDetails)?.filePath) {
                 Functions.downloadFile((resp.data as GetDownloadFileDetails).filePath, resp.data.fileName);
               } else {
@@ -615,13 +616,13 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
   }
 
   downloadSummary() {
-    if (!this.isDownloadSummaryBtnDisabled && this.group.get('searchbar').valid) {
+    if (!this.isDownloadSummaryBtnDisabled && this.group.get('searchbar')?.valid) {
       this.isDownloadSummaryBtnDisabled = true;
       this.loaderService.startLoader();
 
       this.subscription.push(
         this.formService.customActionCall<CsvDataFormat | GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadSummary,
-          this.group.get('searchbar').getRawValue(), null, this.downloadDataUrl)
+          this.group.get('searchbar')?.getRawValue(), null, this.downloadDataUrl)
           .pipe(
             finalize(() => {
               this.loaderService.stopLoader();
@@ -629,7 +630,7 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               if ((resp?.data as GetDownloadFileDetails)?.filePath) {
                 Functions.downloadFile((resp.data as GetDownloadFileDetails).filePath, resp.data.fileName);
               } else {
@@ -654,13 +655,13 @@ export class TableListingNewComponent implements OnInit, OnDestroy {
       const ws: XLSX.WorkSheet = XLSX.utils.table_to_sheet(element);
 
       // Don't add Checkbox, Images, Actions columns
-      if (this.isSelectable && this.tableData?.length > 0 && this.multiActions?.length > 0) {
+      if (this.isSelectable && this.tableData?.length > 0 && this.multiActions?.length > 0 && ws['!cols']) {
         ws['!cols'][checkboxIndex] = { hidden: true };
       }
-      if (this.gallery) {
+      if (this.gallery && ws['!cols']) {
         ws['!cols'][galleryIndex] = { hidden: true };
       }
-      if (this.singleActions?.length) {
+      if (this.singleActions?.length && ws['!cols']) {
         ws['!cols'][actionsIndex] = { hidden: true };
       }
 

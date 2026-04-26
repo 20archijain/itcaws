@@ -32,7 +32,7 @@ export class NavigationItem {
     let modules: SessionModuleObject;
 
     if (SessionUtil.getItem('modules')) {
-      modules = JSON.parse(SessionUtil.getItem('modules'));
+      modules = JSON.parse(SessionUtil.getItem('modules') || '{}');
 
       return this.getModules(modules);
     }

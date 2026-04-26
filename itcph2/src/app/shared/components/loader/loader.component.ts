@@ -5,7 +5,8 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
   selector: 'app-loader',
-  templateUrl: './loader.component.html'
+  templateUrl: './loader.component.html',
+  standalone: false,
 })
 export class LoaderComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];

@@ -1,3 +1,7 @@
+@use "sass:map";
+@use "sass:color";
+@use "../../settings/custom-variables" as *;
+
 .alert-dismissable .close,
 .alert-dismissible .close {
   color: inherit;
@@ -48,19 +52,19 @@
   }
 
   &.alert-info {
-    box-shadow: 0 0 5px transparentize(map-get($theme-colors, "primary"), 0.5);
+    box-shadow: 0 0 5px color.adjust(map.get($theme-colors, "primary"), $alpha: -0.5);
   }
 
   &.alert-success {
-    box-shadow: 0 0 5px transparentize(map-get($theme-colors, "success"), 0.5);
+    box-shadow: 0 0 5px color.adjust(map.get($theme-colors, "success"), $alpha: -0.5);
   }
 
   &.alert-warning {
-    box-shadow: 0 0 5px transparentize(map-get($theme-colors, "warning"), 0.5);
+    box-shadow: 0 0 5px color.adjust(map.get($theme-colors, "warning"), $alpha: -0.5);
   }
 
   &.alert-danger {
-    box-shadow: 0 0 5px transparentize(map-get($theme-colors, "danger"), 0.5);
+    box-shadow: 0 0 5px color.adjust(map.get($theme-colors, "danger"), $alpha: -0.5);
   }
 }
 

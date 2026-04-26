@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import ApexCharts from 'apexcharts/dist/apexcharts.common.js';
+import ApexCharts from 'apexcharts';
 import { Subscription } from 'rxjs';
 
 import { ApexChartService } from 'src/app/core/services/apex-chart.service';
@@ -7,10 +7,11 @@ import { ApexChartService } from 'src/app/core/services/apex-chart.service';
 @Component({
   selector: 'app-apex-chart',
   template: `<div id="{{this.chartID}}"></div>`,
+  standalone: false,
 })
 export class ApexChartComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  @Input() chartID: string;
+  @Input() chartID!: string;
   @Input() chartConfig: any;
   @Input() xAxis: any;
   @Input() newData: any;

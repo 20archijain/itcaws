@@ -2,15 +2,17 @@
 
   <form (ngSubmit)="sendNotification()" [formGroup]="group" novalidate class="form-content">
     <!-- Superadmin and Admin Login -->
-    <div  class="row ml-1 filter-container">
+    <div class="row ml-1 filter-container">
       <div class="w-2 m-1">
-        <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true" [isRequired]="true"
-         [errorMessages]="errorMessages.district" placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
+        <app-select [group]="group" controlName="district" [options]="districtOptions" [multiple]="true"
+          [isRequired]="true" [errorMessages]="errorMessages.district"
+          placeholder="{{ 'app.team.add.district' | translate }}" (onChange)="getBranch()">
         </app-select>
       </div>
       <div class="w-2 m-1">
         <app-select [group]="group" controlName="branch" [options]="branchOptions" [multiple]="true" [isRequired]="true"
-        [errorMessages]="errorMessages.branch"  placeholder="{{ 'app.team.add.branch' | translate }}" (onChange)="getCircle()" groupBy="mainBranch">
+          [errorMessages]="errorMessages.branch" placeholder="{{ 'app.team.add.branch' | translate }}"
+          (onChange)="getCircle()" groupBy="mainBranch">
         </app-select>
       </div>
       <div *ngIf="branchFilter" class="w-2 m-1">
@@ -50,33 +52,31 @@
       </div>
 
       <div class="row">
-      <div class="col-xxl-4 col-md-6">
-        <div class="mb-2">
-          <app-input [isRequired]="true" [group]="group" controlName="notificationTitle"
-            [errorMessages]="errorMessages.notificationTitle" label="Title"
-            placeholder="Title">
-          </app-input>
+        <div class="col-xxl-4 col-md-6">
+          <div class="mb-2">
+            <app-input [isRequired]="true" [group]="group" controlName="notificationTitle"
+              [errorMessages]="errorMessages.notificationTitle" label="Title" placeholder="Title">
+            </app-input>
+          </div>
         </div>
-      </div>
-      <div class="col-xxl-4 col-md-12">
-        <div class="mb-2">
-          <app-textarea [isRequired]="true" rows="5" [group]="group" controlName="notificationText"
-            [errorMessages]="errorMessages.notificationText" label="Message"
-            placeholder="Message">
-          </app-textarea>
+        <div class="col-xxl-4 col-md-12">
+          <div class="mb-2">
+            <app-textarea [isRequired]="true" rows="5" [group]="group" controlName="notificationText"
+              [errorMessages]="errorMessages.notificationText" label="Message" placeholder="Message">
+            </app-textarea>
+          </div>
         </div>
-      </div>
       </div>
 
-   <!-- Add button section -->
-    <div class="row">
-      <div class="col-sm-5 col-md-4 col-lg-3">
-        <app-button type="submit" text="Send Notification" colorClass="btn-info" [isDisabled]="isDisabled"
-          [appScrollToFirstInvalidInput]="group" [showIconInButton]="true" iconName="fa-solid fa-bell"
-          btnTitle="Send Notification" [showSpinner]="isDisabled" spinnerText="Sending...">
-        </app-button>
+      <!-- Add button section -->
+      <div class="row">
+        <div class="col-sm-5 col-md-4 col-lg-3">
+          <app-button type="submit" text="Send Notification" colorClass="btn-info" [isDisabled]="isDisabled"
+            [appScrollToFirstInvalidInput]="group" [showIconInButton]="true" iconName="fa-solid fa-bell"
+            btnTitle="Send Notification" [showSpinner]="isDisabled" spinnerText="Sending...">
+          </app-button>
+        </div>
       </div>
-    </div>
     </div>
   </form>
 </app-card>

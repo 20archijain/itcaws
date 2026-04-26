@@ -17,12 +17,13 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './add.user.component.html'
+  templateUrl: './add.user.component.html',
+  standalone: false,
 })
 export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
   private passwordNotMatchError = 'err.passwordNotSame';
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   clientOptions: DropdownList[] = [];
   projectOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
@@ -116,7 +117,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.clientOptions = resp.data.clientList;
             this.projectOptions = resp.data.projectList;
             this.branchOptions = resp.data.branchList;
@@ -147,7 +148,7 @@ export class AddUserComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   onTypeChange() {
-    switch (this.form.get('type').value) {
+    switch (this.form.get('type')?.value) {
       // Admin
       case '1':
         this.controlVisibility = {

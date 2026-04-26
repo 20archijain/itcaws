@@ -32,14 +32,15 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
       display: block;
       width: 100%;
     }
-  `]
+  `],
+  standalone: false,
 })
 export class LineChartComponent {
   @Input() lineChartData: any[] = []; // Holds the transformed chart data
-  @Input() xAxisLabel: string; // Set to 'Date'
-  @Input() yAxisLabel: string;
-  @Input() heading: string;
-  @Input() width: number;
+  @Input() xAxisLabel?: string; // Set to 'Date'
+  @Input() yAxisLabel?: string;
+  @Input() heading?: string;
+  @Input() width?: number;
   legendPosition: LegendPosition = CHART_DEFAULTS.LEGEND_POSITION;
 
   // Import curveMonotoneX and apply it in the chart via the [curve] binding

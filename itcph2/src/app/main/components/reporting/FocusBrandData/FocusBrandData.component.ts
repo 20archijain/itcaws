@@ -12,13 +12,14 @@ import { environment } from 'src/environments/environment';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './FocusBrandData.component.html'
+  templateUrl: './FocusBrandData.component.html',
+  standalone: false,
 })
 export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: boolean;
+  isSelectable = false;
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   wdOptions: DropdownList[] = [];
@@ -26,16 +27,16 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
   reportTypeOptions: DropdownList[] = [];
   brandTypeOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   isDisabled = false;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;
   url = environment.getActiveVariantsDataUrl;
 
   errorMessages = {
-      reportType: COMMON_VALIDATORS.messages.requiredOnly('Report Type'),
-      brandType: COMMON_VALIDATORS.messages.requiredOnly('Brand Type')
-    };
+    reportType: COMMON_VALIDATORS.messages.requiredOnly('Report Type'),
+    brandType: COMMON_VALIDATORS.messages.requiredOnly('Brand Type')
+  };
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
 
   ngOnInit() {
@@ -62,8 +63,8 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions ?? [];
             this.branchOptions = resp.data.branchList;
             this.dsTypeOptions = resp.data.dsTypeList;
             this.reportTypeOptions = resp.data.reportTypeList;
@@ -89,7 +90,7 @@ export class FocusBrandDataListingComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })

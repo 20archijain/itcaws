@@ -10,6 +10,7 @@ import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interfac
 @Component({
   selector: 'app-date',
   templateUrl: './date.component.html',
+  standalone: false,
 })
 export class DateComponent implements OnChanges, OnInit {
   @Input() private validators = null;
@@ -17,7 +18,7 @@ export class DateComponent implements OnChanges, OnInit {
   @Output() private onClose = new EventEmitter();
   @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'date';
   @Input() isHorizontalForm = false;
   @Input() groupClassName = '';
@@ -31,12 +32,12 @@ export class DateComponent implements OnChanges, OnInit {
   @Input() onlyMonthSelection = false;
   @Input() hide = false;
   @Input() placeholder = '';
-  @Input() isCurrentDateMin: boolean;
-  @Input() isCurrentDateMax: boolean;
-  @Input() minDate: ControlMaxDate;
-  @Input() maxDate: ControlMaxDate;
-  ngbMinDate: ControlMaxDate;
-  ngbMaxDate: ControlMaxDate;
+  @Input() isCurrentDateMin?: boolean;
+  @Input() isCurrentDateMax?: boolean;
+  @Input() minDate?: ControlMaxDate;
+  @Input() maxDate?: ControlMaxDate;
+  ngbMinDate: ControlMaxDate | null = null;
+  ngbMaxDate: ControlMaxDate | null = null;
   errorMessage = '';
   isInvalid = false;
   markDisabledFn = this.markDisabled.bind(this);
@@ -60,18 +61,18 @@ export class DateComponent implements OnChanges, OnInit {
     // disable the control
     if (changes && changes.disable && this.group.get(this.controlName)) {
       if (changes.disable.currentValue) {
-        this.group.get(this.controlName).disable();
+        this.group.get(this.controlName)?.disable();
       } else {
-        this.group.get(this.controlName).enable();
+        this.group.get(this.controlName)?.enable();
       }
     }
 
     // set min date
     if (changes && changes.minDate && changes.minDate.currentValue && this.group.get(this.controlName) &&
       Functions.isValidDate(changes.minDate.currentValue)) {
-      const month = +this.minDate.month < 10 ? `0${this.minDate.month}` : this.minDate.month;
-      const day = +this.minDate.day < 10 ? `0${this.minDate.day}` : this.minDate.day;
-      this.ngbMinDate = Functions.currentDate(`${this.minDate.year}-${month}-${day}`);
+      const month = this.minDate ? (+this.minDate.month < 10 ? `0${this.minDate.month}` : this.minDate.month) : '';
+      const day = this.minDate ? (+this.minDate.day < 10 ? `0${this.minDate.day}` : this.minDate.day) : '';
+      this.ngbMinDate = this.minDate ? Functions.currentDate(`${this.minDate.year}-${month}-${day}`) : null;
     } else {
       if (this.isCurrentDateMin) {
         this.ngbMinDate = Functions.currentDate();
@@ -83,9 +84,9 @@ export class DateComponent implements OnChanges, OnInit {
     // set max date
     if (changes && changes.maxDate && changes.maxDate.currentValue && this.group.get(this.controlName) &&
       Functions.isValidDate(changes.maxDate.currentValue)) {
-      const month = +this.maxDate.month < 10 ? `0${this.maxDate.month}` : this.maxDate.month;
-      const day = +this.maxDate.day < 10 ? `0${this.maxDate.day}` : this.maxDate.day;
-      this.ngbMaxDate = Functions.currentDate(`${this.maxDate.year}-${month}-${day}`);
+      const month = this.maxDate ? (+this.maxDate.month < 10 ? `0${this.maxDate.month}` : this.maxDate.month) : '';
+      const day = this.maxDate ? (+this.maxDate.day < 10 ? `0${this.maxDate.day}` : this.maxDate.day) : '';
+      this.ngbMaxDate = this.maxDate ? Functions.currentDate(`${this.maxDate.year}-${month}-${day}`) : null;
     } else {
       if (this.isCurrentDateMax) {
         this.ngbMaxDate = Functions.currentDate();
@@ -116,7 +117,7 @@ export class DateComponent implements OnChanges, OnInit {
     return this.inputField && (this.inputField.touched || this.inputField.dirty);
   }
 
-  onClosed($event: Event = null) {
+  onClosed($event: Event | null = null) {
     this.resetError($event);
     this.onClose.emit($event);
   }
@@ -125,7 +126,7 @@ export class DateComponent implements OnChanges, OnInit {
     this.resetError($event);
   }
 
-  resetError($event: Event) {
+  resetError($event: Event | null) {
     if ($event && $event.stopPropagation) {
       $event.stopPropagation();
     }

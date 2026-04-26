@@ -1,3 +1,5 @@
+@use "../settings/theme-variables" as *;
+
 .arc-wizard {
   &.arc-custom {
     .steps-indicator li:after {

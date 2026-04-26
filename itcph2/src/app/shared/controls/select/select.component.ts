@@ -13,6 +13,7 @@ import { FormControlErrorMessage } from 'src/app/core/interfaces/common.interfac
     './select.component.scss',
   ],
   templateUrl: './select.component.html',
+  standalone: false,
 })
 export class SelectComponent implements OnChanges, OnInit {
   @Input() private validators = null;
@@ -23,7 +24,7 @@ export class SelectComponent implements OnChanges, OnInit {
   @Output() private onChange = new EventEmitter<any>();
   @Input() protected errorMessages: FormControlErrorMessage[] = [];
   @Input() protected disable = false;
-  @Input() group: UntypedFormGroup = null;
+  @Input() group!: UntypedFormGroup;
   @Input() controlName = 'select';
   @Input() options: any[] = [];
   @Input() multiple = false;
@@ -105,14 +106,14 @@ export class SelectComponent implements OnChanges, OnInit {
 
   onModelChange($event: DropdownList, isAdded?: boolean) {
     this.resetError();
-    if (isAdded && this.group && this.group.get(this.controlName) && $event && ($event.value || (this.groupBy && $event[this.groupBy]))
+    if (isAdded && this.group && this.group.get(this.controlName) && $event && ($event.value || (this.groupBy && ($event as any)[this.groupBy]))
       && this.multiple && this.resetIfAll) {
-      const value: string[] = this.group.get(this.controlName).value;
+      const value: string[] = this.group.get(this.controlName)?.value;
       // If all selected, remove others
       if ($event.value === CONSTANTS.ALL_VALUE) {
         // if some value already selected
         if (value.length > 1) {
-          this.group.get(this.controlName).setValue([$event.value]);
+          this.group.get(this.controlName)?.setValue([$event.value]);
         }
       } else {
         // if other option selected, remove All
@@ -121,7 +122,7 @@ export class SelectComponent implements OnChanges, OnInit {
           const index = value.indexOf(CONSTANTS.ALL_VALUE);
           if (index > -1) {
             value.splice(index, 1);
-            this.group.get(this.controlName).setValue(value);
+            this.group.get(this.controlName)?.setValue(value);
           }
         }
       }

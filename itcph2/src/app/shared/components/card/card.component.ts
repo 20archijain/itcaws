@@ -5,18 +5,14 @@ import { animate, AUTO_STYLE, state, style, transition, trigger } from '@angular
 @Component({
   animations: [
     trigger('collapsedCard', [
-      state('collapsed, void',
-        style({
-          height: '0px',
-          overflow: 'hidden',
-        })
-      ),
-      state('expanded',
-        style({
-          height: AUTO_STYLE,
-          overflow: 'hidden',
-        })
-      ),
+      state('collapsed, void', style({
+        height: '0px',
+        overflow: 'hidden',
+      })),
+      state('expanded', style({
+        height: AUTO_STYLE,
+        overflow: 'hidden',
+      })),
       transition('collapsed <=> expanded', [
         animate('400ms ease-in-out')
       ])
@@ -36,22 +32,23 @@ import { animate, AUTO_STYLE, state, style, transition, trigger } from '@angular
   selector: 'app-card',
   styleUrls: ['./card.component.scss'],
   templateUrl: './card.component.html',
+  standalone: false,
 })
 
 export class CardComponent implements OnInit {
   @Input() cardTitle: string;
-  @Input() cardClass: string;
-  @Input() blockClass: string;
-  @Input() headerClass: string;
+  @Input() cardClass = '';
+  @Input() blockClass?: string;
+  @Input() headerClass?: string;
   @Input() options: boolean;
   @Input() hidHeader: boolean;
   @Input() customHeader: boolean;
-  @Input() cardCaption: string;
-  @Input() captionClass: string;
+  @Input() cardCaption?: string;
+  @Input() captionClass?: string;
   @Input() isCardFooter: boolean;
-  @Input() footerClass: string;
+  @Input() footerClass?: string;
 
-  public animation: string;
+  public animation?: string;
   public fullIcon: string;
   public isAnimating: boolean;
   public collapsedCard: string;
@@ -103,9 +100,11 @@ export class CardComponent implements OnInit {
     setTimeout(() => {
       this.cardClass = animation === 'zoomOut' ? '' : this.cardClass;
       if (this.cardClass === 'full-card') {
-        document.querySelector('body').style.overflow = 'hidden';
+        if (document.querySelector('body')?.style) {
+          document.querySelector('body')!.style.overflow = 'hidden';
+        }
       } else {
-        document.querySelector('body').removeAttribute('style');
+        document.querySelector('body')?.removeAttribute('style');
       }
     }, 500);
   }

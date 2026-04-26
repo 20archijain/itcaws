@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { equals, findIndex, pick } from 'ramda';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { ChekboxOutput, ListingActions } from '../interfaces/helpers.interface';
 import { SessionUtil } from '../utils/session.util';
@@ -15,20 +15,21 @@ export class ListingService {
   constructor(private route: ActivatedRoute) {
   }
 
-  getModuleActions() {
-    let actions: ListingActions[] = [];
-    const allModulesList: SessionModuleObject = JSON.parse(SessionUtil.getItem('modules'));
+  getModuleActions(): (ListingActions | undefined)[] {
+    let actions: (ListingActions | undefined)[] = [];
+    const allModulesList: SessionModuleObject = JSON.parse(SessionUtil.getItem('modules') || '{}');
     let modc = '';
     let pmodc = '';
 
     const routeSnapshot = this.route.snapshot;
     if (routeSnapshot.children[0] && routeSnapshot.children[0].children[0] &&
       routeSnapshot.children[0].children[0].children[0]) {
-      modc = routeSnapshot.children[0].children[0].children[0].paramMap.get(URL_PARAMS_KEYS.modc);
-      pmodc = routeSnapshot.children[0].children[0].children[0].paramMap.get(URL_PARAMS_KEYS.pmodc);
+      modc = routeSnapshot.children[0].children[0].children[0].paramMap.get(URL_PARAMS_KEYS.modc) ?? '';
+      pmodc = routeSnapshot.children[0].children[0].children[0].paramMap.get(URL_PARAMS_KEYS.pmodc) ?? '';
     }
 
-    const currentModule: SessionModule = pmodc === '0' ? allModulesList[modc] : allModulesList[pmodc].submodules[modc];
+    const currentModule: SessionModule = pmodc === '0' ?
+      allModulesList[modc] : allModulesList[pmodc].submodules[modc];
 
     if (currentModule) {
       actions = currentModule.actions.map(action => {
@@ -75,33 +76,33 @@ export class ListingService {
     return actions;
   }
 
-  isMapAllowed() {
+  isMapAllowed(): boolean {
     let isMapAllowed = false;
-    const actions: ListingActions[] = this.getModuleActions();
+    const actions: (ListingActions | undefined)[] = this.getModuleActions();
     if (actions && actions.length) {
-      const map = actions.find(action => action.id === USER_ACTION.MAP);
+      const map = actions.find(action => action?.id === USER_ACTION.MAP);
       isMapAllowed = map ? true : false;
     }
 
     return isMapAllowed;
   }
 
-  isDeleteAllowed() {
+  isDeleteAllowed(): boolean {
     let isDeleteAllowed = false;
-    const actions: ListingActions[] = this.getModuleActions();
+    const actions: (ListingActions | undefined)[] = this.getModuleActions();
     if (actions && actions.length) {
-      const isDelete = actions.find(action => action.id === USER_ACTION.DEL);
+      const isDelete = actions.find(action => action?.id === USER_ACTION.DEL);
       isDeleteAllowed = isDelete ? true : false;
     }
 
     return isDeleteAllowed;
   }
 
-  isDwnImageAllowed() {
+  isDwnImageAllowed(): boolean {
     let isDwnImageAllowed = false;
-    const actions: ListingActions[] = this.getModuleActions();
+    const actions: (ListingActions | undefined)[] = this.getModuleActions();
     if (actions && actions.length) {
-      const isDwnImage = actions.find(action => action.id === USER_ACTION.DWN_IMG);
+      const isDwnImage = actions.find(action => action?.id === USER_ACTION.DWN_IMG);
       isDwnImageAllowed = isDwnImage ? true : false;
     }
 
@@ -161,7 +162,7 @@ export class ListingService {
   }
 
   // check/uncheck clicked record
-  isChecked(data: any, selectedRecords: any[], checkKey: string | string[]) {
+  isChecked(data: any, selectedRecords: any[], checkKey: string | string[]): boolean {
     let isChecked = false;
     if (selectedRecords && selectedRecords.length) {
       const value = this.getCheckedKeyValue(data, checkKey);
@@ -173,7 +174,7 @@ export class ListingService {
   }
 
   // get the record id based on which check/uncheck is done
-  getCheckedKeyValue(data: any, checkKey: string | string[]) {
+  getCheckedKeyValue(data: any, checkKey: string | string[]): string {
     let value = '';
     if (Array.isArray(checkKey)) {
       value = checkKey.length ? pick(checkKey, data) : data;
@@ -184,7 +185,7 @@ export class ListingService {
     return value;
   }
 
-  isFileSelected(files: File[], file: File) {
+  isFileSelected(files: File[], file: File): boolean {
     if (files && files.length) {
       for (const sFile of files) {
         if ((sFile.name + sFile.type + sFile.size) === (file.name + file.type + file.size)) {
@@ -196,7 +197,7 @@ export class ListingService {
     return false;
   }
 
-  isFileTypeValid(file: File, accept: string) {
+  isFileTypeValid(file: File, accept: string): boolean {
     const acceptableTypes = accept ? accept.split(',') : [];
     if (acceptableTypes && acceptableTypes.length) {
       for (const type of acceptableTypes) {
@@ -212,27 +213,27 @@ export class ListingService {
     return false;
   }
 
-  isWildcard(fileType: string) {
-    return fileType && fileType.indexOf('*') !== -1;
+  isWildcard(fileType: string): boolean {
+    return !!fileType && fileType.indexOf('*') !== -1;
   }
 
-  isImage(file: File) {
+  isImage(file: File): boolean {
     return /^image\//.test(file.type);
   }
 
-  getFileExtension(file: File) {
+  getFileExtension(file: File): string {
     return '.' + file.name.split('.').pop();
   }
 
-  getTypeClass(fileType: string) {
+  getTypeClass(fileType: string): string {
     return fileType && fileType.substring(0, fileType.indexOf('/'));
   }
 
-  onRefreshListing() {
+  onRefreshListing(): Observable<void> {
     return this.refreshListingData.asObservable();
   }
 
-  refreshListing() {
+  refreshListing(): void {
     this.refreshListingData.next();
   }
 }

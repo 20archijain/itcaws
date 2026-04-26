@@ -8,6 +8,7 @@ enum SpinnerType {
 @Component({
   selector: 'app-button',
   templateUrl: './button.component.html',
+  standalone: false,
 })
 export class ButtonComponent {
   @Output() private onClick = new EventEmitter<Event>();
@@ -23,7 +24,7 @@ export class ButtonComponent {
   @Input() showIconOnly = false;
   @Input() showIconInButton = false;
   @Input() isFaIcon = false;
-  @Input() iconName: string = null;
+  @Input() iconName = '';
   @Input() spinnerType = SpinnerType.Border;
   @Input() spinnerText = '';
   spinType = SpinnerType;

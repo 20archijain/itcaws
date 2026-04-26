@@ -1,3 +1,5 @@
+@use "../../settings/theme-variables" as *;
+
 $bg-white: #fff;
 
 .auth-wrapper {
@@ -93,7 +95,7 @@ $bg-white: #fff;
   }
 
   .auth-side-img {
-    background-image: url("~assets/images/auth/img-auth-big.jpg");
+    background-image: url("../../../assets/images/auth/img-auth-big.jpg");
     background-size: cover;
     justify-content: center;
     left: 0;

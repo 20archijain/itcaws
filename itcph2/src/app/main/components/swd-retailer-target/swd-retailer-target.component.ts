@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChildren } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { finalize } from 'rxjs/operators';
@@ -21,12 +21,13 @@ import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './swd-retailer-target.component.html',
-  styleUrls: ['./swd-retailer-target.component.scss']
+  styleUrls: ['./swd-retailer-target.component.scss'],
+  standalone: false,
 })
 export class SWDTargetUploadComponent implements OnDestroy, OnInit {
-  @ViewChildren(FileUploadComponent) private fileUploadComponents: FileUploadComponent[];
+  @ViewChildren(FileUploadComponent) private fileUploadComponents!: FileUploadComponent[];
   private subscription: Subscription[] = [];
-  private excelFile: File = null;
+  private excelFile: File | null | undefined = null;
 
   url = "";
   districtOptions: DropdownList[] = [];
@@ -35,13 +36,11 @@ export class SWDTargetUploadComponent implements OnDestroy, OnInit {
   stateOptions: DropdownList[] = [];
   teamOptions: DropdownList[] = [];
   wallOptions: DropdownList[] = [];
-  @Input() firstnamefloatingInput: string;
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   errorMessages = {
     excelFile: COMMON_VALIDATORS.messages.requiredOnly('Excel File'),
   };
 
-  body: string[];
   isDisabled = false;
   dummyImage1 = imagePath + 'file.jpg';
 
@@ -105,7 +104,7 @@ export class SWDTargetUploadComponent implements OnDestroy, OnInit {
           })
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             Functions.downloadFile(resp.data.filePath, resp.data.fileName);
           }
         })

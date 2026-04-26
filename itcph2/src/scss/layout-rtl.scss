@@ -1,4 +1,7 @@
-@import "settings/theme-variables"; /**  =====================
+@use "sass:color";
+@use "settings/theme-variables" as *;
+
+/**  =====================
       Rtl css start
 ==========================  **/
 
@@ -566,7 +569,7 @@ body.next-rtl {
           right: auto;
           left: 0;
           border-radius: 0 3px 3px 0;
-          box-shadow: 0 0 8px transparentize($danger-color, 0.1), -6px 0 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 8px color.adjust($danger-color, $alpha: -0.1), -6px 0 8px rgba(0, 0, 0, 0.1);
         }
 
         &:after {
@@ -584,7 +587,7 @@ body.next-rtl {
         left: -100px;
 
         > a {
-          box-shadow: 0 0 2px transparentize($purple-color, 0.1), -6px 0 8px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 0 2px color.adjust($purple-color, $alpha: -0.1), -6px 0 8px rgba(0, 0, 0, 0.1);
         }
       }
     }

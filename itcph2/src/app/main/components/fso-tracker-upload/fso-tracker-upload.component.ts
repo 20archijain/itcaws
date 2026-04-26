@@ -1,7 +1,8 @@
-import { Component, Input, OnDestroy, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChildren } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { Subscription } from "rxjs";
 import { finalize } from 'rxjs/operators';
+import { TranslateService } from '@ngx-translate/core';
 
 import { environment } from "src/environments/environment";
 import { REQUEST_STATUS, STATIC_MODULES, imagePath } from "src/app/app.constants";
@@ -17,16 +18,15 @@ import { ConfirmationModalService } from 'src/app/core/services/confirmation-mod
 import { CanGoBackGuard } from 'src/app/core/guards/can-go-back-guard.service';
 import { Functions } from 'src/app/core/utils/functions.list';
 import { ToastrService } from 'src/app/core/services/toastr.service';
-import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './fso-tracker-upload.component.html',
-  styleUrls: ['./fso-tracker-upload.component.scss']
+  standalone: false,
 })
 export class FSOTrackerDataUploadComponent implements OnDestroy, OnInit {
-  @ViewChildren(FileUploadComponent) private fileUploadComponents: FileUploadComponent[];
+  @ViewChildren(FileUploadComponent) private fileUploadComponents!: FileUploadComponent[];
   private subscription: Subscription[] = [];
-  private excelFile: File = null;
+  private excelFile: File | null | undefined = null;
 
   url = "";
   // districtOptions: DropdownList[] = [];
@@ -35,13 +35,10 @@ export class FSOTrackerDataUploadComponent implements OnDestroy, OnInit {
   // stateOptions: DropdownList[] = [];
   // teamOptions: DropdownList[] = [];
   // wallOptions: DropdownList[] = [];
-  @Input() firstnamefloatingInput: string;
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   errorMessages = {
     excelFile: COMMON_VALIDATORS.messages.requiredOnly('Excel File'),
   };
-
-  body: string[];
   isDisabled = false;
   dummyImage1 = imagePath + 'file.jpg';
 
@@ -103,7 +100,7 @@ export class FSOTrackerDataUploadComponent implements OnDestroy, OnInit {
           })
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             Functions.downloadFile(resp.data.filePath, resp.data.fileName);
           }
         })

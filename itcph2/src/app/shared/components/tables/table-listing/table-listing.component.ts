@@ -21,13 +21,14 @@ import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
   selector: 'app-table-listing',
-  templateUrl: './table-listing.component.html'
+  templateUrl: './table-listing.component.html',
+  standalone: false,
 })
 export class TableListingComponent implements OnInit, OnDestroy {
-  @ViewChild('pagination', { static: false }) private pagination: PaginationComponent;
+  @ViewChild('pagination', { static: false }) private pagination!: PaginationComponent;
   @Input() private inlineEdit = true;
-  @Input() private editUrl: string = null;
-  private oldSortKey: string = null;
+  @Input() private editUrl?: string;
+  private oldSortKey?: string;
   private subscription: Subscription[] = [];
   private actionData: any = null;
   @Output() listingAction = new EventEmitter();
@@ -36,7 +37,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() showPagination = true;
   @Input() apiListingKey = 'data0';
   @Input() isSelectable = true;
-  @Input() url: string = null;
+  @Input() url?: string;
   @Input() checkKey = '';
   @Input() deleteKey = '';
   @Input() editKey = 'id';
@@ -44,8 +45,8 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() header: string[] = [];
   @Input() body: string[] = [];
   @Input() isSortable = true;
-  @Input() searchTemplate: TemplateRef<any> = null;
-  @Input() searchGroup: UntypedFormGroup = null;
+  @Input() searchTemplate?: TemplateRef<any>;
+  @Input() searchGroup?: UntypedFormGroup;
   @Input() fixedTable = false;
   @Input() smallTable = true;
   @Input() columnWrap = false;
@@ -53,10 +54,10 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() timeColumnSortIndex: number[] = [];
   @Input() downloadColumnIndex: number[] = [];
   @Input() isExpandable = false;
-  @Input() expandableTemplate: TemplateRef<any> = null;
+  @Input() expandableTemplate?: TemplateRef<any>;
   @Input() gallery = false;
   @Input() galleryKey = 'images';
-  @Input() cgConfig: CustomGalleryConfig = null;
+  @Input() cgConfig?: CustomGalleryConfig | null = null;
   @Input() thumbnailNoWrap = false;
   @Input() galleryLimitWidth = false;
   @Input() editConfig: EditConfig[] = [];
@@ -68,10 +69,10 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() isSkeletonModeOn = false;
   @Input() clickableTableColumns = {};
   @Input() editCondition = null;
-  @Input() unlockCondition: [string, boolean];
+  @Input() unlockCondition?: [string, boolean];
   @Input() getListingOnInit = true;
   @Input() extraButtons: ListingExtraButtons[] = [];
-  @Input() deleteCondition: [string, number];
+  @Input() deleteCondition?: [string, number];
 
   /**
    * NEW FLAG: Enable delete with form data
@@ -81,15 +82,15 @@ export class TableListingComponent implements OnInit, OnDestroy {
   @Input() deleteWithFormData = false;
 
   clickedIndex = -1;
-  actions: ListingActions[] = [];
-  singleActions: ListingActions[] = [];
-  multiActions: ListingActions[] = [];
+  actions: (ListingActions | undefined)[] = [];
+  singleActions: (ListingActions | undefined)[] = [];
+  multiActions: (ListingActions | undefined)[] = [];
   selectedRecords: any[] = [];
   isAllChecked = false;
   isSorted = false;
   sortOrder = false;
-  group: UntypedFormGroup;
-  searchbarGroup: UntypedFormGroup;
+  group!: UntypedFormGroup;
+  searchbarGroup?: UntypedFormGroup;
   sketetonList = Array(5);
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService, private listingService: ListingService,
@@ -139,7 +140,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
       this.confirmationModalService.modal()
         .subscribe(resp => {
           if (!resp.goBackGuard && !resp.show) {
-            this.group.get('action').setValue('');
+            this.group.get('action')?.setValue('');
 
             // Delete action chosen
             if (this.confirmationModalService.data === 'modal.confirmation.delete') {
@@ -261,7 +262,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
   }
 
   get limit() {
-    return this.group.get('limit').value || LISTING.display[0];
+    return this.group.get('limit')?.value || LISTING.display[0];
   }
 
   get searchField() {
@@ -313,7 +314,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
       // on sebar search
       // eslint-disable-next-line no-fallthrough
       case 3:
-        if (this.searchTemplate && this.group && this.group.get('searchbar') && this.group.get('searchbar').valid) {
+        if (this.searchTemplate && this.group && this.group.get('searchbar') && this.group.get('searchbar')?.valid) {
           this.onSearch();
         }
         break;
@@ -326,7 +327,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
 
   // called when clicked on any action displayed under Action dropdown
   onBulkAction() {
-    this.onActionClick(JSON.parse(this.group.get('action').value));
+    this.onActionClick(JSON.parse(this.group.get('action')?.value));
   }
 
   onActionClick(action: ListingActions, data = null) {
@@ -337,7 +338,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
           if (this.inlineEdit) {
             this.editModalService.show(data);
           } else {
-            this.routerService.navigate(this.editUrl, [data[this.editKey]]);
+            this.routerService.navigate(this.editUrl as string, [data?.[this.editKey]] as never[]);
           }
           break;
         // delete
@@ -375,7 +376,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
       };
       // delete records with other form data
       this.subscription.push(
-        this.formService.deleteWithFormData(this.url, deleteData)
+        this.formService.deleteWithFormData(this.url as string, deleteData)
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
               this.onSearch();
@@ -385,7 +386,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
       );
     } else {
       this.subscription.push(
-        this.formService.deleteData(this.url, this.actionData)
+        this.formService.deleteData(this.url as string, this.actionData)
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
               this.onSearch();
@@ -399,7 +400,7 @@ export class TableListingComponent implements OnInit, OnDestroy {
   // restore record
   onRestoreConfirm() {
     this.subscription.push(
-      this.formService.restoreData(this.url, this.actionData)
+      this.formService.restoreData(this.url as string, this.actionData)
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
             this.onSearch();

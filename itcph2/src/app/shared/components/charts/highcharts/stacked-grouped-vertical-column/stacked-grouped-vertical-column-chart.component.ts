@@ -13,15 +13,16 @@ import { StackedGroupedColumnChartData } from 'src/app/core/interfaces/http-resp
       [options]="stackGroupedColumnChartOptions"
       style="{{ style }}">
     </highcharts-chart>
-  `
+  `,
+  standalone: false,
 })
 export class StackedGroupedVerticalColumnChartComponent implements OnInit, OnChanges {
   @Input() width = CHART_DEFAULTS.WIDTH;
   @Input() height = CHART_DEFAULTS.HEIGHT;
   @Input() heading = '';
-  @Input() data: StackedGroupedColumnChartData | any[];
+  @Input() data: StackedGroupedColumnChartData | any[] = [];
   Highcharts = Highcharts;
-  stackGroupedColumnChartOptions: Highcharts.Options;
+  stackGroupedColumnChartOptions!: Highcharts.Options;
   style: any = {
     display: 'block',
   };

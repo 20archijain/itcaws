@@ -4,6 +4,7 @@ import { Color, LegendPosition } from '@swimlane/ngx-charts';
 import { LineChartComponent } from '../line/line-chart.component';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { ChartColorSchemeNames } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-area-chart',
@@ -40,13 +41,14 @@ import { Functions } from 'src/app/core/utils/functions.list';
       [yScaleMax]="yScaleMax">
     </ngx-charts-area-chart>
   </div>
-  `
+  `,
+  standalone: false,
 })
 export class AreaChartComponent extends LineChartComponent implements OnChanges {
-  view = undefined;
+  view: [number, number] | undefined = undefined;
   @Input() height = CHART_DEFAULTS.HEIGHT;
   @Input() data = [];
-  @Input() graphMaxHeight: number;
+  @Input() graphMaxHeight?: number;
   @Input() scheme = null;
   @Input() customColors = [];
   @Input() legend = false;
@@ -70,7 +72,7 @@ export class AreaChartComponent extends LineChartComponent implements OnChanges 
   @Input() yScaleMin = 0;
   @Input() yScaleMax = 0;
   style: any;
-  themeScheme: string | Color = null;
+  themeScheme: string | Color | null = null;
   xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
   yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
@@ -82,7 +84,8 @@ export class AreaChartComponent extends LineChartComponent implements OnChanges 
       };
     }
 
-    this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
+    const colorScheme = this.scheme || CHART_DEFAULTS.DEFAULT_THEME as ChartColorSchemeNames;
+    this.themeScheme = Functions.getChartColorsScheme()[colorScheme];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
       (this.themeScheme as Color).domain = this.customColors;
