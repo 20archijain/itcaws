@@ -585,8 +585,8 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number, b.team_name FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null" .
-            " AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
+        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number, b.team_name FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0" .
+            " AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         if ($iRows > 0) {
@@ -616,8 +616,8 @@ class generatePDFCronjob
                         $arrParams = array($team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
                         $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
                         // Send the QR code image via WhatsApp
-                        $qrSent = $this->sendWhatsAppMessage('91' . $ae_number, $actualPdfUrl, $team_name, 'vnsai');
-                        updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", array(1));
+                        // $qrSent = $this->sendWhatsAppMessage('91' . $ae_number, $actualPdfUrl, $team_name, 'vnsai');
+                        // updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", array(1));
                     } else {
                         // debug_log(
                         //     "\r\nData Not Added to Notification Table for Team ID: $team_id date - $currentDate\r\n" .

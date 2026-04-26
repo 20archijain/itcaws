@@ -51,32 +51,45 @@ class AddMdoParameter
             if (!$teamId) {
                 continue;
             }
-            $teamDetails = getRowColumns(
+            $wdId = getRowColumn(
                 $this->_dbConn,
-                "tblmdo_summary",
-                "mdo_name, mdo_type, circle, section,
-                wd_code, wd_market, pop_group, district,
-                main_branch, branch_name",
-                "dstatus = 0 AND mdo_id = $teamId",
+                "tblmdo_wd_mapping",
+                "wd_id",
+                "mdo_id = $teamId"
+            );
+            $mdoDetails = $wdId ? getRowColumns(
+                $this->_dbConn,
+                "tblmapping_wd",
+                "circle, section,
+                wd_code, wd_market, wd_pop_group, district",
+                "dstatus = 0 AND rec_id = $wdId",
+                [],
+                2
+            ) : "";
+            $teamNameBranch = getRowColumns(
+                $this->_dbConn,
+                "tblproject_team",
+                "team_name, branch_id",
+                "dstatus = 0 AND team_id = $teamId"
+            );
+            $branchDetails = getRowColumns(
+                $this->_dbConn,
+                "tblbranch",
+                "branch_name, main_branch",
+                "dstatus = 0 AND branch_id = $teamNameBranch[1]",
                 [],
                 2
             );
-            $teamName = getRowColumn(
-                $this->_dbConn,
-                "tblproject_team",
-                "team_name",
-                "dstatus = 0 AND team_id = $teamId"
-            );
-            // $teamName   = $teamDetails['0'] ?? '';
+            $teamName   = $teamNameBranch['0'] ?? '';
             // $isType     = $teamDetails['1'] ?? '';
-            $circle     = $teamDetails[2] ?? '';
-            $section    = $teamDetails[3] ?? '';
-            $wdCode     = $teamDetails[4] ?? '';
-            $wdMarket   = $teamDetails[5] ?? '';
-            $wdPop      = $teamDetails[6] ?? '';
-            $district   = $teamDetails[7] ?? '';
-            $mainBranch = $teamDetails[8] ?? '';
-            $branchName = $teamDetails[9] ?? '';
+            $circle     = $mdoDetails[0] ?? '';
+            $section    = $mdoDetails[1] ?? '';
+            $wdCode     = $mdoDetails[2] ?? '';
+            $wdMarket   = $mdoDetails[3] ?? '';
+            $wdPop      = $mdoDetails[4] ?? '';
+            $district   = $mdoDetails[5] ?? '';
+            $mainBranch = $branchDetails[1] ?? '';
+            $branchName = $branchDetails[0] ?? '';
             $months = [
                 date('Y-m', strtotime('-2 month')),
                 date('Y-m', strtotime('-1 month')),

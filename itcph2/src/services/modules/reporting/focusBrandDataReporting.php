@@ -9,9 +9,9 @@ if (!isEmptyString($requestAction)) {
         case $ACTION_LIST['GET_DATA']:
             $team->getViewSKUData();
             break;
-        // case $ACTION_LIST['GET_LIST']:
-        //     $team->viewSKUData();
-        //     break;
+            // case $ACTION_LIST['GET_LIST']:
+            //     $team->viewSKUData();
+            //     break;
         case $ACTION_LIST['GET_DOWNLOAD_DATA']:
             $team->downloadMasterData();
             break;

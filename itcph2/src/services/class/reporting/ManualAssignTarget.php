@@ -60,7 +60,7 @@ class ManualAssignTarget
         $year = date('Y');
         $arrTeams = getRowsColumn($this->_dbConn, "tblassign_target", "team_id", " dstatus = 0 AND month = '$month' AND year = '$year'");
         $cond = "";
-        if(isset($arrTeams)){
+        if (isset($arrTeams)) {
             $totalTeamsQyery = implode(',', $arrTeams);
             $cond .= " AND b.team_id NOT IN ($totalTeamsQyery)";
         }

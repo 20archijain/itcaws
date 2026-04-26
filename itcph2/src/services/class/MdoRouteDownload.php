@@ -830,7 +830,7 @@ class MdoRouteDownload
                     $this->_dbConn,
                     $routeTable,
                     "rec_id, wd_code, route_name, outlet_name, outlet_mobile, $addressCol, shop_uniq_code, lt, lg",
-                    "team_id = '$teamsId'"
+                    "team_id = '$teamsId' AND dstatus = 0"
                 );
 
                 $ds_type = $arrTeamType[$is_type];

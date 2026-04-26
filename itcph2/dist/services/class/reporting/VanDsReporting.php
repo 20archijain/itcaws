@@ -2566,6 +2566,17 @@ class VanDsReporting
                         $totalImagesWidth = ($numImages * $imgWidth) + (($numImages - 1) * $imgSpacing);
                         $centeredX = ((277 - $totalImagesWidth) / 2) + 10;
                         $pdf->addImages($images, $centeredX, $imageY, $imgWidth, 130, $imgSpacing);
+                        // Cleanup temp files downloaded from CDN (only /tmp files, not local server files)
+                        foreach ($images as $img) {
+                            if (
+                                isset($img['path']) &&
+                                strpos($img['path'], sys_get_temp_dir()) !== false &&
+                                file_exists($img['path'])
+                            ) {
+                                @unlink($img['path']);
+                            }
+                        }
+                        $images = []; // reset for next iteration
                     }
                     // else {
                     //     $pdf->Ln(5);

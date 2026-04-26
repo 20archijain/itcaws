@@ -268,7 +268,7 @@ class MdoRouteUpload
                                     $this->_dbConn,
                                     "tblroute_details_breeze",
                                     "shop_uniq_code",
-                                    "shop_uniq_code = '$shopCodeValue' AND team_id = '$teamId' AND dstatus = 0"
+                                    "shop_uniq_code = '$shopCodeValue' AND team_id = '$teamId' AND wd_code = '$wdCode' AND dstatus = 0"
                                 );
 
                                 // Skip this row if exists

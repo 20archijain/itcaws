@@ -1199,7 +1199,7 @@ class MdoReporting
                         $dsId = $shopId ? getRowColumn($this->_dbConn, "tblroute_details", "team_id", "rec_id = $shopId") : "";
                     }
 
-                    $sQueryAcc = "SELECT DISTINCT capture_date FROM tblmdo_summary WHERE ds_id = '22488' AND dstatus = 0 AND capture_date = '$date'";
+                    $sQueryAcc = "SELECT DISTINCT capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date = '$date'";
                     $rsAcc = null;
                     $iRowsAcc = 0;
                     $this->_dbConn->ExecuteSelectQuery($sQueryAcc, $rsAcc, $iRowsAcc);
@@ -1214,7 +1214,7 @@ class MdoReporting
                     // 2️⃣ Determine unaccompanied dates (exclude accompanied date)
                     $arrUnaccompaniedDates = [];
 
-                    $sQueryUnaccDates = "SELECT DISTINCT capture_date FROM $respTable WHERE dstatus = 0 AND team_id = '22488' $where2 AND capture_date NOT IN (SELECT DISTINCT capture_date FROM tblmdo_summary
+                    $sQueryUnaccDates = "SELECT DISTINCT capture_date FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' $where2 AND capture_date NOT IN (SELECT DISTINCT capture_date FROM tblmdo_summary
                                         WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date <= '$date')";
                     $rsUnaccDates = null;
                     $iRowsUnaccDates = 0;
@@ -1234,7 +1234,6 @@ class MdoReporting
 
                     $unaccompaniedDatesStr = "'" . implode("','", $arrUnaccompaniedDates) . "'";
                     $unaccompaniedDays = count($arrUnaccompaniedDates);
-                    // print_r($unaccompaniedDatesStr);die;
                     // 3️⃣ Get unaccompanied sale from response table
                     $unacompaniedSale = 0;
                     if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
@@ -1428,14 +1427,14 @@ class MdoReporting
                         $salesValue = "";
                         $distanceInKm = "";
                     }
-                    $marketStartTime = isset($row["startMarket"]) ? $row["startMarket"] : "";
-                    $marketEndTime = isset($row["lastMarket"]) ? $row["lastMarket"] : "";
-                    $timeInMarket = getTimeDifferenceInString($marketStartTime, $marketEndTime, false, false, true);
-                    $timeSpent =  getTimeDifferenceInString($startTime, $endTime ? $endTime : $marketEndTime, false, false, true);
-                    $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId");
+                    $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND ques_0 NOT IN ('Infra Details','InfraDetails')");
                     $firstOutletTime = isset($arrfist_lastTime[0]) ? $arrfist_lastTime[0] : "";
                     $lastOutletTime = isset($arrfist_lastTime[1]) ? $arrfist_lastTime[1] : "";
-                    $coverdOutlets_lineCut = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4) AS count, AVG(ques_7) AS avg", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                    // $marketStartTime = isset($row["startMarket"]) ? $row["startMarket"] : "";
+                    // $marketEndTime = isset($row["lastMarket"]) ? $row["lastMarket"] : "";
+                    $timeInMarket = getTimeDifferenceInString($firstOutletTime, $lastOutletTime, false, false, true);
+                    $timeSpent =  getTimeDifferenceInString($startTime, $endTime ? $endTime : $lastOutletTime, false, false, true);
+                    $coverdOutlets_lineCut = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "COUNT(DISTINCT ques_4) AS count, AVG(ques_7) AS avg", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_0 NOT IN ('Infra Details','InfraDetails')");
                     $coverdOutlets = $coverdOutlets_lineCut ? $coverdOutlets_lineCut[0] : "";
                     $surveyVol = $row["surveyVol"];
                     $surveyVal = $row["surveyVal"];
@@ -1447,7 +1446,7 @@ class MdoReporting
                     // Convert 6 hours into minutes
                     $requiredmin = 360;
                     if ($infraType == 7) {
-                        if ($timeSpent >= $requiredmin && $distanceInKm >= 10) {
+                        if ($timeInMarket >= $requiredmin && $distanceInKm >= 10) {
                             $qualified = '1';
                         } else {
                             $qualified = '0';
@@ -1881,7 +1880,10 @@ class MdoReporting
                     $endDistrict = $arrDayEndDetails[3] ?? "";
                     $endCity = $arrDayEndDetails[4] ?? "";
                     $endPinCode = $arrDayEndDetails[5] ?? "";
-                    $timeSpent = $endTime ? getTimeDifferenceInString($startTime, $endTime, false, false, true) : 0;
+                    $responseTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND ques_0 NOT IN ('Infra Details','InfraDetails') AND team_id = $teamId AND capture_date = '$date'");
+                    $respStartTime = (!empty($responseTime[0]) ? $responseTime[0] : 0);
+                    $respEndTime = (!empty($responseTime[1]) ? $responseTime[1] : 0);
+                    $timeSpent = $endTime ? getTimeDifferenceInString($respStartTime, $respEndTime, false, false, true) : 0;
                     $distanceInKm = $arrDayEndDetails[6] ?? 0;
                     // Convert 6 hours into Minutes
                     $requiredMin = 360;

@@ -202,13 +202,25 @@ class StoreCalendarDataAndSummary
                 "team_id = $teamId"
             );
             if ($teamType == 7 || $teamType == 10) {
-                $attendanceDetails = $this->tableUtil->getRowColumn("$dbName.tblattendance", "MIN(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
-                $arrDayEnd = $this->tableUtil->getRowColumns("$dbName.tblattendance", "distance, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                $responseEndTime = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
-                $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
-                $endTime = !empty($arrDayEnd[1]) ? $arrDayEnd[1] : (!empty($responseEndTime) ? $responseEndTime : 0);
-                $timeSpentInSec = $this->commonFunctions->getTimeDifference($attendanceDetails, $endTime, true);
-                $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
+                $attendanceDetails = $this->tableUtil->getRowColumns("$dbName.tblattendance", "MIN(capture_datetime), other_details", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '0'");
+                if (!empty($attendanceDetails)) {
+                    $arrOtherDetails = json_decode($attendanceDetails[1], true);
+                    $workingWith = $arrOtherDetails['workingWith'];
+                    if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
+                        $startTime = $attendanceDetails[0];
+                        $arrDayEnd = $this->tableUtil->getRowColumns("$dbName.tblattendance", "distance, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
+                        $distanceInKm = $arrDayEnd ? $arrDayEnd[0] : "";
+                        $endTime = $arrDayEnd ? $arrDayEnd[1] : "";
+                        $timeSpentInSec = $this->commonFunctions->getTimeDifference($startTime, $endTime, true);
+                    } else {
+                        $responseTime = $this->tableUtil->getRowColumnS("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND ques_0 NOT IN ('Infra Details','InfraDetails') AND team_id = $teamId AND capture_date = '$date'");
+                        $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
+                        $startTime =  (!empty($responseTime[0]) ? $responseTime[0] : 0);
+                        $endTime =  (!empty($responseTime[1]) ? $responseTime[1] : 0);
+                        $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
+                        $timeSpentInSec = $this->commonFunctions->getTimeDifference($startTime, $endTime, true);
+                    }
+                }
 
                 // Convert 6 hours into seconds
                 $requiredSeconds = 360 * 60;
@@ -392,10 +404,11 @@ class StoreCalendarDataAndSummary
                         $dsName = $workType == 0 ? $wdDsName[1] : "";
                         $workWith = $workingWith . " - " . $wdCode . " - " . $dsName;
                         $arrDayEnd = $this->tableUtil->getRowColumns("$dbName.tblattendance", "distance, capture_datetime", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND call_type = '1'");
-                        $responseEndTime = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date'");
+                        $responseTime = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' AND ques_0 NOT IN ('Infra Details','InfraDetails')");
                         $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
-                        $endTime = !empty($arrDayEnd[1]) ? $arrDayEnd[1] : (!empty($responseEndTime) ? $responseEndTime : 0);
-                        $timeSpent = $this->commonFunctions->getTimeDifference($arrWork[1], $endTime, false, false, true);
+                        $startTime = (!empty($responseTime[0]) ? $responseTime[0] : 0);
+                        $endTime = (!empty($responseTime[1]) ? $responseTime[1] : 0);
+                        $timeSpent = $this->commonFunctions->getTimeDifference($startTime, $endTime, false, false, true);
                         $distanceInKm = !empty($arrDayEnd[0]) ? $arrDayEnd[0] : (!empty($responseDistanceInKm) ? $responseDistanceInKm : 0);
                     }
 

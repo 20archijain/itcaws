@@ -726,7 +726,7 @@ class ActiveUsersReporting
                     "summary_id",
                     "dstatus = 0 AND team_id = '$teamId' AND is_qualified = 1 AND activity_date BETWEEN '$firstDateLastToLastMonth' AND '$lastDatePreviousMonth'"
                 );
-            //    print_r($isQualified);die;
+                //    print_r($isQualified);die;
 
                 if ($isQualified > 0) {
                     $istatus = "Qualified";

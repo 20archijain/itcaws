@@ -29,7 +29,7 @@ class UpdatFocusBrandIfHOApproved
         $this->_commonSettings = $GLOBALS['COMMON_PROCESS_SETTINGS'];
     }
 
-    final public function UpdatFocusBrandIfHOApproved()
+    final public function updatFocusBrandIfHOApproved()
     {
         $nextMonth = date("m", strtotime("+1 month"));
         $nextYear  = date("Y", strtotime("+1 month"));
@@ -109,4 +109,4 @@ class UpdatFocusBrandIfHOApproved
 }
 
 $updateDataCronjob = new UpdatFocusBrandIfHOApproved($dbConn);
-$updateDataCronjob->UpdatFocusBrandIfHOApproved();
+$updateDataCronjob->updatFocusBrandIfHOApproved();

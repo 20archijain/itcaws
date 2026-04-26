@@ -331,7 +331,7 @@ export const COMMON_VALIDATORS = {
       MAXLENGTH_VALIDATOR('Quantity', VALIDATION_LENGTH.QTY_MAXLENGTH),
       PATTERN_VALIDATOR('Quantity'),
     ],
-    nonZeroNumberWithMaxAndMin(controlText: string, maxNumber?: number, minNumber?: number, maxLength?: number, minLength?: number) {
+    nonZeroNumberWithMaxAndMin(controlText: string, maxNumber?: number, minNumber?: number) {
       return [
         MAXVALUE_VALIDATOR(controlText, maxNumber ? maxNumber : VALIDATION_LENGTH.NUMBER_MAXVALUE),
         MINVALUE_VALIDATOR(controlText, minNumber ? minNumber : VALIDATION_LENGTH.MINVALUE),
@@ -444,7 +444,7 @@ export const COMMON_VALIDATORS = {
       Validators.min(VALIDATION_LENGTH.MINVALUE - 1),
       Validators.maxLength(VALIDATION_LENGTH.QTY_MAXLENGTH),
     ],
-    nonZeroNumberWithMaxAndMin(isRegex?: RegExp, isRequired?: boolean, maxNumber?: number, minNumber?: number, maxLength?: number, minLength?: number) {
+    nonZeroNumberWithMaxAndMin(isRegex?: RegExp, isRequired?: boolean, maxNumber?: number, minNumber?: number) {
       const validators = [
         REGEX_VALIDATOR(isRegex ? isRegex : NON_ZERO_NUMBER_REGEX),
         Validators.max(maxNumber ? maxNumber : VALIDATION_LENGTH.NUMBER_MAXVALUE),

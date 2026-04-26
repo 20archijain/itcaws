@@ -219,7 +219,7 @@ class ActiveSKUReporting
             }
         }
         $currentDateTime = currentDateTime();
-         $fileName = "Active_SKU_" . str_replace(":", "_", $currentDateTime) . ".csv";
+        $fileName = "Active_SKU_" . str_replace(":", "_", $currentDateTime) . ".csv";
         if (!file_exists($GLOBALS["SAVE_SPREADSHEET_PATH"])) {
             mkdir($GLOBALS["SAVE_SPREADSHEET_PATH"], 0777, true);
         }
