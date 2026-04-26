@@ -13,9 +13,9 @@
       "pmodc": "DWN01"
     },
     "client": {
-      "logo": "http:\/\/localhost:80\/work\/itcawsportal\/uproots\/logo\/dummy_pic.jpg"
+      "logo": "https:\/\/upimg2.radardashboard.com\/logo\/dummy_pic.jpg"
     },
-    "token": "e67e64e82254bbdc67c13864a2a3ce941d1f9f071bb1c2927f77baa3fb52584b",
+    "token": "295f34f407b9154cf1994f5b4e061b2c4ee5536c5d283cf45422ed8eae816611",
     "modules": {
       "MP01": {
         "breadcrumbs": false,
@@ -92,6 +92,32 @@
             "componentName": "ProductiveDashboardComponent",
             "submodules": [],
             "actions": []
+          },
+          "DSH06": {
+            "breadcrumbs": false,
+            "id": 120,
+            "name": "NPSR Dashboard",
+            "hidden": false,
+            "icon": "",
+            "modc": "DSH06",
+            "pmodc": "DSH01",
+            "fold": "npsr-dashboard\/npsrDashboard2.php",
+            "componentName": "NpsrDashboard2Component",
+            "submodules": [],
+            "actions": []
+          },
+          "DSH07": {
+            "breadcrumbs": false,
+            "id": 132,
+            "name": "Breeze Dashboard",
+            "hidden": false,
+            "icon": "",
+            "modc": "DSH07",
+            "pmodc": "DSH01",
+            "fold": "breeze-dashboard\/breezeDashboard.php",
+            "componentName": "BreezeDashboardComponent",
+            "submodules": [],
+            "actions": []
           }
         },
         "actions": []
@@ -106,21 +132,7 @@
         "pmodc": "0",
         "fold": "actionable\/",
         "componentName": null,
-        "submodules": {
-          "AI01": {
-            "breadcrumbs": false,
-            "id": 200,
-            "name": "AI Insights",
-            "hidden": false,
-            "icon": "",
-            "modc": "AI01",
-            "pmodc": "ACN01",
-            "fold": "ai-insights\/aiInsights.php",
-            "componentName": "AiInsightsComponent",
-            "submodules": [],
-            "actions": []
-          }
-        },
+        "submodules": [],
         "actions": []
       },
       "ATN01": {
@@ -220,7 +232,7 @@
             "icon": "icon-map-pin",
             "modc": "SOM07",
             "pmodc": "ATN01",
-            "fold": "sites-on-map\/mdo-universe-data.php\u200e",
+            "fold": "sites-on-map\/mdo-universe-data.php",
             "componentName": "MdoUniverseDataComponent",
             "submodules": [],
             "actions": []
@@ -342,8 +354,8 @@
           },
           "PM15": {
             "breadcrumbs": false,
-            "id": 103,
-            "name": "View MDO Team",
+            "id": 107,
+            "name": "View  MDO Team",
             "hidden": false,
             "icon": "",
             "modc": "PM15",
@@ -352,8 +364,35 @@
             "componentName": "MDOViewTeamComponent",
             "submodules": [],
             "actions": [
+              "EDIT",
               "DEL"
             ]
+          },
+          "PM18": {
+            "breadcrumbs": false,
+            "id": 117,
+            "name": "Store Offline Manegement",
+            "hidden": false,
+            "icon": "",
+            "modc": "PM18",
+            "pmodc": "PM01",
+            "fold": "system-offline\/systemOffline.php",
+            "componentName": "SystemOfflineComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "PM19": {
+            "breadcrumbs": false,
+            "id": 118,
+            "name": "Download Table",
+            "hidden": false,
+            "icon": "",
+            "modc": "PM19",
+            "pmodc": "PM01",
+            "fold": "download_tables\/downloadDBDataTable.php",
+            "componentName": "DownloadDBTableComponent",
+            "submodules": [],
+            "actions": []
           },
           "EDPT": {
             "breadcrumbs": false,
@@ -509,7 +548,8 @@
             "componentName": "ViewRouteComponent",
             "submodules": [],
             "actions": [
-              "DEL"
+              "DEL",
+              "RESTORE"
             ]
           },
           "RD06": {
@@ -522,6 +562,73 @@
             "pmodc": "RD01",
             "fold": "route-data-upload\/mdoRouteUpload.php",
             "componentName": "MDORouteDataUploadComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "RD07": {
+            "breadcrumbs": false,
+            "id": 110,
+            "name": "Focus Brand Reporting",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD07",
+            "pmodc": "RD01",
+            "fold": "focus_brand_reporting\/viewFocusBrandReporting.php",
+            "componentName": "FocusBrandReportingComponent",
+            "submodules": [],
+            "actions": [
+              "EDIT"
+            ]
+          },
+          "RD09": {
+            "breadcrumbs": false,
+            "id": 113,
+            "name": "SWD  Target Upload",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD09",
+            "pmodc": "RD01",
+            "fold": "swdRetailerAssignTarget.php",
+            "componentName": "SWDTargetUploadComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "RD10": {
+            "breadcrumbs": false,
+            "id": 115,
+            "name": "MDO Route Download",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD10",
+            "pmodc": "RD01",
+            "fold": "route-data-download\/mdoRouteDownload.php",
+            "componentName": "MdoDownloadRouteComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "RD11": {
+            "breadcrumbs": false,
+            "id": 116,
+            "name": "Breeze Data Upload",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD11",
+            "pmodc": "RD01",
+            "fold": "breeze_response_upload\/breezeResponseUpload.php",
+            "componentName": "BreezeResponseUploadComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "RD12": {
+            "breadcrumbs": false,
+            "id": 119,
+            "name": "FSO Tracker Upload",
+            "hidden": false,
+            "icon": null,
+            "modc": "RD12",
+            "pmodc": "RD01",
+            "fold": "upload-fsoTracker\/uploadFSOTracker.php",
+            "componentName": "FSOTrackerDataUploadComponent",
             "submodules": [],
             "actions": []
           }
@@ -656,12 +763,14 @@
             "fold": "download_misscall\/downloadMisscall.php",
             "componentName": "DownloadMisscallComponent",
             "submodules": [],
-            "actions": []
+            "actions": [
+              "DEL"
+            ]
           },
           "DWN14": {
             "breadcrumbs": false,
             "id": 94,
-            "name": "Assign Target",
+            "name": "NPSR DSPM Target Setting",
             "hidden": false,
             "icon": null,
             "modc": "DWN14",
@@ -686,20 +795,204 @@
               "MAP"
             ]
           },
-          "DWN16": {
+          "DWN17": {
             "breadcrumbs": false,
-            "id": 102,
+            "id": 103,
+            "name": "NPSR DSPM Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN17",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/targetReport.php",
+            "componentName": "TargetReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN18": {
+            "breadcrumbs": false,
+            "id": 104,
+            "name": "Active MDO Reporting",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN18",
+            "pmodc": "DWN01",
+            "fold": "reporting\/activeMDOUsersReporting.php",
+            "componentName": "ActiveMDOUsersListingComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN19": {
+            "breadcrumbs": false,
+            "id": 105,
             "name": "MDO Performance Report",
             "hidden": false,
             "icon": null,
-            "modc": "DWN16",
+            "modc": "DWN19",
             "pmodc": "DWN01",
             "fold": "downloadReports\/mdoPerformanceReport.php",
             "componentName": "MdoPerformanceComponent",
             "submodules": [],
             "actions": []
+          },
+          "DWN20": {
+            "breadcrumbs": false,
+            "id": 112,
+            "name": "Add WD",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN20",
+            "pmodc": "DWN01",
+            "fold": "wd-mapping\/addWdMapping.php",
+            "componentName": "AddWdMappingComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN21": {
+            "breadcrumbs": false,
+            "id": 114,
+            "name": "Active Focus Varient",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN21",
+            "pmodc": "DWN01",
+            "fold": "reporting\/focusBrandDataReporting.php",
+            "componentName": "FocusBrandDataListingComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN22": {
+            "breadcrumbs": false,
+            "id": 121,
+            "name": "PDF Access Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN22",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/pdfAccessReport.php",
+            "componentName": "PDFAccessReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN23": {
+            "breadcrumbs": false,
+            "id": 122,
+            "name": "Linecut Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN23",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/lineCutReport.php",
+            "componentName": "LineCutReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN24": {
+            "breadcrumbs": false,
+            "id": 124,
+            "name": "Order Reporting",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN24",
+            "pmodc": "DWN01",
+            "fold": "reporting\/orderReporting.php",
+            "componentName": "OrderListingComponent",
+            "submodules": [],
+            "actions": [
+              "MAP"
+            ]
+          },
+          "DWN26": {
+            "breadcrumbs": false,
+            "id": 128,
+            "name": "Branch SKU Allocation",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN26",
+            "pmodc": "DWN01",
+            "fold": "skuSetting\/branchSkuAllocation.php",
+            "componentName": "BranchProductAllocationComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN27": {
+            "breadcrumbs": false,
+            "id": 129,
+            "name": "District SKU Allocation",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN27",
+            "pmodc": "DWN01",
+            "fold": "skuSetting\/districtSkuAllocation.php",
+            "componentName": "DistrictProductAllocationComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN28": {
+            "breadcrumbs": false,
+            "id": 130,
+            "name": "HO SKU Allocation",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN28",
+            "pmodc": "DWN01",
+            "fold": "skuSetting\/hoSkuAllocation.php",
+            "componentName": "DistrictProductAllocationComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN29": {
+            "breadcrumbs": false,
+            "id": 131,
+            "name": "Allocation Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN29",
+            "pmodc": "DWN01",
+            "fold": "skuSetting\/allocationReport.php",
+            "componentName": "AllocationReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN30": {
+            "breadcrumbs": false,
+            "id": 133,
+            "name": "MDO DSPM Report",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN30",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/mdoTargetReport.php",
+            "componentName": "MDOReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN31": {
+            "breadcrumbs": false,
+            "id": 134,
+            "name": "Manual Assign Target",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN31",
+            "pmodc": "DWN01",
+            "fold": "reporting\/manualAssignTarget.php",
+            "componentName": "ManualAssignTargetComponent",
+            "submodules": [],
+            "actions": []
           }
         },
+        "actions": []
+      },
+      "APN01": {
+        "breadcrumbs": false,
+        "id": 102,
+        "name": "App Notification",
+        "hidden": false,
+        "icon": "icon-bell",
+        "modc": "APN01",
+        "pmodc": "0",
+        "fold": "notification\/appNotification.php",
+        "componentName": "AppNotificationComponent",
+        "submodules": [],
         "actions": []
       }
     }
