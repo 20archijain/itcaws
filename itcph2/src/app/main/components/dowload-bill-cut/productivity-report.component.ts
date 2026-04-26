@@ -63,7 +63,7 @@ export class ProductivityReportComponent implements OnDestroy, OnInit {
       this.loaderService.startLoader();
       this.subscription.push(
         this.formService.customActionCall<GetDownloadFileDetails>(STATIC_MODULES.custom.getDownloadData, this.group.getRawValue(),
-          null, environment.downloadAttendanceUrl)
+          null, environment.downloadExcelUrl)
           .pipe(
             finalize(() => {
               this.isDisabled = false;

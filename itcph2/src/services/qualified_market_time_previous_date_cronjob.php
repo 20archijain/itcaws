@@ -33,7 +33,9 @@ class processUpdateQualifiedMarketTime
         $previousDate = date("Y-m-d", strtotime("-1 day")); // yesterday's date
         $cond = "AND activity_date = '$previousDate'";
 
-        $saleProductSumExpr = implode(" + ", array_map(function ($i) { return "total_sale_product$i"; }, range(1, 145)));
+        $saleProductSumExpr = implode(" + ", array_map(function ($i) {
+            return "total_sale_product$i";
+        }, range(1, 145)));
         $minDailySaleInM = (float) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'minDailySaleInM' AND team_type = 0");
         $maxDailySaleInM = (float) getRowColumn($this->dbConn, $constantsTable, "con_value", "con_name = 'maxDailySaleInM' AND team_type = 0");
 

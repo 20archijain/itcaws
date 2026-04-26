@@ -38,7 +38,7 @@ class ProcessMdoData
         $iRows = 0;
 
         $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND (updated_date != '$currentDate' OR updated_date IS NULL) LIMIT 50";
-        // $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND mdo_id IN (23915,23914) AND is_previous_day_updated = 0 LIMIT 50";
+        // $sQuery = "SELECT id, mdo_id, teams, is_type FROM tblmdo_access WHERE dstatus = 0 AND is_type NOT IN (2,5) AND mdo_id IN (22841) AND is_previous_day_updated = 0 LIMIT 50";
 
         $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 

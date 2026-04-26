@@ -2,45 +2,208 @@
   "status": 200,
   "message": [],
   "data": {
+    "districtList": [
+      {
+        "label": "EDIS",
+        "value": "EDIS"
+      },
+      {
+        "label": "NDIS",
+        "value": "NDIS"
+      },
+      {
+        "label": "SDIS",
+        "value": "SDIS"
+      },
+      {
+        "label": "WDIS",
+        "value": "WDIS"
+      }
+    ],
     "branchList": [
       {
-        "label": "UP East",
-        "value": "1",
-        "mainBranch": "NEUP"
+        "label": "All",
+        "value": "all"
       },
       {
-        "label": "Jaipur",
-        "value": "5",
-        "mainBranch": "NJPR"
+        "label": "Agra",
+        "value": 56,
+        "mainBranch": "NSAH"
       },
       {
-        "label": "EBEN",
-        "value": "15",
-        "mainBranch": "EBEN"
+        "label": "Aligarh",
+        "value": 57,
+        "mainBranch": "NSAH"
       },
       {
-        "label": "Bihar",
-        "value": "18",
-        "mainBranch": "EPAT"
+        "label": "Arunachal",
+        "value": 7,
+        "mainBranch": "EGAU"
+      }
+    ],
+    "circleList": [
+      {
+        "label": "AH1 - ",
+        "value": "AH1"
       },
       {
-        "label": "W-NAG-MH",
-        "value": "25",
-        "mainBranch": "WNAG"
+        "label": "AH1 - Ahmedabad Circle",
+        "value": "AH1"
       },
       {
-        "label": "SCOI",
-        "value": "35",
-        "mainBranch": "SCOI"
+        "label": "AH2 - South Gujarat",
+        "value": "AH2"
+      },
+      {
+        "label": "AH2 - South Gujrat Circle",
+        "value": "AH2"
+      },
+      {
+        "label": "AH3 - ",
+        "value": "AH3"
+      }
+    ],
+    "sectionList": [
+      {
+        "label": "AH1001 - Ahm City 1-CFP",
+        "value": "AH1001"
+      },
+      {
+        "label": "AH1002 - ",
+        "value": "AH1002"
+      },
+      {
+        "label": "AH1002 - Ahm City 2-CFP",
+        "value": "AH1002"
+      },
+      {
+        "label": "AH1003 - Ahm City 3-CFP",
+        "value": "AH1003"
+      },
+      {
+        "label": "AH2001 - Vadodara - CFP",
+        "value": "AH2001"
+      },
+      {
+        "label": "AH2002 - Surat 1-CFP",
+        "value": "AH2002"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "label": "AH20621 - RAJKOT (M CORP.) - AAKASH ENTERPRISE",
+        "value": "AH20621"
+      },
+      {
+        "label": "AH2119 -  - MUKHI AGENCY",
+        "value": "AH2119"
+      },
+      {
+        "label": "AH21431 - AHMADABAD (M CORP.) - MAHADEV AGENCIES",
+        "value": "AH21431"
+      },
+      {
+        "label": "AH2356 -  - P H WADIA & SONS",
+        "value": "AH2356"
+      },
+      {
+        "label": "AH2844 - MODASA (M) - SANA ENTERPRISE",
+        "value": "AH2844"
+      },
+      {
+        "label": "AH2882 - BOTAD (M) - AVADH MARKETING",
+        "value": "AH2882"
       }
     ],
     "teamType": [
       {
-        "label": "VAN DS",
+        "label": "Van DS",
         "value": "0"
+      },
+      {
+        "label": "Town SWD",
+        "value": "2"
+      },
+      {
+        "label": "NPSR",
+        "value": "5"
+      }
+    ],
+    "teamList": [
+      {
+        "label": "1CG BALAKRISHNAN",
+        "value": 19858
+      },
+      {
+        "label": "A Basha",
+        "value": 20272
+      },
+      {
+        "label": "A RAJU",
+        "value": 20025
+      },
+      {
+        "label": "A Raza",
+        "value": 1459
+      },
+      {
+        "label": "A SRINIVASAN",
+        "value": 19768
+      }
+    ],
+    "wdMarketList": [
+      {
+        "label": "ABHAYAPURI (TC)",
+        "value": "ABHAYAPURI (TC)"
+      },
+      {
+        "label": "ABOHAR (M CL)",
+        "value": "ABOHAR (M CL)"
+      },
+      {
+        "label": "ABU ROAD (M)",
+        "value": "ABU ROAD (M)"
+      },
+      {
+        "label": "ACHAMPET (CT)",
+        "value": "ACHAMPET (CT)"
+      },
+      {
+        "label": "ADDANKI (NORTH) (U)",
+        "value": "ADDANKI (NORTH) (U)"
+      }
+    ],
+    "wdPopGroupList": [
+      {
+        "label": "<2",
+        "value": "<2"
+      },
+      {
+        "label": ">1000",
+        "value": ">1000"
+      },
+      {
+        "label": ">1000000",
+        "value": ">1000000"
+      },
+      {
+        "label": "0",
+        "value": "0"
+      },
+      {
+        "label": "10-20",
+        "value": "10-20"
       }
     ],
     "productList": [
+      {
+        "label": "AC Fusion Paan",
+        "value": "AC Fusion Paan"
+      },
+      {
+        "label": "B&H Blue",
+        "value": "B&H Blue"
+      },
       {
         "label": "Capstan Pilot",
         "value": "Capstan Pilot"
@@ -50,32 +213,8 @@
         "value": "Capstan Spl"
       },
       {
-        "label": "Classic Connect",
-        "value": "Classic Connect"
-      },
-      {
-        "label": "Classic Icon",
-        "value": "Classic Icon"
-      },
-      {
-        "label": "GF Indie Mint",
-        "value": "GF Indie Mint"
-      },
-      {
-        "label": "GF Neo Smart",
-        "value": "GF Neo Smart"
-      },
-      {
-        "label": "GFK Red",
-        "value": "GFK Red"
-      },
-      {
-        "label": "GFP",
-        "value": "GFP"
-      },
-      {
-        "label": "Wave Ice Mint",
-        "value": "Wave Ice Mint"
+        "label": "Classic BT",
+        "value": "Classic BT"
       }
     ]
   },

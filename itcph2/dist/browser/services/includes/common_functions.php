@@ -394,6 +394,7 @@ function getYearList()
     return array(
         array("label" => 2024, "value" => 2024),
         array("label" => 2025, "value" => 2025),
+        array("label" => 2026, "value" => 2026),
     );
 }
 

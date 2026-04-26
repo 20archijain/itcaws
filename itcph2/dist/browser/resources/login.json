@@ -15,7 +15,7 @@
     "client": {
       "logo": "https:\/\/upimg2.radardashboard.com\/logo\/dummy_pic.jpg"
     },
-    "token": "87d69cb4cf0eadad602aefae72aa9610c137a80e9fb3a46bf7b0bbee62592305",
+    "token": "c2e11d8ddb8a7a30ef5e49f0f7a2d9be0025f9e04b5aabf4b49bde09e1cdfc00",
     "modules": {
       "MP01": {
         "breadcrumbs": false,
@@ -963,6 +963,19 @@
             "pmodc": "DWN01",
             "fold": "downloadReports\/mdoTargetReport.php",
             "componentName": "MDOReportComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DWN31": {
+            "breadcrumbs": false,
+            "id": 134,
+            "name": "Manual Assign Target",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN31",
+            "pmodc": "DWN01",
+            "fold": "reporting\/manualAssignTarget.php",
+            "componentName": "ManualAssignTargetComponent",
             "submodules": [],
             "actions": []
           }

@@ -626,7 +626,7 @@ class LineCutReport
                         //All Brand Query
                         $sAction3 = null;
                         $iRows3 = 0;
-                        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_history as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
+                        $sQuery3 = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_pickupstock_products_allocation as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
                             "  AND a.branch_id = $branchId $teamTypeCond AND a.team_type = '$isType' AND a.month = '$numericMonth' AND a.year = '$numericYear'
                         $Cond $whereFilter ORDER BY a.category_name, a.product_name";
                         // echo $sQuery3;die;

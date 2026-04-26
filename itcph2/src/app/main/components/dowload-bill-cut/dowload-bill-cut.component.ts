@@ -113,7 +113,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.group.get('district')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
@@ -141,7 +141,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.productValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.group.get('branch')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
@@ -167,7 +167,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
@@ -190,7 +190,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
@@ -209,7 +209,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
@@ -224,7 +224,7 @@ export class DowloadBillCutComponent implements OnDestroy, OnInit {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.group.get('branch')?.value, circle: this.group.get('circle')?.value, section: this.group.get('section')?.value, wdCode: this.group.get('wdCode')?.value, dsType: this.group.get('dsType')?.value }, null, this.url)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {

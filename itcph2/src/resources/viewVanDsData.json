@@ -2,548 +2,467 @@
   "status": 200,
   "message": [],
   "data": {
+    "districtList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "EDIS",
+        "value": "EDIS"
+      },
+      {
+        "label": "NDIS",
+        "value": "NDIS"
+      },
+      {
+        "label": "SDIS",
+        "value": "SDIS"
+      },
+      {
+        "label": "WDIS",
+        "value": "WDIS"
+      }
+    ],
     "branchList": [
       {
         "label": "All",
         "value": "all"
       },
       {
-        "label": "UP East",
-        "value": "1",
-        "mainBranch": "NEUP"
+        "label": "Agra",
+        "value": 56,
+        "mainBranch": "NSAH"
       },
       {
-        "label": "Jaipur",
-        "value": "5",
-        "mainBranch": "NJPR"
+        "label": "Aligarh",
+        "value": 57,
+        "mainBranch": "NSAH"
       },
       {
-        "label": "EBEN",
-        "value": "15",
-        "mainBranch": "EBEN"
+        "label": "Arunachal",
+        "value": 7,
+        "mainBranch": "EGAU"
       },
       {
-        "label": "Bihar",
-        "value": "18",
-        "mainBranch": "EPAT"
-      },
-      {
-        "label": "W-NAG-MH",
-        "value": "25",
-        "mainBranch": "WNAG"
-      },
-      {
-        "label": "SCOI",
-        "value": "35",
-        "mainBranch": "SCOI"
+        "label": "Assam",
+        "value": 8,
+        "mainBranch": "EGAU"
       }
     ],
     "circleList": [
       {
-        "value": "CA1",
-        "label": "CA1"
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "CAV",
-        "label": "CAV"
+        "label": "AH1 - ",
+        "value": "AH1"
       },
       {
-        "value": "CO1",
-        "label": "CO1"
+        "label": "AH1 - Ahmedabad Circle",
+        "value": "AH1"
       },
       {
-        "value": "CO2",
-        "label": "CO2"
+        "label": "AH2 - South Gujarat",
+        "value": "AH2"
       },
       {
-        "value": "CO3",
-        "label": "CO3"
+        "label": "AH2 - South Gujrat Circle",
+        "value": "AH2"
       },
       {
-        "value": "JAK",
-        "label": "JAK"
-      },
-      {
-        "value": "LU4",
-        "label": "LU4"
-      },
-      {
-        "value": "LUC_CFP",
-        "label": "LUC_CFP"
-      },
-      {
-        "value": "NAM",
-        "label": "NAM"
-      },
-      {
-        "value": "NAV",
-        "label": "NAV"
-      },
-      {
-        "value": "PAM",
-        "label": "PAM"
+        "label": "AH3 - ",
+        "value": "AH3"
       }
     ],
     "sectionList": [
       {
-        "value": "CA1004",
-        "label": "CA1004"
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "CAV001",
-        "label": "CAV001"
+        "label": "AH1001 - Ahm City 1-CFP",
+        "value": "AH1001"
       },
       {
-        "value": "CAV005",
-        "label": "CAV005"
+        "label": "AH1002 - ",
+        "value": "AH1002"
       },
       {
-        "value": "CO100A",
-        "label": "CO100A"
+        "label": "AH1002 - Ahm City 2-CFP",
+        "value": "AH1002"
       },
       {
-        "value": "CO200B",
-        "label": "CO200B"
+        "label": "AH1003 - Ahm City 3-CFP",
+        "value": "AH1003"
       },
       {
-        "value": "CO3007",
-        "label": "CO3007"
-      },
-      {
-        "value": "JAK001",
-        "label": "JAK001"
-      },
-      {
-        "value": "LU4002",
-        "label": "LU4002"
-      },
-      {
-        "value": "LU4004",
-        "label": "LU4004"
-      },
-      {
-        "value": "LUC003_CFP",
-        "label": "LUC003_CFP"
-      },
-      {
-        "value": "NAM001",
-        "label": "NAM001"
-      },
-      {
-        "value": "NAV002",
-        "label": "NAV002"
-      },
-      {
-        "value": "NAV003",
-        "label": "NAV003"
-      },
-      {
-        "value": "NAV004",
-        "label": "NAV004"
-      },
-      {
-        "value": "PAM004",
-        "label": "PAM004"
-      },
-      {
-        "value": "PAM007",
-        "label": "PAM007"
-      },
-      {
-        "value": "PAM010",
-        "label": "PAM010"
+        "label": "AH2001 - Vadodara - CFP",
+        "value": "AH2001"
       }
     ],
     "wdCodeList": [
       {
-        "value": "CA3469",
-        "label": "CA3469"
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "CA3520",
-        "label": "CA3520"
+        "label": "AH20621 - RAJKOT (M CORP.) - AAKASH ENTERPRISE",
+        "value": "AH20621"
       },
       {
-        "value": "CA3684",
-        "label": "CA3684"
+        "label": "AH2119 -  - MUKHI AGENCY",
+        "value": "AH2119"
       },
       {
-        "value": "CO4034",
-        "label": "CO4034"
+        "label": "AH21431 - AHMADABAD (M CORP.) - MAHADEV AGENCIES",
+        "value": "AH21431"
       },
       {
-        "value": "CO4043",
-        "label": "CO4043"
+        "label": "AH2356 -  - P H WADIA & SONS",
+        "value": "AH2356"
       },
       {
-        "value": "CO4097",
-        "label": "CO4097"
-      },
-      {
-        "value": "JA6051",
-        "label": "JA6051"
-      },
-      {
-        "value": "LU3999",
-        "label": "LU3999"
-      },
-      {
-        "value": "LU4001",
-        "label": "LU4001"
-      },
-      {
-        "value": "LU4077",
-        "label": "LU4077"
-      },
-      {
-        "value": "NG2241",
-        "label": "NG2241"
-      },
-      {
-        "value": "NG2957",
-        "label": "NG2957"
-      },
-      {
-        "value": "NG3104",
-        "label": "NG3104"
-      },
-      {
-        "value": "NG3141",
-        "label": "NG3141"
-      },
-      {
-        "value": "PA208910",
-        "label": "PA208910"
-      },
-      {
-        "value": "PA2714",
-        "label": "PA2714"
-      },
-      {
-        "value": "PA2774",
-        "label": "PA2774"
+        "label": "AH2844 - MODASA (M) - SANA ENTERPRISE",
+        "value": "AH2844"
       }
     ],
     "teamType": [
       {
-        "label": "VAN DS",
-        "value": "0"
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "Van DS",
+        "value": 0
+      },
+      {
+        "label": "Town SWD",
+        "value": 2
+      },
+      {
+        "label": "NPSR",
+        "value": 5
       }
     ],
     "teamList": [
       {
-        "value": "1260",
-        "label": "Akash Jawanjad"
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "1131",
-        "label": "ANURAG"
+        "label": "1CG BALAKRISHNAN",
+        "value": 19858
       },
       {
-        "value": "8",
-        "label": "Asif"
+        "label": "A Basha",
+        "value": 20272
       },
       {
-        "value": "1851",
-        "label": "Asif Mirza"
+        "label": "A RAJU",
+        "value": 20025
       },
       {
-        "value": "19044",
-        "label": "Bikash Kumar"
+        "label": "A Raza",
+        "value": 1459
+      }
+    ],
+    "wdMarketList": [
+      {
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "944",
-        "label": "CHANDAN_EX CG SWD DS"
+        "label": "ABHAYAPURI (TC)",
+        "value": "ABHAYAPURI (TC)"
       },
       {
-        "value": "1067",
-        "label": "Kartick2"
+        "label": "ABOHAR (M CL)",
+        "value": "ABOHAR (M CL)"
       },
       {
-        "value": "638",
-        "label": "KOUSHIK ROY"
+        "label": "ABU ROAD (M)",
+        "value": "ABU ROAD (M)"
       },
       {
-        "value": "15940",
-        "label": "M MUTHUKRISHNAN"
+        "label": "ACHAMPET (CT)",
+        "value": "ACHAMPET (CT)"
+      }
+    ],
+    "wdPopGroupList": [
+      {
+        "label": "All",
+        "value": "all"
       },
       {
-        "value": "1867",
-        "label": "Mahadeo Sonkusare1"
+        "label": "<2",
+        "value": "<2"
       },
       {
-        "value": "639",
-        "label": "MRINAL ROY"
+        "label": ">1000",
+        "value": ">1000"
       },
       {
-        "value": "1068",
-        "label": "Narayan"
+        "label": ">1000000",
+        "value": ">1000000"
       },
       {
-        "value": "965",
-        "label": "Naushad2"
+        "label": "0",
+        "value": "0"
       },
       {
-        "value": "15950",
-        "label": "P STEPHEN"
+        "label": "10-20",
+        "value": "10-20"
       },
       {
-        "value": "926",
-        "label": "PRAMOD KUMAR"
+        "label": "100-500",
+        "value": "100-500"
       },
       {
-        "value": "1589",
-        "label": "PRATAP ROY2"
+        "label": "10k - 20K",
+        "value": "10k - 20K"
       },
       {
-        "value": "1532",
-        "label": "Rajeev"
+        "label": "2-5",
+        "value": "2-5"
       },
       {
-        "value": "2",
-        "label": "Ram Ds"
+        "label": "20-50",
+        "value": "20-50"
       },
       {
-        "value": "946",
-        "label": "RANJAN EX CG SWD DS"
+        "label": "21-50",
+        "value": "21-50"
       },
       {
-        "value": "15960",
-        "label": "RUBAN"
+        "label": "21-50000",
+        "value": "21-50000"
       },
       {
-        "value": "1069",
-        "label": "Santu"
+        "label": "44105",
+        "value": "44105"
       },
       {
-        "value": "1591",
-        "label": "SAYAN PAIN"
+        "label": "5-10",
+        "value": "5-10"
       },
       {
-        "value": "59",
-        "label": "SHIVAM VAN DS"
+        "label": "500-1000",
+        "value": "500-1000"
       },
       {
-        "value": "1480",
-        "label": "SUJAN DAS"
+        "label": "50k",
+        "value": "50k"
       },
       {
-        "value": "1168",
-        "label": "Sunil2"
+        "label": "51-100",
+        "value": "51-100"
       },
       {
-        "value": "1167",
-        "label": "Sunny"
+        "label": "51-100K",
+        "value": "51-100K"
       },
       {
-        "value": "19075",
-        "label": "Sunny"
+        "label": "FLP",
+        "value": "FLP"
       },
       {
-        "value": "1070",
-        "label": "Tapas Das"
+        "label": "OLP",
+        "value": "OLP"
       },
       {
-        "value": "1224",
-        "label": "TULSI KUMAR WHOLESALE DS"
-      },
-      {
-        "value": "1866",
-        "label": "TUSHAR"
-      },
-      {
-        "value": "19076",
-        "label": "Tushar"
-      },
-      {
-        "value": "1158",
-        "label": "UTTAM"
+        "label": "TLP",
+        "value": "TLP"
       }
     ],
     "showTransactionDownloadBtn": true,
     "showSummaryDownloadBtn": true,
     "branchFilter": true,
     "userBranch": "",
-    "total": 248,
+    "binderReportDownloadDays": 5,
+    "transactionReportDownloadDays": 31,
+    "summaryReportDownloadDays": 31,
+    "total": 3784,
     "listingData": [
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "AMBAJI KIRANA",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CH3468",
+        "route": "6_Sat_Chendodu",
+        "shopName": "SSR",
+        "mobileNumber": "9849694202",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:30:16 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8888806",
-        "lg": "75.3496302",
+        "timestamp": "26-04-2026 06:43:45 AM",
+        "team_id": 20170,
+        "team": "JAMEER",
+        "branchName": "SRAY",
+        "circle": "HYF",
+        "section": "HYF006",
+        "lt": 14.144640700000000066438587964512407779693603515625,
+        "lg": 79.85246300000000019281287677586078643798828125,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "GURUKRUPA KIRANA",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CH3468",
+        "route": "6_Sat_Chendodu",
+        "shopName": "BMK",
+        "mobileNumber": "9550002607",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:29:33 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8888813",
-        "lg": "75.3496304",
+        "timestamp": "26-04-2026 06:43:19 AM",
+        "team_id": 20170,
+        "team": "JAMEER",
+        "branchName": "SRAY",
+        "circle": "HYF",
+        "section": "HYF006",
+        "lt": 14.1446360000000002088427208946086466312408447265625,
+        "lg": 79.8524627000000037924110074527561664581298828125,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "AANAND KIRANA",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CH3468",
+        "route": "6_Sat_Chendodu",
+        "shopName": "VENKATA RAMANA (BK)",
+        "mobileNumber": "9515484816",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:20:18 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8884041",
-        "lg": "75.349052",
+        "timestamp": "26-04-2026 06:42:47 AM",
+        "team_id": 20170,
+        "team": "JAMEER",
+        "branchName": "SRAY",
+        "circle": "HYF",
+        "section": "HYF006",
+        "lt": 14.1446296000000000248064679908566176891326904296875,
+        "lg": 79.8524529000000029554939828813076019287109375,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "KHANDELWAL KIRANA",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "ER2399",
+        "route": "4_Thu_Kottayam_Pampady",
+        "shopName": "KAITHAMATTOM STORES - ELAKODINJI",
+        "mobileNumber": "9544889683",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:19:33 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8895545",
-        "lg": "75.3497807",
+        "timestamp": "26-04-2026 06:35:11 AM",
+        "team_id": 19964,
+        "team": "SUJITH",
+        "branchName": "SERN",
+        "circle": "ER2",
+        "section": "ER2002",
+        "lt": 9.58868269999999967012627166695892810821533203125,
+        "lg": 76.5240462000000007947164704091846942901611328125,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "AARUSHI ENT",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "BL5305",
+        "route": "1_Mon_HARAPANAHALLI_TO_HARAPANAHALLI",
+        "shopName": "ASLAM GENERAL STORE",
+        "mobileNumber": "7019458673",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:18:30 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8888806",
-        "lg": "75.3496302",
+        "timestamp": "26-04-2026 06:24:11 AM",
+        "team_id": 20111,
+        "team": "SHRIDHAR",
+        "branchName": "SKAR",
+        "circle": "BLT",
+        "section": "BLT004",
+        "lt": 14.7850049999999999528199623455293476581573486328125,
+        "lg": 75.987454600000006621485226787626743316650390625,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "NG3104",
-        "route": "Fri_SAWANGI",
-        "shopName": "VIJAY TRADING",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CA3718",
+        "route": "Mon_GHUTUARISARIF TO CANNING .2",
+        "shopName": "MAHADEB BHANDAR",
+        "mobileNumber": "8927787792",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 09:17:49 PM",
-        "team_id": "1851",
-        "team": "Asif Mirza",
-        "branchName": "W-NAG-MH",
-        "circle": "NAM",
-        "section": "NAM001",
-        "lt": "19.8888812",
-        "lg": "75.3496304",
+        "timestamp": "26-04-2026 06:07:03 AM",
+        "team_id": 1607,
+        "team": "Hasibul Gazi",
+        "branchName": "ECAL",
+        "circle": "CA3",
+        "section": "CA3005",
+        "lt": 0,
+        "lg": 0,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "PA2774",
-        "route": "Fri_PATAHI_to_SARAIYA",
-        "shopName": "sk gen",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "BL5804",
+        "route": "NANJANGUD SWD",
+        "shopName": "BHARATH STORES",
+        "mobileNumber": "8861142518",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 08:05:13 PM",
-        "team_id": "1131",
-        "team": "ANURAG",
-        "branchName": "Bihar",
-        "circle": "PAM",
-        "section": "PAM004",
-        "lt": "26.115179721253",
-        "lg": "85.29880810529",
+        "timestamp": "26-04-2026 05:46:31 AM",
+        "team_id": 20283,
+        "team": "Mazar Ahamed",
+        "branchName": "SBLR UC",
+        "circle": "BLM",
+        "section": "BLM001",
+        "lt": 12.1160025999999998447265170398168265819549560546875,
+        "lg": 76.6692335999999983187080943025648593902587890625,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "PA2774",
-        "route": "Fri_PATAHI_to_SARAIYA",
-        "shopName": "SUBASH GEN3",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CA3555",
+        "route": "Thu_PAHALANPUR TO GOTAN",
+        "shopName": "ALI GROUP",
+        "mobileNumber": "8609501229",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 08:04:51 PM",
-        "team_id": "1131",
-        "team": "ANURAG",
-        "branchName": "Bihar",
-        "circle": "PAM",
-        "section": "PAM004",
-        "lt": "26.115179721253",
-        "lg": "85.29880810529",
+        "timestamp": "26-04-2026 05:38:44 AM",
+        "team_id": 657,
+        "team": "Somnath ghosh",
+        "branchName": "EBEN",
+        "circle": "CAV",
+        "section": "CAV002",
+        "lt": 22.999741199999998997327566030435264110565185546875,
+        "lg": 87.8525321999999988520357874222099781036376953125,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "PA2774",
-        "route": "Fri_PATAHI_to_SARAIYA",
-        "shopName": "GAYATRI GEN",
-        "mobileNumber": "",
-        "shopType": null,
+        "wdCode": "CA3671",
+        "route": "Thu_AMDOHORA TO DARKA",
+        "shopName": "FULLESHAWARI BHANDAR",
+        "mobileNumber": "8972875394",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 08:04:28 PM",
-        "team_id": "1131",
-        "team": "ANURAG",
-        "branchName": "Bihar",
-        "circle": "PAM",
-        "section": "PAM004",
-        "lt": "26.115179721253",
-        "lg": "85.29880810529",
+        "timestamp": "26-04-2026 05:33:20 AM",
+        "team_id": 630,
+        "team": "BIKRAM KANUI",
+        "branchName": "EBEN",
+        "circle": "CAV",
+        "section": "CAV003",
+        "lt": 23.68617330000000009704308467917144298553466796875,
+        "lg": 87.7945021999999966055838740430772304534912109375,
         "images": []
       },
       {
         "reportingType": "Outlet Order",
-        "wdCode": "CO4034",
-        "route": "Fri_TOWN",
-        "shopName": "VIJAYALAKSHMI STORES",
-        "mobileNumber": "6381123546",
-        "shopType": null,
+        "wdCode": "ER2399",
+        "route": "4_Thu_Kottayam_Pampady",
+        "shopName": "THOMAS DEVASSIYA AMBALAKAVALA",
+        "mobileNumber": "9400135196",
+        "shopType": "",
         "sellIinOrder": "Yes",
-        "timestamp": "07-02-2025 07:51:02 PM",
-        "team_id": "15940",
-        "team": "M MUTHUKRISHNAN",
-        "branchName": "SCOI",
-        "circle": "CO3",
-        "section": "CO3007",
-        "lt": "9.9226089",
-        "lg": "78.1230386",
+        "timestamp": "26-04-2026 05:18:37 AM",
+        "team_id": 19964,
+        "team": "SUJITH",
+        "branchName": "SERN",
+        "circle": "ER2",
+        "section": "ER2002",
+        "lt": 9.5907531999999999783312887302599847316741943359375,
+        "lg": 76.5382527999999950907294987700879573822021484375,
         "images": []
       }
     ]

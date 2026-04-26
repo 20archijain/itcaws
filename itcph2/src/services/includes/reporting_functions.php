@@ -640,7 +640,7 @@ function getGridDataAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNo
     return $arrValues;
 }
 
-// Get  Ans2 Grid data as array
+// Get Grid data as array
 function getGridDataForOrderAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNotSet = false)
 {
     $arrValues = array();

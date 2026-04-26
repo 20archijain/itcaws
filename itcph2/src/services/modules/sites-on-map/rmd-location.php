@@ -6,12 +6,12 @@ require_once $include_path . "class/SitesOnMapManagement.php";
 if (!isEmptyString($requestAction)) {
     $sites = new SitesOnMapManagement($dbConn, $requestData, $arrAccessInfo);
     switch ($requestAction) {
-        case $ACTION_LIST['GET_DATA']:
-            $sites->getRmdData();
-            break;
-        case $ACTION_LIST['GET_LIST']:
-            $sites->getRmdLocationCoveredData();
-            break;
+            // case $ACTION_LIST['GET_DATA']:
+            //     $sites->getRmdData();
+            //     break;
+            // case $ACTION_LIST['GET_LIST']:
+            //     $sites->getRmdLocationCoveredData();
+            //     break;
         default:
             $arrMessage = responseMessage(array($INVALID_ACTION));
             echo json_encode($arrMessage);
