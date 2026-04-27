@@ -13,7 +13,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './view.project.component.html'
+  templateUrl: './view.project.component.html',
+  standalone: false,
 })
 export class ViewProjectComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
@@ -22,7 +23,7 @@ export class ViewProjectComponent implements OnDestroy, OnInit {
   url = environment.viewProjectsUrl;
   sortOptions: DropdownList[] = [];
   clientOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   editConfig: EditConfig[] = [];
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
@@ -45,11 +46,11 @@ export class ViewProjectComponent implements OnDestroy, OnInit {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sortOptions = resp.data.sortOptions;
             this.clientOptions = resp.data.clientList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader ?? [];
+            this.body = resp.data.viewBody ?? [];
 
             this.editConfig = [
               {

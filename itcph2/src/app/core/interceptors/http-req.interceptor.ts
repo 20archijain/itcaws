@@ -50,13 +50,30 @@ export class HttpReqInterceptor implements HttpInterceptor {
         catchError((err: HttpErrorResponse) => {
           let statusText = '';
           let errorMsg = '';
+
+          // Check browser network status
+          const isOnline = navigator.onLine;
+
+          if (!isOnline) {
+            statusText = 'Failed';
+            errorMsg = 'No internet connection';
+            console.warn(errorMsg);
+
+            this.spinnerService.stopSpinner();
+            this.toastr.toastr({ type: 'error', title: statusText, msg: errorMsg });
+
+            // Block the request
+            throw { status: REQUEST_STATUS.FAILED, message: ['You are offline'] };
+          }
+
+          console.warn(err);
           if (err.error instanceof Error) {
             errorMsg = err.error.message;
             // A client-side or network error occurred
             this.toastr.toastr({ type: 'error', title: 'Some network error', msg: errorMsg });
           } else {
-            statusText = err.statusText.toLowerCase() === 'unknown error' ? 'Network Error' : err.statusText;
-            errorMsg = err.statusText.toLowerCase() === 'unknown error' ? 'No Internet Connection ' : err.message;
+            statusText = err.statusText;
+            errorMsg = err.message;
             // The backend returned an unsuccessful response code like 404, some broken file, server is down
             this.toastr.toastr({ type: 'error', title: statusText, msg: errorMsg });
           }

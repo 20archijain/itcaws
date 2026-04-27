@@ -12,11 +12,12 @@ import { DropdownList, GetAddProjectDataResponse } from 'src/app/core/interfaces
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './add.wdmapping.component.html'
+  templateUrl: './add.wdmapping.component.html',
+  standalone: false,
 })
 export class AddWdMappingComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   errorMessages = {
     district: COMMON_VALIDATORS.messages.requiredOnly('District'),
     branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
@@ -70,7 +71,7 @@ export class AddWdMappingComponent implements AfterViewInit, OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(response => {
-          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+          if (response && response.status === REQUEST_STATUS.SUCCESS && response.data) {
             this.districtOptions = response.data.districtList;
             this.branchOptions = response.data.branchList;
           }

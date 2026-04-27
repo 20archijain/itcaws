@@ -17,7 +17,8 @@ import * as FileSaver from 'file-saver';
         animate('300ms ease-in', style({ opacity: 0, transform: 'translateX(50px)' })),
       ]),
     ]),
-  ]
+  ],
+  standalone: false,
 })
 export class NpsrAccordionComponent implements OnChanges {
   @Input() monthlySalesData: any;

@@ -6,11 +6,12 @@ import { MAP_DEFAULTS, mapPath } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-line-map',
-  templateUrl: './line-map.component.html'
+  templateUrl: './line-map.component.html',
+  standalone: false,
 })
 export class LineMapComponent implements AfterViewInit, OnChanges {
-  @ViewChild(MapPolyline) mapPolyline: MapPolyline;
-  @ViewChild(GoogleMap) googleMap: GoogleMap;
+  @ViewChild(MapPolyline) mapPolyline!: MapPolyline;
+  @ViewChild(GoogleMap) googleMap!: GoogleMap;
   @Input() markers: MapConfig[] = [];
   @Input() defaultZoom = MAP_DEFAULTS.defaultZoom;
   @Input() strokeWeight = MAP_DEFAULTS.strokeWeight;
@@ -22,7 +23,7 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
   @Input() betweenMarkerUrl = `${mapPath}${MAP_DEFAULTS.icons.BETWEEN}`;
   @Input() lastMarkerUrl = `${mapPath}${MAP_DEFAULTS.icons.END}`;
   paths: google.maps.LatLngLiteral[] = [];
-  center: google.maps.LatLngLiteral;
+  center!: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     zoomControl: true,
     scrollwheel: true,
@@ -50,7 +51,7 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
     anchor: new google.maps.Point(16, 16)
   };
 
-  marker: google.maps.Marker;
+  marker!: google.maps.Marker;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes?.markers?.currentValue?.length > 0) {
@@ -64,7 +65,7 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
     if (this.showAnimation && this.mapPolyline?.polyline) {
       this.animateCircle(this.mapPolyline.polyline);
     }
-    this.directionsRenderer.setMap(this.googleMap.googleMap);
+    this.directionsRenderer.setMap(this.googleMap.googleMap as google.maps.Map);
     this.directionsRenderer.setOptions({ suppressMarkers: true });
     this.initializeWalkingAnimation();
   }
@@ -80,7 +81,7 @@ export class LineMapComponent implements AfterViewInit, OnChanges {
       waypoints: waypoints,
       travelMode: google.maps.TravelMode.DRIVING
     }, (response, status) => {
-      if (status === google.maps.DirectionsStatus.OK) {
+      if (status === google.maps.DirectionsStatus.OK && response) {
         this.directionsRenderer.setDirections(response);
         this.startWalkingAnimation(response.routes[0].overview_path);
       } else {

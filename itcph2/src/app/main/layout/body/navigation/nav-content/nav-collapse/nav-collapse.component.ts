@@ -18,10 +18,11 @@ import { NextConfig } from 'src/app/app-config';
   ],
   selector: 'app-nav-collapse',
   templateUrl: './nav-collapse.component.html',
+  standalone: false,
 })
 export class NavCollapseComponent {
   private nextConfig: any;
-  @Input() item: INavigationItem;
+  @Input() item!: INavigationItem;
   public themeLayout: string;
 
   constructor() {
@@ -29,7 +30,7 @@ export class NavCollapseComponent {
     this.themeLayout = this.nextConfig.layout;
   }
 
-  navCollapse(e) {
+  navCollapse(e: any) {
     let parent = e.target;
     if (this.themeLayout === 'vertical') {
       parent = parent.parentElement;

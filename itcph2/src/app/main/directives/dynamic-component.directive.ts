@@ -1,7 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[appDynamicComponent]'
+  selector: '[appDynamicComponent]',
+  standalone: false,
 })
 
 export class DynamicComponentDirective {

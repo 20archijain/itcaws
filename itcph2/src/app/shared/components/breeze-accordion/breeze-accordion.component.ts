@@ -18,19 +18,14 @@ import * as FileSaver from "file-saver";
     trigger("columnAnimation", [
       transition(":enter", [
         style({ opacity: 0, transform: "translateX(50px)" }),
-        animate(
-          "300ms ease-out",
-          style({ opacity: 1, transform: "translateX(0)" }),
-        ),
+        animate("300ms ease-out", style({ opacity: 1, transform: "translateX(0)" })),
       ]),
       transition(":leave", [
-        animate(
-          "300ms ease-in",
-          style({ opacity: 0, transform: "translateX(50px)" }),
-        ),
+        animate("300ms ease-in", style({ opacity: 0, transform: "translateX(50px)" })),
       ]),
     ]),
   ],
+  standalone: false,
 })
 export class BreezeAccordionComponent implements OnChanges {
   @Input() monthlySalesData: any;
@@ -320,47 +315,47 @@ export class BreezeAccordionComponent implements OnChanges {
         });
       });
     } else if (_label == 'type') {
-  this.monthlySalesData.districtData.forEach((district: any) => {
-    district.branchData.forEach((branch: any) => {
-      branch.circleData.forEach((circle: any) => {
-        circle.sectionData.forEach((section: any) => {
-          section.wdData.forEach((wd: any) => {
-            wd.teamTypeData.forEach((teamType: any) => {
-              rows.push(this.createRow({
-                district: district.district, branch: branch.branch_name,
-                circle: circle.circle, section: section.section,
-                wd: wd.wd_code, type: teamType.team_type
-              }, teamType.teamTypeLevelSale));
-            });
-          });
-        });
-      });
-    });
-  });
-}
-else if (_label == 'team') {
-  this.monthlySalesData.districtData.forEach((district: any) => {
-    district.branchData.forEach((branch: any) => {
-      branch.circleData.forEach((circle: any) => {
-        circle.sectionData.forEach((section: any) => {
-          section.wdData.forEach((wd: any) => {
-            // NEW: go through teamTypeData first
-            wd.teamTypeData.forEach((teamType: any) => {
-              teamType.teamData.forEach((team: any) => {
-                rows.push(this.createRow({
-                  district: district.district, branch: branch.branch_name,
-                  circle: circle.circle, section: section.section,
-                  wd: wd.wd_code, type: teamType.team_type,
-                  dsType: team.team_type, dsId: team.team_id, dsName: team.team_name
-                }, team.teamLevelSale));
+      this.monthlySalesData.districtData.forEach((district: any) => {
+        district.branchData.forEach((branch: any) => {
+          branch.circleData.forEach((circle: any) => {
+            circle.sectionData.forEach((section: any) => {
+              section.wdData.forEach((wd: any) => {
+                wd.teamTypeData.forEach((teamType: any) => {
+                  rows.push(this.createRow({
+                    district: district.district, branch: branch.branch_name,
+                    circle: circle.circle, section: section.section,
+                    wd: wd.wd_code, type: teamType.team_type
+                  }, teamType.teamTypeLevelSale));
+                });
               });
             });
           });
         });
       });
-    });
-  });
-}
+    }
+    else if (_label == 'team') {
+      this.monthlySalesData.districtData.forEach((district: any) => {
+        district.branchData.forEach((branch: any) => {
+          branch.circleData.forEach((circle: any) => {
+            circle.sectionData.forEach((section: any) => {
+              section.wdData.forEach((wd: any) => {
+                // NEW: go through teamTypeData first
+                wd.teamTypeData.forEach((teamType: any) => {
+                  teamType.teamData.forEach((team: any) => {
+                    rows.push(this.createRow({
+                      district: district.district, branch: branch.branch_name,
+                      circle: circle.circle, section: section.section,
+                      wd: wd.wd_code, type: teamType.team_type,
+                      dsType: team.team_type, dsId: team.team_id, dsName: team.team_name
+                    }, team.teamLevelSale));
+                  });
+                });
+              });
+            });
+          });
+        });
+      });
+    }
     // else if (_label == "team") {
     //   this.monthlySalesData.districtData.forEach((district: any) => {
     //     district.branchData.forEach((branch: any) => {

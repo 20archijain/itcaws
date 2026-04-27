@@ -5,14 +5,15 @@ import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-alert',
-  templateUrl: './alert.component.html'
+  templateUrl: './alert.component.html',
+  standalone: false,
 })
 export class AlertComponent {
-  @Input() response: HttpRequestResponse = null;
+  @Input() response: HttpRequestResponse | null = null;
   @Input() allowDismiss = true;
   requestEnum = REQUEST_STATUS;
 
-  dismissAlert(element) {
+  dismissAlert(element: HTMLElement | null) {
     if (element && element.parentElement) {
       element.parentElement.removeChild(element);
     }

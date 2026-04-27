@@ -14,11 +14,12 @@ import { LoaderService } from 'src/app/core/services/loader.service';
 import { ChekboxOutput } from 'src/app/core/interfaces/helpers.interface';
 
 @Component({
-  templateUrl: './add.project.component.html'
+  templateUrl: './add.project.component.html',
+  standalone: false,
 })
 export class AddProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   errorMessages = {
     client: COMMON_VALIDATORS.messages.dropdown('Client Name'),
     landingPage: COMMON_VALIDATORS.messages.dropdown('Landing Page'),
@@ -29,7 +30,7 @@ export class AddProjectComponent implements AfterViewInit, OnInit, OnDestroy {
   landingPageOptions: DropdownList[] = [];
   checkboxOptions: DropdownList[] = [];
   checkKey = 'value';
-  selectedRecords = [];
+  selectedRecords: string[] | number[] = [];
 
   constructor(private fb: UntypedFormBuilder, private formService: FormService,
     private canGoBackGuard: CanGoBackGuard, private loaderService: LoaderService) { }
@@ -66,7 +67,7 @@ export class AddProjectComponent implements AfterViewInit, OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(response => {
-          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+          if (response && response.status === REQUEST_STATUS.SUCCESS && response.data) {
             this.clientOptions = response.data.clientList;
             this.landingPageOptions = response.data.landingPageList;
             this.checkboxOptions = response.data.checkboxList;
@@ -94,19 +95,18 @@ export class AddProjectComponent implements AfterViewInit, OnInit, OnDestroy {
     }
   }
 
-  isChecked(option: DropdownList) {
-    return this.selectedRecords ? this.selectedRecords.indexOf(option[this.checkKey]) > -1 : false;
+  isChecked(option: any) {
+    return this.selectedRecords ? this.selectedRecords.indexOf(option[this.checkKey] as never) > -1 : false;
   }
 
   emitSelectedRecords($event: ChekboxOutput) {
     this.selectedRecords = $event.selectedRecords;
     if (this.form.get('checkboxList')) {
-      this.form.get('checkboxList').setValue(this.selectedModules);
+      this.form.get('checkboxList')?.setValue(this.selectedModules);
     }
   }
 
   get selectedModules() {
-    // eslint-disable-next-line prefer-spread
-    return [].concat.apply([], this.selectedRecords);
+    return [...this.selectedRecords];
   }
 }

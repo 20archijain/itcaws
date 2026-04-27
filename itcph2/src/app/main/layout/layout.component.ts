@@ -4,7 +4,8 @@ import { SessionTimeoutService } from 'src/app/core/services/session.timeout.ser
 
 @Component({
   selector: 'app-layout',
-  templateUrl: './layout.component.html'
+  templateUrl: './layout.component.html',
+  standalone: false,
 })
 
 export class LayoutComponent {

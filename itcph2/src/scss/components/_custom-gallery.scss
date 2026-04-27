@@ -1,3 +1,5 @@
+@use "../mixins/scrollbar" as *;
+
 $cg-preview-actions-bg-color: rgba(0, 0, 0, .45);
 $cg-action-font-size: 24px;
 $cg-preview-actions-padding: 10px;

@@ -1,3 +1,5 @@
+@use "./mixins/scrollbar" as *;
+
 $error-border-color: #ff5252;
 $bg-light-info: rgba(0, 172, 193, .2);
 $required-field-color: #e32;

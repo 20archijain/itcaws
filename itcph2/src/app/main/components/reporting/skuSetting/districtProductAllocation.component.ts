@@ -26,23 +26,23 @@ export interface CategoryGroup {
 
 @Component({
   templateUrl: './branchProductAllocation.component.html',
-  styleUrls: ['./branchProductAllocation.component.scss']
+  styleUrls: ['./branchProductAllocation.component.scss'],
+  standalone: false,
 })
 export class DistrictProductAllocationComponent implements AfterViewInit, OnInit, OnDestroy {
 
   private subscription: Subscription[] = [];
 
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   productOptions: DropdownList[] = [];
   mainBranchOptions: DropdownList[] = [];
   regionOptions: DropdownList[] = [];
   teamTypeOptions: DropdownList[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: boolean;
   statusFlagCond = false;
   defaultDspm = false;
-  submittedDataList = [];
+  submittedDataList: any[] = [];
   currentDate = Functions.currentDate();
   skuDefaultAllocation = false;
 
@@ -104,7 +104,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
       this.formService.getList<GetProductSelectorDataResponse>(this.url, this.form.getRawValue())
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.mainBranchOptions = resp.data.mainBranchList;
             this.skuDefaultAllocation = resp.data.skuDefaultAllocation;
           }
@@ -115,7 +115,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
 
   getInitialData() {
     if (this.form.valid) {
-      const mainBranch = this.form.get('teamType').value;
+      const mainBranch = this.form.get('teamType')?.value;
       if (mainBranch === '5') {
         this.defaultDspm = true;
       } else {
@@ -126,7 +126,7 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
         this.formService.getData<GetProductSelectorDataResponse>(this.url, this.form.getRawValue())
           .pipe(finalize(() => this.loaderService.stopLoader()))
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               this.statusFlagCond = resp.data.statusFlag;
               this.submittedDataList = resp.data.submittedList;
 
@@ -136,10 +136,10 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
                 const existingIds = new Set(resp.data.selectedDataList.map(p => p.id));
 
                 // filter
-                resp.data.productList = resp.data.productList.filter(p => !existingIds.has(p.value));
+                resp.data.productList = resp.data.productList.filter((p: any) => !existingIds.has(p.value));
               }
 
-              this.availableProducts = resp.data.productList.map(p => ({
+              this.availableProducts = resp.data.productList.map((p: any) => ({
                 id: p.value,
                 name: p.label,
                 category: p.category,
@@ -165,10 +165,10 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
     this.teamTypeValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { mainBranch: this.form.get('main_branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { mainBranch: this.form.get('main_branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.regionOptions = resp.data.regionList;
           }
         })
@@ -186,10 +186,10 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
     this.teamTypeValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { region: this.form.get('region').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { region: this.form.get('region')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamTypeList;
           }
         })
@@ -558,14 +558,14 @@ export class DistrictProductAllocationComponent implements AfterViewInit, OnInit
     return group.category;
   }
 
-  set regionValue(value: string) {
+  set regionValue(value: string | null) {
     this.regionOptions = [];
-    this.form.get('region').setValue(value);
+    this.form.get('region')?.setValue(value);
   }
 
-  set teamTypeValue(value: string) {
+  set teamTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.form.get('teamType').setValue(value);
+    this.form.get('teamType')?.setValue(value);
   }
 
   ngAfterViewInit() {

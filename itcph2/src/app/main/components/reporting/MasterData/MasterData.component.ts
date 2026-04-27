@@ -13,13 +13,14 @@ import { EditConfig } from 'src/app/core/interfaces/helpers.interface';
 import { COMMON_VALIDATORS } from 'src/app/core/validators/validations.list';
 
 @Component({
-  templateUrl: './MasterData.component.html'
+  templateUrl: './MasterData.component.html',
+  standalone: false,
 })
 export class MasterDataListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: boolean;
+  isSelectable = false;
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   wdOptions: DropdownList[] = [];
@@ -27,7 +28,7 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
   teamOptions: DropdownList[] = [];
   focusTypeOptions: DropdownList[] = [];
   editConfig: EditConfig[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   isDisabled = false;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;
@@ -57,13 +58,13 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
-            this.branchOptions = resp.data.branchList;
-            this.dsTypeOptions = resp.data.dsTypeList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
-            this.isSelectable = resp.data.isSelectable;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions ?? [];
+            this.branchOptions = resp.data.branchList ?? [];
+            this.dsTypeOptions = resp.data.dsTypeList ?? [];
+            this.header = resp.data.viewHeader ?? [];
+            this.body = resp.data.viewBody ?? [];
+            this.isSelectable = resp.data.isSelectable ?? false;
 
             this.editConfig = [
               {
@@ -93,8 +94,8 @@ export class MasterDataListingComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+              Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })
       );

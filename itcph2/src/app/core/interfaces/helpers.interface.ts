@@ -19,13 +19,20 @@ export interface CsvDataFormat {
 
 export interface ConfirmationModalOutput {
   data: string | boolean;
-  goBackGuard: boolean;
+  goBackGuard?: boolean;
   show: boolean;
 }
 
 export interface ControlMaxDate {
   day: number;
   month: number;
+  year: number;
+}
+
+export interface FormattedDate<T = string> {
+  date: Date;
+  day: number;
+  month: T;
   year: number;
 }
 
@@ -61,8 +68,8 @@ export interface ListingBulkActionOutput {
 }
 
 export interface FileUploadEvent {
-  originalEvent: DragEvent | Event;
-  files: FileList;
+  originalEvent: DragEvent | Event | null;
+  files: FileList | null | undefined;
   invalid: boolean;
 }
 

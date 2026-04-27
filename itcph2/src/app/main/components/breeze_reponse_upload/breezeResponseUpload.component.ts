@@ -18,16 +18,17 @@ import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
   templateUrl: './breezeResponseUpload.component.html',
+  standalone: false,
 })
 export class BreezeResponseUploadComponent implements OnInit, OnDestroy {
 
-  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent: FileUploadComponent;
+  @ViewChild(FileUploadComponent, { static: false }) private fileUploadComponent!: FileUploadComponent;
 
   private subscription: Subscription[] = [];
 
-  excelFile: File = null;
+  excelFile: File | null | undefined = null;
   isDisabled = false;
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   excelData: any[] = [];
   excel = UPLOAD_FILES.fileTypes.excel.mimeTypes.join(',');
 
@@ -65,7 +66,6 @@ export class BreezeResponseUploadComponent implements OnInit, OnDestroy {
   onSelect(event: FileUploadEvent) {
     this.excelData = [];
     this.excelFile = event && event.files && event.files[0];
-
   }
 
   uploadData() {
@@ -115,7 +115,7 @@ export class BreezeResponseUploadComponent implements OnInit, OnDestroy {
           })
         )
         .subscribe(response => {
-          if (response && response.status === REQUEST_STATUS.SUCCESS) {
+          if (response && response.status === REQUEST_STATUS.SUCCESS && response.data) {
             Functions.downloadFile(response.data.filePath, response.data.fileName);
           }
         })

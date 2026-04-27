@@ -15,13 +15,14 @@ import { ToastrService } from 'src/app/core/services/toastr.service';
 import { LoaderService } from 'src/app/core/services/loader.service';
 
 @Component({
-  templateUrl: './my-profile.component.html'
+  templateUrl: './my-profile.component.html',
+  standalone: false,
 })
 export class MyProfileComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private passwordNotMatchError = 'err.passwordNotMatch';
-  personalForm: UntypedFormGroup;
-  passwordForm: UntypedFormGroup;
+  personalForm!: UntypedFormGroup;
+  passwordForm!: UntypedFormGroup;
   errorMessages = {
     confirmNewPassword: PROFILE_VALIDATORS.messages.confirmNewPassword,
     currentPassword: PROFILE_VALIDATORS.messages.currentPassword,
@@ -44,7 +45,7 @@ export class MyProfileComponent implements OnDestroy, OnInit {
         })
     );
 
-    const userDetails = JSON.parse(SessionUtil.getItem('user'));
+    const userDetails = JSON.parse(SessionUtil.getItem('user') || '{}');
     const name = userDetails && userDetails.name ? userDetails.name : '';
     const email = userDetails && userDetails.email ? userDetails.email : '';
 

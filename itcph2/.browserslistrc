@@ -1,0 +1,21 @@
+# The config to share target browsers and Node.js versions between different front-end tools. It is used in:
+# Autoprefixer
+# Babel
+# postcss-preset-env
+# eslint-plugin-compat
+# stylelint-no-unsupported-browser-features
+# postcss-normalize
+# obsolete-webpack-plugin
+
+# This file is used by the build system to adjust CSS and JS output to support the specified browsers below.
+# For additional information regarding the format and rule options, please see:
+# https://github.com/browserslist/browserslist#queries
+
+# You can see what browsers were selected by your queries by running:
+#   npx browserslist
+
+> 0.5% # Include all browsers with more than 0.5% global market share
+last 2 versions # Include the last 2 versions of every major browser
+Firefox ESR # Include Firefox ESR (Extended Support Release)
+not dead # Exclude “dead” browsers
+not IE 9-11 # For IE 9-11 support, remove 'not'.

@@ -7,15 +7,16 @@ import { Functions } from 'src/app/core/utils/functions.list';
 
 @Directive({
   selector: '[appScrollToFirstInvalidInput]',
+  standalone: false,
 })
 export class ScrollToFirstInvalidInputDirective {
-  @Input() private appScrollToFirstInvalidInput: UntypedFormGroup;
+  @Input() private appScrollToFirstInvalidInput!: UntypedFormGroup;
   tagNames = [
     'INPUT',
     'SELECT',
     'TEXTAREA',
   ];
-  control: HTMLElement;
+  control?: HTMLElement;
 
   constructor(private el: ElementRef) { }
 
@@ -26,7 +27,7 @@ export class ScrollToFirstInvalidInputDirective {
       if (this.form.valid) {
         return true;
       } else {
-        let controls = [];
+        let controls: any[] = [];
         // Get control names
         for (const key in this.form.controls) {
           // eslint-disable-next-line no-prototype-builtins
@@ -116,7 +117,7 @@ export class ScrollToFirstInvalidInputDirective {
 
   touchControl(control: AbstractControl | UntypedFormControl | UntypedFormGroup | UntypedFormArray) {
     if (control) {
-      if (control['controls']) {
+      if ((control as any)['controls']) {
         // FormArray
         if (control instanceof UntypedFormArray) {
           (control as UntypedFormArray).controls.forEach(ctrl => {
@@ -124,11 +125,11 @@ export class ScrollToFirstInvalidInputDirective {
           });
         } else {
           // FormGroup
-          const controls = Object.keys(control['controls']);
+          const controls = Object.keys((control as UntypedFormGroup)['controls']);
           controls.forEach(formControl => {
-            if (control['controls'][formControl]
-              && control['controls'][formControl].invalid) {
-              this.touchControl(control['controls'][formControl]);
+            if ((control as UntypedFormGroup)['controls'][formControl]
+              && (control as UntypedFormGroup)['controls'][formControl].invalid) {
+              this.touchControl((control as UntypedFormGroup)['controls'][formControl]);
             }
           });
         }
@@ -140,7 +141,7 @@ export class ScrollToFirstInvalidInputDirective {
     }
   }
 
-  findInputControl(control) {
+  findInputControl(control: any) {
     if (control && this.tagNames.indexOf(control.tagName) > -1) {
       return this.control = control;
     } else {

@@ -1,13 +1,14 @@
 import { AbstractControl, UntypedFormArray, UntypedFormGroup, ValidatorFn } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { CUSTOM_VALIDATOR_KEYS } from 'src/app/app.constants';
 import { PasswordConfig } from '../interfaces/helpers.interface';
 import { ListingService } from '../services/listing.service';
 
 export const FILE_SIZE_VALIDATOR = (allowedMaxSizeInBytes: number, currentSizeInBytes?: number): ValidatorFn => {
-  return (control: AbstractControl): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
 
-    if (control && allowedMaxSizeInBytes && currentSizeInBytes > allowedMaxSizeInBytes) {
+    if (control && allowedMaxSizeInBytes && currentSizeInBytes && currentSizeInBytes > allowedMaxSizeInBytes) {
       return { [CUSTOM_VALIDATOR_KEYS.FILE_SIZE]: true };
     }
 
@@ -16,10 +17,10 @@ export const FILE_SIZE_VALIDATOR = (allowedMaxSizeInBytes: number, currentSizeIn
 };
 
 export const FILE_TYPE_VALIDATOR = (allowedFileTypes: string, file: File): ValidatorFn => {
-  return (control: AbstractControl): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
 
     if (control && allowedFileTypes && file) {
-      const listingService = new ListingService(null);
+      const listingService = new ListingService({} as ActivatedRoute);
 
       if (!listingService.isFileTypeValid(file, allowedFileTypes)) {
         return { [CUSTOM_VALIDATOR_KEYS.FILE_TYPE]: true };
@@ -31,7 +32,7 @@ export const FILE_TYPE_VALIDATOR = (allowedFileTypes: string, file: File): Valid
 };
 
 export const REGEX_VALIDATOR = (validRegex: RegExp, isOptional?: boolean): ValidatorFn => {
-  return (control: AbstractControl): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
     const input = control.value;
     let isInvalidValueFound = false;
 
@@ -65,7 +66,8 @@ export const REGEX_VALIDATOR = (validRegex: RegExp, isOptional?: boolean): Valid
 };
 
 export const CONFIRM_PASSWORD_VALIDATOR = (config: PasswordConfig): ValidatorFn => {
-  return (form: UntypedFormGroup): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const form = control as UntypedFormGroup;
 
     if (!form || !form.controls ||
       !form.controls[config.newPass] || !form.controls[config.newPass].value ||
@@ -86,7 +88,8 @@ export const CONFIRM_PASSWORD_VALIDATOR = (config: PasswordConfig): ValidatorFn 
 // Check if user has filled any textbox with value (> 0 if includeZeroAsQty = true else >= 0)
 // If index >= 0, check form group else form array
 export const ATLEAST_ONE_MATERIAL_REQUIRED_VALIDATOR = (index?: number, includeZeroAsQty = false): ValidatorFn => {
-  return (form: UntypedFormArray): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const form = control as UntypedFormGroup;
     if (!form || !form.value || form.value.length === 0) {
       return null;
     }
@@ -100,7 +103,7 @@ export const ATLEAST_ONE_MATERIAL_REQUIRED_VALIDATOR = (index?: number, includeZ
       }
     } else {
       // get values from form array
-      form.value.forEach(qtyControl => {
+      form.value.forEach((qtyControl: Record<string, string>) => {
         if (qtyControl) {
           for (const control in qtyControl) {
             if (control) {
@@ -124,66 +127,13 @@ export const ATLEAST_ONE_MATERIAL_REQUIRED_VALIDATOR = (index?: number, includeZ
   };
 };
 
-// export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
-//   groupSize: number,
-//   index?: number,
-//   includeZeroAsQty = false
-// ): ValidatorFn => {
-//   return (form: UntypedFormArray): { [key: string]: any } | null => {
-//     if (!form || !form.value || form.value.length === 0 || groupSize <= 1) {
-//       return null;
-//     }
-
-//     const values: any[] = [];
-
-//     // Extract values
-//     if (index !== undefined && index !== null) {
-//       for (const control in form.value) {
-//         if (control) {
-//           values.push(form.value[control]);
-//         }
-//       }
-//     } else {
-//       form.value.forEach(qtyControl => {
-//         if (qtyControl) {
-//           for (const control in qtyControl) {
-//             if (control) {
-//               values.push(qtyControl[control]);
-//             }
-//           }
-//         }
-//       });
-//     }
-
-//     // Utility to determine if a value is "filled"
-//     const isFilled = (val: any) =>
-//       val !== null &&
-//       val !== undefined &&
-//       val !== '' &&
-//       !isNaN(+val) &&
-//       (includeZeroAsQty ? +val >= 0 : +val > 0);
-
-//     // Check each group
-//     for (let i = 0; i < values.length; i += groupSize) {
-//       const group = values.slice(i, i + groupSize);
-//       const filledCount = group.filter(val => isFilled(val)).length;
-
-//       if (filledCount > 0 && filledCount < group.length) {
-//         return { [CUSTOM_VALIDATOR_KEYS.ALL_VALUES_IN_GROUP_REQUIRED]: true };
-//       }
-//     }
-
-//     return null;
-//   };
-// };
-
-
 export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
   groupSize: number,
   index?: number,
   includeZeroAsQty = false
 ): ValidatorFn => {
-  return (form: UntypedFormArray): { [key: string]: any } | null => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const form = control as UntypedFormArray;
     if (!form || !form.value || form.value.length === 0 || groupSize <= 1) {
       return null;
     }
@@ -198,7 +148,7 @@ export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
         }
       }
     } else {
-      form.value.forEach(qtyControl => {
+      form.value.forEach((qtyControl: Record<string, string>) => {
         if (qtyControl) {
           for (const control in qtyControl) {
             if (control) {
@@ -242,7 +192,8 @@ export const GROUPED_VALUES_ALL_OR_NONE_VALIDATOR = (
 };
 
 export const ATLEAST_ONE_VALUE_REQUIRED_VALIDATOR = (index?: number): ValidatorFn => {
-  return (form: UntypedFormArray): { [key: string]: any } => {
+  return (control: AbstractControl): { [key: string]: any } | null => {
+    const form = control as UntypedFormGroup;
     if (!form || !form.value || form.value.length === 0) {
       return null;
     }
@@ -261,25 +212,25 @@ export const ATLEAST_ONE_VALUE_REQUIRED_VALIDATOR = (index?: number): ValidatorF
       if (form && form.controls) {
         Object.keys(form.controls).forEach(controlKey => {
           // Form array
-          if (form.controls[controlKey] && form.controls[controlKey].controls) {
-            if (form.controls[controlKey].controls.length) {
-              form.controls[controlKey].controls.forEach(control => {
+          if (form.controls[controlKey] && (form.controls[controlKey] as UntypedFormArray).controls) {
+            if ((form.controls[controlKey] as UntypedFormArray).controls.length) {
+              (form.controls[controlKey] as UntypedFormArray).controls.forEach(control => {
                 // Form group
-                if (control && control.controls && Object.keys(control.controls).length) {
-                  Object.keys(control.controls).forEach(innerControl => {
-                    values.push(control.controls[innerControl].value);
+                if (control && (control as UntypedFormGroup).controls && Object.keys((control as UntypedFormGroup).controls).length) {
+                  Object.keys((control as UntypedFormGroup).controls).forEach(innerControl => {
+                    values.push((control as UntypedFormGroup).controls[innerControl].value);
                   });
                 } else {
                   values.push(control.value);
                 }
               });
             } else {
-              if (Object.keys(form.controls[controlKey].controls).length) {
-                Object.keys(form.controls[controlKey].controls).forEach(innerControl => {
-                  values.push(form.controls[controlKey].controls[innerControl].value);
+              if (Object.keys((form.controls[controlKey] as UntypedFormArray).controls).length) {
+                Object.keys((form.controls[controlKey] as UntypedFormArray).controls).forEach(innerControl => {
+                  values.push((form.controls[controlKey] as UntypedFormArray).controls[innerControl as any].value);
                 });
               } else {
-                values.push(form.controls[controlKey].value);
+                values.push((form.controls[controlKey] as UntypedFormArray).value);
               }
             }
           } else {

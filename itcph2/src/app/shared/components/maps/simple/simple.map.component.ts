@@ -6,11 +6,12 @@ import { mapPath, MAP_DEFAULTS } from 'src/app/app.constants';
 
 @Component({
   selector: 'app-simple-map',
-  templateUrl: './simple-map.component.html'
+  templateUrl: './simple-map.component.html',
+  standalone: false,
 })
 export class SimpleMapComponent implements OnChanges {
-  @ViewChild(MapInfoWindow, { static: false }) infoWindow: MapInfoWindow;
-  @ViewChild(GoogleMap, { static: false }) map: GoogleMap;
+  @ViewChild(MapInfoWindow, { static: false }) infoWindow!: MapInfoWindow;
+  @ViewChild(GoogleMap, { static: false }) map!: GoogleMap;
   @Input() markers: MapConfig[] = [];
   @Input() defaultZoom = MAP_DEFAULTS.defaultZoom;
   @Input() defaultUrl = `${mapPath}${MAP_DEFAULTS.icons.GREEN}`;
@@ -39,7 +40,7 @@ export class SimpleMapComponent implements OnChanges {
   ];
   @Input() heatMapRadius = 20;
   @Input() heatMapOpacity = 0.6;
-  center: google.maps.LatLngLiteral;
+  center!: google.maps.LatLngLiteral;
   mapOptions: google.maps.MapOptions = {
     zoomControl: true,
     scrollwheel: true,
@@ -48,7 +49,7 @@ export class SimpleMapComponent implements OnChanges {
     maxZoom: MAP_DEFAULTS.maxZoom,
     minZoom: MAP_DEFAULTS.minZoom,
   };
-  infoWindowContent: string;
+  infoWindowContent?: string;
   private heatmapLayer: google.maps.visualization.HeatmapLayer | null = null;
   heatMapData: google.maps.LatLng[] = [];
 
@@ -165,7 +166,7 @@ export class SimpleMapComponent implements OnChanges {
   }
 
   getMarkerOptions(marker: MapConfig, first: boolean, last: boolean): google.maps.MarkerOptions {
-    let icon: string;
+    let icon = '';
     // use "markerUrl" if present
     if (marker?.markerUrl) {
       icon = marker?.markerUrl;

@@ -4,27 +4,29 @@
     <div class="row">
 
       <!-- Branch -->
-      <div class="col-sm-3 col-lg-2">
+      <div class="col-sm-2 col-lg-2">
         <app-select placeholder="{{ 'app.team.add.branch' | translate }}" [group]="form" controlName="branch"
           [options]="branchOptions" (onChange)="getProductsList()">
         </app-select>
       </div>
 
       <!-- Dynamic Inputs -->
-      <div formGroupName="quantity">
-        <ng-container *ngFor="let item of productOptions">
-          <div class="col-sm-3 col-lg-2">
-            <app-input [placeholder]="item[0]" [group]="form.get('quantity')" [controlName]="item[1]"
-              [errorMessages]="errorMessages[item[1]]">
-            </app-input>
-          </div>
-        </ng-container>
+      <div formGroupName="quantity" class="col-sm-9 col-lg-9">
+        <div class="row">
+          <ng-container *ngFor="let item of productOptions">
+            <div class="col-sm-3 col-lg-3">
+              <app-input [placeholder]="item[0]" [group]="quantityFormGroup" [controlName]="item[1]"
+                [errorMessages]="errorMessages[item[1]]">
+              </app-input>
+            </div>
+          </ng-container>
+        </div>
       </div>
 
       <!-- Button -->
       <div class="m-1">
-        <app-button btnClass="m-t-30" text="Save" btnTitle="button.save"
-          [appScrollToFirstInvalidInput]="form" (onClick)="submitData()">
+        <app-button btnClass="m-t-30" text="Save" btnTitle="button.save" [appScrollToFirstInvalidInput]="form"
+          (onClick)="submitData()">
         </app-button>
       </div>
 

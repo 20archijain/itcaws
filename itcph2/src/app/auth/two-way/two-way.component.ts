@@ -15,18 +15,19 @@ import { SessionUtil } from 'src/app/core/utils/session.util';
 import { LoginDataUser } from 'src/app/core/interfaces/http-response.interface';
 
 @Component({
-  templateUrl: './two-way.component.html'
+  templateUrl: './two-way.component.html',
+  standalone: false,
 })
 export class TwoWayComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private gaLabels = GA_ACTION_LIST.auth;
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   isVerifyOtpDisabled = false;
   isResendBtnDisable = true;
-  timerText: string;
-  userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user'));
+  timerText = '';
+  userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user') || '{}');
   heading = 'auth.twoWay.form.heading';
-  mobile = +this.userDetails?.mobile;
+  mobile = this.userDetails?.mobile ? +this.userDetails.mobile : 0;
   mobileString = this.mobile?.toString();
   obscuredNumber = this.mobileString ? this.mobileString.replace(/(\d{2})\d+(\d{3})/, '$1*****$2') : '';
   resendOtpText = 'button.resendOTP';
@@ -86,7 +87,7 @@ export class TwoWayComponent implements AfterViewInit, OnDestroy, OnInit {
   verify() {
     if (this.group && this.group.valid) {
       this.isVerifyOtpDisabled = true;
-      const userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user'));
+      const userDetails: LoginDataUser = JSON.parse(SessionUtil.getItem('user') || '{}');
 
       this.subscription.push(
         this.authService.verifyOtp({ ...this.group.getRawValue(), id: userDetails.id })
@@ -96,8 +97,8 @@ export class TwoWayComponent implements AfterViewInit, OnDestroy, OnInit {
               this.gaLabels.twoWayVerifyOtpBtn.label, response?.status);
             this.isVerifyOtpDisabled = false;
             if (response && response.status === REQUEST_STATUS.SUCCESS) {
-              const params = Functions.getHomeLocation();
-              this.routerService.navigate('app', params);
+              const params = Functions.getHomeLocation() ?? [];
+              this.routerService.navigate('app', params as never[]);
             }
           }, (response: HttpRequestResponse) => {
             this.gaService.sendEvent(this.gaLabels.twoWayVerifyOtpBtn.apiFailed, this.gaLabels.twoWayVerifyOtpBtn.category,

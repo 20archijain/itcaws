@@ -3,13 +3,8 @@
     <div class="row">
       <div class="col-sm-7 col-md-6 col-xl-4">
 
-        <app-file-upload 
-          [group]="form" 
-          label="app.routeData.breezeFile"
-          controlName="excelFile"
-          [showDummyImageIfNoImageSelected]="false"
-          [accept]="excel"
-          [errorMessages]="errorMessages.excelFile"
+        <app-file-upload [group]="form" label="app.routeData.breezeFile" controlName="excelFile"
+          [showDummyImageIfNoImageSelected]="false" [accept]="excel" [errorMessages]="errorMessages.excelFile"
           (onSelect)="onSelect($event)">
         </app-file-upload>
 
@@ -18,30 +13,22 @@
       <div class="col-sm-5 col-md-6 col-xl-2 mt-sm-btn-align mb-1 mb-sm-0">
         <div class="d-flex gap-2">
           <div class="flex-fill">
-            <app-button 
-              (onClick)="format()" 
-              text="button.format">
+            <app-button (onClick)="format()" text="button.format">
             </app-button>
           </div>
         </div>
       </div>
     </div>
 
-      <div class="col-sm-12">
+    <div class="col-sm-12">
 
-        <div class="mt-3">
-          <app-button 
-            (onClick)="uploadData()" 
-            text="button.upload" 
-            [isDisabled]="isDisabled"
-            [showIconInButton]="true" 
-            iconName="icon-upload"
-            [showSpinner]="isDisabled" 
-            spinnerText="spinnerText.uploading">
-          </app-button>
-        </div>
-
+      <div class="mt-3">
+        <app-button (onClick)="uploadData()" text="button.upload" [isDisabled]="isDisabled" [showIconInButton]="true"
+          iconName="icon-upload" [showSpinner]="isDisabled" spinnerText="spinnerText.uploading">
+        </app-button>
       </div>
+
+    </div>
     <!-- </div> -->
 
   </form>

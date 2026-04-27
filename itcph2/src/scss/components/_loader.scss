@@ -1,3 +1,5 @@
+@use "sass:math";
+
 $loader-blockui-color: rgba(255, 255, 255, .5);
 $loader-size: 50px;
 $loader-color: #337ab7;
@@ -14,8 +16,8 @@ $loader-color: #337ab7;
   .loader-container {
     height: $loader-size;
     left: 50%;
-    margin-left: -calc($loader-size / 2);
-    margin-top: -calc($loader-size / 2);
+    margin-left: -(math.div($loader-size, 2));
+    margin-top: -(math.div($loader-size, 2));
     position: relative;
     top: 50%;
     width: $loader-size;

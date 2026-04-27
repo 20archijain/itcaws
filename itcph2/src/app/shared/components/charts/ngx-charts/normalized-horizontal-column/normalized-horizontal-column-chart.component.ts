@@ -4,6 +4,7 @@ import { Color } from '@swimlane/ngx-charts';
 import { LineChartComponent } from '../line/line-chart.component';
 import { CHART_DEFAULTS } from 'src/app/app.constants';
 import { Functions } from 'src/app/core/utils/functions.list';
+import { ChartColorSchemeNames } from 'src/app/core/interfaces/common.interface';
 
 @Component({
   selector: 'app-normalized-horizontal-column-chart',
@@ -44,12 +45,13 @@ import { Functions } from 'src/app/core/utils/functions.list';
         </ng-template>
     </ngx-charts-bar-horizontal-normalized>
   </div>
-  `
+  `,
+  standalone: false,
 })
 export class NormalizedHorizontalColumnChartComponent extends LineChartComponent implements OnChanges {
-  view = undefined;
+  view: [number, number] | undefined = undefined;
   @Input() height = CHART_DEFAULTS.HEIGHT;
-  @Input() graphMaxHeight: number;
+  @Input() graphMaxHeight?: number;
   @Input() data = [];
   @Input() scheme = null;
   @Input() customColors = [];
@@ -72,7 +74,7 @@ export class NormalizedHorizontalColumnChartComponent extends LineChartComponent
   @Input() barPadding = 8;
   @Input() tooltipDisabled = false;
   style: any;
-  themeScheme: string | Color = null;
+  themeScheme: string | Color | null = null;
   xAxisTickFormattingFn = this.xAxisTickFormatting.bind(this);
   yAxisTickFormattingFn = this.yAxisTickFormatting.bind(this);
 
@@ -84,7 +86,8 @@ export class NormalizedHorizontalColumnChartComponent extends LineChartComponent
       };
     }
 
-    this.themeScheme = Functions.getChartColorsScheme()[this.scheme || CHART_DEFAULTS.DEFAULT_THEME];
+    const colorScheme = this.scheme || CHART_DEFAULTS.DEFAULT_THEME as ChartColorSchemeNames;
+    this.themeScheme = Functions.getChartColorsScheme()[colorScheme];
     // Set custom colors
     if (this.scheme && this.scheme === 'CUSTOM') {
       (this.themeScheme as Color).domain = this.customColors;

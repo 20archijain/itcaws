@@ -1,5 +1,5 @@
 // You can add global styles to this file, and also import other style files */
-@import 'scss/style';
+@use 'scss/style' as *;
 
 $black1: rgba(0, 0, 0, .2);
 $black2: rgba(0, 0, 0, .15);

@@ -13,7 +13,7 @@ import { STOCK_NUMBER_MAX_3_REGEX } from 'src/app/core/validators/regex';
 
 @Component({
   templateUrl: './ManualAssignTarget.component.html',
-
+  standalone: false,
 })
 export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
@@ -21,7 +21,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   body: string[] = [];
   branchOptions: DropdownList[] = [];
   productOptions = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;
   showInputOption = false;
@@ -30,7 +30,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   product3 = '';
   url = environment.getActiveVariantsDataUrl;
 
-  errorMessages = {
+  errorMessages: { [key: string]: any } = {
     branch: COMMON_VALIDATORS.messages.requiredOnly('Branch'),
   };
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService) { }
@@ -48,6 +48,10 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
     this.subscription.forEach(sub => sub.unsubscribe());
   }
 
+  get quantityFormGroup() {
+    return this.form.get('quantity') as UntypedFormGroup;
+  }
+
 
   getInitialData() {
     this.loaderService.startLoader();
@@ -58,7 +62,7 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
         )
         .subscribe(resp => {
           if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.branchOptions = resp.data.branchList;
+            this.branchOptions = resp?.data?.branchList || [];
           }
         })
     );
@@ -68,19 +72,19 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
   getProductsList() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<ManualAssignTargetResponse>(STATIC_MODULES.custom.getproduct, { branch: this.form.get('branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<ManualAssignTargetResponse>(STATIC_MODULES.custom.getproduct, { branch: this.form?.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.productOptions = resp.data.productList;
             this.form.removeControl('quantity');
             this.form.addControl('quantity', new UntypedFormGroup({}));
 
 
-            if (this.form.get('quantity')) {
-              this.form.removeControl('quantity');
-              this.form.addControl('quantity', new UntypedFormGroup({}));
-            }
+            // if (this.form.get('quantity')) {
+            //   this.form.removeControl('quantity');
+            //   this.form.addControl('quantity', new UntypedFormGroup({}));
+            // }
             const quantity = this.form.get('quantity') as UntypedFormGroup;
 
             this.productOptions.forEach(item => {
@@ -126,9 +130,11 @@ export class ManualAssignTargetComponent implements OnInit, OnDestroy {
           )
           .subscribe(resp => {
             if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-                this.form.reset();
-                this.form.removeControl('quantity');
-                this.getInitialData();
+              this.form.reset();
+              this.form.removeControl('quantity');
+              this.form.addControl('quantity', new UntypedFormGroup({}));
+              this.getInitialData();
+              this.productOptions = [];
             }
           })
       );

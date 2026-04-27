@@ -14,14 +14,14 @@ import { environment } from 'src/environments/environment';
 
 @Component({
   templateUrl: './download-misscall.component.html',
+  standalone: false,
 })
 export class DownloadMisscallComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   dataBaseListOptions: DropdownList[] = [];
   projectOptions: DropdownList[] = [];
   searchValue: any;
-  group: UntypedFormGroup;
   header: string[] = [];
   body: string[] = [];
   url = environment.viewProjectsUrl;
@@ -31,8 +31,7 @@ export class DownloadMisscallComponent implements OnDestroy, OnInit {
     database: COMMON_VALIDATORS.messages.requiredOnly('Database'),
     project: COMMON_VALIDATORS.messages.requiredOnly('Project'),
   };
-isExportBtnDisabled: boolean;
-hideSearchbar: any;
+  hideSearchbar: any;
 
   constructor(
     protected formService: FormService,
@@ -42,8 +41,8 @@ hideSearchbar: any;
 
   ngOnInit() {
     this.form = this.fb.group({
-        dateFrom: [null],
-        dateTo: [null],
+      dateFrom: [null],
+      dateTo: [null],
 
       database: [null, COMMON_VALIDATORS.validators.requiredOnly],
       project: [null, COMMON_VALIDATORS.validators.requiredOnly],
@@ -57,10 +56,10 @@ hideSearchbar: any;
     this.loaderService.startLoader();
     this.subscription.push(
       this.formService
-        .getData<DownloadReports>(null)
+        .getData<DownloadReports>()
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe((resp) => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.dataBaseListOptions = resp.data.dataBaseList;
             this.header = resp.data.viewHeader;
             this.body = resp.data.viewBody;
@@ -72,12 +71,12 @@ hideSearchbar: any;
   getProject() {
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DownloadReports>(STATIC_MODULES.custom.getProjectsList, { database: this.form.get('database').value }, null, null)
+      this.formService.customActionCall<DownloadReports>(STATIC_MODULES.custom.getProjectsList, { database: this.form.get('database')?.value })
         .pipe(
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.projectOptions = resp.data.projectList;
           }
         })
@@ -106,7 +105,7 @@ hideSearchbar: any;
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.downloadFile(resp.data.filePath, resp.data.fileName);
             }
           })

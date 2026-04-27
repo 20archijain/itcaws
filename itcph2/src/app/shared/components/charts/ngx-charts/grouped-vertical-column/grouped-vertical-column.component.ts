@@ -33,13 +33,14 @@ import { CHART_DEFAULTS } from 'src/app/app.constants';
       </ng-template>
     </div>
   `,
+  standalone: false,
 })
 export class GroupedVerticalColumnChartComponent implements OnInit {
   @Input() transformedChartData: any[] = [];
-  @Input() xAxisLabel: string;
-  @Input() yAxisLabel: string;
-  @Input() heading: string;
-  @Input() legendTitle: string;
+  @Input() xAxisLabel?: string;
+  @Input() yAxisLabel?: string;
+  @Input() heading?: string;
+  @Input() legendTitle?: string;
   @Input() height = 225; // Default height
   @Input() minWidth = 300; // Minimum width for responsiveness
   @Input() maxWidth = 600; // Maximum width for responsiveness

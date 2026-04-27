@@ -14,7 +14,8 @@ import { CUSTOM_VALIDATION_LENGTH } from 'src/app/core/validators/validators.lis
 import { Functions } from 'src/app/core/utils/functions.list';
 
 @Component({
-  templateUrl: './view.team.component.html'
+  templateUrl: './view.team.component.html',
+  standalone: false,
 })
 export class ViewTeamComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
@@ -25,7 +26,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
   dsTypeOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   statusOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   url = environment.viewTeamsUrl;
   isExportBtnDisabled = false;
 
@@ -58,13 +59,13 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions || [];
             this.branchOptions = resp.data.branchList;
             this.dsTypeOptions = resp.data.dsTypeList;
             this.statusOptions = resp.data.statusList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader || [];
+            this.body = resp.data.viewBody || [];
 
             this.editConfig = [
               {
@@ -138,7 +139,7 @@ export class ViewTeamComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.createCSV(resp.data);
             }
           })

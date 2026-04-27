@@ -15,8 +15,10 @@
                 <a (click)="goToHome()" *ngIf="type === 'theme1'" class="link">{{ 'text.home' | translate }}</a>
               </li>
               <ng-container *ngFor="let breadcrumb of navigationList">
-                <li class="breadcrumb-item" *ngIf="breadcrumb.url !== false"><a [routerLink]="breadcrumb.url">
-                    {{ breadcrumb.title }}</a></li>
+                <li class="breadcrumb-item" *ngIf="breadcrumb.url !== false && typeof breadcrumb.url === 'string'">
+                  <a [routerLink]="breadcrumb.url">
+                    {{ breadcrumb.title }}</a>
+                </li>
                 <li class="breadcrumb-item" *ngIf="breadcrumb.url === false"><a href="javascript:">
                     {{ breadcrumb.title }}</a></li>
               </ng-container>

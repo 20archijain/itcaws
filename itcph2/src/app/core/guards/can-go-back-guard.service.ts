@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { ConfirmationModalService } from '../services/confirmation-modal.service';
@@ -8,7 +8,7 @@ import { RoutingService } from '../services/routing.service';
 @Injectable()
 export class CanGoBackGuard implements OnDestroy {
   private subscription: Subscription[] = [];
-  private routedUrl: string = null;
+  private routedUrl = '';
   private isFormDirty = false;
   private isFormDirty$ = new BehaviorSubject<boolean>(false);
 
@@ -34,11 +34,11 @@ export class CanGoBackGuard implements OnDestroy {
     );
   }
 
-  canActivateChild(route: ActivatedRouteSnapshot) {
+  canActivateChild(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     // if unsaved changes, show confirm modal
     if (this.isFormDirty) {
       this.confirmationModalService.show('modal.confirmation.text', true);
-      this.routedUrl = route['_routerState']['url'];
+      this.routedUrl = state.url;
 
       return false;
     } else {

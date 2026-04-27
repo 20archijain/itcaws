@@ -7,7 +7,7 @@ import { switchMap } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { AUTOREFRESH, STATIC_MODULES } from 'src/app/app.constants';
 import { CustomFile, ValidationError } from '../interfaces/helpers.interface';
-import { HttpRequestParams, HttpRequestParamsModuleInfo, HttpRequestResponse } from '../interfaces/common.interface';
+import { FormControlErrorMessage, HttpRequestParams, HttpRequestParamsModuleInfo, HttpRequestResponse } from '../interfaces/common.interface';
 import { HttpService } from './http.service';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class FormService implements OnDestroy {
 
   private getFormData(form: UntypedFormGroup): any {
     const keys = Object.keys(form.controls);
-    const data = {};
+    const data: Record<string, any> = {};
     if (keys && keys.length) {
       keys.forEach(key => {
         data[key] = form.controls[key].value;
@@ -30,7 +30,7 @@ export class FormService implements OnDestroy {
   }
 
   private uploadData<T>({ action, moduleName, staticModule }: HttpRequestParams,
-    formData: UntypedFormGroup | any, file: File | File[] | CustomFile[] = null, url = environment.apiUrl) {
+    formData: UntypedFormGroup | any, file: File | File[] | CustomFile[] | null = null, url = environment.apiUrl) {
     let data: any;
     if (formData instanceof UntypedFormGroup) {
       data = this.getFormData(formData);
@@ -42,7 +42,7 @@ export class FormService implements OnDestroy {
       .upload<T>(url, file, { action, data, moduleName, staticModule });
   }
 
-  private getDropdownListOnChange<T>(action: string, id: number | number[] | string | string[], url = environment.apiUrl) {
+  private getDropdownListOnChange<T>(action: string, id: number | number[] | string | string[] | undefined, url = environment.apiUrl) {
     return this.uploadData<T>({ action }, { id }, null, url);
   }
 
@@ -50,9 +50,9 @@ export class FormService implements OnDestroy {
     this.subscription.forEach(sub => sub.unsubscribe());
   }
 
-  getValidationError(field: AbstractControl, errorMessages = []): ValidationError {
-    const errResp = {
-      errorMessage: null,
+  getValidationError(field: AbstractControl | null | undefined, errorMessages: FormControlErrorMessage[] = []): ValidationError {
+    const errResp: ValidationError = {
+      errorMessage: '',
       isInvalid: false
     };
 
@@ -87,7 +87,7 @@ export class FormService implements OnDestroy {
     return errResp;
   }
 
- addData<T = any>(form: UntypedFormGroup | any, file: File | File[] | CustomFile[] = null, url = environment.apiUrl,
+  addData<T = any>(form: UntypedFormGroup | any, file: File | File[] | CustomFile[] | null = null, url = environment.apiUrl,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.uploadData<T>({ action: STATIC_MODULES.listing.addData, moduleName, staticModule }, form, file, url);
   }
@@ -134,14 +134,14 @@ export class FormService implements OnDestroy {
     }
   }
 
-  deleteData<T = any>(url: string, id: any,
+  deleteData<T = any>(url: string | undefined, id: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService
       .request<T>(url, { action: STATIC_MODULES.listing.deleteData, data: { id }, moduleName, staticModule });
   }
 
   // deleting data with form details
-   deleteWithFormData<T = any>(url: string, formData: any,
+  deleteWithFormData<T = any>(url: string, formData: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService
       .request<T>(url, { action: STATIC_MODULES.listing.deleteWithFormData, data: formData, moduleName, staticModule });
@@ -153,12 +153,12 @@ export class FormService implements OnDestroy {
       .request<T>(url, { action: STATIC_MODULES.listing.deleteImage, data, moduleName, staticModule });
   }
 
-  editData<T = any>(form: UntypedFormGroup, file: File, url = environment.apiUrl,
+  editData<T = any>(form: UntypedFormGroup, file: File | null | undefined, url = environment.apiUrl,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.uploadData<T>({ action: STATIC_MODULES.listing.editData, moduleName, staticModule }, form, file, url);
   }
 
-  customActionCall<T = any>(action: string, formData: UntypedFormGroup | any, file: File = null, url = environment.apiUrl,
+  customActionCall<T = any>(action: string, formData: UntypedFormGroup | any, file: File | null = null, url = environment.apiUrl,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.uploadData<T>({ action, moduleName, staticModule }, formData, file, url);
   }
@@ -175,7 +175,7 @@ export class FormService implements OnDestroy {
     return this.getDropdownListOnChange<T>(STATIC_MODULES.custom.getTeamsList, id, url);
   }
 
-  restoreData<T = any>(url: string, id: any,
+  restoreData<T = any>(url: string | undefined, id: any,
     { moduleName, staticModule }: HttpRequestParamsModuleInfo = {}): Observable<HttpRequestResponse<T>> {
     return this.httpService
       .request<T>(url, { action: STATIC_MODULES.listing.restoreData, data: { id }, moduleName, staticModule });

@@ -14,12 +14,13 @@ import { Functions } from 'src/app/core/utils/functions.list';
 @Component({
   templateUrl: './ActiveUsers.component.html',
   styleUrls: ["./ActiveUsers.component.scss"],
+  standalone: false,
 })
 export class ActiveUsersListingComponent implements OnInit, OnDestroy {
   private subscription: Subscription[] = [];
   header: string[] = [];
   body: string[] = [];
-  isSelectable: boolean;
+  isSelectable = false;
   sortOptions: DropdownList[] = [];
   branchOptions: DropdownList[] = [];
   wdCodeOptions: DropdownList[] = [];
@@ -30,7 +31,7 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
   districtOptions: DropdownList[] = [];
   wdMarketOptions: DropdownList[] = [];
   wdPopGroupOptions: DropdownList[] = [];
-  form: UntypedFormGroup;
+  form!: UntypedFormGroup;
   isExportBtnDisabled = false;
   showDownloadDataBtn = false;
   downloadDataBtnTitle = false;
@@ -70,16 +71,16 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
-            this.sortOptions = resp.data.sortOptions;
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
+            this.sortOptions = resp.data.sortOptions ?? [];
             this.branchOptions = resp.data.branchList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
-            this.header = resp.data.viewHeader;
-            this.body = resp.data.viewBody;
+            this.header = resp.data.viewHeader ?? [];
+            this.body = resp.data.viewBody ?? [];
             this.isSelectable = resp.data.isSelectable;
-            this.branchFilter = resp.data.branchFilter
+            this.branchFilter = resp.data.branchFilter ?? false;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.districtOptions = resp.data.districtList;
@@ -105,7 +106,7 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               Functions.createCSV(resp.data);
             }
           })
@@ -124,10 +125,10 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.form.get('district').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getBranch, { district: this.form.get('district')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
@@ -151,10 +152,10 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getCircle, { branch: this.form.get('branch')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.circleOptions = resp.data.circleList;
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
@@ -176,10 +177,10 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.form.get('branch').value, circle: this.form.get('circle').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getSection, { branch: this.form.get('branch')?.value, circle: this.form.get('circle')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.sectionOptions = resp.data.sectionList;
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
@@ -199,10 +200,10 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.wdPopGroupValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getWDList, { branch: this.form.get('branch')?.value, circle: this.form.get('circle')?.value, section: this.form.get('section')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.wdCodeOptions = resp.data.wdCodeList;
             this.teamOptions = resp.data.teamList;
             this.teamTypeOptions = resp.data.teamType;
@@ -218,10 +219,10 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value, wdCode: this.form.get('wdCode').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.form.get('branch')?.value, circle: this.form.get('circle')?.value, section: this.form.get('section')?.value, wdCode: this.form.get('wdCode')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamType;
             this.teamOptions = resp.data.teamList;
           }
@@ -233,48 +234,48 @@ export class ActiveUsersListingComponent implements OnInit, OnDestroy {
     this.dsNameValue = null;
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.form.get('branch').value, circle: this.form.get('circle').value, section: this.form.get('section').value, wdCode: this.form.get('wdCode').value, dsType: this.form.get('dsType').value }, null, environment.viewVanDsDataUrl)
+      this.formService.customActionCall<DashboardData>(STATIC_MODULES.custom.getTeamsList, { branch: this.form.get('branch')?.value, circle: this.form.get('circle')?.value, section: this.form.get('section')?.value, wdCode: this.form.get('wdCode')?.value, dsType: this.form.get('dsType')?.value }, null, environment.viewVanDsDataUrl)
         .pipe(finalize(() => this.loaderService.stopLoader()))
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamOptions = resp.data.teamList;
           }
         })
     );
   }
 
-  set branchValue(value: string) {
+  set branchValue(value: string | null) {
     this.branchOptions = [];
-    this.form.get('branch').setValue(value);
+    this.form.get('branch')?.setValue(value);
   }
 
-  set circleValue(value: string) {
+  set circleValue(value: string | null) {
     this.circleOptions = [];
-    this.form.get('circle').setValue(value);
+    this.form.get('circle')?.setValue(value);
   }
-  set sectionValue(value: string) {
+  set sectionValue(value: string | null) {
     this.sectionOptions = [];
-    this.form.get('section').setValue(value);
+    this.form.get('section')?.setValue(value);
   }
-  set wdCodeValue(value: string) {
+  set wdCodeValue(value: string | null) {
     this.wdCodeOptions = [];
-    this.form.get('wdCode').setValue(value);
+    this.form.get('wdCode')?.setValue(value);
   }
-  set dsTypeValue(value: string) {
+  set dsTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.form.get('dsType').setValue(value);
+    this.form.get('dsType')?.setValue(value);
   }
-  set dsNameValue(value: string) {
+  set dsNameValue(value: string | null) {
     this.teamOptions = [];
-    this.form.get('dsName').setValue(value);
+    this.form.get('dsName')?.setValue(value);
   }
-  set wdMarketValue(value: string) {
+  set wdMarketValue(value: string | null) {
     this.wdMarketOptions = [];
-    this.form.get('wdMarket').setValue(value);
+    this.form.get('wdMarket')?.setValue(value);
   }
-  set wdPopGroupValue(value: string) {
+  set wdPopGroupValue(value: string | null) {
     this.wdPopGroupOptions = [];
-    this.form.get('wdPopGroup').setValue(value);
+    this.form.get('wdPopGroup')?.setValue(value);
   }
   clearForm() {
     this.form.reset();

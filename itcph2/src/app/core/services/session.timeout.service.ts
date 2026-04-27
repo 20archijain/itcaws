@@ -12,9 +12,9 @@ export class SessionTimeoutService implements OnDestroy {
   private subscription: Subscription[] = [];
   private isIdleStarted = false;
   private isModalOpen = false;
-  private lastWakeUpDate: Date;
-  private pollScreenObservable: Observable<number>;
-  private pollScreenSubscription: Subscription;
+  private lastWakeUpDate!: Date;
+  private pollScreenObservable!: Observable<number>;
+  private pollScreenSubscription!: Subscription;
   private domEvents = 'click mousemove focus keydown touchstart mousedown mousewheel DOMMouseScroll touchmove scroll';
 
   constructor(private confirmationModalService: ConfirmationModalService) {

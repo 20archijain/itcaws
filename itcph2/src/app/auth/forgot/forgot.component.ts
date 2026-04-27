@@ -14,11 +14,12 @@ import { HttpRequestResponse } from 'src/app/core/interfaces/common.interface';
 @Component({
   styleUrls: ['./forgot.component.scss'],
   templateUrl: './forgot.component.html',
+  standalone: false,
 })
 export class ForgotComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
   private gaLabels = GA_ACTION_LIST.auth.forgot;
-  group: UntypedFormGroup;
+  group!: UntypedFormGroup;
   isDisabled = false;
   errorMessages = {
     email: FORGOT_VALIDATORS.messages.email,
@@ -66,6 +67,6 @@ export class ForgotComponent implements OnDestroy, OnInit {
   }
 
   reset() {
-    this.group.get('email').reset();
+    this.group.get('email')?.reset();
   }
 }

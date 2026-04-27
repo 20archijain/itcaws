@@ -41,7 +41,7 @@ class GetAeMaster extends Utilities
         $visitedOutletIds = $this->tableUtil->getRowsColumn(
             "$dbName.tblsurvey_response_details",
             "ques_3",
-            "dstatus = 0 AND ques_0 = 'Outlet Order' AND capture_date BETWEEN '$oneMonthAgoDate' AND '$todayDate' AND team_id = '$teamId'",
+            "dstatus = 0 AND ques_0 IN ('Outlet Order','Add Outlet') AND capture_date BETWEEN '$oneMonthAgoDate' AND '$todayDate' AND team_id = '$teamId'",
             [],
             true
         );
@@ -62,7 +62,7 @@ class GetAeMaster extends Utilities
                 $outletName = $row["outlet_name"] ?? "Unknown";
 
                 // Determine background color
-                $backgroundColor = (!in_array($recId, $visitedOutletIds)) ? "#ff8a8a" : "";
+                $backgroundColor = (!in_array($recId, $visitedOutletIds)) ? "#ff8a8a" : "#13AB13";
 
                 $groupedRoutes[$routeName][] = [
                     "label" => $outletName,

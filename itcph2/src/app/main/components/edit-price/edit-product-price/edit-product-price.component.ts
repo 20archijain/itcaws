@@ -16,8 +16,8 @@ import { environment } from "src/environments/environment";
 // Custom Validator
 function oneOfTwoRequiredValidator(): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
-    const branch = group.get('branch').value;
-    const wdCode = group.get('wdCode').value;
+    const branch = group.get('branch')?.value;
+    const wdCode = group.get('wdCode')?.value;
 
     return (branch && !wdCode) || (!branch && wdCode) ? null : { oneOfTwoRequired: true };
   };
@@ -26,28 +26,29 @@ function oneOfTwoRequiredValidator(): ValidatorFn {
 @Component({
   selector: 'app-edit-product-price',
   templateUrl: './edit-product-price.component.html',
+  standalone: false,
 })
 export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  searchGroup: UntypedFormGroup;
-  group: UntypedFormGroup;
-  branchOptions: DropdownList[];
-  wdOptions: DropdownList[];
-  teamTypeOptions: DropdownList[];
+  searchGroup!: UntypedFormGroup;
+  group!: UntypedFormGroup;
+  branchOptions: DropdownList[] = [];
+  wdOptions: DropdownList[] = [];
+  teamTypeOptions: DropdownList[] = [];
   productsNamePriceList: { productName: string; sellingPrice: number; productId: number; branchId: number; wdCode: string; }[] = [];
   isSearching = false;
   isDisabled = false;
-  editProductHeading: string;
-  branchLabel: string;
-  wdLabel: string;
-  teamTypeLabel: string;
-  productPrice: number;
-  branchId: number;
-  wdCode: string;
+  editProductHeading = '';
+  branchLabel = '';
+  wdLabel = '';
+  teamTypeLabel = '';
+  productPrice!: number;
+  branchId!: number;
+  wdCode!: string;
   errorMessages = {
     sellingPrice: COMMON_VALIDATORS.messages.dropdownAllOptional('Price')
   };
-  sellingPriceForm: UntypedFormGroup;
+  sellingPriceForm!: UntypedFormGroup;
 
   constructor(private formService: FormService, private fb: UntypedFormBuilder, private loaderService: LoaderService,
     private canGoBackGuard: CanGoBackGuard, private confirmationModalService: ConfirmationModalService) { }
@@ -108,13 +109,13 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.branchOptions = resp.data.branchList;
             this.wdOptions = resp.data.wdList;
-            this.editProductHeading = resp.data.editProductHeading;
-            this.branchLabel = resp.data.branchLabel;
-            this.wdLabel = resp.data.wdLabel;
-            this.teamTypeLabel = resp.data.teamTypeLabel;
+            this.editProductHeading = resp.data.editProductHeading ?? '';
+            this.branchLabel = resp.data.branchLabel ?? '';
+            this.wdLabel = resp.data.wdLabel ?? '';
+            this.teamTypeLabel = resp.data.teamTypeLabel ?? '';
           }
         })
     );
@@ -126,7 +127,7 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
       this.loaderService.startLoader();
       this.subscription.push(
         this.formService.getList<EditProductResponse>(environment.editProductUrl,
-          { branchId: this.searchGroup.get('branch').value, wdCode: this.searchGroup.get('wdCode').value })
+          { branchId: this.searchGroup.get('branch')?.value, wdCode: this.searchGroup.get('wdCode')?.value })
           .pipe(
             finalize(() => {
               this.isDisabled = false;
@@ -134,7 +135,7 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
             })
           )
           .subscribe(resp => {
-            if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+            if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
               this.productsNamePriceList = resp.data.productsList;
 
               this.initializePriceControls();
@@ -168,22 +169,22 @@ export class EditProductPriceComponent implements AfterViewInit, OnDestroy, OnIn
 
     this.loaderService.startLoader();
     this.subscription.push(
-      this.formService.customActionCall<EditProductResponse>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.searchGroup.get('branch').value },
+      this.formService.customActionCall<EditProductResponse>(STATIC_MODULES.custom.getTeamsTypeList, { branch: this.searchGroup.get('branch')?.value },
         null, environment.editProductUrl)
         .pipe(
           finalize(() => this.loaderService.stopLoader())
         )
         .subscribe(resp => {
-          if (resp && resp.status === REQUEST_STATUS.SUCCESS) {
+          if (resp && resp.status === REQUEST_STATUS.SUCCESS && resp.data) {
             this.teamTypeOptions = resp.data.teamsTypeList;
           }
         })
     );
   }
 
-  set teamTypeValue(value: string) {
+  set teamTypeValue(value: string | null) {
     this.teamTypeOptions = [];
-    this.searchGroup.get('teamType').setValue(value);
+    this.searchGroup.get('teamType')?.setValue(value);
   }
 
   confirmPrice() {

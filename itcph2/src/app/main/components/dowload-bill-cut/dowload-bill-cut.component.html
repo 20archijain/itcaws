@@ -54,19 +54,17 @@
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
             <app-select [group]="group" controlName="product" placeholder="{{ 'app.download.products' | translate }}"
-             [options]="productOptions" [multiple]="true">
+              [options]="productOptions" [multiple]="true">
             </app-select>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-date placeholder="{{ 'placeholder.from' | translate }}" [group]="group"
-              controlName="dateFrom" [isRequired]="true" [errorMessages]="errorMessages.dateFrom"
-              [maxDate]="group.get('dateTo').value">
+            <app-date placeholder="{{ 'placeholder.from' | translate }}" [group]="group" controlName="dateFrom"
+              [isRequired]="true" [errorMessages]="errorMessages.dateFrom" [maxDate]="group.get('dateTo').value">
             </app-date>
           </div>
           <div class="col-sm-6 col-lg-2 col-xl-2">
-            <app-date placeholder="{{ 'placeholder.to' | translate }}" [group]="group"
-              controlName="dateTo" [isRequired]="true" [errorMessages]="errorMessages.dateTo"
-              [minDate]="group.get('dateFrom').value">
+            <app-date placeholder="{{ 'placeholder.to' | translate }}" [group]="group" controlName="dateTo"
+              [isRequired]="true" [errorMessages]="errorMessages.dateTo" [minDate]="group.get('dateFrom').value">
             </app-date>
           </div>
           <div class="col-sm-3 col-md-2">

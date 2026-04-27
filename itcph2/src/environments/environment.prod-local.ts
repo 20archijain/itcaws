@@ -2,10 +2,10 @@ export const basePath = {
   image: 'itcph2/assets/images/',
   mapMarkers: 'uproots/markers/',
   svgIcons: 'assets/icons/',
-  url: 'http://itccampaign.com/'
+  url: 'https://radardashboard.com/'
 };
 
-export const baseHref = 'https://itcph2.itccampaign.com/';
+export const baseHref = 'https://radar.radardashboard.com/';
 const baseUrl = `${baseHref}services/`;
 
 export const environment = {

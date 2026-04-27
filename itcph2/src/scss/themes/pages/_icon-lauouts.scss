@@ -1,3 +1,5 @@
+@use "sass:color";
+
 // Icon layouts css start
 $ico-col: #4680ff, #6610f2, #6f42c1, #e83e8c, #ff5252, #fd7e14, #ffa21d, #11c15b, #20c997, #00acc1;
 $border-color: #f1f1f1;
@@ -60,7 +62,7 @@ $border-color: #f1f1f1;
     @while $t < 5 {
       @each $value in $ico-col {
         &:nth-child(#{$i}) {
-          background: transparentize($value, 0.9);
+          background: color.adjust($value, $alpha: -0.9);
           border-color: $value;
 
           i {

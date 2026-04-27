@@ -6,7 +6,7 @@ export const basePath = {
 };
 
 export const baseHref = '';
-const baseUrl = `${baseHref}/work/itcawsportal/itcph2/dist/services/`;
+const baseUrl = `${baseHref}services/`;
 
 export const environment = {
   addClientUrl: baseUrl,
