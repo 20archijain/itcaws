@@ -191,6 +191,7 @@ export class AddGroupComponent implements OnDestroy, OnInit {
   }
 
   get selectedModules() {
-    return [...this.selectedRecords];
+    // eslint-disable-next-line prefer-spread
+    return [].concat.apply([], this.selectedRecords as any);
   }
 }
