@@ -32,7 +32,8 @@ class VanDswhatsAppSummary
         $debugStep = "start";
         try {
             $currentDate = currentDate();
-            // $currentDate = "2026-02-08"; // For testing
+            // $currentDate = "2026-02-23"; // For testing
+            // $sectionCond = " AND b.section = 'JPU002'"; // For testing
             $this->clearOldImageDateFolders($currentDate);
             $monthStartDate = date("Y-m-01", strtotime($currentDate));
             $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -48,7 +49,7 @@ class VanDswhatsAppSummary
             $debugStep = "reset_summary_sent";
             $sAction10 = null;
             $iRows10 = 0;
-            $resetQuery = "UPDATE $projectTeamTable SET summary_sent = 0 WHERE dstatus = 0 AND s_id = 99 AND summary_sent_date IS NOT NULL AND summary_sent_date != '$currentDate'";
+            $resetQuery = "UPDATE $projectTeamTable SET summary_sent = 0 WHERE dstatus = 0 AND is_type IN (0,2,5)  AND (summary_sent_date != '$currentDate' OR summary_sent_date IS NULL)";
             $this->_dbConn->ExecuteSelectQuery($resetQuery, $sAction10, $iRows10);
 
             $debugStep = "fetch_sections";
@@ -63,6 +64,7 @@ class VanDswhatsAppSummary
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $aeName = $row["ae_name"];
                 $phoneNumber = $row["ae_number"];
+                // $phoneNumber = '6397329039'; // For Testing
                 $wdCode = $row["wd_code"];
                 $section = $row["section"];
                 $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section' AND is_type IN (0,2,5)";
@@ -94,12 +96,16 @@ class VanDswhatsAppSummary
                         $typeBifurcation
                     );
                     if ($imagePath) {
+                        $imageUrl = $this->buildPublicImageUrl($imagePath);
+                        $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrl, $aeName, 'vnsai');
                         $processedSections[$section] = true;
                         $createdImages[] = array(
                             "ae_name" => $aeName,
                             "ae_number" => $phoneNumber,
                             "section" => $section,
-                            "image_path" => $imagePath
+                            "image_path" => $imagePath,
+                            "image_url" => $imageUrl,
+                            "whatsapp_response" => $whatsAppResponse
                         );
                     }
                 }
@@ -170,6 +176,149 @@ class VanDswhatsAppSummary
         }
     }
 
+    private function buildPublicImageUrl($imagePath)
+    {
+        $path = str_replace("\\", "/", (string) $imagePath);
+        $basePath = isset($GLOBALS["CUST_FOLDER_PATH"]) ? str_replace("\\", "/", (string) $GLOBALS["CUST_FOLDER_PATH"]) : "";
+        $baseUrl = isset($GLOBALS["CUST_FOLDER_URL"]) ? rtrim((string) $GLOBALS["CUST_FOLDER_URL"], "/") : "";
+        if ($basePath !== "" && $baseUrl !== "" && stripos($path, $basePath) === 0) {
+            $relative = ltrim(substr($path, strlen($basePath)), "/");
+            return $baseUrl . "/" . $relative;
+        }
+        return $path;
+    }
+
+    // Send WhatsApp PDF
+    private function sendWhatsAppMessage($phoneNumber, $FilePath, $team_name, $apiType = 'vnsai')
+    {
+        if ($apiType === 'wab') {
+            // WAB API Configuration
+            $apiUrl = 'https://api.wab.ai/whatsapp-api/v1.0/customer/95755/bot/b9b57bd0131f43fb/template';
+            $authorizationToken = '6f088510-93ef-41a2-b9d4-cf7570fbcbe1-Hswi54Q';
+            $namespace = 'a7a46341_4176_4bd7_b74f_bf560970e605';
+
+            $qrImageLink = $FilePath;
+            $payload = [
+                'payload' => [
+                    'name' => 'qr_utility',
+                    'components' => [
+                        [
+                            'type' => 'header',
+                            'parameters' => [
+                                [
+                                    'type' => 'image',
+                                    'image' => [
+                                        'link' => $qrImageLink
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'body',
+                            'parameters' => [
+                                [
+                                    'type' => 'text',
+                                    'text' => $team_name
+                                ]
+                            ]
+                        ],
+                        [
+                            'type' => 'button',
+                            'sub_type' => 'quick_reply',
+                            'index' => 0,
+                            'parameters' => [
+                                [
+                                    'type' => 'payload',
+                                    'payload' => 'flow_3A4EBA3C81F543A7BD3F25C680C68A10'
+                                ]
+                            ]
+                        ]
+                    ],
+                    'language' => [
+                        'code' => 'en_US',
+                        'policy' => 'deterministic'
+                    ],
+                    'namespace' => $namespace
+                ],
+                'phoneNumber' => $phoneNumber
+            ];
+
+            $headers = [
+                'Authorization: Basic ' . $authorizationToken,
+                'Content-Type: application/json'
+            ];
+            $postFields = json_encode($payload);
+        } elseif ($apiType === 'vnsai') {
+            // VNSAI API Configuration
+            $apiUrl = 'https://api.vnsai.com/WAApi/send';
+            $headers = ['Cookie: SERVERID=webC1'];
+            $postFields = [
+                'userid'  => 'Appilary',
+                'password'  => 'Uyf6wtH0',
+                'wabaNumber' => '919289854142',
+                'output' => 'json',
+                'mobile' => $phoneNumber,
+                'sendMethod' => 'quick',
+                'msgType' => 'Media',
+                'templateName' => 'radar20',
+                'msg' => "Dear Sir,
+
+Below are the Team Summary of your Section.",
+                'mediaType' => 'Image',
+                'mediaUrl' => $FilePath
+            ];
+        } else {
+            throw new InvalidArgumentException('Invalid API type provided.');
+        }
+
+        // Convert data to query string
+        $postData = http_build_query($postFields);
+
+        // Create stream context
+        $options = [
+            'http' => [
+                'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+                    "Cookie: SERVERID=webC1\r\n",
+                'method'  => 'POST',
+                'content' => $postData,
+                'timeout' => 30
+            ]
+        ];
+
+        $context = stream_context_create($options);
+
+        // Send request
+        $response = file_get_contents($apiUrl, false, $context);
+
+        if ($response === FALSE) {
+            return "Error sending request";
+        }
+        echo "WhatsApp API Response: " . $response; // Log the response for debugging
+
+        return json_decode($response, true);
+
+        // Initialize cURL
+        // $ch = curl_init($apiUrl);
+        // curl_setopt($ch, CURLOPT_POST, true);
+        // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+
+        // // Execute the cURL request
+        // $response = curl_exec($ch);
+
+        // // Check for errors
+        // $success = false;
+        // if (curl_errno($ch)) {
+        //     error_log('WhatsApp API Error: ' . curl_error($ch));
+        // } else {
+        //     $success = true;
+        // }
+
+        // curl_close($ch);
+        // return $success;
+    }
+
     private function clearOldImageDateFolders($currentDate)
     {
         $baseDir = $GLOBALS["CUST_FOLDER_PATH"] . "/ae_summary_images";
@@ -232,7 +381,7 @@ class VanDswhatsAppSummary
         }
 
         $canvasW = 1080;
-        $contentBottom = 590;
+        $contentBottom = 538;
         if ($hasNpsr) {
             $contentBottom += 516; // NPSR today panel + gap
             $contentBottom += 316; // NPSR MTD panel + gap
@@ -265,13 +414,13 @@ class VanDswhatsAppSummary
         // Team strength cards in mobile-friendly 2x2 grid
         $vanCount = isset($typeBifurcation["van_ds_count"]) ? (int) $typeBifurcation["van_ds_count"] : 0;
         $npsrCount = isset($typeBifurcation["npsr_count"]) ? (int) $typeBifurcation["npsr_count"] : 0;
-        $totalSalesmenNote = "VAN DS: " . $vanCount . " | NPSR: " . $npsrCount;
-        $this->drawStrengthCard($img, 16, 150, 514, 180, "TOTAL SALESMEN", (string) $teamStrength["total"], $blue, "T", $totalSalesmenNote);
-        $this->drawStrengthCard($img, 550, 150, 514, 180, "QUALIFIED TODAY", (string) $teamStrength["qualified"], $green, "Q", "");
-        $this->drawStrengthCard($img, 16, 344, 514, 230, "UNQUALIFIED", (string) $teamStrength["unqualified"], $orange, "U", $teamStrength["unqualified_names"]);
-        $this->drawStrengthCard($img, 550, 344, 514, 230, "ABSENT", (string) $teamStrength["absent"], $red, "A", $teamStrength["absent_names"]);
+        $totalSalesmenValue = "Total " . (string) $teamStrength["total"] . " | VAN DS: " . $vanCount . " | NPSR: " . $npsrCount;
+        $this->drawStrengthCard($img, 16, 150, 514, 120, "SALESMEN", $totalSalesmenValue, $blue, "T", "");
+        $this->drawStrengthCard($img, 550, 150, 514, 120, "QUALIFIED TODAY", (string) $teamStrength["qualified"], $green, "Q", "");
+        $this->drawStrengthCard($img, 16, 284, 514, 230, "UNQUALIFIED", (string) $teamStrength["unqualified"], $orange, "U", $teamStrength["unqualified_names"]);
+        $this->drawStrengthCard($img, 550, 284, 514, 230, "ABSENT", (string) $teamStrength["absent"], $red, "A", $teamStrength["absent_names"]);
 
-        $cursorY = 590;
+        $cursorY = 522;
 
         // NPSR blocks (only if section has NPSR)
         $npsrTodayRows = array(
@@ -287,7 +436,7 @@ class VanDswhatsAppSummary
         );
         if ($hasNpsr) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 500, "NPSR SNAPSHOT (TODAY)", $blue, $npsrTodayRows, $line, $dark, "N");
-            $cursorY += 516;
+            $cursorY += 508;
         }
 
         // NPSR MTD
@@ -299,7 +448,7 @@ class VanDswhatsAppSummary
         );
         if ($hasNpsr) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 300, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRows, $line, $dark, "N");
-            $cursorY += 316;
+            $cursorY += 308;
         }
 
         // VAN Today
@@ -315,7 +464,7 @@ class VanDswhatsAppSummary
         );
         if ($hasVan) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 480, "VAN DS SNAPSHOT (TODAY)", $blue, $vanTodayRows, $line, $dark, "V");
-            $cursorY += 496;
+            $cursorY += 488;
         }
 
         // VAN MTD
@@ -325,7 +474,7 @@ class VanDswhatsAppSummary
         );
         if ($hasVan) {
             $this->drawMetricsPanel($img, 16, $cursorY, 1048, 200, "VAN DS SNAPSHOT (MONTH TILL DATE)", $purple, $vanMtdRows, $line, $dark, "V");
-            $cursorY += 216;
+            $cursorY += 208;
         }
 
         // Footer insight strip
@@ -342,14 +491,13 @@ class VanDswhatsAppSummary
         } else {
             $strikeText = "NA";
         }
-        $npsrInfraValue = $hasNpsr ? $this->extractNumericValue($npsrToday["infra_volume"]) : null;
-        $vanInfraValue = $hasVan ? $this->extractNumericValue($vanDsToday["infra_volume"]) : null;
-        if ($npsrInfraValue !== null && $vanInfraValue !== null) {
-            $infraText = (string) round(($npsrInfraValue + $vanInfraValue) / 2) . " Ms";
-        } elseif ($vanInfraValue !== null) {
-            $infraText = (string) round($vanInfraValue) . " Ms";
-        } elseif ($npsrInfraValue !== null) {
-            $infraText = (string) round($npsrInfraValue) . " Ms";
+        $npsrInfraSum = $hasNpsr && isset($npsrToday["infra_volume_sum"]) ? (float) $npsrToday["infra_volume_sum"] : 0;
+        $vanInfraSum = $hasVan && isset($vanDsToday["infra_volume_sum"]) ? (float) $vanDsToday["infra_volume_sum"] : 0;
+        $npsrInfraCount = $hasNpsr && isset($npsrToday["infra_volume_count"]) ? (int) $npsrToday["infra_volume_count"] : 0;
+        $vanInfraCount = $hasVan && isset($vanDsToday["infra_volume_count"]) ? (int) $vanDsToday["infra_volume_count"] : 0;
+        $infraCount = $npsrInfraCount + $vanInfraCount;
+        if ($infraCount > 0) {
+            $infraText = (string) round(($npsrInfraSum + $vanInfraSum) / $infraCount) . " Ms";
         } else {
             $infraText = "NA";
         }
@@ -385,9 +533,10 @@ class VanDswhatsAppSummary
         $iconCy = $y + 34;
         $this->drawIconBadge($img, $iconCx, $iconCy, $valueColor, $iconText, null, 14);
         $this->drawCenterText($img, $x + 12, $y + 20, $x + $w - 12, $y + 64, $label, 4, $dark);
-        $this->drawCenterText($img, $x + 12, $y + 62, $x + $w - 12, $y + 110, $value, 5, $valueColor);
+        $valueFont = strlen((string) $value) > 16 ? 4 : 5;
+        $this->drawCenterText($img, $x + 12, $y + 62, $x + $w - 12, $y + 110, $value, $valueFont, $valueColor);
         if ($note !== "") {
-            $this->drawWrappedTextInBox($img, $x + 14, $y + 108, $x + $w - 14, $y + $h - 10, $note, 4, $dark, 1);
+            $this->drawWrappedTextInBox($img, $x + 12, $y + 102, $x + $w - 12, $y + $h - 8, $note, 5, $dark, 1);
         }
     }
 
@@ -455,8 +604,8 @@ class VanDswhatsAppSummary
         $this->drawIconBadge($img, $x + 30, $y + 29, imagecolorallocate($img, 255, 255, 255), $panelIconText, $titleColor, 14);
         $this->drawCenterText($img, $x + 60, $y + 6, $x + $w - 14, $y + 46, $title, 5, imagecolorallocate($img, 255, 255, 255));
 
-        $contentTop = $y + 60;
-        $contentBottom = $y + $h - 12;
+        $contentTop = $y + 56;
+        $contentBottom = $y + $h - 8;
         $count = count($rows) > 0 ? count($rows) : 1;
         $availableHeight = max(10, ($contentBottom - $contentTop));
         $weights = array();
@@ -504,7 +653,7 @@ class VanDswhatsAppSummary
             } else {
                 $midY = (int) ($top + (($bottom - $top) * 0.42));
                 $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $midY, $value, 5, $valueColor);
-                $this->drawWrappedTextInBox($img, $midX + 10, $midY, $x + $w - 14, $bottom - 2, $note, 4, $dark, 1);
+                $this->drawWrappedTextInBox($img, $midX + 10, $midY, $x + $w - 14, $bottom - 2, $note, 5, $dark, 1);
             }
         }
     }
@@ -749,7 +898,7 @@ class VanDswhatsAppSummary
             $billed = (float) $row["total_sellin_shops"];
             $strike = $visited > 0 ? ($billed / $visited) * 100 : 0;
             $infraVolume = (float) $row["infra_volume"];
-            $lineCut = $visited > 0 ? ($billed / $visited) : 0;
+            $lineCut = isset($row["line_cut_count"]) ? (float) $row["line_cut_count"] : 0;
             $marketMins = (float) getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
 
             $sumVisited += $visited;
@@ -792,7 +941,9 @@ class VanDswhatsAppSummary
             "avg_strike_rate" => (string) round($sumStrikeRate / $count) . "%",
             "lowest_strike_rate" => $this->formatNumber((float) $lowestStrikeRate, 2) . "%",
             "lowest_strike_team" => $lowestTeamName,
-            "infra_volume" => (string) round($sumInfraVolume / $count) . " Ms",
+            "infra_volume" => (string) round($sumInfraVolume) . " Ms",
+            "infra_volume_sum" => $sumInfraVolume,
+            "infra_volume_count" => $count,
             "infra_below_limit" => (string) $infraBelow,
             "infra_below_limit_names" => $this->formatTeamNames(array_keys($infraBelowNames)),
             "avg_line_cut" => (string) round($sumLineCut / $count),
@@ -1102,10 +1253,11 @@ class VanDswhatsAppSummary
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $formula = $this->_productSaleVolumeFormula;
+        $lineCutFormula = $this->buildLineCutCountFormula();
         $summaryAction = null;
         $summaryRows = 0;
         $query = "SELECT a.activity_date, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.dayend_datetime, a.total_sales_deliveries, a.total_sellin_shops, a.total_other_shops, a.is_qualified, " .
-            "$formula AS infra_volume, b.team_id, b.team_name, b.wd_code, b.is_type, b.branch_id FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.is_type IN (0,2,5)" .
+            "$formula AS infra_volume, $lineCutFormula AS line_cut_count, b.team_id, b.team_name, b.wd_code, b.is_type, b.branch_id FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND b.is_type IN (0,2,5)" .
             " AND b.ae_number = '$aeNumber' AND b.section = '$section' AND a.activity_date BETWEEN '$dateFrom' AND '$dateTo'";
         $this->_dbConn->ExecuteSelectQuery($query, $summaryAction, $summaryRows);
 
@@ -1248,10 +1400,19 @@ class VanDswhatsAppSummary
     private function buildProductSaleVolumeFormula()
     {
         $formulaParts = array();
-        for ($index = 1; $index <= 130; $index++) {
+        for ($index = 1; $index <= 145; $index++) {
             $formulaParts[] = "COALESCE(a.total_sale_product$index,0)";
         }
         return implode(" + ", $formulaParts);
+    }
+
+    private function buildLineCutCountFormula()
+    {
+        $formulaParts = array();
+        for ($index = 1; $index <= 145; $index++) {
+            $formulaParts[] = "CASE WHEN COALESCE(a.total_sale_product$index,0) > 0 THEN 1 ELSE 0 END";
+        }
+        return "(" . implode(" + ", $formulaParts) . ")";
     }
 
     private function formatNumber($value, $decimals = 2)
@@ -1288,6 +1449,8 @@ class VanDswhatsAppSummary
             "lowest_strike_rate" => "0%",
             "lowest_strike_team" => "",
             "infra_volume" => "0 Ms",
+            "infra_volume_sum" => 0,
+            "infra_volume_count" => 0,
             "infra_below_limit" => "0",
             "infra_below_limit_names" => "",
             "avg_line_cut" => "0",
