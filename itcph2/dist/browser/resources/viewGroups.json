@@ -4,27 +4,57 @@
   "data": {
     "data0": [
       {
-        "name": "Branch Access",
-        "id": "4",
-        "modules": "My Profile | Logout | Home Page | Route Data | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance"
+        "name": "Shiva testing2",
+        "id": 15,
+        "modules": "My Profile | Logout | Home Page | Actionable | AI Insights"
       },
       {
-        "name": "WD Access",
-        "id": "3",
-        "modules": "My Profile | Logout | Home Page | Route Data | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Dashboard | Sales Dashboard | Attendance"
+        "name": "Products Alloaction",
+        "id": 14,
+        "modules": "My Profile | Logout | Downloads | Branch SKU Allocation | District SKU Allocation | HO SKU Allocation | Allocation Report"
       },
       {
-        "name": "HO Access",
-        "id": "2",
-        "modules": "My Profile | Logout | Home Page | Route (Outlet Master) | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance | Outlet Universe"
+        "name": "DISTRICT",
+        "id": 13,
+        "modules": "My Profile | Logout | Home Page | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Active Variants | Locator | Productivity Dashboard | MDO Reporting | MDO Reporting Map | NPSR DSPM Report | NPSR Dashboard | District SKU Allocation"
       },
       {
-        "name": "Superadmin",
-        "id": "1",
-        "modules": "My Profile | Logout | Home Page | Project Management | Add Client | View Clients | Edit Client | Delete Client | Add Project | View Project | Edit Project | Delete Project | Add Team | View Team | Edit Team | Delete Team | Super User | Add Group | View Groups | Edit Group | Delete Group | Add User | View Users | Edit User | Delete User | Add Module | View Modules | Edit Module | Delete Module | Unlock User | Route Data | Route (Outlet Master) | Upload Route Data | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Edit Product Price | Dashboard | Sales Dashboard | Active DSs | Active Variants | Attendance | Actionable | Outlet Universe"
+        "name": "HO TEST",
+        "id": 12,
+        "modules": "My Profile | Logout"
       },
       {
-        "total": 4
+        "name": "Shiva Testing",
+        "id": 11,
+        "modules": "My Profile | Logout | Home Page | Project Management | Add Client | View Clients | Edit Client | Delete Client | Add Project | View Project | Edit Project | Delete Project | Add Team | View Team | Edit Team | Delete Team | Super User | Add Group | View Groups | Edit Group | Delete Group | Add User | View Users | Edit User | Delete User | Add Module | View Modules | Edit Module | Delete Module | Unlock User | Route Data | Route (Outlet Master) | Upload Route Data | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Productivity Report | Edit Product Price | Dashboard | Survey Trend | Active DSs | Active Variants | Locator | Actionable | Leaderboard Data | Outlet Universe | Survey Dashboard | Productivity Dashboard | Add MDO Team | wd mapping management | Conversion Report | Missed Call Report | NPSR DSPM Target Setting | View Route Data | Delete Route Data | Restore Team | MDO Reporting | MDO Reporting Map | MDO Route Traker | MDO Outlet Universe | App Notification | NPSR DSPM Report | Active MDO Reporting | MDO Performance Report | Upload MDO Route | View  MDO Team | Delete Mdo Team | EDIT Mdo Team | Focus Brand Reporting | Focus Edit | Add WD | SWD  Target Upload | Active Focus Varient | MDO Route Download | Breeze Data Upload | Store Offline Manegement | Download Table | FSO Tracker Upload | NPSR Dashboard | PDF Access Report | Linecut Report | Order Map | Order Reporting | Restore Route Data | AI Insights | Delete Miss Call | Branch SKU Allocation | District SKU Allocation | HO SKU Allocation | Allocation Report | Breeze Dashboard"
+      },
+      {
+        "name": "FSO Amin",
+        "id": 10,
+        "modules": "My Profile | Logout | Route Data | Attendance Tracker | Attendance Locator | Downloads | Locator | MDO Reporting | MDO Reporting Map | MDO Route Traker | MDO Outlet Universe | MDO Route Download"
+      },
+      {
+        "name": "MDO Group",
+        "id": 9,
+        "modules": "My Profile | Logout | Attendance Tracker | Attendance Locator | Downloads | Locator | MDO Reporting | MDO Reporting Map | Active MDO Reporting | MDO Performance Report"
+      },
+      {
+        "name": "Section Level",
+        "id": 8,
+        "modules": "My Profile | Logout | Home Page | Route Data | Route (Outlet Master) | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Dashboard | Survey Trend | Active DSs | Active Variants | Locator | Survey Dashboard | Productivity Dashboard | NPSR DSPM Target Setting | MDO Reporting | MDO Reporting Map | MDO Route Traker"
+      },
+      {
+        "name": "FSO",
+        "id": 7,
+        "modules": "My Profile | Logout | Attendance Tracker | Attendance Locator | Downloads | Locator | MDO Reporting | MDO Reporting Map | MDO Route Traker | MDO Outlet Universe"
+      },
+      {
+        "name": "NSM",
+        "id": 5,
+        "modules": "My Profile | Logout | Home Page | Attendance Tracker | Attendance Locator | Locations Covered | Route Tracker | Van DS Reporting | Van DS Reporting Map | Downloads | UOB Report | Active DSs | Active Variants | Locator | Outlet Universe | Survey Dashboard | Productivity Dashboard"
+      },
+      {
+        "total": 15
       }
     ]
   },
