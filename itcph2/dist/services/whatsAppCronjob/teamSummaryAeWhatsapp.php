@@ -272,51 +272,51 @@ Below are the Team Summary of your Section.",
         }
 
         // Convert data to query string
-        $postData = http_build_query($postFields);
+        // $postData = http_build_query($postFields);
 
-        // Create stream context
-        $options = [
-            'http' => [
-                'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
-                    "Cookie: SERVERID=webC1\r\n",
-                'method'  => 'POST',
-                'content' => $postData,
-                'timeout' => 30
-            ]
-        ];
+        // // Create stream context
+        // $options = [
+        //     'http' => [
+        //         'header'  => "Content-Type: application/x-www-form-urlencoded\r\n" .
+        //             "Cookie: SERVERID=webC1\r\n",
+        //         'method'  => 'POST',
+        //         'content' => $postData,
+        //         'timeout' => 30
+        //     ]
+        // ];
 
-        $context = stream_context_create($options);
+        // $context = stream_context_create($options);
 
-        // Send request
-        $response = file_get_contents($apiUrl, false, $context);
+        // // Send request
+        // $response = file_get_contents($apiUrl, false, $context);
 
-        if ($response === FALSE) {
-            return "Error sending request";
-        }
-        echo "WhatsApp API Response: " . $response; // Log the response for debugging
+        // if ($response === FALSE) {
+        //     return "Error sending request";
+        // }
+        // echo "WhatsApp API Response: " . $response; // Log the response for debugging
 
-        return json_decode($response, true);
+        // return json_decode($response, true);
 
         // Initialize cURL
-        // $ch = curl_init($apiUrl);
-        // curl_setopt($ch, CURLOPT_POST, true);
-        // curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        // curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
+        $ch = curl_init($apiUrl);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
-        // // Execute the cURL request
-        // $response = curl_exec($ch);
+        // Execute the cURL request
+        $response = curl_exec($ch);
 
-        // // Check for errors
-        // $success = false;
-        // if (curl_errno($ch)) {
-        //     error_log('WhatsApp API Error: ' . curl_error($ch));
-        // } else {
-        //     $success = true;
-        // }
+        // Check for errors
+        $success = false;
+        if (curl_errno($ch)) {
+            error_log('WhatsApp API Error: ' . curl_error($ch));
+        } else {
+            $success = true;
+        }
 
-        // curl_close($ch);
-        // return $success;
+        curl_close($ch);
+        return $success;
     }
 
     private function clearOldImageDateFolders($currentDate)
