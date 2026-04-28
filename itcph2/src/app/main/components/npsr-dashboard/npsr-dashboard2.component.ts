@@ -126,7 +126,7 @@ export class NpsrDashboard2Component implements OnDestroy, OnInit {
 
   getCardData(showLoader = false) {
     const monthValues = this.group.get('month')?.value;
-    if (monthValues && monthValues.length <= 3) {
+    if (monthValues?.length <= 3) {
       // this.chartData = null;
       if (showLoader) {
         this.loaderService.startLoader();
