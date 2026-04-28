@@ -5,216 +5,409 @@
     "modulesList": [
       [
         {
-          "label": "Actionable",
-          "value": "84"
+          "label": "App Notification",
+          "value": 102
         }
       ],
       [
         {
-          "label": "Attendance",
-          "value": "83"
+          "label": "Actionable",
+          "value": 84
+        },
+        {
+          "label": "Add MDO Team",
+          "value": 90
+        },
+        {
+          "label": "AI Insights",
+          "value": 126
+        }
+      ],
+      [
+        {
+          "label": "Locator",
+          "value": 83
         },
         {
           "label": "Attendance Tracker",
-          "value": "51"
+          "value": 51
         },
         {
           "label": "Attendance Locator",
-          "value": "52"
+          "value": 52
         }
       ],
       [
         {
           "label": "Home Page",
-          "value": "3"
+          "value": 3
         },
         {
           "label": "Dashboard",
-          "value": "78"
+          "value": 78
         },
         {
-          "label": "Sales Dashboard",
-          "value": "79"
-        }
-      ],
-      [
-        {
-          "label": "Route Data",
-          "value": "47"
+          "label": "Survey Trend",
+          "value": 79
         },
         {
-          "label": "Upload Route Data",
-          "value": "49"
+          "label": "Survey Dashboard",
+          "value": 88
         },
         {
-          "label": "Locations Covered",
-          "value": "62"
+          "label": "Productivity Dashboard",
+          "value": 89
         },
         {
-          "label": "Route Tracker",
-          "value": "63"
+          "label": "NPSR Dashboard",
+          "value": 120
         },
         {
-          "label": "Outlet Universe",
-          "value": "86"
-        }
-      ],
-      [
-        {
-          "label": "Downloads",
-          "value": "74"
-        },
-        {
-          "label": "Van DS Reporting",
-          "value": "72"
-        },
-        {
-          "label": "Van DS Reporting Map",
-          "value": "73"
-        },
-        {
-          "label": "Productivity Report",
-          "value": "76"
-        },
-        {
-          "label": "UOB Report",
-          "value": "75"
-        },
-        {
-          "label": "Active DSs",
-          "value": "80"
-        },
-        {
-          "label": "Active Variants",
-          "value": "81"
-        },
-        {
-          "label": "Route (Outlet Master)",
-          "value": "48"
-        },
-        {
-          "label": "Leaderboard Data",
-          "value": "85"
-        },
-        {
-          "label": "Edit Product Price",
-          "value": "77"
-        }
-      ],
-      [
-        {
-          "label": "Project Management",
-          "value": "11"
-        },
-        {
-          "label": "Add Client",
-          "value": "12"
-        },
-        {
-          "label": "View Clients",
-          "value": "13"
-        },
-        {
-          "label": "Edit Client",
-          "value": "14"
-        },
-        {
-          "label": "Delete Client",
-          "value": "15"
-        },
-        {
-          "label": "Add Project",
-          "value": "16"
-        },
-        {
-          "label": "View Project",
-          "value": "17"
-        },
-        {
-          "label": "Edit Project",
-          "value": "18"
-        },
-        {
-          "label": "Delete Project",
-          "value": "19"
-        },
-        {
-          "label": "Add Team",
-          "value": "20"
-        },
-        {
-          "label": "View Team",
-          "value": "21"
-        },
-        {
-          "label": "Edit Team",
-          "value": "22"
-        },
-        {
-          "label": "Delete Team",
-          "value": "23"
+          "label": "Breeze Dashboard",
+          "value": 132
         }
       ],
       [
         {
           "label": "Super User",
-          "value": "31"
+          "value": 31
         },
         {
           "label": "Add Group",
-          "value": "32"
+          "value": 32
         },
         {
           "label": "View Groups",
-          "value": "33"
+          "value": 33
         },
         {
           "label": "Edit Group",
-          "value": "34"
+          "value": 34
         },
         {
           "label": "Delete Group",
-          "value": "35"
+          "value": 35
         },
         {
           "label": "Add User",
-          "value": "36"
+          "value": 36
         },
         {
           "label": "View Users",
-          "value": "37"
+          "value": 37
         },
         {
           "label": "Edit User",
-          "value": "38"
+          "value": 38
         },
         {
           "label": "Delete User",
-          "value": "39"
+          "value": 39
         },
         {
           "label": "Add Module",
-          "value": "40"
+          "value": 40
         },
         {
           "label": "View Modules",
-          "value": "41"
+          "value": 41
         },
         {
           "label": "Edit Module",
-          "value": "42"
+          "value": 42
         },
         {
           "label": "Delete Module",
-          "value": "43"
+          "value": 43
         },
         {
           "label": "Unlock User",
-          "value": "44"
+          "value": 44
+        }
+      ],
+      [
+        {
+          "label": "Route Data",
+          "value": 47
+        },
+        {
+          "label": "Upload Route Data",
+          "value": 49
+        },
+        {
+          "label": "View Route Data",
+          "value": 95
+        },
+        {
+          "label": "Delete Route Data",
+          "value": 96
+        },
+        {
+          "label": "Upload MDO Route",
+          "value": 106
+        },
+        {
+          "label": "Focus Brand Reporting",
+          "value": 110
+        },
+        {
+          "label": "Focus Edit",
+          "value": 111
+        },
+        {
+          "label": "SWD  Target Upload",
+          "value": 113
+        },
+        {
+          "label": "MDO Route Download",
+          "value": 115
+        },
+        {
+          "label": "Breeze Data Upload",
+          "value": 116
+        },
+        {
+          "label": "FSO Tracker Upload",
+          "value": 119
+        },
+        {
+          "label": "Restore Route Data",
+          "value": 125
+        },
+        {
+          "label": "Locations Covered",
+          "value": 62
+        },
+        {
+          "label": "Route Tracker",
+          "value": 63
+        },
+        {
+          "label": "Outlet Universe",
+          "value": 86
+        },
+        {
+          "label": "MDO Route Traker",
+          "value": 100
+        },
+        {
+          "label": "MDO Outlet Universe",
+          "value": 101
+        }
+      ],
+      [
+        {
+          "label": "Project Management",
+          "value": 11
+        },
+        {
+          "label": "Add Client",
+          "value": 12
+        },
+        {
+          "label": "View Clients",
+          "value": 13
+        },
+        {
+          "label": "Edit Client",
+          "value": 14
+        },
+        {
+          "label": "Delete Client",
+          "value": 15
+        },
+        {
+          "label": "Add Project",
+          "value": 16
+        },
+        {
+          "label": "View Project",
+          "value": 17
+        },
+        {
+          "label": "Edit Project",
+          "value": 18
+        },
+        {
+          "label": "Delete Project",
+          "value": 19
+        },
+        {
+          "label": "Add Team",
+          "value": 20
+        },
+        {
+          "label": "View Team",
+          "value": 21
+        },
+        {
+          "label": "Edit Team",
+          "value": 22
+        },
+        {
+          "label": "Delete Team",
+          "value": 23
+        },
+        {
+          "label": "Restore Team",
+          "value": 97
+        },
+        {
+          "label": "View  MDO Team",
+          "value": 107
+        },
+        {
+          "label": "Delete Mdo Team",
+          "value": 108
+        },
+        {
+          "label": "EDIT Mdo Team",
+          "value": 109
+        },
+        {
+          "label": "Store Offline Manegement",
+          "value": 117
+        },
+        {
+          "label": "Download Table",
+          "value": 118
+        }
+      ],
+      [
+        {
+          "label": "Downloads",
+          "value": 74
+        },
+        {
+          "label": "Van DS Reporting",
+          "value": 72
+        },
+        {
+          "label": "Van DS Reporting Map",
+          "value": 73
+        },
+        {
+          "label": "Productivity Report",
+          "value": 76
+        },
+        {
+          "label": "UOB Report",
+          "value": 75
+        },
+        {
+          "label": "Active DSs",
+          "value": 80
+        },
+        {
+          "label": "Active Variants",
+          "value": 81
+        },
+        {
+          "label": "Route (Outlet Master)",
+          "value": 48
+        },
+        {
+          "label": "Leaderboard Data",
+          "value": 85
+        },
+        {
+          "label": "wd mapping management",
+          "value": 91
+        },
+        {
+          "label": "Conversion Report",
+          "value": 92
+        },
+        {
+          "label": "Missed Call Report",
+          "value": 93
+        },
+        {
+          "label": "NPSR DSPM Target Setting",
+          "value": 94
+        },
+        {
+          "label": "MDO Reporting",
+          "value": 98
+        },
+        {
+          "label": "MDO Reporting Map",
+          "value": 99
+        },
+        {
+          "label": "NPSR DSPM Report",
+          "value": 103
+        },
+        {
+          "label": "Active MDO Reporting",
+          "value": 104
+        },
+        {
+          "label": "MDO Performance Report",
+          "value": 105
+        },
+        {
+          "label": "Add WD",
+          "value": 112
+        },
+        {
+          "label": "Active Focus Varient",
+          "value": 114
+        },
+        {
+          "label": "PDF Access Report",
+          "value": 121
+        },
+        {
+          "label": "Linecut Report",
+          "value": 122
+        },
+        {
+          "label": "Order Reporting",
+          "value": 124
+        },
+        {
+          "label": "Delete Miss Call",
+          "value": 127
+        },
+        {
+          "label": "Order Map",
+          "value": 123
+        },
+        {
+          "label": "Branch SKU Allocation",
+          "value": 128
+        },
+        {
+          "label": "District SKU Allocation",
+          "value": 129
+        },
+        {
+          "label": "HO SKU Allocation",
+          "value": 130
+        },
+        {
+          "label": "Allocation Report",
+          "value": 131
+        },
+        {
+          "label": "MDO DSPM Report",
+          "value": 133
+        },
+        {
+          "label": "Manual Assign Target",
+          "value": 134
+        },
+        {
+          "label": "Edit Product Price",
+          "value": 77
         }
       ]
     ],
-    "groupData": null,
+    "groupData": {
+      "name": "Products Alloaction",
+      "items": "1,2,74,130,131,128,129"
+    },
     "sortOptions": [
       {
         "label": "Group Name",

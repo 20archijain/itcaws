@@ -30,7 +30,7 @@ export class AddGroupComponent implements OnDestroy, OnInit {
   private editId: number | null = null;
   group!: UntypedFormGroup;
   moduleList: AddGroup[][] = [];
-  selectedRecords: any[][] = [];
+  selectedRecords: Record<number, number[]> = {};
   errorMessages = {
     name: GROUP_VALIDATORS.messages.name,
   };
@@ -92,12 +92,12 @@ export class AddGroupComponent implements OnDestroy, OnInit {
               this.group.get('name')?.setValue(editData?.name || '');
               this.group.get('id')?.setValue(this.editId);
 
-              const selectedRecords: string[] = editData?.items.split(',');
+              const selectedRecords: number[] = editData?.items.split(',').map(item => +item);
 
               if (selectedRecords && selectedRecords.length > 0) {
                 selectedRecords.forEach(moduleId => {
                   const index = findIndex((mainModule: AddGroup[]) => {
-                    return mainModule.findIndex(mod => +mod.value === +moduleId) > -1;
+                    return mainModule.findIndex(mod => +mod.value === moduleId) > -1;
                   })(this.moduleList);
                   if (index > -1 && this.selectedRecords[index]) {
                     this.selectedRecords[index].push(moduleId);
@@ -191,7 +191,6 @@ export class AddGroupComponent implements OnDestroy, OnInit {
   }
 
   get selectedModules() {
-    // eslint-disable-next-line prefer-spread
-    return [].concat.apply([], this.selectedRecords as any);
+    return Object.values(this.selectedRecords).flat();
   }
 }

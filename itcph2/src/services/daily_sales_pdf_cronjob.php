@@ -495,7 +495,8 @@ class generatePDFCronjob
                 $vol_today = (float)($todayData['vol_today'] ?? 0);
 
                 /* WEEK */
-                $weekQuery = " SELECT COUNT(DISTINCT ques_3) as uob_week, SUM($col) as vol_week FROM $respTable WHERE team_id = $teamId AND capture_date BETWEEN '$weekStart' AND '$weekEnd' AND dstatus = 0 AND $col > 0";
+                $weekQuery = " SELECT COUNT(DISTINCT ques_3) as uob_week, SUM($col) as vol_week FROM $respTable WHERE team_id = $teamId
+                                 AND capture_date BETWEEN '$weekStart' AND '$weekEnd' AND dstatus = 0 AND $col > 0";
 
                 $weekAction = null;
                 $tmp2 = null;
@@ -573,10 +574,10 @@ class generatePDFCronjob
 
     final public function generatePDF()
     {
-        // $currentDate = currentDate();
-        $currentDate = '2026-02-16';
-        $sDateCond = "AND a.activity_date = '$currentDate' AND a.team_id = '19734'"; // For Testing
-        // $sDateCond = "AND a.activity_date = '$currentDate'";
+        $currentDate = currentDate();
+        // $currentDate = '2026-02-16';
+        // $sDateCond = "AND a.activity_date = '$currentDate' and a.team_id = 19734";
+        $sDateCond = "AND a.activity_date = '$currentDate'";
 
         $cDT = currentDateTime();
         $cD = $currentDate;
@@ -584,22 +585,17 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number ,a.resp_enddatetime, b.team_name FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.team_id = b.team_id AND a.attendance_datetime is not null" .
-            " AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
+        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number, b.team_name FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0" .
+            " AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 30";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $summary_id = $row["summary_id"];
                 $start_datetime = $row["attendance_datetime"];
-                if ($end_datetime == '' || $end_datetime == null) {
-                    $end_datetime = $row["resp_enddatetime"];
-                } else {
-                    $end_datetime = $row["dayend_datetime"];
-                }
+                $end_datetime = $row["dayend_datetime"];
                 $team_id = $row["team_id"];
                 $ae_number = $row["ae_number"];
-                // $ae_number = '6397329039'; // For Testing
                 $team_name = $row["team_name"];
                 $notificationTitle = "Survey Summary";
 
@@ -698,14 +694,14 @@ class generatePDFCronjob
             $apiUrl = 'https://api.vnsai.com/WAApi/send';
             $headers = ['Cookie: SERVERID=webC1'];
             $postFields = [
-                'userid'  => 'Appilary',
-                'password'  => 'Uyf6wtH0',
-                'wabaNumber' => '919289854142',
+                'userid' => 'AppilaryAnanta',
+                'password' => 'ztzYF8q4',
+                'wabaNumber' => '919211627912',
                 'output' => 'json',
                 'mobile' => $phoneNumber,
                 'sendMethod' => 'quick',
                 'msgType' => 'Media',
-                'templateName' => 'radar_2point_0',
+                'templateName' => 'radar_2',
                 'msg' => "Dear Sir,
 
 Sharing Day End Report of {$team_name}. PDF attached.",
