@@ -33,7 +33,7 @@ class VanDswhatsAppSummary
         try {
             $currentDate = currentDate();
             // $currentDate = "2026-02-23"; // For testing
-            // $sectionCond = " AND b.section = 'JPU002'"; // For testing
+            $sectionCond = " AND b.section IN ('PU8003','BHM002','BHM001','AHN001', 'BHL005')"; // For testing
             $this->clearOldImageDateFolders($currentDate);
             $monthStartDate = date("Y-m-01", strtotime($currentDate));
             $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -54,95 +54,95 @@ class VanDswhatsAppSummary
 
             $debugStep = "fetch_sections";
             $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
-            "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' AND b.is_type IN (0,2,5) " .
-            "AND COALESCE(b.summary_sent, 0) = 0 GROUP BY b.section ORDER BY b.section LIMIT 15";
+                "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' AND b.is_type IN (0,2,5) " .
+                "AND COALESCE(b.summary_sent, 0) = 0 $sectionCond GROUP BY b.section ORDER BY b.section LIMIT 15";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             $createdImages = array();
             $processedSections = array();
             if ($iRows > 0) {
-            while ($row = $this->_dbConn->GetData($sAction)) {
-                $aeName = $row["ae_name"];
-                $phoneNumber = $row["ae_number"];
-                // $phoneNumber = '6397329039'; // For Testing
-                $wdCode = $row["wd_code"];
-                $section = $row["section"];
-                $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section' AND is_type IN (0,2,5)";
-                $totalSalesmen = (int) getRowColumn($this->_dbConn, $projectTeamTable, "COUNT(team_id)", $aeCondition);
+                while ($row = $this->_dbConn->GetData($sAction)) {
+                    $aeName = $row["ae_name"];
+                    // $phoneNumber = $row["ae_number"];
+                    $phoneNumber = '6397329039'; // For Testing
+                    $wdCode = $row["wd_code"];
+                    $section = $row["section"];
+                    $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section' AND is_type IN (0,2,5)";
+                    $totalSalesmen = (int) getRowColumn($this->_dbConn, $projectTeamTable, "COUNT(team_id)", $aeCondition);
 
-                $dailyRows = $this->getAeSummaryRows($phoneNumber, $section, $currentDate, $currentDate);
-                $mtdRows = $this->getAeSummaryRows($phoneNumber, $section, $monthStartDate, $currentDate);
+                    $dailyRows = $this->getAeSummaryRows($phoneNumber, $section, $currentDate, $currentDate);
+                    $mtdRows = $this->getAeSummaryRows($phoneNumber, $section, $monthStartDate, $currentDate);
 
-                $teamDetails = $this->getSectionTeamDetails($phoneNumber, $section);
-                $sectionTypeFlags = $this->getSectionTypeFlags($phoneNumber, $section);
-                $typeBifurcation = $this->getSectionTypeBifurcationCounts($phoneNumber, $section);
-                $teamStrength = $this->getTeamStrengthData($phoneNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec);
-                $npsrToday = $this->getSnapshotTodayData($dailyRows, 5, 2, $teamDetails);
-                $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5, $currentDate, $phoneNumber, $section);
-                $vanDsToday = $this->getSnapshotTodayData($dailyRows, 0, 20, $teamDetails);
-                $vanDsMtd = $this->getSnapshotMtdData($mtdRows, 0, $currentDate, $phoneNumber, $section);
-                if (!empty($phoneNumber)) {
-                    $imagePath = $this->createAeSummaryImage(
-                        $currentDate,
-                        $aeName,
-                        $wdCode,
-                        $section,
-                        $teamStrength,
-                        $npsrToday,
-                        $npsrMtd,
-                        $vanDsToday,
-                        $vanDsMtd,
-                        $sectionTypeFlags,
-                        $typeBifurcation
-                    );
-                    if ($imagePath) {
-                        $imageUrl = $this->buildPublicImageUrl($imagePath);
-                        $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrl, $aeName, 'vnsai');
-                        $processedSections[$section] = true;
-                        $createdImages[] = array(
-                            "ae_name" => $aeName,
-                            "ae_number" => $phoneNumber,
-                            "section" => $section,
-                            "image_path" => $imagePath,
-                            "image_url" => $imageUrl,
-                            "whatsapp_response" => $whatsAppResponse
+                    $teamDetails = $this->getSectionTeamDetails($phoneNumber, $section);
+                    $sectionTypeFlags = $this->getSectionTypeFlags($phoneNumber, $section);
+                    $typeBifurcation = $this->getSectionTypeBifurcationCounts($phoneNumber, $section);
+                    $teamStrength = $this->getTeamStrengthData($phoneNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec);
+                    $npsrToday = $this->getSnapshotTodayData($dailyRows, 5, 2, $teamDetails);
+                    $npsrMtd = $this->getSnapshotMtdData($mtdRows, 5, $currentDate, $phoneNumber, $section);
+                    $vanDsToday = $this->getSnapshotTodayData($dailyRows, 0, 20, $teamDetails);
+                    $vanDsMtd = $this->getSnapshotMtdData($mtdRows, 0, $currentDate, $phoneNumber, $section);
+                    if (!empty($phoneNumber)) {
+                        $imagePath = $this->createAeSummaryImage(
+                            $currentDate,
+                            $aeName,
+                            $wdCode,
+                            $section,
+                            $teamStrength,
+                            $npsrToday,
+                            $npsrMtd,
+                            $vanDsToday,
+                            $vanDsMtd,
+                            $sectionTypeFlags,
+                            $typeBifurcation
                         );
+                        if ($imagePath) {
+                            $imageUrl = $this->buildPublicImageUrl($imagePath);
+                            $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrl, $aeName, 'vnsai');
+                            $processedSections[$section] = true;
+                            $createdImages[] = array(
+                                "ae_name" => $aeName,
+                                "ae_number" => $phoneNumber,
+                                "section" => $section,
+                                "image_path" => $imagePath,
+                                "image_url" => $imageUrl,
+                                "whatsapp_response" => $whatsAppResponse
+                            );
+                        }
                     }
                 }
             }
-            }
 
             if (count($processedSections) > 0) {
-            $sectionList = array();
-            foreach (array_keys($processedSections) as $sentSection) {
-                $sectionList[] = "'" . addslashes($sentSection) . "'";
-            }
-            $sectionInClause = implode(",", $sectionList);
-            $debugStep = "mark_sent_sections";
-            $sAction5 = null;
-            $iRows = 0;
-            $markSentQuery = "UPDATE $projectTeamTable SET summary_sent = 1, summary_sent_date = '$currentDate' WHERE dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)";
-            $this->_dbConn->ExecuteSelectQuery($markSentQuery, $sAction5, $iRows);
+                $sectionList = array();
+                foreach (array_keys($processedSections) as $sentSection) {
+                    $sectionList[] = "'" . addslashes($sentSection) . "'";
+                }
+                $sectionInClause = implode(",", $sectionList);
+                $debugStep = "mark_sent_sections";
+                $sAction5 = null;
+                $iRows = 0;
+                $markSentQuery = "UPDATE $projectTeamTable SET summary_sent = 1, summary_sent_date = '$currentDate' WHERE dstatus = 0 AND s_id = 99 AND section IN ($sectionInClause)";
+                $this->_dbConn->ExecuteSelectQuery($markSentQuery, $sAction5, $iRows);
             }
 
             // If nothing is pending now, remove all generated images for this date.
             $debugStep = "pending_count_check";
             $pendingCount = (int) getRowColumn(
-            $this->_dbConn,
-            $projectTeamTable,
-            "COUNT(DISTINCT section)",
-            "dstatus = 0 AND s_id = 99 AND section IS NOT NULL AND section != '' " .
-                "AND (COALESCE(summary_sent, 0) = 0 OR summary_sent_date IS NULL OR summary_sent_date != '$currentDate')"
+                $this->_dbConn,
+                $projectTeamTable,
+                "COUNT(DISTINCT section)",
+                "dstatus = 0 AND s_id = 99 AND section IS NOT NULL AND section != '' " .
+                    "AND (COALESCE(summary_sent, 0) = 0 OR summary_sent_date IS NULL OR summary_sent_date != '$currentDate')"
             );
             if ($pendingCount === 0) {
                 $this->clearGeneratedImagesForDate($currentDate);
             }
 
             echo json_encode(array(
-            "status" => 1,
-            "capture_date" => $currentDate,
-            "total_images" => count($createdImages),
-            "images" => $createdImages
+                "status" => 1,
+                "capture_date" => $currentDate,
+                "total_images" => count($createdImages),
+                "images" => $createdImages
             ));
         } catch (Exception $e) {
             echo json_encode(array(
@@ -181,9 +181,22 @@ class VanDswhatsAppSummary
         $path = str_replace("\\", "/", (string) $imagePath);
         $basePath = isset($GLOBALS["CUST_FOLDER_PATH"]) ? str_replace("\\", "/", (string) $GLOBALS["CUST_FOLDER_PATH"]) : "";
         $baseUrl = isset($GLOBALS["CUST_FOLDER_URL"]) ? rtrim((string) $GLOBALS["CUST_FOLDER_URL"], "/") : "";
+        $baseUrl = "";
+        if (isset($GLOBALS["SITE_URL"]) && defined("PRODS_ANY_FOLDER")) {
+            $baseUrl = rtrim((string) $GLOBALS["SITE_URL"], "/") . constant("PRODS_ANY_FOLDER");
+        } elseif (isset($GLOBALS["CUST_FOLDER_URL"])) {
+            $baseUrl = rtrim((string) $GLOBALS["CUST_FOLDER_URL"], "/");
+        }
         if ($basePath !== "" && $baseUrl !== "" && stripos($path, $basePath) === 0) {
             $relative = ltrim(substr($path, strlen($basePath)), "/");
             return $baseUrl . "/" . $relative;
+        }
+        if ($baseUrl !== "") {
+            $marker = "/prods/any/";
+            $markerPos = stripos($path, $marker);
+            if ($markerPos !== false) {
+                return rtrim((string) $GLOBALS["SITE_URL"], "/") . substr($path, $markerPos);
+            }
         }
         return $path;
     }
@@ -728,7 +741,7 @@ Below are the Team Summary of your Section.",
         if ($this->_resolvedSansFont !== null) {
             return $this->_resolvedSansFont;
         }
-        $projectFont = dirname(__FILE__) . "/../../assets/fonts/team_summary.ttf";
+        $projectFont = dirname(__FILE__) . "../../assets/fonts/team_summary.ttf";
         if (file_exists($projectFont)) {
             $this->_resolvedSansFont = $projectFont;
             return $this->_resolvedSansFont;
