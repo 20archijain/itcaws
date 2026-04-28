@@ -28,9 +28,12 @@ class ActiveMdoUsersReporting
     // Filter Condition
     final public function getCondition()
     {
-        $teamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $projectTeamTable = $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'];
+        $breezeTeamTable = $GLOBALS['TABLES']['BREEZE_TEAM_TABLE'];
         $branchTable = $GLOBALS['TABLES']['BRANCH_TABLE'];
         $mappingTable = $GLOBALS['TABLES']['WD_MAPPING_TABLE'];
+        $unionTeamQuery = "(SELECT team_id, team_name, branch_id, circle, section, wd_code, is_type, dstatus FROM $projectTeamTable WHERE dstatus = 0" .
+            " UNION ALL SELECT team_id, team_name, branch_id, circle, section, wd_code, is_type, dstatus FROM $breezeTeamTable WHERE dstatus = 0)";
         $condition = "";
         $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
         if ($district) {
@@ -40,7 +43,7 @@ class ActiveMdoUsersReporting
                     $districts = "'" . implode("','", $district) . "'";
                     $condition .= " AND a.district IN ($districts)";
                 } else {
-                    $condition .= " AND a.district = $district";
+                    $condition .= " AND a.district = '$district'";
                 }
             }
         }
@@ -143,14 +146,13 @@ class ActiveMdoUsersReporting
 
         $where = "";
         if ($condition) {
-            $where .=  $condition;
-
-            // $where .= " AND c.team_id IN (SELECT a.team_id FROM $teamTable as a, $branchTable as b, $mappingTable as e, tblmdo_wd_mapping AS d WHERE a.dstatus = '0' AND b.dstatus = '0' AND c.dstatus = '0' AND a.branch_id = b.branch_id AND a.team_id = d.mdo_id AND a.rec_id = b.wd_id $condition)";
+            $where .= " AND ma.teams IN (SELECT c.team_id FROM $unionTeamQuery AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id" .
+                " LEFT JOIN $mappingTable AS a ON c.wd_code = a.wd_code WHERE c.dstatus = 0 $condition)";
         }
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         if ($teamList) {
-            $where .= " AND c.team_id IN $teamList";
+            $where .= " AND ma.mdo_id IN $teamList";
         }
 
         return $where;
@@ -167,12 +169,14 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.district from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '10' $where order by a.district";
+        $query = "SELECT DISTINCT a.district FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, dstatus FROM tblbreeze_team) AS b WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND d.teams = b.team_id AND a.branch_id = b.branch_id $where ORDER BY a.district";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -198,7 +202,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -208,7 +212,9 @@ class ActiveMdoUsersReporting
         // echo $where;die;
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct a.branch_name, a.main_branch, a.branch_id from tblbranch as a, tblproject_team as b where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '10' $where order by a.branch_name";
+        $query = "SELECT DISTINCT a.branch_name, a.main_branch, a.branch_id FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, dstatus FROM tblbreeze_team) AS b WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND d.teams = b.team_id AND a.branch_id = b.branch_id $where ORDER BY a.branch_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -234,7 +240,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -243,8 +249,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.circle, c.circle_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.circle IS NOT NULL AND b.circle != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.circle";
+        $query = "SELECT DISTINCT b.circle, c.circle_name FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, circle, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, circle, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.circle IS NOT NULL AND b.circle != '' AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY b.circle";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -269,7 +276,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -278,8 +285,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.section, c.section_name from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.section IS NOT NULL AND b.section != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.section";
+        $query = "SELECT DISTINCT b.section, c.section_name FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, section, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, section, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.section IS NOT NULL AND b.section != '' AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY b.section";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -304,7 +312,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -313,8 +321,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_code, c.wd_firm_name, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by b.wd_code";
+        $query = "SELECT DISTINCT c.wd_code, c.wd_firm_name, c.wd_market FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY b.wd_code";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -340,7 +349,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -349,8 +358,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_market, c.wd_market from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by c.wd_market";
+        $query = "SELECT DISTINCT c.wd_market, c.wd_market FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_market IS NOT NULL AND c.wd_market != '' AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY c.wd_market";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -375,7 +385,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -384,8 +394,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct c.wd_pop_group, c.wd_pop_group from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id AND b.s_id = '10' $where order by c.wd_pop_group";
+        $query = "SELECT DISTINCT c.wd_pop_group, c.wd_pop_group FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND c.wd_pop_group IS NOT NULL AND c.wd_pop_group != '' AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY c.wd_pop_group";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -402,6 +413,7 @@ class ActiveMdoUsersReporting
 
     final public function getDsTypeList($cond = "")
     {
+        global $ARR_TEAM_TYPES;
         $arrData = array();
         $arrData[] = array(
             "label" => "All",
@@ -410,7 +422,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -419,28 +431,14 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.is_type from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.is_type IN (7, 10) AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.is_type";
+        $query = "SELECT DISTINCT b.is_type FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, branch_id, wd_code, is_type, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, branch_id, wd_code, is_type, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.is_type IN (0, 6, 7, 8, 10) AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY b.is_type";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $teamType = "";
-                if ($row['is_type'] == 0) {
-                    $teamType = "Van DS";
-                } elseif ($row['is_type'] == 1) {
-                    $teamType = "Niche";
-                } elseif ($row['is_type'] == 2) {
-                    $teamType = "Town SWD";
-                } elseif ($row['is_type'] == 3) {
-                    $teamType = "Hybrid";
-                } elseif ($row['is_type'] == 5) {
-                    $teamType = "NPSR";
-                } elseif ($row['is_type'] == 7) {
-                    $teamType = "MDO";
-                } elseif ($row['is_type'] == 10) {
-                    $teamType = "FSO";
-                }
+                $teamType = isset($ARR_TEAM_TYPES[$row['is_type']]) ? $ARR_TEAM_TYPES[$row['is_type']] : (string) $row['is_type'];
                 $arrData[] = array(
                     "label" => $teamType,
                     "value" => $row['is_type']
@@ -461,7 +459,7 @@ class ActiveMdoUsersReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
-            $where .= " AND b.team_id IN $teamList";
+            $where .= " AND d.mdo_id IN $teamList";
         }
 
         if ($cond) {
@@ -470,8 +468,9 @@ class ActiveMdoUsersReporting
 
         $rsAction = null;
         $iActionRows = 0;
-        $query = "select Distinct b.team_name, b.team_id from tblbranch as a, tblproject_team as b, tblmapping_wd as c, tblmdo_wd_mapping AS d where a.branch_id = b.branch_id AND a.dstatus = 0 AND b.dstatus = 0" .
-            " AND b.team_name IS NOT NULL AND b.team_name != '' AND b.s_id = '10' AND b.team_id = d.mdo_id AND c.rec_id = d.wd_id $where order by b.team_name";
+        $query = "SELECT DISTINCT b.team_name, b.team_id FROM tblmdo_access AS d, tblbranch AS a, (SELECT team_id, team_name, branch_id, wd_code, dstatus FROM tblproject_team" .
+            " UNION ALL SELECT team_id, team_name, branch_id, wd_code, dstatus FROM tblbreeze_team) AS b, tblmapping_wd AS c WHERE d.dstatus = 0 AND a.dstatus = 0 AND b.dstatus = 0" .
+            " AND b.team_name IS NOT NULL AND b.team_name != '' AND d.teams = b.team_id AND a.branch_id = b.branch_id AND b.wd_code = c.wd_code $where ORDER BY b.team_name";
         $this->_dbConn->ExecuteSelectQuery($query, $rsAction, $iActionRows);
 
         if ($iActionRows > 0) {
@@ -783,26 +782,30 @@ class ActiveMdoUsersReporting
                 array("label" => "Date Created - ASC", "value" => "c.rcd"),
             ),
             "viewHeader" => array(
-                "app.reporting.activeUSers.dsId",
-                "app.reporting.activeUSers.dsName",
-                "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.branch",
+                "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.circle",
                 "app.reporting.activeUSers.section",
                 "app.reporting.activeUSers.wdCode",
+                "MDO ID",
+                "MDO Name",
+                "app.reporting.activeUSers.dsId",
+                "app.reporting.activeUSers.dsName",
                 "app.reporting.activeUSers.dsType",
-                "app.reporting.activeUSers.creationDate"
+                // "app.reporting.activeUSers.creationDate"
             ),
             "viewBody" => array(
-                "id",
-                "dsName",
-                "region",
                 "branchName",
+                "region",
                 "circle",
                 "section",
                 "wdCode",
+                "mdoId",
+                "mdoName",
+                "id",
+                "dsName",
                 "dsType",
-                "creationDate"
+                // "creationDate"
             ),
         );
 
@@ -813,100 +816,210 @@ class ActiveMdoUsersReporting
     //DS DETAILS
     final public function viewDSDetails()
     {
-        $searchCondition = $this->getCondition();
+        Global $ARR_TEAM_TYPES;
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
         $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
-        $projectList = $this->_arrAccessInfo["user_projects"];
-        $teamList = $this->_arrAccessInfo["user_teams"];
+        $arrResult = array();
+        $where = "";
+        $where = $this->getCondition();
 
-        // order by condition
-        $sOrderCond = getOrderByCond("c.rcd", $this->_data["sort"]);
 
-        // Don't use b.dstatus = 0
-        $sAction = null;
-        $iRows = 0;
-        $types = array(7 => "MDO", 10 => "FSO");
+        $accessAction = null;
+        $accessRows = 0;
+        $accessQuery = "SELECT ma.mdo_id, ma.teams, ma.is_type FROM tblmdo_access AS ma WHERE ma.dstatus = 0 AND ma.is_type IN (0, 6, 7, 8, 10) $where";
+        $this->_dbConn->ExecuteSelectQuery($accessQuery, $accessAction, $accessRows);
 
-        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number" .
-            ", c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0 AND a.rec_id = b.wd_id" .
-            " AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $searchCondition $sOrderCond";
+        if ($accessRows > 0) {
+            while ($accessData = $this->_dbConn->GetData($accessAction)) {
+                $mdoId = trim($accessData["mdo_id"]);
+                $teams = trim($accessData["teams"]);
+                $teamType = (int) $accessData["is_type"];
 
-        $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
-        $sQuery .= " " . $limit["limit"];
+                if ($mdoId === "" || $teams === "") {
+                    continue;
+                }
 
-        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+                $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
+                $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
 
-        if ($iRows > 0) {
-            while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $teamId = $arrData["team_id"];
-                $teamType = $arrData["is_type"];
-                $mainBranch = $arrData["main_branch"];
-                $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
+                $arrTeamIds = explode(",", $teams);
+                foreach ($arrTeamIds as $dsId) {
+                    $dsId = trim($dsId);
+                    if ($dsId === "") {
+                        continue;
+                    }
 
-                $arrResult[] = array(
-                    "id" => $teamId,
-                    "dsName" => $arrData["team_name"],
-                    "region" => $arrData["branch_name"],
-                    "branchName" => $mainBranch,
-                    "circle" => $arrData["circle"] . ' - ' . $arrData["circle_name"],
-                    "section" => $arrData["section"] . ' - ' . $arrData["section_name"],
-                    "wdCode" => $arrData["wd_code"] . ' - ' . $arrData['wd_market'] . ' - ' . $arrData['wd_firm_name'],
-                    "dsType" =>  $types[$teamType],
-                    "dsNum" =>  $arrData["ds_number"],
-                    "creationDate" => $creationDate
-                );
+                    $dsAction = null;
+                    $dsRows = 0;
+                    $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, c.branch_id, d.branch_name, d.main_branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
+                        " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
+                        " WHERE c.dstatus = 0 AND c.team_id = '$dsId' LIMIT 1";
+                    $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
+
+                    if ($dsRows > 0) {
+                        $arrData = $this->_dbConn->GetData($dsAction);
+                        $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                        $arrResult[] = array(
+                            "id" => $arrData["team_id"],
+                            "mdoId" => $mdoId,
+                            "mdoName" => $mdoName ? $mdoName : "",
+                            "dsName" => $arrData["team_name"],
+                            "region" => $arrData["branch_name"],
+                            "branchName" => $arrData["main_branch"],
+                            "circle" => trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
+                            "section" => trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
+                            "wdCode" => trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                            "dsType" => isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
+                            "dsNum" => $arrData["ds_number"],
+                            "creationDate" => $creationDate
+                        );
+                    }
+                }
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $total = count($arrResult);
+        $pageNo = isset($this->_data["pageNo"]) ? (int) $this->_data["pageNo"] : 1;
+        $limit = isset($this->_data["limit"]) ? (int) $this->_data["limit"] : 10;
+        if ($pageNo < 1) {
+            $pageNo = 1;
+        }
+        if ($limit < 1) {
+            $limit = 10;
+        }
+        $start = ($pageNo - 1) * $limit;
+        $arrResult = array_slice($arrResult, $start, $limit);
+        $arrResult[] = array("total" => $total);
 
         $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
         echo json_encode($arrMessage);
     }
 
-
-    final public function downloadDSDetails()
+    private function getMdoNameMap()
     {
-        $dwnCond = $this->getCondition();
-        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
-        $branchTable = $this->_tables["BRANCH_TABLE"];
-        $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
-        $cloudDBName = $GLOBALS["DB_DBNAME_CLOUD"];
+        $arrProjectMdoIds = array();
+        $arrBreezeMdoIds = array();
+        $arrMdoNames = array();
 
-        // order by condition
-        $sOrderCond = getOrderByCond("a.rcd");
-
-        // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrBody = array();
         $sAction = null;
         $iRows = 0;
-        $types = array(7 => "MDO", 10 => "FSO");
-        $sQuery = "SELECT a.district, a.branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name, a.wd_pop_group, c.team_id, c.team_name, c.branch_id, d.branch_name, d.main_branch, c.ds_number" .
-            ", c.is_type, c.rcd  FROM $wdMappingTable AS a, tblmdo_wd_mapping as b, $projectTeamTable as c, $branchTable as d WHERE a.dstatus = 0 AND b.dstatus = 0 AND  c.dstatus = 0  AND d.dstatus = 0" .
-            " AND a.rec_id = b.wd_id AND b.mdo_id = c.team_id AND c.s_id = '10' AND c.branch_id = d.branch_id $dwnCond  $sOrderCond";
-
-        $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
+        $query = "SELECT a.mdo_id, a.teams, a.is_type FROM tblmdo_access AS a WHERE a.dstatus = 0 AND a.is_type IN (0, 6, 7, 8, 10)";
+        $this->_dbConn->ExecuteSelectQuery($query, $sAction, $iRows);
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $teamType = $arrData["is_type"];
-                $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
-                $arrBody[] = array(
-                    $arrData["team_id"],
-                    $arrData["team_name"],
-                    $arrData["ds_number"],
-                    $arrData["district"],
-                    $arrData["branch_name"],
-                    $arrData["main_branch"],
-                    $arrData["circle"],
-                    $arrData["section"],
-                    $arrData["wd_code"],
-                    $types[$teamType],
-                    $creationDate,
-                );
+                $mdoId = trim($arrData["mdo_id"]);
+                $teamType = (int) $arrData["is_type"];
+                if ($mdoId === "") {
+                    continue;
+                }
+
+                if ($teamType == 6 || $teamType == 8) {
+                    $arrBreezeMdoIds[$mdoId] = 1;
+                } else {
+                    $arrProjectMdoIds[$mdoId] = 1;
+                }
+
             }
-            $header = array("DS ID", "DS Name", "DS Mob No.", "District", "Region", "Branch", "Circle", "Section", "WD Code", "DS Type", "Date of Creation");
+        }
+
+        $arrProjectMdoIdList = array_keys($arrProjectMdoIds);
+        if (isNonEmptyArray($arrProjectMdoIdList)) {
+            $mdoIdStr = "'" . implode("','", $arrProjectMdoIdList) . "'";
+            $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+            $projectAction = null;
+            $projectRows = 0;
+            $projectQuery = "SELECT team_id, team_name FROM $projectTeamTable WHERE dstatus = 0 AND team_id IN ($mdoIdStr)";
+            $this->_dbConn->ExecuteSelectQuery($projectQuery, $projectAction, $projectRows);
+            if ($projectRows > 0) {
+                while ($projectData = $this->_dbConn->GetData($projectAction)) {
+                    $arrMdoNames[$projectData["team_id"]] = $projectData["team_name"];
+                }
+            }
+        }
+
+        $arrBreezeMdoIdList = array_keys($arrBreezeMdoIds);
+        if (isNonEmptyArray($arrBreezeMdoIdList)) {
+            $mdoIdStr = "'" . implode("','", $arrBreezeMdoIdList) . "'";
+            $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
+            $breezeAction = null;
+            $breezeRows = 0;
+            $breezeQuery = "SELECT team_id, team_name FROM $breezeTeamTable WHERE dstatus = 0 AND team_id IN ($mdoIdStr)";
+            $this->_dbConn->ExecuteSelectQuery($breezeQuery, $breezeAction, $breezeRows);
+            if ($breezeRows > 0) {
+                while ($breezeData = $this->_dbConn->GetData($breezeAction)) {
+                    $arrMdoNames[$breezeData["team_id"]] = $breezeData["team_name"];
+                }
+            }
+        }
+
+        return $arrMdoNames;
+    }
+
+
+    final public function downloadDSDetails()
+    {
+        Global $ARR_TEAM_TYPES;
+        $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
+        $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
+        $branchTable = $this->_tables["BRANCH_TABLE"];
+        $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
+        $arrBody = array();
+
+        $accessAction = null;
+        $accessRows = 0;
+        $accessQuery = "SELECT ma.mdo_id, ma.teams, ma.is_type FROM tblmdo_access AS ma WHERE ma.dstatus = 0 AND ma.is_type IN (0, 6, 7, 8, 10)";
+        $this->_dbConn->ExecuteSelectQuery($accessQuery, $accessAction, $accessRows);
+
+        if ($accessRows > 0) {
+            while ($accessData = $this->_dbConn->GetData($accessAction)) {
+                $mdoId = trim($accessData["mdo_id"]);
+                $teams = trim($accessData["teams"]);
+                $teamType = (int) $accessData["is_type"];
+
+                if ($mdoId === "" || $teams === "") {
+                    continue;
+                }
+
+                $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
+                $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
+
+                $arrTeamIds = explode(",", $teams);
+                foreach ($arrTeamIds as $dsId) {
+                    $dsId = trim($dsId);
+                    if ($dsId === "") {
+                        continue;
+                    }
+
+                    $dsAction = null;
+                    $dsRows = 0;
+                    $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, d.branch_name, d.main_branch, a.district, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
+                        " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
+                        " WHERE c.dstatus = 0 AND c.team_id = '$dsId' LIMIT 1";
+                    $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
+
+                    if ($dsRows > 0) {
+                        $arrData = $this->_dbConn->GetData($dsAction);
+                        $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                        $arrBody[] = array(
+                            $arrData["team_id"],
+                            $mdoId,
+                            $mdoName ? $mdoName : "",
+                            $arrData["team_name"],
+                            $arrData["branch_name"],
+                            $arrData["main_branch"],
+                            trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
+                            trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
+                            trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                            isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
+                            $creationDate,
+                        );
+                    }
+                }
+            }
+            $header = array("DS ID", "MDO ID", "MDO Name", "DS Name", "Region", "Branch", "Circle", "Section", "WD Code", "DS Type", "Date of Creation");
             $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
             $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
             echo json_encode($arrMessage);
