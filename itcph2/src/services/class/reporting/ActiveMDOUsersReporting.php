@@ -1004,22 +1004,22 @@ class ActiveMdoUsersReporting
                         $arrData = $this->_dbConn->GetData($dsAction);
                         $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
                         $arrBody[] = array(
-                            $arrData["team_id"],
-                            $mdoId,
-                            $mdoName ? $mdoName : "",
-                            $arrData["team_name"],
                             $arrData["branch_name"],
                             $arrData["main_branch"],
                             trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
                             trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
                             trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                            $mdoId,
+                            $mdoName ? $mdoName : "",
+                            $arrData["team_id"],
+                            $arrData["team_name"],
                             isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
-                            $creationDate,
+                            // $creationDate,
                         );
                     }
                 }
             }
-            $header = array("DS ID", "MDO ID", "MDO Name", "DS Name", "Region", "Branch", "Circle", "Section", "WD Code", "DS Type", "Date of Creation");
+            $header = array("Region", "Branch","Circle", "Section", "WD Code", "MDO ID",  "MDO Name", "DS ID",  "DS Name","DS Type",);
             $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
             $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
             echo json_encode($arrMessage);
