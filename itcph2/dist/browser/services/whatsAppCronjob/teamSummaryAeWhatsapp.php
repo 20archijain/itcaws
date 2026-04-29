@@ -96,6 +96,16 @@ class VanDswhatsAppSummary
                             $typeBifurcation
                         );
                         if ($imagePath) {
+                            // Stable file path on disk; force a unique URL per send so
+                            // WhatsApp / VNSAI / CDN caches don't serve a stale copy
+                            // (e.g. the empty "0 figures" snapshot from earlier in the day).
+                            $imageUrl = $this->buildPublicImageUrl($imagePath);
+                            $cacheBuster = (string) @filemtime($imagePath);
+                            if ($cacheBuster === "" || $cacheBuster === "0") {
+                                $cacheBuster = (string) time();
+                            }
+                            $imageUrlForSend = $imageUrl . (strpos($imageUrl, '?') === false ? '?' : '&') . 'v=' . $cacheBuster;
+                            // $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrlForSend, $aeName, 'vnsai');
                             $imageUrl = $this->buildPublicImageUrl($imagePath);
                             $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrl, $aeName, 'vnsai');
                             $processedSections[$section] = true;
@@ -105,6 +115,8 @@ class VanDswhatsAppSummary
                                 "section" => $section,
                                 "image_path" => $imagePath,
                                 "image_url" => $imageUrl,
+                                "image_url_for_send" => $imageUrlForSend,
+                                // "whatsapp_response" => $whatsAppResponse
                                 "whatsapp_response" => $whatsAppResponse
                             );
                         }
@@ -393,108 +405,220 @@ Below are the Team Summary of your Section.",
             $hasVan = true;
         }
 
+        // ---------- Layout constants ----------
         $canvasW = 1080;
-        $contentBottom = 538;
+        $margin = 16;
+        $panelW = $canvasW - 2 * $margin;
+        $headerH = 116;
+        $kpiH = 92;
+        $strengthRow1H = 132;
+        $gap = 10;
+        $sparklineH = 110;
+        $footerH = 56;
+
+        // ---------- Build row data (color names; resolve later) ----------
+        $npsrTodayRows = $hasNpsr ? array(
+            array("Average Outlets Visited", $this->formatCompactNumber($npsrToday["avg_outlets_visited"]), "blue"),
+            array("Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), "blue"),
+            array("Average Strike Rate", $npsrToday["avg_strike_rate"], "blue"),
+            array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], "orange", $npsrToday["lowest_strike_team"]),
+            array("Total Infra Volume", $npsrToday["infra_volume"], "purple"),
+            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], "red", $npsrToday["infra_below_limit_names"]),
+            array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), "green"),
+            array("Average Time Spent", $npsrToday["avg_time_spent"], "blue"),
+            array("Below 6 Hours", $npsrToday["below_6_hours"], "red", $npsrToday["below_6_hours_names"])
+        ) : array();
+        $npsrMtdRows = $hasNpsr ? array(
+            array("Avg Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), "green"),
+            array("Avg Daily Infra Volume", $npsrMtd["avg_daily_volume"], "green"),
+            array($npsrMtd["incentive_brand_1_label"], $npsrMtd["incentive_brand_1"], "purple"),
+            array($npsrMtd["incentive_brand_2_label"], $npsrMtd["incentive_brand_2"], "orange")
+        ) : array();
+        $vanTodayRows = $hasVan ? array(
+            array("Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), "blue"),
+            array("Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), "blue"),
+            array("Average Strike Rate", $vanDsToday["avg_strike_rate"], "blue"),
+            array("Total Infra Volume", $vanDsToday["infra_volume"], "purple"),
+            array("Infra Below 20 Ms", $vanDsToday["infra_below_limit"], "red", $vanDsToday["infra_below_limit_names"]),
+            array("Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), "green"),
+            array("Average Time Spent", $vanDsToday["avg_time_spent"], "blue"),
+            array("Below 6 Hours", $vanDsToday["below_6_hours"], "red", $vanDsToday["below_6_hours_names"])
+        ) : array();
+        $vanMtdRows = $hasVan ? array(
+            array("Avg Daily Outlets Billed", $this->formatCompactNumber($vanDsMtd["avg_daily_outlets_billed"]), "purple"),
+            array("Avg Daily Volume", $vanDsMtd["avg_daily_volume"], "purple")
+        ) : array();
+
+        // ---------- Pre-compute dynamic heights ----------
+        $npsrTodayH = $this->computeMetricsPanelHeight($npsrTodayRows);
+        $npsrMtdH = $this->computeMetricsPanelHeight($npsrMtdRows);
+        $vanTodayH = $this->computeMetricsPanelHeight($vanTodayRows);
+        $vanMtdH = $this->computeMetricsPanelHeight($vanMtdRows);
+
+        $unqNote = isset($teamStrength["unqualified_names"]) ? (string) $teamStrength["unqualified_names"] : "";
+        $absNote = isset($teamStrength["absent_names"]) ? (string) $teamStrength["absent_names"] : "";
+        $strengthRow2H = max($this->computeNamesCardHeight($unqNote), $this->computeNamesCardHeight($absNote));
+
+        $contentH = $headerH + $gap + $kpiH + $gap + $strengthRow1H + $gap + $strengthRow2H + $gap;
         if ($hasNpsr) {
-            $contentBottom += 516; // NPSR today panel + gap
-            $contentBottom += 316; // NPSR MTD panel + gap
+            $contentH += $npsrTodayH + $gap + $npsrMtdH + $gap + $sparklineH + $gap;
         }
         if ($hasVan) {
-            $contentBottom += 496; // VAN today panel + gap
-            $contentBottom += 216; // VAN MTD panel + gap
+            $contentH += $vanTodayH + $gap + $vanMtdH + $gap + $sparklineH + $gap;
         }
-        $canvasH = max(980, $contentBottom + 90);
+        $contentH += $footerH + 16;
+        $canvasH = max(900, $contentH);
+
+        // ---------- Image + palette ----------
         $img = imagecreatetruecolor($canvasW, $canvasH);
-        imageantialias($img, true);
-        $bg = imagecolorallocate($img, 246, 249, 252);
+        if (function_exists('imageantialias')) {
+            imageantialias($img, true);
+        }
+
+        $blue = imagecolorallocate($img, 37, 99, 235);
+        $green = imagecolorallocate($img, 22, 163, 74);
+        $orange = imagecolorallocate($img, 234, 88, 12);
+        $red = imagecolorallocate($img, 220, 38, 38);
+        $purple = imagecolorallocate($img, 124, 58, 237);
+        $dark = imagecolorallocate($img, 31, 41, 55);
+        $darkSlate = imagecolorallocate($img, 15, 23, 42);
+        $accent = imagecolorallocate($img, 99, 102, 241);
+        $white = imagecolorallocate($img, 255, 255, 255);
+        $line = imagecolorallocate($img, 226, 232, 240);
+        $muted = imagecolorallocate($img, 107, 114, 128);
+        $bg = imagecolorallocate($img, 244, 246, 250);
+        $headerSub = imagecolorallocate($img, 200, 213, 225);
+        $headerSubDim = imagecolorallocate($img, 168, 188, 209);
+
         imagefill($img, 0, 0, $bg);
 
-        $blue = imagecolorallocate($img, 10, 65, 140);
-        $green = imagecolorallocate($img, 26, 150, 74);
-        $orange = imagecolorallocate($img, 226, 122, 33);
-        $red = imagecolorallocate($img, 206, 53, 57);
-        $purple = imagecolorallocate($img, 95, 53, 153);
-        $dark = imagecolorallocate($img, 34, 49, 63);
-        $white = imagecolorallocate($img, 255, 255, 255);
-        $line = imagecolorallocate($img, 214, 225, 239);
-        $muted = imagecolorallocate($img, 94, 113, 136);
+        $colorMap = array(
+            "blue" => $blue,
+            "green" => $green,
+            "orange" => $orange,
+            "red" => $red,
+            "purple" => $purple,
+            "dark" => $dark
+        );
+        $resolveRows = function ($rows) use ($colorMap, $dark) {
+            $out = array();
+            foreach ($rows as $r) {
+                $newR = $r;
+                $key = isset($r[2]) ? (string) $r[2] : "dark";
+                $newR[2] = isset($colorMap[$key]) ? $colorMap[$key] : $dark;
+                $out[] = $newR;
+            }
+            return $out;
+        };
+        $npsrTodayRowsR = $resolveRows($npsrTodayRows);
+        $npsrMtdRowsR = $resolveRows($npsrMtdRows);
+        $vanTodayRowsR = $resolveRows($vanTodayRows);
+        $vanMtdRowsR = $resolveRows($vanMtdRows);
 
-        // Header
-        imagefilledrectangle($img, 12, 12, $canvasW - 12, 100, $blue);
-        $this->drawCenterText($img, 12, 20, $canvasW - 12, 94, "TEAM SUMMARY", 5, $white);
-        $this->drawHeaderMeta($img, $aeName, $section, $currentDate, $dark, $typeBifurcation);
+        // ===== HEADER =====
+        imagefilledrectangle($img, 0, 0, $canvasW, $headerH, $darkSlate);
+        imagefilledrectangle($img, 0, $headerH - 4, $canvasW, $headerH, $accent);
 
-        // Team strength cards in mobile-friendly 2x2 grid
+        $aeNameText = isset($aeName) ? strtoupper(trim((string) $aeName)) : "";
+        $sectionText = isset($section) ? strtoupper(trim((string) $section)) : "";
+        $this->drawTextLeft($img, $margin + 8, 18, "TEAM SUMMARY", 5, $white);
+        $this->drawTextLeft($img, $margin + 8, 56, $aeNameText . "  |  SEC: " . $sectionText . "  |  DATE: " . (string) $currentDate, 4, $headerSub);
+
         $vanCount = isset($typeBifurcation["van_ds_count"]) ? (int) $typeBifurcation["van_ds_count"] : 0;
         $npsrCount = isset($typeBifurcation["npsr_count"]) ? (int) $typeBifurcation["npsr_count"] : 0;
-        $totalSalesmenValue = "Total " . (string) $teamStrength["total"] . " | VAN DS: " . $vanCount . " | NPSR: " . $npsrCount;
-        $this->drawStrengthCard($img, 16, 150, 514, 120, "SALESMEN", $totalSalesmenValue, $blue, "T", "");
-        $this->drawStrengthCard($img, 550, 150, 514, 120, "QUALIFIED TODAY", (string) $teamStrength["qualified"], $green, "Q", "");
-        $this->drawStrengthCard($img, 16, 284, 514, 230, "UNQUALIFIED", (string) $teamStrength["unqualified"], $orange, "U", $teamStrength["unqualified_names"]);
-        $this->drawStrengthCard($img, 550, 284, 514, 230, "ABSENT", (string) $teamStrength["absent"], $red, "A", $teamStrength["absent_names"]);
+        $this->drawTextLeft($img, $margin + 8, 86, "VAN DS: " . $vanCount . "    |    NPSR: " . $npsrCount, 3, $headerSubDim);
 
-        $cursorY = 522;
+        $totalSm = isset($teamStrength["total"]) ? (int) $teamStrength["total"] : 0;
+        $qualifiedSm = isset($teamStrength["qualified"]) ? (int) $teamStrength["qualified"] : 0;
+        $absentSm = isset($teamStrength["absent"]) ? (int) $teamStrength["absent"] : 0;
+        $unqualifiedSm = isset($teamStrength["unqualified"]) ? (int) $teamStrength["unqualified"] : 0;
+        $qualPct = $totalSm > 0 ? (int) round(($qualifiedSm / $totalSm) * 100) : 0;
+        $absPct = $totalSm > 0 ? (int) round(($absentSm / $totalSm) * 100) : 0;
+        $unqPct = $totalSm > 0 ? (int) round(($unqualifiedSm / $totalSm) * 100) : 0;
+        $this->drawStatusPill($img, $canvasW - 308, 28, $canvasW - 24, 64, "QUAL " . $qualPct . "%   UNQ " . $unqPct . "%   ABS " . $absPct . "%", $accent, $white);
 
-        // NPSR blocks (only if section has NPSR)
-        $npsrTodayRows = array(
-            array("Average Outlets Visited", $this->formatCompactNumber($npsrToday["avg_outlets_visited"]), $blue),
-            array("Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), $blue),
-            array("Average Strike Rate", $npsrToday["avg_strike_rate"], $blue),
-            array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], $orange, $npsrToday["lowest_strike_team"]),
-            array("Total Infra Volume", $npsrToday["infra_volume"], $purple),
-            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], $red, $npsrToday["infra_below_limit_names"]),
-            array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), $green),
-            array("Average Time Spent", $npsrToday["avg_time_spent"], $blue),
-            array("Below 6 Hours", $npsrToday["below_6_hours"], $red, $npsrToday["below_6_hours_names"])
+        // ===== KPI STRIP =====
+        $kpiY = $headerH + $gap;
+        $kpiTileW = (int) (($panelW - 3 * 8) / 4);
+
+        $strikeForKpi = $hasNpsr && $this->isMeaningfulValue($npsrToday["avg_strike_rate"])
+            ? $npsrToday["avg_strike_rate"]
+            : ($hasVan && $this->isMeaningfulValue($vanDsToday["avg_strike_rate"]) ? $vanDsToday["avg_strike_rate"] : "NA");
+
+        $infraSum = ($hasNpsr ? (float) $npsrToday["infra_volume_sum"] : 0) + ($hasVan ? (float) $vanDsToday["infra_volume_sum"] : 0);
+        $infraCnt = ($hasNpsr ? (int) $npsrToday["infra_volume_count"] : 0) + ($hasVan ? (int) $vanDsToday["infra_volume_count"] : 0);
+        $infraAvgVal = $infraCnt > 0 ? (int) round($infraSum / $infraCnt) : 0;
+        $infraStr = $infraCnt > 0 ? $infraAvgVal . " Ms" : "NA";
+
+        $timeStr = $hasVan && $this->isMeaningfulValue($vanDsToday["avg_time_spent"])
+            ? $vanDsToday["avg_time_spent"]
+            : ($hasNpsr && $this->isMeaningfulValue($npsrToday["avg_time_spent"]) ? $npsrToday["avg_time_spent"] : "NA");
+
+        $below6Total = ($hasNpsr ? (int) $npsrToday["below_6_hours"] : 0) + ($hasVan ? (int) $vanDsToday["below_6_hours"] : 0);
+
+        $strikePct = $this->extractPercentValue($strikeForKpi);
+        $this->drawKpiTile($img, $margin, $kpiY, $kpiTileW, $kpiH, "TODAY STRIKE", $strikeForKpi, $blue, $strikePct, 100, $white, $line, $muted, $dark);
+        $infraBarPct = $infraAvgVal > 0 ? min(100, (int) round(($infraAvgVal / 50) * 100)) : 0;
+        $this->drawKpiTile($img, $margin + ($kpiTileW + 8), $kpiY, $kpiTileW, $kpiH, "INFRA VOLUME", $infraStr, $purple, $infraBarPct, 100, $white, $line, $muted, $dark);
+        $timeMins = $this->extractDurationMinutes($timeStr);
+        $timeBarPct = $timeMins > 0 ? min(100, (int) round(($timeMins / 600) * 100)) : 0;
+        $this->drawKpiTile($img, $margin + 2 * ($kpiTileW + 8), $kpiY, $kpiTileW, $kpiH, "AVG TIME", $timeStr, $green, $timeBarPct, 100, $white, $line, $muted, $dark);
+        $belowBarPct = $totalSm > 0 ? min(100, (int) round(($below6Total / $totalSm) * 100)) : 0;
+        $this->drawKpiTile($img, $margin + 3 * ($kpiTileW + 8), $kpiY, $kpiTileW, $kpiH, "BELOW 6 HRS", (string) $below6Total, $red, $belowBarPct, 100, $white, $line, $muted, $dark);
+
+        $cursorY = $kpiY + $kpiH + $gap;
+
+        // ===== STRENGTH ROW 1 =====
+        $card1W = (int) (($panelW - 8) / 2);
+        $totalSalesmenValue = "Total " . (string) $totalSm;
+        $strengthSubLine = "VAN DS: " . $vanCount . "  |  NPSR: " . $npsrCount;
+        $donutData = array(
+            "qualified" => $qualifiedSm,
+            "unqualified" => $unqualifiedSm,
+            "absent" => $absentSm,
+            "qualified_color" => $green,
+            "unqualified_color" => $orange,
+            "absent_color" => $red
         );
+        $this->drawStrengthCardWithDonut($img, $margin, $cursorY, $card1W, $strengthRow1H, "TEAM SALESMEN", $totalSalesmenValue, $blue, $donutData, $white, $line, $dark, $muted, $strengthSubLine);
+        $qualSub = $totalSm > 0 ? "of " . $totalSm . " salesmen" : "";
+        $this->drawStatCard($img, $margin + $card1W + 8, $cursorY, $card1W, $strengthRow1H, "QUALIFIED TODAY", (string) $qualifiedSm, $green, $qualSub, $qualPct, $white, $line, $dark, $muted);
+        $cursorY += $strengthRow1H + $gap;
+
+        // ===== STRENGTH ROW 2 =====
+        $unqLabel = "UNQUALIFIED" . ($totalSm > 0 ? "  -  " . $unqPct . "%" : "");
+        $absLabel = "ABSENT" . ($totalSm > 0 ? "  -  " . $absPct . "%" : "");
+        $this->drawNamesCard($img, $margin, $cursorY, $card1W, $strengthRow2H, $unqLabel, (string) $unqualifiedSm, $orange, $unqNote, $white, $line, $dark, $muted);
+        $this->drawNamesCard($img, $margin + $card1W + 8, $cursorY, $card1W, $strengthRow2H, $absLabel, (string) $absentSm, $red, $absNote, $white, $line, $dark, $muted);
+        $cursorY += $strengthRow2H + $gap;
+
+        // ===== NPSR =====
         if ($hasNpsr) {
-            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 500, "NPSR SNAPSHOT (TODAY)", $blue, $npsrTodayRows, $line, $dark, "N");
-            $cursorY += 508;
+            $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $npsrTodayH, "NPSR SNAPSHOT (TODAY)", $blue, $npsrTodayRowsR, $line, $dark, "N");
+            $cursorY += $npsrTodayH + $gap;
+            $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $npsrMtdH, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRowsR, $line, $dark, "N");
+            $cursorY += $npsrMtdH + $gap;
+            $npsrSeries = isset($npsrMtd["daily_volume_series"]) ? $npsrMtd["daily_volume_series"] : array();
+            $this->drawSparklineStrip($img, $margin, $cursorY, $panelW, $sparklineH, "NPSR  -  DAILY INFRA VOLUME (MTD)", $npsrSeries, $green, $white, $line, $dark, $muted);
+            $cursorY += $sparklineH + $gap;
         }
 
-        // NPSR MTD
-        $npsrMtdRows = array(
-            array("Average Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), $green),
-            array("Average Infra Volume", $npsrMtd["avg_daily_volume"], $green),
-            array($npsrMtd["incentive_brand_1_label"], $npsrMtd["incentive_brand_1"], $purple),
-            array($npsrMtd["incentive_brand_2_label"], $npsrMtd["incentive_brand_2"], $orange)
-        );
-        if ($hasNpsr) {
-            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 300, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRows, $line, $dark, "N");
-            $cursorY += 308;
-        }
-
-        // VAN Today
-        $vanTodayRows = array(
-            array("Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), $blue),
-            array("Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), $blue),
-            array("Average Strike Rate", $vanDsToday["avg_strike_rate"], $blue),
-            array("Total Infra Volume", $vanDsToday["infra_volume"], $purple),
-            array("Infra Below 20 Ms", $vanDsToday["infra_below_limit"], $red, $vanDsToday["infra_below_limit_names"]),
-            array("Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), $green),
-            array("Average Time Spent", $vanDsToday["avg_time_spent"], $blue),
-            array("Below 6 Hours", $vanDsToday["below_6_hours"], $red, $vanDsToday["below_6_hours_names"])
-        );
+        // ===== VAN =====
         if ($hasVan) {
-            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 480, "VAN DS SNAPSHOT (TODAY)", $blue, $vanTodayRows, $line, $dark, "V");
-            $cursorY += 488;
+            $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $vanTodayH, "VAN DS SNAPSHOT (TODAY)", $blue, $vanTodayRowsR, $line, $dark, "V");
+            $cursorY += $vanTodayH + $gap;
+            $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $vanMtdH, "VAN DS SNAPSHOT (MONTH TILL DATE)", $purple, $vanMtdRowsR, $line, $dark, "V");
+            $cursorY += $vanMtdH + $gap;
+            $vanSeries = isset($vanDsMtd["daily_volume_series"]) ? $vanDsMtd["daily_volume_series"] : array();
+            $this->drawSparklineStrip($img, $margin, $cursorY, $panelW, $sparklineH, "VAN DS  -  DAILY INFRA VOLUME (MTD)", $vanSeries, $purple, $white, $line, $dark, $muted);
+            $cursorY += $sparklineH + $gap;
         }
 
-        // VAN MTD
-        $vanMtdRows = array(
-            array("Average Daily Outlets Billed", $this->formatCompactNumber($vanDsMtd["avg_daily_outlets_billed"]), $purple),
-            array("Average Daily Volume", $vanDsMtd["avg_daily_volume"], $purple)
-        );
-        if ($hasVan) {
-            $this->drawMetricsPanel($img, 16, $cursorY, 1048, 200, "VAN DS SNAPSHOT (MONTH TILL DATE)", $purple, $vanMtdRows, $line, $dark, "V");
-            $cursorY += 208;
-        }
+        // ===== FOOTER =====
+        $footerY1 = $cursorY + 2;
+        $footerY2 = $footerY1 + $footerH;
+        imagefilledrectangle($img, $margin, $footerY1, $canvasW - $margin, $footerY2, $darkSlate);
 
-        // Footer insight strip
-        $footerY1 = $cursorY + 10;
-        $footerY2 = $footerY1 + 56;
-        imagefilledrectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $white);
-        imagerectangle($img, 16, $footerY1, $canvasW - 16, $footerY2, $line);
         $npsrStrike = isset($npsrToday["avg_strike_rate"]) ? trim((string) $npsrToday["avg_strike_rate"]) : "";
         $vanStrike = isset($vanDsToday["avg_strike_rate"]) ? trim((string) $vanDsToday["avg_strike_rate"]) : "";
         if ($hasNpsr && $npsrStrike !== "" && strtoupper($npsrStrike) !== "NA") {
@@ -504,23 +628,11 @@ Below are the Team Summary of your Section.",
         } else {
             $strikeText = "NA";
         }
-        $npsrInfraSum = $hasNpsr && isset($npsrToday["infra_volume_sum"]) ? (float) $npsrToday["infra_volume_sum"] : 0;
-        $vanInfraSum = $hasVan && isset($vanDsToday["infra_volume_sum"]) ? (float) $vanDsToday["infra_volume_sum"] : 0;
-        $npsrInfraCount = $hasNpsr && isset($npsrToday["infra_volume_count"]) ? (int) $npsrToday["infra_volume_count"] : 0;
-        $vanInfraCount = $hasVan && isset($vanDsToday["infra_volume_count"]) ? (int) $vanDsToday["infra_volume_count"] : 0;
-        $infraCount = $npsrInfraCount + $vanInfraCount;
-        if ($infraCount > 0) {
-            $infraText = (string) round(($npsrInfraSum + $vanInfraSum) / $infraCount) . " Ms";
-        } else {
-            $infraText = "NA";
-        }
-        $timeText = $hasVan ? $vanDsToday["avg_time_spent"] : "NA";
+        $infraText = $infraCnt > 0 ? $infraAvgVal . " Ms" : "NA";
+        $timeText2 = $hasVan ? $vanDsToday["avg_time_spent"] : "NA";
         $belowText = $hasVan ? $vanDsToday["infra_below_limit"] : "NA";
-        $insightText = "Overall Strike: " . $strikeText .
-            "  |  Avg Infra Volume: " . $infraText .
-            "  |  Avg Time: " . $timeText .
-            "  |  Infra Below Target: " . $belowText;
-        $this->drawCenterText($img, 24, $footerY1 + 4, $canvasW - 24, $footerY2 - 4, $insightText, 4, $muted);
+        $insightText = "Overall Strike: " . $strikeText . "    |    Avg Infra: " . $infraText . "    |    Avg Time: " . $timeText2 . "    |    Infra Below Tgt: " . $belowText;
+        $this->drawCenterText($img, $margin + 8, $footerY1 + 4, $canvasW - $margin - 8, $footerY2 - 4, $insightText, 4, $white);
 
         imagepng($img, $absolutePath);
         imagedestroy($img);
@@ -662,7 +774,17 @@ Below are the Team Summary of your Section.",
             $this->drawIconBadge($img, $iconCx, $iconCy, $valueColor, "", imagecolorallocate($img, 255, 255, 255), 15);
             $this->drawCenterText($img, $x + 44, $top + 2, $midX - 10, $bottom - 2, $label, 4, $dark);
             if ($note === "") {
-                $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $bottom - 2, $value, 5, $valueColor);
+                if ($this->isPercentageValue($value)) {
+                    $textBottom = (int) ($top + (($bottom - $top) * 0.62));
+                    $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $textBottom, $value, 5, $valueColor);
+                    $barX1 = $midX + 24;
+                    $barX2 = $x + $w - 24;
+                    $barY = $textBottom + 4;
+                    $pct = $this->extractPercentValue($value);
+                    $this->drawHorizontalBar($img, $barX1, $barY, $barX2, 5, $pct, $valueColor, $line);
+                } else {
+                    $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $bottom - 2, $value, 5, $valueColor);
+                }
             } else {
                 $midY = (int) ($top + (($bottom - $top) * 0.42));
                 $this->drawCenterText($img, $midX + 8, $top + 2, $x + $w - 12, $midY, $value, 5, $valueColor);
@@ -690,6 +812,449 @@ Below are the Team Summary of your Section.",
                 false
             );
         }
+    }
+
+    // ============================ CHART / LAYOUT HELPERS ============================
+
+    private function drawTextLeft($img, $x, $y, $text, $font, $color)
+    {
+        $text = (string) $text;
+        $font = $this->getScaledFont($font);
+        $ttf = $this->getReadableSansFont();
+        if ($ttf !== "" && function_exists('imagettftext') && function_exists('imagettfbbox')) {
+            $size = $this->mapGdToTtfSize($font);
+            $bbox = imagettfbbox($size, 0, $ttf, $text);
+            if (is_array($bbox)) {
+                $ascHeight = abs($bbox[7]);
+                $baselineY = (int) ($y + $ascHeight);
+                imagettftext($img, $size, 0, (int) $x, $baselineY, $color, $ttf, $text);
+                return;
+            }
+        }
+        imagestring($img, $font, (int) $x, (int) $y, $text, $color);
+    }
+
+    private function drawTextRight($img, $xRight, $y, $text, $font, $color)
+    {
+        $width = $this->measureTextWidth((string) $text, $font);
+        $this->drawTextLeft($img, $xRight - $width, $y, $text, $font, $color);
+    }
+
+    private function drawStatusPill($img, $x1, $y1, $x2, $y2, $text, $bg, $fg)
+    {
+        imagefilledrectangle($img, (int) $x1, (int) $y1, (int) $x2, (int) $y2, $bg);
+        $this->drawCenterText($img, $x1 + 8, $y1 + 2, $x2 - 8, $y2 - 2, $text, 4, $fg);
+    }
+
+    private function drawHorizontalBar($img, $x1, $y, $x2, $h, $pct, $fillColor, $trackColor)
+    {
+        $pct = max(0, min(100, (float) $pct));
+        $width = max(1, $x2 - $x1);
+        imagefilledrectangle($img, (int) $x1, (int) $y, (int) $x2, (int) ($y + $h), $trackColor);
+        if ($pct > 0) {
+            $filled = (int) round($width * ($pct / 100));
+            if ($filled > 0) {
+                imagefilledrectangle($img, (int) $x1, (int) $y, (int) ($x1 + $filled), (int) ($y + $h), $fillColor);
+            }
+        }
+    }
+
+    private function drawDonutChart($img, $cx, $cy, $rOuter, $rInner, $segments, $holeColor, $emptyTrackColor)
+    {
+        $total = 0;
+        foreach ($segments as $seg) {
+            $total += max(0, (float) $seg["value"]);
+        }
+        if ($total <= 0) {
+            imagefilledellipse($img, (int) $cx, (int) $cy, $rOuter * 2, $rOuter * 2, $emptyTrackColor);
+            imagefilledellipse($img, (int) $cx, (int) $cy, $rInner * 2, $rInner * 2, $holeColor);
+            return;
+        }
+        $current = 270.0;
+        foreach ($segments as $seg) {
+            $value = max(0, (float) $seg["value"]);
+            if ($value <= 0) {
+                continue;
+            }
+            $sweep = ($value / $total) * 360.0;
+            $end = $current + $sweep;
+            if ($sweep >= 359.99) {
+                imagefilledellipse($img, (int) $cx, (int) $cy, $rOuter * 2, $rOuter * 2, $seg["color"]);
+            } else {
+                imagefilledarc($img, (int) $cx, (int) $cy, $rOuter * 2, $rOuter * 2, (int) round($current), (int) round($end), $seg["color"], IMG_ARC_PIE);
+            }
+            $current = $end;
+        }
+        imagefilledellipse($img, (int) $cx, (int) $cy, $rInner * 2, $rInner * 2, $holeColor);
+    }
+
+    private function drawKpiTile($img, $x, $y, $w, $h, $label, $value, $accentColor, $pct, $maxPct, $white, $line, $muted, $dark)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + 4), (int) ($y + $h), $accentColor);
+        $this->drawTextLeft($img, $x + 14, $y + 12, $label, 3, $muted);
+        $valueFont = $this->measureTextWidth((string) $value, 5) > ($w - 28) ? 4 : 5;
+        $this->drawTextLeft($img, $x + 14, $y + 36, (string) $value, $valueFont, $accentColor);
+        $barX1 = $x + 14;
+        $barX2 = $x + $w - 14;
+        $barY = $y + $h - 16;
+        $this->drawHorizontalBar($img, $barX1, $barY, $barX2, 6, $pct, $accentColor, $line);
+    }
+
+    private function drawStrengthCardWithDonut($img, $x, $y, $w, $h, $label, $value, $valueColor, $donutData, $white, $line, $dark, $muted, $subLine)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + 4), $valueColor);
+        $cx = $x + 70;
+        $cy = $y + (int) ($h / 2) + 4;
+        $rOuter = 46;
+        $rInner = 30;
+        $segments = array(
+            array("value" => (float) $donutData["qualified"], "color" => $donutData["qualified_color"]),
+            array("value" => (float) $donutData["unqualified"], "color" => $donutData["unqualified_color"]),
+            array("value" => (float) $donutData["absent"], "color" => $donutData["absent_color"])
+        );
+        $this->drawDonutChart($img, $cx, $cy, $rOuter, $rInner, $segments, $white, $line);
+        $total = (int) ($donutData["qualified"] + $donutData["unqualified"] + $donutData["absent"]);
+        $this->drawCenterText($img, $cx - $rInner, $cy - 14, $cx + $rInner, $cy + 14, (string) $total, 4, $dark);
+
+        $rx = $x + 134;
+        $rxEnd = $x + $w - 14;
+        $this->drawTextLeft($img, $rx, $y + 14, $label, 3, $muted);
+        $valueFont = $this->measureTextWidth((string) $value, 5) > ($rxEnd - $rx) ? 4 : 5;
+        $this->drawTextLeft($img, $rx, $y + 36, (string) $value, $valueFont, $valueColor);
+        if ($subLine !== "") {
+            $this->drawTextLeft($img, $rx, $y + 70, $subLine, 4, $dark);
+        }
+        $legendY = $y + $h - 26;
+        $this->drawLegendDot($img, $rx, $legendY, $donutData["qualified_color"], "Qual " . (int) $donutData["qualified"], $muted);
+        $this->drawLegendDot($img, $rx + 110, $legendY, $donutData["unqualified_color"], "Unq " . (int) $donutData["unqualified"], $muted);
+        $this->drawLegendDot($img, $rx + 220, $legendY, $donutData["absent_color"], "Abs " . (int) $donutData["absent"], $muted);
+    }
+
+    private function drawLegendDot($img, $x, $y, $color, $text, $textColor)
+    {
+        imagefilledellipse($img, (int) $x + 4, (int) ($y + 8), 10, 10, $color);
+        $this->drawTextLeft($img, $x + 14, $y, $text, 3, $textColor);
+    }
+
+    private function drawStatCard($img, $x, $y, $w, $h, $label, $value, $valueColor, $sub, $pct, $white, $line, $dark, $muted)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + 4), $valueColor);
+        $cx = $x + 70;
+        $cy = $y + (int) ($h / 2) + 4;
+        $rOuter = 46;
+        $rInner = 36;
+        $segments = array(
+            array("value" => max(0, (float) $pct), "color" => $valueColor),
+            array("value" => max(0, 100 - (float) $pct), "color" => $line)
+        );
+        $this->drawDonutChart($img, $cx, $cy, $rOuter, $rInner, $segments, $white, $line);
+        $this->drawCenterText($img, $cx - $rInner, $cy - 14, $cx + $rInner, $cy + 14, ((int) round($pct)) . "%", 4, $dark);
+
+        $rx = $x + 134;
+        $this->drawTextLeft($img, $rx, $y + 14, $label, 3, $muted);
+        $this->drawTextLeft($img, $rx, $y + 36, (string) $value, 5, $valueColor);
+        if ($sub !== "") {
+            $this->drawTextLeft($img, $rx, $y + 76, $sub, 4, $dark);
+        }
+    }
+
+    private function drawNamesCard($img, $x, $y, $w, $h, $label, $value, $accentColor, $names, $white, $line, $dark, $muted)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + 4), $accentColor);
+        $this->drawTextLeft($img, $x + 14, $y + 14, $label, 3, $muted);
+        $this->drawTextRight($img, $x + $w - 14, $y + 12, $value, 5, $accentColor);
+        imageline($img, $x + 14, $y + 50, $x + $w - 14, $y + 50, $line);
+        $names = trim((string) $names);
+        if ($names === "") {
+            $this->drawCenterText($img, $x + 14, $y + 56, $x + $w - 14, $y + $h - 8, "—", 4, $muted);
+        } else {
+            $this->drawWrappedTextInBox($img, $x + 14, $y + 60, $x + $w - 14, $y + $h - 10, $names, 4, $dark, 2);
+        }
+    }
+
+    private function drawSparklineStrip($img, $x, $y, $w, $h, $title, $series, $accentColor, $white, $line, $dark, $muted)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + 4), (int) ($y + $h), $accentColor);
+
+        $this->drawTextLeft($img, $x + 14, $y + 10, $title, 3, $muted);
+
+        $values = array();
+        $dates = array();
+        if (is_array($series)) {
+            ksort($series);
+            foreach ($series as $date => $val) {
+                $dates[] = (string) $date;
+                $values[] = (float) $val;
+            }
+        }
+        $count = count($values);
+
+        // Stat boxes (top-right) - LATEST | AVG | PEAK
+        $statBoxW = 76;
+        $statBoxH = 40;
+        $statY1 = $y + 8;
+        $statsTotalW = 3 * $statBoxW + 2 * 6;
+        $rx = $x + $w - 14 - $statsTotalW;
+        $latestVal = $count > 0 ? (int) round($values[$count - 1]) : 0;
+        $maxVal = $count > 0 ? (int) round(max($values)) : 0;
+        $avgVal = $count > 0 ? (int) round(array_sum($values) / $count) : 0;
+        $this->drawMiniStat($img, $rx, $statY1, $statBoxW, $statBoxH, "LATEST", $latestVal . " Ms", $accentColor, $white, $line, $muted);
+        $this->drawMiniStat($img, $rx + $statBoxW + 6, $statY1, $statBoxW, $statBoxH, "AVG", $avgVal . " Ms", $dark, $white, $line, $muted);
+        $this->drawMiniStat($img, $rx + 2 * ($statBoxW + 6), $statY1, $statBoxW, $statBoxH, "PEAK", $maxVal . " Ms", $accentColor, $white, $line, $muted);
+
+        if ($count === 0) {
+            $this->drawCenterText($img, $x + 14, $y + 50, $x + $w - 14, $y + $h - 14, "No daily volume yet", 3, $muted);
+            return;
+        }
+
+        $max = max($values);
+        if ($max <= 0) {
+            $max = 1;
+        }
+        $avg = array_sum($values) / max(1, $count);
+
+        // Chart area - full width, generous vertical room, day labels below
+        $chartX1 = $x + 22;
+        $chartX2 = $x + $w - 22;
+        $chartY1 = $y + 56;
+        $chartY2 = $y + $h - 22;
+        $chartW = max(1, $chartX2 - $chartX1);
+        $chartH = max(1, $chartY2 - $chartY1);
+
+        // Subtle horizontal grid at avg (dashed)
+        $avgY = (int) round($chartY2 - ($avg / $max) * $chartH);
+        for ($gx = $chartX1; $gx < $chartX2; $gx += 7) {
+            imageline($img, $gx, $avgY, min($gx + 4, $chartX2), $avgY, $line);
+        }
+
+        // Compute points
+        $stepX = $count > 1 ? $chartW / ($count - 1) : 0;
+        $points = array();
+        for ($i = 0; $i < $count; $i++) {
+            $px = $count > 1 ? (int) round($chartX1 + $i * $stepX) : (int) round(($chartX1 + $chartX2) / 2);
+            $py = (int) round($chartY2 - ($values[$i] / $max) * $chartH);
+            $points[] = array($px, $py);
+        }
+
+        // Filled area beneath the line (subtle gradient effect via lightened color)
+        if ($count >= 2 && function_exists('imagefilledpolygon')) {
+            $poly = array();
+            $poly[] = $points[0][0];
+            $poly[] = $chartY2;
+            foreach ($points as $p) {
+                $poly[] = $p[0];
+                $poly[] = $p[1];
+            }
+            $poly[] = $points[$count - 1][0];
+            $poly[] = $chartY2;
+            $fillColor = $this->lightenColor($img, $accentColor, 0.88);
+            if (PHP_VERSION_ID >= 80100) {
+                @imagefilledpolygon($img, $poly, $fillColor);
+            } else {
+                @imagefilledpolygon($img, $poly, count($poly) / 2, $fillColor);
+            }
+        }
+
+        // Thick smooth line
+        if (function_exists('imagesetthickness')) {
+            imagesetthickness($img, 2);
+        }
+        for ($i = 1; $i < $count; $i++) {
+            imageline($img, $points[$i - 1][0], $points[$i - 1][1], $points[$i][0], $points[$i][1], $accentColor);
+        }
+        if (function_exists('imagesetthickness')) {
+            imagesetthickness($img, 1);
+        }
+
+        // Highlight only peak and latest points (cleaner look)
+        $peakIdx = 0;
+        for ($i = 1; $i < $count; $i++) {
+            if ($values[$i] > $values[$peakIdx]) {
+                $peakIdx = $i;
+            }
+        }
+        if ($count > 0 && $peakIdx !== $count - 1) {
+            $peak = $points[$peakIdx];
+            imagefilledellipse($img, $peak[0], $peak[1], 8, 8, $accentColor);
+            imagefilledellipse($img, $peak[0], $peak[1], 3, 3, $white);
+            // small label above peak point
+            $peakLabel = (int) round($values[$peakIdx]) . "";
+            $labelW = $this->measureTextWidth($peakLabel, 2);
+            $labelX = max($chartX1, min($chartX2 - $labelW, (int) ($peak[0] - $labelW / 2)));
+            $this->drawTextLeft($img, $labelX, $peak[1] - 14, $peakLabel, 2, $accentColor);
+        }
+        if ($count > 0) {
+            $last = $points[$count - 1];
+            imagefilledellipse($img, $last[0], $last[1], 10, 10, $accentColor);
+            imagefilledellipse($img, $last[0], $last[1], 4, 4, $white);
+        }
+
+        // X-axis day labels (start, mid, end)
+        if ($count > 0) {
+            $startLabel = $this->extractDayLabel($dates[0]);
+            $endLabel = $this->extractDayLabel($dates[$count - 1]);
+            $this->drawTextLeft($img, $chartX1, $chartY2 + 4, $startLabel, 2, $muted);
+            $this->drawTextRight($img, $chartX2, $chartY2 + 4, $endLabel, 2, $muted);
+            if ($count >= 5) {
+                $midIdx = (int) floor(($count - 1) / 2);
+                $midLabel = $this->extractDayLabel($dates[$midIdx]);
+                $midLabelW = $this->measureTextWidth($midLabel, 2);
+                $midX = $points[$midIdx][0] - (int) ($midLabelW / 2);
+                $midX = max($chartX1, min($chartX2 - $midLabelW, $midX));
+                $this->drawTextLeft($img, $midX, $chartY2 + 4, $midLabel, 2, $muted);
+            }
+        }
+    }
+
+    private function drawMiniStat($img, $x, $y, $w, $h, $label, $value, $valueColor, $white, $line, $muted)
+    {
+        imagefilledrectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $white);
+        imagerectangle($img, (int) $x, (int) $y, (int) ($x + $w), (int) ($y + $h), $line);
+        $this->drawTextLeft($img, $x + 6, $y + 4, $label, 2, $muted);
+        $valueFont = $this->measureTextWidth((string) $value, 4) > ($w - 12) ? 3 : 4;
+        $this->drawTextLeft($img, $x + 6, $y + 18, (string) $value, $valueFont, $valueColor);
+    }
+
+    private function extractDayLabel($date)
+    {
+        $ts = @strtotime((string) $date);
+        if ($ts === false || $ts === -1) {
+            return (string) $date;
+        }
+        return date("d M", $ts);
+    }
+
+    private function lightenColor($img, $color, $factor)
+    {
+        $rgb = @imagecolorsforindex($img, $color);
+        if (!is_array($rgb)) {
+            return $color;
+        }
+        $factor = max(0.0, min(1.0, (float) $factor));
+        $r = (int) round($rgb["red"] + (255 - $rgb["red"]) * $factor);
+        $g = (int) round($rgb["green"] + (255 - $rgb["green"]) * $factor);
+        $b = (int) round($rgb["blue"] + (255 - $rgb["blue"]) * $factor);
+        return imagecolorallocate($img, $r, $g, $b);
+    }
+
+    private function computeMetricsPanelHeight($rows)
+    {
+        $headerH = 50;
+        $padding = 12;
+        $rowBase = 36;
+        $rowWithBar = 44;
+        $rowWithNote = 60;
+        $total = $headerH + $padding;
+        foreach ($rows as $r) {
+            $note = isset($r[3]) ? trim((string) $r[3]) : "";
+            $value = isset($r[1]) ? (string) $r[1] : "";
+            if ($note !== "") {
+                $total += $rowWithNote;
+            } elseif ($this->isPercentageValue($value)) {
+                $total += $rowWithBar;
+            } else {
+                $total += $rowBase;
+            }
+        }
+        return max(80, $total);
+    }
+
+    private function computeNamesCardHeight($names)
+    {
+        $headerH = 56;
+        $padding = 16;
+        $namesText = trim((string) $names);
+        if ($namesText === "") {
+            return 140;
+        }
+        $textHeight = $this->measureWrappedTextHeight($namesText, 4, 480);
+        return max(150, min(280, $headerH + $textHeight + $padding));
+    }
+
+    private function measureWrappedTextHeight($text, $font, $maxWidth)
+    {
+        $text = trim((string) $text);
+        if ($text === "") {
+            return 0;
+        }
+        $lines = array();
+        $paragraphs = preg_split("/\\r\\n|\\n|\\r/", $text);
+        foreach ($paragraphs as $paragraph) {
+            $paragraph = trim((string) $paragraph);
+            if ($paragraph === "") {
+                $lines[] = "";
+                continue;
+            }
+            $words = preg_split('/\s+/', $paragraph);
+            $current = "";
+            foreach ($words as $word) {
+                $candidate = $current === "" ? $word : ($current . " " . $word);
+                if ($this->measureTextWidth($candidate, $font) <= $maxWidth) {
+                    $current = $candidate;
+                } else {
+                    if ($current !== "") {
+                        $lines[] = $current;
+                    }
+                    $current = $word;
+                }
+            }
+            if ($current !== "") {
+                $lines[] = $current;
+            }
+        }
+        $lineHeight = $this->getLineHeightForFont($font) + 2;
+        return count($lines) * $lineHeight;
+    }
+
+    private function isPercentageValue($value)
+    {
+        $text = trim((string) $value);
+        if ($text === "") {
+            return false;
+        }
+        return stripos($text, '%') !== false && (bool) preg_match('/-?\d+(?:\.\d+)?/', $text);
+    }
+
+    private function extractPercentValue($value)
+    {
+        $num = $this->extractNumericValue($value);
+        if ($num === null) {
+            return 0;
+        }
+        return max(0, min(100, (float) $num));
+    }
+
+    private function extractDurationMinutes($value)
+    {
+        $text = (string) $value;
+        $hours = 0;
+        $mins = 0;
+        if (preg_match('/(-?\d+)\s*h/i', $text, $mh)) {
+            $hours = (int) $mh[1];
+        }
+        if (preg_match('/(-?\d+)\s*m/i', $text, $mm)) {
+            $mins = (int) $mm[1];
+        }
+        return $hours * 60 + $mins;
+    }
+
+    private function isMeaningfulValue($value)
+    {
+        $text = trim((string) $value);
+        if ($text === "" || strtoupper($text) === "NA") {
+            return false;
+        }
+        return true;
     }
 
     //  drawTextAtCenter
@@ -985,7 +1550,9 @@ Below are the Team Summary of your Section.",
                 "incentive_brand_1_label" => $brandMeta1["label"],
                 "incentive_brand_1" => $incentiveBrand1Percent,
                 "incentive_brand_2_label" => $brandMeta2["label"],
-                "incentive_brand_2" => $incentiveBrand2Percent
+                "incentive_brand_2" => $incentiveBrand2Percent,
+                "daily_volume_series" => array(),
+                "daily_billed_series" => array()
             );
         }
 
@@ -1010,7 +1577,9 @@ Below are the Team Summary of your Section.",
             "incentive_brand_1_label" => $brandMeta1["label"],
             "incentive_brand_1" => $incentiveBrand1Percent,
             "incentive_brand_2_label" => $brandMeta2["label"],
-            "incentive_brand_2" => $incentiveBrand2Percent
+            "incentive_brand_2" => $incentiveBrand2Percent,
+            "daily_volume_series" => $dailyVolume,
+            "daily_billed_series" => $dailyBilled
         );
     }
 
