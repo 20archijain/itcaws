@@ -761,6 +761,7 @@ class MasterDataDownload
 
     final public function getMasterData()
     {
+        global $ARR_TEAM_TYPES;
         $where = $this->getCondition();
         $respTable = getRespTable(1, $this->projectId);
 
@@ -777,6 +778,7 @@ class MasterDataDownload
         $arrHeader = array(
             "Rec Id",
             "DS Id",
+            "DS Type",
             "DS Name",
             "District",
             "Branch",
@@ -804,7 +806,8 @@ class MasterDataDownload
             "Lt",
             "Lg",
             "Outlet Last Visited",
-            "Billing Status"
+            "Billed in last 30 days",
+            "Billed in Last 3 months"
         );
 
         $captureDateCondition = "";
@@ -813,7 +816,6 @@ class MasterDataDownload
             $lastDate = date("Y-m-t", strtotime($firstDate)); // Gets the last date of the month
             $captureDateCondition = "capture_date BETWEEN '$firstDate' AND '$lastDate'";
             $arrHeader[] = "No of Times Visited";
-            $arrHeader[] = "Billing Status";
         }
 
         // Create header array for CSV
@@ -827,7 +829,7 @@ class MasterDataDownload
         $partialQuery = "FROM $routeDetailsTable AS a, $projectTeamTable AS b, $branchTable AS c, $wdMappingTable as d WHERE a.team_id = b.team_id AND b.s_id = 99 AND b.branch_id = c.branch_id AND a.dstatus = 0 AND b.dstatus = 0 AND b.wd_code = d.wd_code $where";
 
         $sQuery = "SELECT DISTINCT a.rec_id, b.section, b.circle, a.wd_code, a.wd_town, a.state, a.district, a.sub_district_goi, a.route_name, a.market_name, a.goi_market_id, a.outlet_name, a.outlet_mobile, a.goi_pop_group" .
-            ", a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, a.kyc_done, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
+            ", a.ds_sify_id, a.ds_mobile, a.outlet_type, a.shop_type, a.shop_uniq_code, a.lt, a.lg, a.team_id, b.team_name, b.is_type, a.kyc_done, c.district, c.branch_name, c.main_branch $partialQuery ORDER BY a.capture_datetime DESC";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -835,6 +837,7 @@ class MasterDataDownload
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $route_name = $row["route_name"];
                 $shopId = $row["rec_id"];
+                $is_type = $row["is_type"];
                 $arrParts = explode('_', $route_name);
                 $dayName = isset($arrParts[0]) ? $arrParts[0] : "";
                 $kyc = (!empty($row["kyc_done"]) && $row["kyc_done"] == 1) ? "Yes" : "No";
@@ -860,45 +863,33 @@ class MasterDataDownload
                     $noOfTimesVisited = "";
                 }
 
-                // If no month selected → use current month
-                if (!$month || !$year) {
-                    $year = date("Y");
-                    $month = date("m");
-                }
+                $today = date("Y-m-d");
+                $last30DaysDate = date("Y-m-d", strtotime("-30 days"));
+                $last3MonthsDate = date("Y-m-d", strtotime("-3 months"));
 
-                $firstDate = "$year-$month-01";
-                $lastDate = date("Y-m-t", strtotime($firstDate));
-
-                // Count inside selected/current month
-                $billingCountArr = getRowColumns(
+                $billingCountLast30DaysArr = getRowColumns(
                     $this->_dbConn,
                     $respTable,
                     "COUNT(pro_id)",
-                    "dstatus = 0 $cond AND capture_date BETWEEN '$firstDate' AND '$lastDate'"
+                    "dstatus = 0 $cond AND capture_date BETWEEN '$last30DaysDate' AND '$today'"
                 );
-                $billingCount = isset($billingCountArr[0]) ? $billingCountArr[0] : 0;
+                $billingCountLast30Days = isset($billingCountLast30DaysArr[0]) ? $billingCountLast30DaysArr[0] : 0;
 
-                // Default blank
-                $billingStatus = "";
+                $billingCountLast3MonthsArr = getRowColumns(
+                    $this->_dbConn,
+                    $respTable,
+                    "COUNT(pro_id)",
+                    "dstatus = 0 $cond AND capture_date BETWEEN '$last3MonthsDate' AND '$today'"
+                );
+                $billingCountLast3Months = isset($billingCountLast3MonthsArr[0]) ? $billingCountLast3MonthsArr[0] : 0;
 
-                if ($billingCount > 0) {
-                    $billingStatus = "Billed";
-                } else {
-                    // Check ANY visit Exist?
-                    $anyVisit = getRowColumns($this->_dbConn, $respTable, "COUNT(pro_id)", "dstatus = 0 $cond");
-
-                    if ($anyVisit[0] > 0) {
-                        // Shop exists but no visit in selected month
-                        $billingStatus = "Unbilled";
-                    } else {
-                        // Shop never visited → blank
-                        $billingStatus = "";
-                    }
-                }
+                $billedInLast30Days = ($billingCountLast30Days > 0) ? "Yes" : "No";
+                $billedInLast3Months = ($billingCountLast3Months > 0) ? "Yes" : "No";
 
                 $rowData = array(
                     cleanCSVValue($row["rec_id"]),
                     cleanCSVValue($row["team_id"]),
+                    cleanCSVValue($ARR_TEAM_TYPES[$row["is_type"]]),
                     cleanCSVValue($row["team_name"]),
                     cleanCSVValue($row["district"]),
                     cleanCSVValue($row["main_branch"]),
@@ -926,12 +917,12 @@ class MasterDataDownload
                     cleanCSVValue($row["lt"]),
                     cleanCSVValue($row["lg"]),
                     cleanCSVValue(isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : ""),
-                    cleanCSVValue($billingStatus)
+                    cleanCSVValue($billedInLast30Days),
+                    cleanCSVValue($billedInLast3Months)
                 );
 
                 if ($captureDateCondition) {
                     $rowData[] = cleanCSVValue($noOfTimesVisited);
-                    $rowData[] = cleanCSVValue($billingStatus);
                 }
 
                 $arrDataHolder[] = $rowData;
