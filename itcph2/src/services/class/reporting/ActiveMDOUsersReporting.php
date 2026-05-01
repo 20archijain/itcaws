@@ -787,6 +787,8 @@ class ActiveMdoUsersReporting
                 "app.reporting.activeUSers.circle",
                 "app.reporting.activeUSers.section",
                 "app.reporting.activeUSers.wdCode",
+                "AE Name",
+                "AE Number",
                 "MDO ID",
                 "MDO Name",
                 "app.reporting.activeUSers.dsId",
@@ -800,6 +802,8 @@ class ActiveMdoUsersReporting
                 "circle",
                 "section",
                 "wdCode",
+                "aeName",
+                "aeNumber",
                 "mdoId",
                 "mdoName",
                 "id",
@@ -816,7 +820,7 @@ class ActiveMdoUsersReporting
     //DS DETAILS
     final public function viewDSDetails()
     {
-        Global $ARR_TEAM_TYPES;
+        global $ARR_TEAM_TYPES;
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
@@ -861,9 +865,14 @@ class ActiveMdoUsersReporting
                     if ($dsRows > 0) {
                         $arrData = $this->_dbConn->GetData($dsAction);
                         $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                        $wdCode = $arrData["wd_code"];
+                        $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
+                        $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
                         $arrResult[] = array(
                             "id" => $arrData["team_id"],
                             "mdoId" => $mdoId,
+                            "aeName" => $aeName,
+                            "aeNumber" => $aeNumber,
                             "mdoName" => $mdoName ? $mdoName : "",
                             "dsName" => $arrData["team_name"],
                             "region" => $arrData["branch_name"],
@@ -921,7 +930,6 @@ class ActiveMdoUsersReporting
                 } else {
                     $arrProjectMdoIds[$mdoId] = 1;
                 }
-
             }
         }
 
@@ -961,7 +969,7 @@ class ActiveMdoUsersReporting
 
     final public function downloadDSDetails()
     {
-        Global $ARR_TEAM_TYPES;
+        global $ARR_TEAM_TYPES;
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $breezeTeamTable = $this->_tables["BREEZE_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
@@ -1003,12 +1011,17 @@ class ActiveMdoUsersReporting
                     if ($dsRows > 0) {
                         $arrData = $this->_dbConn->GetData($dsAction);
                         $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                        $wdCode = $arrData["wd_code"];
+                        $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
+                        $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
                         $arrBody[] = array(
                             $arrData["branch_name"],
                             $arrData["main_branch"],
                             trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
                             trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
                             trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                            $aeName,
+                            $aeNumber,
                             $mdoId,
                             $mdoName ? $mdoName : "",
                             $arrData["team_id"],
@@ -1019,7 +1032,7 @@ class ActiveMdoUsersReporting
                     }
                 }
             }
-            $header = array("Region", "Branch","Circle", "Section", "WD Code", "MDO ID",  "MDO Name", "DS ID",  "DS Name","DS Type",);
+            $header = array("Region", "Branch", "Circle", "Section", "WD Code", "AE Name", "AE Number", "MDO ID", "MDO Name", "DS ID", "DS Name", "DS Type",);
             $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
             $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
             echo json_encode($arrMessage);
