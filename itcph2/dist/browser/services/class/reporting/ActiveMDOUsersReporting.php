@@ -892,8 +892,11 @@ class ActiveMdoUsersReporting
         }
 
         $total = count($arrResult);
-        $pageNo = isset($this->_data["pageNo"]) ? (int) $this->_data["pageNo"] : 1;
-        $limit = isset($this->_data["limit"]) ? (int) $this->_data["limit"] : 10;
+        $pageNo = (int) getFormData($this->_data, "page");
+        if ($pageNo < 1) {
+            $pageNo = (int) getFormData($this->_data, "pageNo");
+        }
+        $limit = (int) getFormData($this->_data, "limit");
         if ($pageNo < 1) {
             $pageNo = 1;
         }
