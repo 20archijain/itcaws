@@ -1659,9 +1659,9 @@ class VanDsReporting
 
             $rsAction = null;
             $iRows = 0;
-            $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries" .
-                ", SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, a.uni_total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code, a.is_qualified $sProductSaleColumns" .
-                " FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
+            $sQuery = "SELECT a.route, a.activity_date, a.dayend_datetime, a.start_datetime, a.end_datetime, a.resp_startdatetime, a.resp_enddatetime, a.total_time, a.is_beat_adherence,a.beat_adherence_reason, a.planned_outlets, SUM(a.total_sales_deliveries) AS total_sales_deliveries" .
+                ", SUM(a.total_sellin_shops) AS total_sellin_shops, SUM(a.total_other_shops) AS total_other_shops, a.total_meter_travelled, a.uni_total_sales_deliveries, a.uni_total_sellin_shops, b.team_id, b.team_name, b.is_type, b.circle, b.section, b.branch_id, b.wd_code" .
+                ", a.is_qualified $sProductSaleColumns FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.s_id = '99' AND b.branch_id = $branchId $where GROUP BY a.activity_date, a.team_id ORDER BY a.activity_date DESC, b.team_name";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
             if ($iRows > 0) {
@@ -1802,7 +1802,7 @@ class VanDsReporting
                         $district = $arrBranchDetails[$branchIndex][3];
                     }
 
-                    $totalShops = $orderShop + $addShop;
+                    $totalShops = $row['uni_total_sales_deliveries'];
 
                     // Divide by total shops
                     $timePerShop = ($totalShops > 0) ? ($time / $totalShops) : 0;
@@ -1837,7 +1837,7 @@ class VanDsReporting
                     $arrSummary["sale"][$index][] = $row["dayend_datetime"] ? currentDateTime($row["dayend_datetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = isset($row["resp_startdatetime"]) ? currentDateTime($row["resp_startdatetime"], "H:i:s") : "";
                     $arrSummary["sale"][$index][] = isset($row["resp_enddatetime"]) ? currentDateTime($row["resp_enddatetime"], "H:i:s") : "";
-                    $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
+                    $arrSummary["sale"][$index][] = $row["total_time"];
                     $arrSummary["sale"][$index][] = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
                     $arrSummary["sale"][$index][] = $distanceInKm;
                     $arrSummary["sale"][$index][] = $totalMinutes;

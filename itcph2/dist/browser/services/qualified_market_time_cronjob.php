@@ -57,7 +57,7 @@ class processUpdateQualifiedMarketTime
                 $addShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
                 $totalShops = $orderShop + $addShop;
                 $timeSpentInSec = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"] ? $row["end_datetime"] : $row["resp_enddatetime"], true);
-                $totalTime = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"], false, false, true);
+                $totalTime = getTimeDifferenceInString($row["start_datetime"], $row["end_datetime"] ? $row["end_datetime"] : $row["resp_enddatetime"], false, false, true);
                 $dailySaleInM = (float) $row["dailySaleInM"];
                 $saleQualified = ($teamType == 5) || ($dailySaleInM >= $minDailySaleInM && $dailySaleInM <= $maxDailySaleInM);
                 $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec && $saleQualified ? 1 : 0;
@@ -65,7 +65,12 @@ class processUpdateQualifiedMarketTime
                 $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                 $condition = "summary_id = ?";
                 if ($isQualifiedAttendance == 1) {
+                    $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                     updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$isQualifiedAttendance, $timeInMarket, $totalTime, $summaryId]);
+                } else {
+                    // Do NOT mark is_update = 1 here
+                    $updateValues = "total_time = ?";
+                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$totalTime, $summaryId]);
                 }
             }
         }
@@ -148,7 +153,7 @@ class processUpdateQualifiedMarketTime
                 $idealRoute = getRowColumn($this->dbConn, $table, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
                 $beatDay = getRowColumn($this->dbConn, $table, "beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
                 $routeNameLower = strtolower($routeName);
-                $beatDayLower   = strtolower($beatDay);
+                $beatDayLower   = $beatDay ? strtolower($beatDay) : '';
                 if (strpos($routeNameLower, $beatDayLower) !== false) {
                     $showDay = $beatDay;   // Beat day exists inside the route name
                 } else {

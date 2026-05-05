@@ -1599,10 +1599,19 @@ class MdoReporting
                                 $routeName = "";
                             }
                             $arrWdDetails = $wdCode ? getRowColumns($this->_dbConn, "tblmapping_wd", "wd_firm_name, wd_market, wd_pop_group", "wd_code = '$wdCode'") : "";
+                            $arrfist_lastTime = getRowColumns($this->_dbConn, "tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "capture_date = '$date' AND team_id = $teamId AND ques_0 NOT IN ('Infra Details','InfraDetails')");
+                            $firstOutletTime = isset($arrfist_lastTime[0]) ? $arrfist_lastTime[0] : "";
+                            $lastOutletTime = isset($arrfist_lastTime[1]) ? $arrfist_lastTime[1] : "";
+                            $timeInMarket = getTimeDifferenceInString($firstOutletTime, $lastOutletTime, false, false, true);
                             // Convert 6 hours into minutes
                             $requiredMin = 360;
+                            if ($workWith == 0) {
+                                $qualifiedTime = $timeInMarket;
+                            } else {
+                                $qualifiedTime = $timeSpent;
+                            }
                             if ($infraType == 7) {
-                                if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
+                                if ($qualifiedTime >= $requiredMin && $distanceInKm >= 10) {
                                     $attenqualified = '1';
                                 } else {
                                     $attenqualified = '0';
@@ -1610,7 +1619,6 @@ class MdoReporting
                             } elseif ($infraType == 10) {
                                 $attenqualified = '1';
                             }
-
 
                             $arrExcelData[] = [
                                 $rowTeam["district"],

@@ -32,8 +32,8 @@ class VanDswhatsAppSummary
         $debugStep = "start";
         try {
             $currentDate = currentDate();
-            // $currentDate = "2026-02-23"; // For testing
-            $sectionCond = " AND b.section IN ('PU8003','BHM002','BHM001','AHN001', 'BHL005')"; // For testing
+            // $currentDate = "2026-04-27"; // For testing
+            // $sectionCond = " AND b.section IN ('PU8003','BHM002','BHM001','AHN001', 'BHL005')"; // For testing
             $this->clearOldImageDateFolders($currentDate);
             $monthStartDate = date("Y-m-01", strtotime($currentDate));
             $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -55,7 +55,7 @@ class VanDswhatsAppSummary
             $debugStep = "fetch_sections";
             $sQuery = "SELECT b.section, ae_name AS ae_name, ae_number AS ae_number, wd_code AS wd_code " .
                 "FROM $projectTeamTable AS b WHERE b.dstatus = 0 AND b.s_id = 99 AND b.section IS NOT NULL AND b.section != '' AND b.ae_number IS NOT NULL AND b.ae_number != '' AND b.is_type IN (0,2,5) " .
-                "AND COALESCE(b.summary_sent, 0) = 0 $sectionCond GROUP BY b.section ORDER BY b.section LIMIT 15";
+                "AND COALESCE(b.summary_sent, 0) = 0  GROUP BY b.section ORDER BY b.section LIMIT 15";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
             $createdImages = array();
@@ -63,8 +63,8 @@ class VanDswhatsAppSummary
             if ($iRows > 0) {
                 while ($row = $this->_dbConn->GetData($sAction)) {
                     $aeName = $row["ae_name"];
-                    // $phoneNumber = $row["ae_number"];
-                    $phoneNumber = '6397329039'; // For Testing
+                    $phoneNumber = $row["ae_number"];
+                    // $phoneNumber = '6397329039'; // For Testing
                     $wdCode = $row["wd_code"];
                     $section = $row["section"];
                     $aeCondition = "dstatus = 0 AND s_id = 99 AND ae_number = '$phoneNumber' AND section = '$section' AND is_type IN (0,2,5)";
@@ -105,9 +105,7 @@ class VanDswhatsAppSummary
                                 $cacheBuster = (string) time();
                             }
                             $imageUrlForSend = $imageUrl . (strpos($imageUrl, '?') === false ? '?' : '&') . 'v=' . $cacheBuster;
-                            // $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrlForSend, $aeName, 'vnsai');
-                            $imageUrl = $this->buildPublicImageUrl($imagePath);
-                            $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrl, $aeName, 'vnsai');
+                            $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrlForSend, $aeName, 'vnsai');
                             $processedSections[$section] = true;
                             $createdImages[] = array(
                                 "ae_name" => $aeName,
@@ -116,7 +114,6 @@ class VanDswhatsAppSummary
                                 "image_path" => $imagePath,
                                 "image_url" => $imageUrl,
                                 "image_url_for_send" => $imageUrlForSend,
-                                // "whatsapp_response" => $whatsAppResponse
                                 "whatsapp_response" => $whatsAppResponse
                             );
                         }
@@ -1306,7 +1303,7 @@ Below are the Team Summary of your Section.",
         if ($this->_resolvedSansFont !== null) {
             return $this->_resolvedSansFont;
         }
-        $projectFont = dirname(__FILE__) . "../../assets/fonts/team_summary.ttf";
+        $projectFont = dirname(__FILE__) . "/../../assets/fonts/team_summary.ttf";
         if (file_exists($projectFont)) {
             $this->_resolvedSansFont = $projectFont;
             return $this->_resolvedSansFont;
