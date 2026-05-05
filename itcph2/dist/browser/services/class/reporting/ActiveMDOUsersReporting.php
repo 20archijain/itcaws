@@ -837,53 +837,55 @@ class ActiveMdoUsersReporting
 
         if ($accessRows > 0) {
             while ($accessData = $this->_dbConn->GetData($accessAction)) {
-                $mdoId = trim($accessData["mdo_id"]);
+                $mdoTeamsId = trim($accessData["mdo_id"]);
                 $teams = trim($accessData["teams"]);
                 $teamType = (int) $accessData["is_type"];
+                $mdoId = getRowColumn($this->_dbConn, $projectTeamTable, "team_id", "dstatus = 0 AND team_id = '$mdoTeamsId'");
 
                 if ($mdoId === "" || $teams === "") {
                     continue;
                 }
+                if ($mdoId && !empty($mdoId)) {
+                    $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
+                    $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
 
-                $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
-                $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
+                    $arrTeamIds = explode(",", $teams);
+                    foreach ($arrTeamIds as $dsId) {
+                        $dsId = trim($dsId);
+                        if ($dsId === "") {
+                            continue;
+                        }
 
-                $arrTeamIds = explode(",", $teams);
-                foreach ($arrTeamIds as $dsId) {
-                    $dsId = trim($dsId);
-                    if ($dsId === "") {
-                        continue;
-                    }
+                        $dsAction = null;
+                        $dsRows = 0;
+                        $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, c.branch_id, d.branch_name, d.main_branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
+                            " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
+                            " WHERE c.dstatus = 0 AND c.team_id = '$dsId' AND c.dstatus = 0 LIMIT 1";
+                        $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
 
-                    $dsAction = null;
-                    $dsRows = 0;
-                    $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, c.branch_id, d.branch_name, d.main_branch, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
-                        " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
-                        " WHERE c.dstatus = 0 AND c.team_id = '$dsId' LIMIT 1";
-                    $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
-
-                    if ($dsRows > 0) {
-                        $arrData = $this->_dbConn->GetData($dsAction);
-                        $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
-                        $wdCode = $arrData["wd_code"];
-                        $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
-                        $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
-                        $arrResult[] = array(
-                            "id" => $arrData["team_id"],
-                            "mdoId" => $mdoId,
-                            "aeName" => $aeName,
-                            "aeNumber" => $aeNumber,
-                            "mdoName" => $mdoName ? $mdoName : "",
-                            "dsName" => $arrData["team_name"],
-                            "region" => $arrData["branch_name"],
-                            "branchName" => $arrData["main_branch"],
-                            "circle" => trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
-                            "section" => trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
-                            "wdCode" => trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
-                            "dsType" => isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
-                            "dsNum" => $arrData["ds_number"],
-                            "creationDate" => $creationDate
-                        );
+                        if ($dsRows > 0) {
+                            $arrData = $this->_dbConn->GetData($dsAction);
+                            $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                            $wdCode = $arrData["wd_code"];
+                            $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
+                            $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
+                            $arrResult[] = array(
+                                "id" => $arrData["team_id"],
+                                "mdoId" => $mdoId,
+                                "aeName" => $aeName,
+                                "aeNumber" => $aeNumber,
+                                "mdoName" => $mdoName ? $mdoName : "",
+                                "dsName" => $arrData["team_name"],
+                                "region" => $arrData["branch_name"],
+                                "branchName" => $arrData["main_branch"],
+                                "circle" => trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
+                                "section" => trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
+                                "wdCode" => trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                                "dsType" => isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
+                                "dsNum" => $arrData["ds_number"],
+                                "creationDate" => $creationDate
+                            );
+                        }
                     }
                 }
             }
@@ -983,52 +985,55 @@ class ActiveMdoUsersReporting
 
         if ($accessRows > 0) {
             while ($accessData = $this->_dbConn->GetData($accessAction)) {
-                $mdoId = trim($accessData["mdo_id"]);
+                $mdoTeamsId = trim($accessData["mdo_id"]);
                 $teams = trim($accessData["teams"]);
                 $teamType = (int) $accessData["is_type"];
+                $mdoId = getRowColumn($this->_dbConn, $projectTeamTable, "team_id", "dstatus = 0 AND team_id = '$mdoTeamsId'");
 
                 if ($mdoId === "" || $teams === "") {
                     continue;
                 }
 
-                $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
-                $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
+                if ($mdoId && !empty($mdoId)) {
+                    $teamTable = ($teamType == 6 || $teamType == 8) ? $breezeTeamTable : $projectTeamTable;
+                    $mdoName = getRowColumn($this->_dbConn, $projectTeamTable, "team_name", "dstatus = 0 AND team_id = '$mdoId'");
 
-                $arrTeamIds = explode(",", $teams);
-                foreach ($arrTeamIds as $dsId) {
-                    $dsId = trim($dsId);
-                    if ($dsId === "") {
-                        continue;
-                    }
+                    $arrTeamIds = explode(",", $teams);
+                    foreach ($arrTeamIds as $dsId) {
+                        $dsId = trim($dsId);
+                        if ($dsId === "") {
+                            continue;
+                        }
 
-                    $dsAction = null;
-                    $dsRows = 0;
-                    $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, d.branch_name, d.main_branch, a.district, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
-                        " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
-                        " WHERE c.dstatus = 0 AND c.team_id = '$dsId' LIMIT 1";
-                    $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
+                        $dsAction = null;
+                        $dsRows = 0;
+                        $dsQuery = "SELECT c.team_id, c.team_name, c.ds_number, c.rcd, d.branch_name, d.main_branch, a.district, a.circle, a.circle_name, a.section, a.section_name, a.wd_code, a.wd_market, a.wd_firm_name" .
+                            " FROM $teamTable AS c LEFT JOIN $branchTable AS d ON c.branch_id = d.branch_id LEFT JOIN $wdMappingTable AS a ON c.wd_code = a.wd_code" .
+                            " WHERE c.dstatus = 0 AND c.team_id = '$dsId' AND c.dstatus = 0  LIMIT 1";
+                        $this->_dbConn->ExecuteSelectQuery($dsQuery, $dsAction, $dsRows);
 
-                    if ($dsRows > 0) {
-                        $arrData = $this->_dbConn->GetData($dsAction);
-                        $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
-                        $wdCode = $arrData["wd_code"];
-                        $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
-                        $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
-                        $arrBody[] = array(
-                            $arrData["branch_name"],
-                            $arrData["main_branch"],
-                            trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
-                            trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
-                            trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
-                            $aeName,
-                            $aeNumber,
-                            $mdoId,
-                            $mdoName ? $mdoName : "",
-                            $arrData["team_id"],
-                            $arrData["team_name"],
-                            isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
-                            // $creationDate,
-                        );
+                        if ($dsRows > 0) {
+                            $arrData = $this->_dbConn->GetData($dsAction);
+                            $creationDate = $arrData["rcd"] ? date("Y-m-d", strtotime($arrData["rcd"])) : "";
+                            $wdCode = $arrData["wd_code"];
+                            $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
+                            $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
+                            $arrBody[] = array(
+                                $arrData["branch_name"],
+                                $arrData["main_branch"],
+                                trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
+                                trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
+                                trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                                $aeName,
+                                $aeNumber,
+                                $mdoId,
+                                $mdoName ? $mdoName : "",
+                                $arrData["team_id"],
+                                $arrData["team_name"],
+                                isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
+                                // $creationDate,
+                            );
+                        }
                     }
                 }
             }
