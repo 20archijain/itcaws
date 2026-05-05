@@ -74,6 +74,7 @@ class ActiveSKUReporting
                 "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.dsType",
                 "app.reporting.activeUSers.focusBrand",
+                "Incentive Brand",
                 "app.reporting.activeUSers.skucategory",
                 "app.reporting.activeUSers.skuName",
                 "app.reporting.activeUSers.baseRate",
@@ -83,6 +84,7 @@ class ActiveSKUReporting
                 "branchName",
                 "dsType",
                 "focusBrand",
+                "incentiveBrand",
                 "category",
                 "skuName",
                 "prodRate",
@@ -122,9 +124,11 @@ class ActiveSKUReporting
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
+        $currentMonth = date('m'); // 01 to 12
+        $currentYear  = date('Y'); // 4-digit year (e.g., 2026)
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $focusType = array(0 => "No", 1 => "Yes");
-        $sQuery = "SELECT a.rec_id, a.branch_id, a.team_type, a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b" .
+        $sQuery = "SELECT a.rec_id, a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b" .
             " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id $branchCond  $searchCondition $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
         $sQuery .= " " . $limit["limit"];
@@ -133,7 +137,14 @@ class ActiveSKUReporting
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                // $teamId = $arrData["branch_id"];
+                $branchId = $arrData["branch_id"];
+                $summary_column_name = $arrData["summary_column_name"];
+                $incentive = isRecordExist($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "branch_id = $branchId AND summary_column_name = '$summary_column_name' AND month = '$currentMonth' AND year = '$currentYear' AND dstatus = 0");
+                if ($incentive == 1) {
+                    $incentiveBrand = "Yes";
+                } else {
+                    $incentiveBrand = "No";
+                }
                 $focusBrand = $arrData["is_focusbrand"];
                 $dsType = $arrData["team_type"];
                 $category = $arrData["category_name"];
@@ -148,6 +159,7 @@ class ActiveSKUReporting
                     "region" => $mainBranch,
                     "dsType" =>  $types[$dsType],
                     "focusBrand" => $focusType[$focusBrand],
+                    "incentiveBrand" => $incentiveBrand,
                     "category" =>  $category,
                     "skuName" =>  $skuName,
                     "creationDate" => $creationDate,
@@ -168,6 +180,8 @@ class ActiveSKUReporting
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
+         $currentMonth = date('m'); // 01 to 12
+        $currentYear  = date('Y'); // 4-digit year (e.g., 2026)
 
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
@@ -180,6 +194,7 @@ class ActiveSKUReporting
             "Region",
             "DS Type",
             "Focus Brand",
+            "Incentive Brand",
             "SKU Category",
             "SKU Name",
             "Base Rate (M)"
@@ -191,12 +206,20 @@ class ActiveSKUReporting
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $focusType = array(0 => "No", 1 => "Yes");
 
-        $sQuery = "SELECT a.branch_id, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
+        $sQuery = "SELECT a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
+                $branchId = $arrData["branch_id"];
+                $summary_column_name = $arrData["summary_column_name"];
+                $incentive = isRecordExist($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "branch_id = $branchId AND summary_column_name = '$summary_column_name' AND month = '$currentMonth' AND year = '$currentYear' AND dstatus = 0");
+                if ($incentive == 1) {
+                    $incentiveBrand = "Yes";
+                } else {
+                    $incentiveBrand = "No";
+                }
                 $focusBrand = $arrData["is_focusbrand"];
                 $dsType = $arrData["team_type"];
                 $district = $arrData["district"];
@@ -212,6 +235,7 @@ class ActiveSKUReporting
                     $branchName,
                     $types[$dsType],
                     $focusType[$focusBrand],
+                    $incentiveBrand,
                     $categoryName,
                     $prodName,
                     $prodRate,
