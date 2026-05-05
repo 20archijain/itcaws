@@ -156,5 +156,6 @@ $ARR_TEAM_TYPES = array(
     6 => "RMD",
     7 => "MDO",
     8 => "Stockiest DS",
+    9 => "Common FMCG Lite DS",
     10 => "FSO",
 );
