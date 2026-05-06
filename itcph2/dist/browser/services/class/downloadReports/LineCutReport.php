@@ -382,7 +382,7 @@ class LineCutReport
                             $this->_dbConn,
                             "tblroute_details_delhi",
                             "COUNT(rec_id) AS total",
-                            "dstatus = 0 AND team_id = $team_id"
+                            "dstatus = 0 AND ho_team_id = $team_id"
                         );
                     } else {
                         $allShops = getRowColumn(
@@ -648,7 +648,12 @@ class LineCutReport
                         }
 
                         if (isset($arrColumnsAllProduct) && !empty($arrColumnsAllProduct)) {
-                            $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, tblroute_details as b" .
+                            if ($branchId == 40) {
+                                $routeTable = "tblroute_details_delhi";
+                            } else {
+                                $routeTable = "tblroute_details";
+                            }
+                            $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, $routeTable as b" .
                                 " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
                                 " AND a.ques_3 = b.rec_id AND b.dstatus = 0";
                             // echo $queryNew;die;
