@@ -1146,11 +1146,12 @@ class MdoReporting
             "Billed Outlets (by DS) Accompanied",
             "Total Sale (M) (by DS) Accompanied",
             "Sale (M) (by DS) (outlets which MDO surveyed) Accompanied",
-            "ULC (by DS) Accompanied",
+            "Line Cut (by DS) Accompanied",
             "Avg Daily Visited Outlets (by DS) Unaccompanied",
             "Avg Daily Billed Outlets (by DS) Unaccompanied",
-            "Avg Daily Total Sale (by DS) Unaccompanied",
-            "Avg ULC (by DS) Unaccompanied",
+            "Avg Daily Total Sale (by DS) Unaccompanied (Source breeze for Retail DS)",
+            "Line Cut (by DS) Unaccompanied",
+            "Total Sales as per mdo day end"
         ];
 
         // Loop through each brach data
@@ -1214,8 +1215,7 @@ class MdoReporting
                     // 2️⃣ Determine unaccompanied dates (exclude accompanied date)
                     $arrUnaccompaniedDates = [];
 
-                    $sQueryUnaccDates = "SELECT DISTINCT capture_date FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' $where2 AND capture_date NOT IN (SELECT DISTINCT capture_date FROM tblmdo_summary
-                                        WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date <= '$date')";
+                    $sQueryUnaccDates = "SELECT DISTINCT capture_date FROM $respTable WHERE dstatus = 0 AND team_id = '$dsId' $where2 AND capture_date NOT IN (SELECT DISTINCT capture_date FROM tblmdo_summary WHERE ds_id = '$dsId' AND dstatus = 0 AND capture_date <= '$date')";
                     $rsUnaccDates = null;
                     $iRowsUnaccDates = 0;
 
@@ -1500,7 +1500,8 @@ class MdoReporting
                         $unacompaniedOutletPerDay,
                         $unacompaniedSellOutletPerDay,
                         $unacompaniedSalePerDay,
-                        $unacompaniedULCPerDay
+                        $unacompaniedULCPerDay,
+                        $salesValue
                     ];
                 }
             }

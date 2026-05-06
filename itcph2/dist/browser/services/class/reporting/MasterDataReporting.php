@@ -180,7 +180,7 @@ class ActiveSKUReporting
         $dwnCond = $this->getCondition();
         $branchPickupTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
-         $currentMonth = date('m'); // 01 to 12
+        $currentMonth = date('m'); // 01 to 12
         $currentYear  = date('Y'); // 4-digit year (e.g., 2026)
 
         // order by condition
@@ -206,7 +206,8 @@ class ActiveSKUReporting
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
         $focusType = array(0 => "No", 1 => "Yes");
 
-        $sQuery = "SELECT a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
+        $sQuery = "SELECT a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a" .
+            ", $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 

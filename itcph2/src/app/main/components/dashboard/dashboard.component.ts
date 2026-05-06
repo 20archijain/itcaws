@@ -44,7 +44,7 @@ export class DashboardComponent implements OnDestroy, OnInit {
   QualifiedAttData: any;
   slideCardData: any;
   OutletVisitedCardData: any;
-  TodayOutletVisitedCardData: any;
+  // TodayOutletVisitedCardData: any;
   BeatAdherenceCardData: any;
   FocusVisitTodayAmountCardData: any;
   FocusVisitTillDateAmountCardData: any;
@@ -162,12 +162,6 @@ export class DashboardComponent implements OnDestroy, OnInit {
             this.wdMarketOptions = resp.data.wdMarketList;
             this.wdPopGroupOptions = resp.data.wdPopGroupList;
             this.districtOptions = resp.data.districtList;
-            this.AttCardData = resp.data.attCardData;
-            this.QualifiedAttData = resp.data.qualifiedAttData;
-            this.OutletVisitedCardData = resp.data.outletVisitedCardData;
-            this.BeatAdherenceCardData = resp.data.beatAdherenceCardData;
-            this.FocusVisitTillDateAmountCardData = resp.data.focusVisitTillDateAmountCardData;
-            this.slideCardData = resp.data.slideCardData;
             this.branchFilter = resp.data.branchFilter ?? false;
           }
         })

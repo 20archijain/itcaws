@@ -592,15 +592,6 @@ class DashboardManagement
         // }
         $arrResult = array(
             "branchFilter" => true,
-            "attCardData" => $this->getAttendanceCardData(),
-            // "dayendCardData" => $this->getDayendCardData(),
-            "beatAdherenceCardData" => $this->getBeatAdherenceCardData(),
-            // "todaySalesAmountCardData" => $this->getTodaySalesAmountCardData(),
-            "qualifiedAttData" => $this->getQualifiedAttendanceCardData(),
-            "outletVisitedCardData" => $this->getOutletVisitedCardData(),
-            "todayOutletVisitedCardData" => $this->getTodayOutletVisitedCardData(),
-            "focusVisitTillDateAmountCardData" => $this->getFocusVisitTillDateAmountCardData(),
-            "slideCardData" => $this->getSlideCardData(),
             "monthList" => getMonthList(),
             "yearList" => getYearList(),
             "districtList" => $this->getDistrictList(),
@@ -1015,7 +1006,7 @@ class DashboardManagement
             // "todaySalesAmountCardData" => $this->getTodaySalesAmountCardData(),
             "qualifiedAttData" => $this->getQualifiedAttendanceCardData(),
             "outletVisitedCardData" => $this->getOutletVisitedCardData(),
-            "todayOutletVisitedCardData" => $this->getTodayOutletVisitedCardData(),
+            // "todayOutletVisitedCardData" => $this->getTodayOutletVisitedCardData(),
             "focusVisitTillDateAmountCardData" => $this->getFocusVisitTillDateAmountCardData(),
             "slideCardData" => $this->getSlideCardData(),
             "graphs" => array(

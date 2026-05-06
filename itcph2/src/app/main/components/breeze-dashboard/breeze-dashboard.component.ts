@@ -23,7 +23,7 @@ import { environment } from "src/environments/environment";
 })
 export class BreezeDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  url = environment.viewSalesDashboardDataUrl;
+  url = environment.viewBreezeDashboardDataUrl;
   group!: UntypedFormGroup;
   form!: UntypedFormGroup;
   // chartData;

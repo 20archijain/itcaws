@@ -62,7 +62,6 @@ class processUpdateQualifiedMarketTime
                 $saleQualified = ($teamType == 5) || ($dailySaleInM >= $minDailySaleInM && $dailySaleInM <= $maxDailySaleInM);
                 $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec && $saleQualified ? 1 : 0;
                 $timeInMarket = getTimeDifferenceInString($row["resp_startdatetime"], $row["resp_enddatetime"], false, false, true);
-                $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";
                 $condition = "summary_id = ?";
                 if ($isQualifiedAttendance == 1) {
                     $updateValues = "is_update = 1, is_qualified = ?, time_in_market = ?, total_time = ?";

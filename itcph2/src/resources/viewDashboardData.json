@@ -3,6 +3,81 @@
   "message": [],
   "data": {
     "branchFilter": true,
+    "attCardData": {
+      "allTeams": 3387,
+      "morningAttData": 2095,
+      "percentAttendance": 61.85000000000000142108547152020037174224853515625,
+      "notPresent": 1395
+    },
+    "beatAdherenceCardData": {
+      "todayActiveDS": 2095,
+      "adherence": 1594,
+      "unAdherence": 479,
+      "avgCompRoute": 76.090000000000003410605131648480892181396484375
+    },
+    "qualifiedAttData": {
+      "todayActiveDS": 2095,
+      "qualifiedCount": 1489,
+      "UnqualifiedCount": 584,
+      "avgQualified": 71.06999999999999317878973670303821563720703125
+    },
+    "outletVisitedCardData": {
+      "totalShopsVisitedTillDate": 144324,
+      "supposedShopCounts": 163908,
+      "totalSellinShopsTillDate": "129651",
+      "focusBilled": 136625
+    },
+    "focusVisitTillDateAmountCardData": {
+      "totalFocusBilled": 1,
+      "minimumSupposedShop": 281734
+    },
+    "slideCardData": [
+      {
+        "value1": "48354",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 26473,
+        "text2": "Visited",
+        "value2Class": "text-c-black",
+        "value3": "54.75 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Outlets Visited",
+        "color": "light-grey",
+        "color1": ""
+      },
+      {
+        "value1": "48354",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 26569,
+        "text2": " Billed",
+        "value2Class": "text-c-black",
+        "value3": "54.95 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Outlets Billed",
+        "color": "light-grey",
+        "color1": ""
+      },
+      {
+        "value1": "48354",
+        "text1": "Target",
+        "value1Class": "text-c-black",
+        "value2": 25936,
+        "text2": " Billed",
+        "value2Class": "text-c-black",
+        "value3": "53.64 %",
+        "text3": "Percent",
+        "iconClass": "feather icon-layout f-18 text-black m-r-10",
+        "iconText": "",
+        "title": "Focus Brands Billed",
+        "color": "text-black",
+        "color1": ""
+      }
+    ],
     "monthList": [
       {
         "label": "January",
@@ -61,6 +136,10 @@
       {
         "label": 2025,
         "value": 2025
+      },
+      {
+        "label": 2026,
+        "value": 2026
       }
     ],
     "districtList": [
@@ -91,799 +170,14 @@
         "value": "all"
       },
       {
-        "label": "Arunachal",
-        "value": 7,
-        "mainBranch": "EGAU"
-      },
-      {
-        "label": "Assam",
-        "value": 8,
-        "mainBranch": "EGAU"
-      },
-      {
-        "label": "Bihar",
-        "value": 18,
-        "mainBranch": "EPAT"
-      },
-      {
-        "label": "EBEN",
-        "value": 15,
-        "mainBranch": "EBEN"
-      },
-      {
-        "label": "ECAL",
-        "value": 13,
-        "mainBranch": "ECAL"
-      },
-      {
-        "label": "EORI",
-        "value": 17,
-        "mainBranch": "EORI"
-      },
-      {
-        "label": "EVIZ",
-        "value": 14,
-        "mainBranch": "EVIZ"
-      },
-      {
-        "label": "Haryana",
-        "value": 3,
-        "mainBranch": "NCHA"
-      },
-      {
-        "label": "Jharkhand",
-        "value": 19,
-        "mainBranch": "EPAT"
-      },
-      {
-        "label": "Meghalaya",
-        "value": 9,
-        "mainBranch": "EGAU"
-      },
-      {
-        "label": "Mizoram",
-        "value": 10,
-        "mainBranch": "EGAU"
-      },
-      {
-        "label": "NDEL",
-        "value": 40,
-        "mainBranch": "NDEL"
-      },
-      {
-        "label": "NJAM",
-        "value": 6,
-        "mainBranch": "NJAM"
-      },
-      {
-        "label": "NJPR",
-        "value": 5,
-        "mainBranch": "NJPR"
-      },
-      {
-        "label": "NLUC",
-        "value": 4,
-        "mainBranch": "NLUC"
-      },
-      {
-        "label": "NSAH",
-        "value": 2,
+        "label": "Agra",
+        "value": 56,
         "mainBranch": "NSAH"
       },
       {
-        "label": "Punjab",
-        "value": 30,
-        "mainBranch": "NCHA"
-      },
-      {
-        "label": "SBLR",
-        "value": 33,
-        "mainBranch": "SBLR"
-      },
-      {
-        "label": "SCHE",
-        "value": 34,
-        "mainBranch": "SCHE"
-      },
-      {
-        "label": "SCOI",
-        "value": 35,
-        "mainBranch": "SCOI"
-      },
-      {
-        "label": "SERN",
-        "value": 36,
-        "mainBranch": "SERN"
-      },
-      {
-        "label": "SHYD",
-        "value": 37,
-        "mainBranch": "SHYD"
-      },
-      {
-        "label": "SKAR",
-        "value": 39,
-        "mainBranch": "SKAR"
-      },
-      {
-        "label": "SRAY",
-        "value": 32,
-        "mainBranch": "SRAY"
-      },
-      {
-        "label": "Tripura",
-        "value": 12,
-        "mainBranch": "EGAU"
-      },
-      {
-        "label": "UP East",
-        "value": 1,
-        "mainBranch": "NEUP"
-      },
-      {
-        "label": "WAHM",
-        "value": 28,
-        "mainBranch": "WAHM"
-      },
-      {
-        "label": "WBHO",
-        "value": 27,
-        "mainBranch": "WBHO"
-      },
-      {
-        "label": "WMUM",
-        "value": 31,
-        "mainBranch": "WMUM"
-      },
-      {
-        "label": "WNAG-CG",
-        "value": 26,
-        "mainBranch": "WNAG"
-      },
-      {
-        "label": "WNAG-MH",
-        "value": 25,
-        "mainBranch": "WNAG"
-      },
-      {
-        "label": "WPUN-GOA",
-        "value": 24,
-        "mainBranch": "WPUN"
-      },
-      {
-        "label": "WPUN-MH",
-        "value": 23,
-        "mainBranch": "WPUN"
-      }
-    ],
-    "circleList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "AH2 - South Gujrat Circle",
-        "value": "AH2"
-      },
-      {
-        "label": "AH3 - Saurashtra Circle",
-        "value": "AH3"
-      },
-      {
-        "label": "AH3 - ",
-        "value": "AH3"
-      },
-      {
-        "label": "AHN - North Gujrat Circle",
-        "value": "AHN"
-      },
-      {
-        "label": "BHG - CFP_Gwalior",
-        "value": "BHG"
-      },
-      {
-        "label": "BHL - CFP_Jabalpur",
-        "value": "BHL"
-      },
-      {
-        "label": "BHM - CFP_Indore",
-        "value": "BHM"
-      },
-      {
-        "label": "BHT - CFP_Bhopal",
-        "value": "BHT"
-      },
-      {
-        "label": "BL1 - BLR North - CFP",
-        "value": "BL1"
-      },
-      {
-        "label": "BL1 - ",
-        "value": "BL1"
-      },
-      {
-        "label": "BL2 - ",
-        "value": "BL2"
-      },
-      {
-        "label": "BL2 - BLR South- CFP",
-        "value": "BL2"
-      },
-      {
-        "label": "BL3 - BLR E-City -CFP",
-        "value": "BL3"
-      },
-      {
-        "label": "BL3 - Mysore -CFP",
-        "value": "BL3"
-      },
-      {
-        "label": "BLM - BLM Mysore -CFP",
-        "value": "BLM"
-      },
-      {
-        "label": "BLS - ",
-        "value": "BLS"
-      },
-      {
-        "label": "BLS - NORTH-2",
-        "value": "BLS"
-      },
-      {
-        "label": "BLT - Central - CFP",
-        "value": "BLT"
-      },
-      {
-        "label": "BLU - ",
-        "value": "BLU"
-      },
-      {
-        "label": "BLU - Mysore -CFP",
-        "value": "BLU"
-      },
-      {
-        "label": "CA1 - Cal Up Country CFP",
-        "value": "CA1"
-      },
-      {
-        "label": "CA1 - Cal Cosmopolitan CFP",
-        "value": "CA1"
-      },
-      {
-        "label": "CA1 - Cal Megapolis CFP",
-        "value": "CA1"
-      },
-      {
-        "label": "CA2 - Cal Up Country CFP",
-        "value": "CA2"
-      },
-      {
-        "label": "CA2 - Cal Megapolis CFP",
-        "value": "CA2"
-      },
-      {
-        "label": "CA3 - Cal Megapolis CFP",
-        "value": "CA3"
-      },
-      {
-        "label": "CA3 - Cal Up Country CFP",
-        "value": "CA3"
-      },
-      {
-        "label": "CA4 - North CFP",
-        "value": "CA4"
-      },
-      {
-        "label": "CA5 - West CFP",
-        "value": "CA5"
-      },
-      {
-        "label": "CAG - Darjiling CFP",
-        "value": "CAG"
-      },
-      {
-        "label": "CAV - South Central CFP",
-        "value": "CAV"
-      },
-      {
-        "label": "CH1 - CHENNAI SOUTH - CFP",
-        "value": "CH1"
-      },
-      {
-        "label": "CH2 - ",
-        "value": "CH2"
-      },
-      {
-        "label": "CH2 - CHENNAI NORTH - CFP",
-        "value": "CH2"
-      },
-      {
-        "label": "CH3 - PONDY - CFP",
-        "value": "CH3"
-      },
-      {
-        "label": "CH3 - ",
-        "value": "CH3"
-      },
-      {
-        "label": "CH4 - ",
-        "value": "CH4"
-      },
-      {
-        "label": "CH4 - VELLORE - CFP",
-        "value": "CH4"
-      },
-      {
-        "label": "CO1 - North_ CFP",
-        "value": "CO1"
-      },
-      {
-        "label": "CO2 - Central_ CFP",
-        "value": "CO2"
-      },
-      {
-        "label": "CO3 - South_ CFP",
-        "value": "CO3"
-      },
-      {
-        "label": "ER1 - North CFP",
-        "value": "ER1"
-      },
-      {
-        "label": "ER1 - ",
-        "value": "ER1"
-      },
-      {
-        "label": "ER2 - ",
-        "value": "ER2"
-      },
-      {
-        "label": "ER2 - South CFP",
-        "value": "ER2"
-      },
-      {
-        "label": "ERA - ",
-        "value": "ERA"
-      },
-      {
-        "label": "ERA - CENTRAL CFP",
-        "value": "ERA"
-      },
-      {
-        "label": "GA1 - CFP GuwMeg",
-        "value": "GA1"
-      },
-      {
-        "label": "GA2 - CFP LAsManMizCAsAru",
-        "value": "GA2"
-      },
-      {
-        "label": "GA3 - ",
-        "value": "GA3"
-      },
-      {
-        "label": "GA3 - CFP UAssGuwAru",
-        "value": "GA3"
-      },
-      {
-        "label": "GAD - ",
-        "value": "GAD"
-      },
-      {
-        "label": "GAD - CFP BvalTriNagCAss",
-        "value": "GAD"
-      },
-      {
-        "label": "HY1 - Hyd City CFP 1",
-        "value": "HY1"
-      },
-      {
-        "label": "HY2 - ",
-        "value": "HY2"
-      },
-      {
-        "label": "HY2 - Hyd City CFP 2",
-        "value": "HY2"
-      },
-      {
-        "label": "HY3 - ",
-        "value": "HY3"
-      },
-      {
-        "label": "HY3 - HYD U\/C CFP 2",
-        "value": "HY3"
-      },
-      {
-        "label": "HY4 - ",
-        "value": "HY4"
-      },
-      {
-        "label": "HY4 - Telangana CFP",
-        "value": "HY4"
-      },
-      {
-        "label": "HY5 - Hyd City CFP 3",
-        "value": "HY5"
-      },
-      {
-        "label": "HY6 - HYD U\/C CFP 1",
-        "value": "HY6"
-      },
-      {
-        "label": "HYF - ",
-        "value": "HYF"
-      },
-      {
-        "label": "HYF - AP South CFP",
-        "value": "HYF"
-      },
-      {
-        "label": "JA1 - ",
-        "value": "JA1"
-      },
-      {
-        "label": "JA1 - VALLEY-CFP",
-        "value": "JA1"
-      },
-      {
-        "label": "JA2 - HP - CFP",
-        "value": "JA2"
-      },
-      {
-        "label": "JA3 - PROVINCE-CFP",
-        "value": "JA3"
-      },
-      {
-        "label": "JA6 - Punjab-CFP",
-        "value": "JA6"
-      },
-      {
-        "label": "JA6 - ",
-        "value": "JA6"
-      },
-      {
-        "label": "JAE - HARYANA 1-CFP",
-        "value": "JAE"
-      },
-      {
-        "label": "JAE - ",
-        "value": "JAE"
-      },
-      {
-        "label": "JAH - Chandigarh-CFP",
-        "value": "JAH"
-      },
-      {
-        "label": "JAK - HARYANA 2-CFP",
-        "value": "JAK"
-      },
-      {
-        "label": "JPL - North West Circle",
-        "value": "JPL"
-      },
-      {
-        "label": "JPT - Jaipur Circle",
-        "value": "JPT"
-      },
-      {
-        "label": "JPU - South East Circle",
-        "value": "JPU"
-      },
-      {
-        "label": "JPV - South West Circle",
-        "value": "JPV"
-      },
-      {
-        "label": "LU1 - ",
-        "value": "LU1"
-      },
-      {
-        "label": "LU1 - Lucknow",
-        "value": "LU1"
-      },
-      {
-        "label": "LU2 - Kanpur",
-        "value": "LU2"
-      },
-      {
-        "label": "LU2 - ",
-        "value": "LU2"
-      },
-      {
-        "label": "LU3 - ",
-        "value": "LU3"
-      },
-      {
-        "label": "LU3 - Varanasi",
-        "value": "LU3"
-      },
-      {
-        "label": "LU4 - Allahabad",
-        "value": "LU4"
-      },
-      {
-        "label": "LU4 - ",
-        "value": "LU4"
-      },
-      {
-        "label": "LUC - Gorakhpur",
-        "value": "LUC"
-      },
-      {
-        "label": "LUC - ",
-        "value": "LUC"
-      },
-      {
-        "label": "LUE - ",
-        "value": "LUE"
-      },
-      {
-        "label": "LUE - Kanpur",
-        "value": "LUE"
-      },
-      {
-        "label": "LUE - Sitapur CFP",
-        "value": "LUE"
-      },
-      {
-        "label": "LUF - ",
-        "value": "LUF"
-      },
-      {
-        "label": "LUF - Bareilly",
-        "value": "LUF"
-      },
-      {
-        "label": "MU1 - MUM-CFP1",
-        "value": "MU1"
-      },
-      {
-        "label": "MU2 - MUM-CFP2",
-        "value": "MU2"
-      },
-      {
-        "label": "MUU - MUM-CFPU",
-        "value": "MUU"
-      },
-      {
-        "label": "NA1 - MH_Nagpur",
-        "value": "NA1"
-      },
-      {
-        "label": "NAB - CG_Bilaspur",
-        "value": "NAB"
-      },
-      {
-        "label": "NAD - CG_Raipur",
-        "value": "NAD"
-      },
-      {
-        "label": "NAM - MH_Marathwada",
-        "value": "NAM"
-      },
-      {
-        "label": "NAV - MH_Vidarbha",
-        "value": "NAV"
-      },
-      {
-        "label": "NAV - ",
-        "value": "NAV"
-      },
-      {
-        "label": "PAJ - ",
-        "value": "PAJ"
-      },
-      {
-        "label": "PAJ - Jharkhand 1",
-        "value": "PAJ"
-      },
-      {
-        "label": "PAM - North Circle",
-        "value": "PAM"
-      },
-      {
-        "label": "PAN - Jharkhand 2",
-        "value": "PAN"
-      },
-      {
-        "label": "PAS - ",
-        "value": "PAS"
-      },
-      {
-        "label": "PAS - North 2 Circle",
-        "value": "PAS"
-      },
-      {
-        "label": "PU1 - Pune - CFP",
-        "value": "PU1"
-      },
-      {
-        "label": "PU2 - Solapur - CFP",
-        "value": "PU2"
-      },
-      {
-        "label": "PU2 - ",
-        "value": "PU2"
-      },
-      {
-        "label": "PU3 - ",
-        "value": "PU3"
-      },
-      {
-        "label": "PU3 - Nashik - CFP",
-        "value": "PU3"
-      },
-      {
-        "label": "PU3 - Solapur - CFP",
-        "value": "PU3"
-      },
-      {
-        "label": "PU8 - ",
-        "value": "PU8"
-      },
-      {
-        "label": "PU8 - SouthMAHARASTRGOACFP",
-        "value": "PU8"
-      },
-      {
-        "label": "SH1 - SAHARANPUR CIRCLE",
-        "value": "SH1"
-      },
-      {
-        "label": "SH2 - AGRA CIRCLE",
-        "value": "SH2"
-      },
-      {
-        "label": "SH3 - Dehradun Circle",
-        "value": "SH3"
-      },
-      {
-        "label": "SH3 - Meerut Circle",
-        "value": "SH3"
-      },
-      {
-        "label": "SHS - Meerut Circle",
-        "value": "SHS"
-      },
-      {
-        "label": "VI1 - Central AP- CFP",
-        "value": "VI1"
-      },
-      {
-        "label": "VI2 - CENTRAL CFP",
-        "value": "VI2"
-      },
-      {
-        "label": "VI2 - ",
-        "value": "VI2"
-      },
-      {
-        "label": "VI3 - ",
-        "value": "VI3"
-      },
-      {
-        "label": "VI3 - COASTAL CFP",
-        "value": "VI3"
-      },
-      {
-        "label": "VI7 - SOUTH AP - CFP",
-        "value": "VI7"
-      },
-      {
-        "label": "VIH - ",
-        "value": "VIH"
-      },
-      {
-        "label": "VIH - WESTERN CFP",
-        "value": "VIH"
-      },
-      {
-        "label": "VIJ - NORTH AP - CFP",
-        "value": "VIJ"
-      }
-    ],
-    "sectionList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "AH2001 - Vadodara - CFP",
-        "value": "AH2001"
-      },
-      {
-        "label": "AH2003 - Vapi-CFP",
-        "value": "AH2003"
-      },
-      {
-        "label": "AH2004 - Valsad - CFP",
-        "value": "AH2004"
-      }
-    ],
-    "wdCodeList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "AH2356 -  - P H WADIA & SONS",
-        "value": "AH2356"
-      },
-      {
-        "label": "AH2882 - BOTAD (M) - AVADH MARKETING",
-        "value": "AH2882"
-      },
-      {
-        "label": "AH2912 - BHACHAU (M) - BHAVANI STORE",
-        "value": "AH2912"
-      }
-    ],
-    "teamType": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "DS",
-        "value": 0
-      },
-      {
-        "label": "Town SWD",
-        "value": 2
-      },
-      {
-        "label": "SCP",
-        "value": 4
-      },
-      {
-        "label": "NPSR",
-        "value": 5
-      }
-    ],
-    "teamList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "1CG BALAKRISHNAN",
-        "value": 19858
-      },
-      {
-        "label": "A Basha",
-        "value": 20272
-      },
-      {
-        "label": "A RAJU",
-        "value": 20025
-      }
-    ],
-    "wdMarketList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "ABHAYAPURI (TC)",
-        "value": "ABHAYAPURI (TC)"
-      },
-      {
-        "label": "ABOHAR (M CL)",
-        "value": "ABOHAR (M CL)"
-      }
-    ],
-    "wdPopGroupList": [
-      {
-        "label": "All",
-        "value": "all"
-      },
-      {
-        "label": "<2",
-        "value": "<2"
-      },
-      {
-        "label": ">1000",
-        "value": ">1000"
+        "label": "Aligarh",
+        "value": 57,
+        "mainBranch": "NSAH"
       }
     ],
     "categoryList": [
@@ -892,8 +186,8 @@
         "value": "all"
       },
       {
-        "label": "Capstan",
-        "value": "Capstan"
+        "label": "American Club",
+        "value": "American Club"
       },
       {
         "label": "Classic",
@@ -908,74 +202,68 @@
         "value": "Gold Flake"
       },
       {
+        "label": "Capstan",
+        "value": "Capstan"
+      },
+      {
         "label": "Navy Cut",
         "value": "Navy Cut"
+      },
+      {
+        "label": "Players",
+        "value": "Players"
       },
       {
         "label": "Silk Cut",
         "value": "Silk Cut"
       },
       {
-        "label": "American Club",
-        "value": "American Club"
+        "label": "Wave",
+        "value": "Wave"
+      },
+      {
+        "label": "Gold Flake Kings",
+        "value": "Gold Flake Kings"
+      },
+      {
+        "label": "IBs",
+        "value": "IBs"
+      },
+      {
+        "label": "Berkeley",
+        "value": "Berkeley"
+      },
+      {
+        "label": "Duke",
+        "value": "Duke"
+      },
+      {
+        "label": "Royal",
+        "value": "Royal"
+      }
+    ],
+    "circleList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "AH1 - North West Circle",
+        "value": "AH1"
+      },
+      {
+        "label": "AH1 - ",
+        "value": "AH1"
+      },
+      {
+        "label": "AH1 - Ahmedabad Circle",
+        "value": "AH1"
       }
     ],
     "productList": [
       {
         "label": "All",
         "value": "all"
-      },
-      {
-        "label": "Capstan Metro",
-        "value": "Capstan Metro"
-      },
-      {
-        "label": "Classic Connect",
-        "value": "Classic Connect"
-      },
-      {
-        "label": "Classic Edge",
-        "value": "Classic Edge"
-      },
-      {
-        "label": "Flake Excel TastePro Spl",
-        "value": "Flake Excel TastePro Spl"
-      },
-      {
-        "label": "Flake Spl DSFT",
-        "value": "Flake Spl DSFT"
-      },
-      {
-        "label": "GF Indie Mint Kings",
-        "value": "GF Indie Mint Kings"
-      },
-      {
-        "label": "GFK Blue",
-        "value": "GFK Blue"
-      },
-      {
-        "label": "GFK Mix Pod",
-        "value": "GFK Mix Pod"
-      },
-      {
-        "label": "GF Indie Mint",
-        "value": "GF Indie Mint"
-      },
-      {
-        "label": "GFP",
-        "value": "GFP"
-      },
-      {
-        "label": "Navy Cut",
-        "value": "Navy Cut"
-      },
-      {
-        "label": "NC Virginia",
-        "value": "NC Virginia"
-      },
-      {
-        "label": "Silk Cut Red Spl DSFT",
-        "value": "Silk Cut Red Spl DSFT"
       },
       {
         "label": "AC Clove Mint",
@@ -990,8 +278,16 @@
         "value": "Classic BT"
       },
       {
+        "label": "Classic Connect",
+        "value": "Classic Connect"
+      },
+      {
         "label": "Classic Double Burst",
         "value": "Classic Double Burst"
+      },
+      {
+        "label": "Classic Edge",
+        "value": "Classic Edge"
       },
       {
         "label": "Classic Ice Burst",
@@ -1022,6 +318,10 @@
         "value": "GF Neo Smart"
       },
       {
+        "label": "GFK Mix Pod",
+        "value": "GFK Mix Pod"
+      },
+      {
         "label": "GFK SLK Sleek",
         "value": "GFK SLK Sleek"
       },
@@ -1032,86 +332,330 @@
       {
         "label": "GFP Blue Mint Switch",
         "value": "GFP Blue Mint Switch"
+      },
+      {
+        "label": "AC Fruity Fresh",
+        "value": "AC Fruity Fresh"
+      },
+      {
+        "label": "Capstan Metro",
+        "value": "Capstan Metro"
+      },
+      {
+        "label": "Flake Excel Tastepro Spl",
+        "value": "Flake Excel Tastepro Spl"
+      },
+      {
+        "label": "Flake Insta Fresh",
+        "value": "Flake Insta Fresh"
+      },
+      {
+        "label": "Flake Spl DSFT",
+        "value": "Flake Spl DSFT"
+      },
+      {
+        "label": "GF Indie Mint",
+        "value": "GF Indie Mint"
+      },
+      {
+        "label": "GFK Blue",
+        "value": "GFK Blue"
+      },
+      {
+        "label": "GFK Red",
+        "value": "GFK Red"
+      },
+      {
+        "label": "GFP",
+        "value": "GFP"
+      },
+      {
+        "label": "GFSS",
+        "value": "GFSS"
+      },
+      {
+        "label": "Navy Cut",
+        "value": "Navy Cut"
+      },
+      {
+        "label": "NC RSFT",
+        "value": "NC RSFT"
+      },
+      {
+        "label": "NC Virginia",
+        "value": "NC Virginia"
+      },
+      {
+        "label": "Players Magic Mix",
+        "value": "Players Magic Mix"
+      },
+      {
+        "label": "Silk Cut Blue Spl DSFT",
+        "value": "Silk Cut Blue Spl DSFT"
+      },
+      {
+        "label": "Silk Cut Red Spl DSFT",
+        "value": "Silk Cut Red Spl DSFT"
+      },
+      {
+        "label": "Wave Cool Mint",
+        "value": "Wave Cool Mint"
+      },
+      {
+        "label": "Classic Clove",
+        "value": "Classic Clove"
+      },
+      {
+        "label": "GFK Social 2POD",
+        "value": "GFK Social 2POD"
+      },
+      {
+        "label": "Classic BT Longs",
+        "value": "Classic BT Longs"
+      },
+      {
+        "label": "Classic RefT Longs",
+        "value": "Classic RefT Longs"
+      },
+      {
+        "label": "Classic RT Longs",
+        "value": "Classic RT Longs"
+      },
+      {
+        "label": "GF Blue Luxury",
+        "value": "GF Blue Luxury"
+      },
+      {
+        "label": "GF Fresh Mint",
+        "value": "GF Fresh Mint"
+      },
+      {
+        "label": "GF Red Luxury",
+        "value": "GF Red Luxury"
+      },
+      {
+        "label": "GFK SLK",
+        "value": "GFK SLK"
+      },
+      {
+        "label": "Silk Cut Virginia",
+        "value": "Silk Cut Virginia"
+      },
+      {
+        "label": "AC L.I.T.",
+        "value": "AC L.I.T."
+      },
+      {
+        "label": "American Club Fresh",
+        "value": "American Club Fresh"
+      },
+      {
+        "label": "Classic Verve BT",
+        "value": "Classic Verve BT"
+      },
+      {
+        "label": "GF SLK Blue",
+        "value": "GF SLK Blue"
+      },
+      {
+        "label": "GF SLK Red",
+        "value": "GF SLK Red"
+      },
+      {
+        "label": "GFK Social Red",
+        "value": "GFK Social Red"
+      },
+      {
+        "label": "B&H Gold Blue",
+        "value": "B&H Gold Blue"
+      },
+      {
+        "label": "NC Deluxe",
+        "value": "NC Deluxe"
+      },
+      {
+        "label": "AC Fruity Taste",
+        "value": "AC Fruity Taste"
+      },
+      {
+        "label": "AC Smash",
+        "value": "AC Smash"
+      },
+      {
+        "label": "Berkeley Spl DSFT",
+        "value": "Berkeley Spl DSFT"
+      },
+      {
+        "label": "Duke Spl",
+        "value": "Duke Spl"
+      },
+      {
+        "label": "Flake Liberty",
+        "value": "Flake Liberty"
+      },
+      {
+        "label": "Flake Prm",
+        "value": "Flake Prm"
+      },
+      {
+        "label": "GFFT",
+        "value": "GFFT"
+      },
+      {
+        "label": "PLAYERS AROMIX ST",
+        "value": "PLAYERS AROMIX ST"
+      },
+      {
+        "label": "Players Fruity Cool",
+        "value": "Players Fruity Cool"
+      },
+      {
+        "label": "Players Fruity",
+        "value": "Players Fruity"
+      },
+      {
+        "label": "Classic Icon",
+        "value": "Classic Icon"
+      },
+      {
+        "label": "GF Smart Pro",
+        "value": "GF Smart Pro"
+      },
+      {
+        "label": "Capstan Spl",
+        "value": "Capstan Spl"
+      },
+      {
+        "label": "GFP Mint Switch",
+        "value": "GFP Mint Switch"
+      },
+      {
+        "label": "GFSS Capsule Blue",
+        "value": "GFSS Capsule Blue"
+      },
+      {
+        "label": "Royal Rich",
+        "value": "Royal Rich"
+      },
+      {
+        "label": "Flake Sky",
+        "value": "Flake Sky"
       }
     ],
-    "attCardData": {
-      "allTeams": 2384,
-      "morningAttData": 1411,
-      "percentAttendance": 59.18999999999999772626324556767940521240234375,
-      "notPresent": 973
-    },
-    "beatAdherenceCardData": {
-      "todayActiveDS": 1411,
-      "adherence": 710,
-      "unAdherence": 703,
-      "avgCompRoute": 50.32000000000000028421709430404007434844970703125
-    },
-    "qualifiedAttData": {
-      "todayActiveDS": 1411,
-      "qualifiedCount": 1111,
-      "UnqualifiedCount": 302,
-      "avgQualified": 78.7399999999999948840923025272786617279052734375
-    },
-    "outletVisitedCardData": {
-      "totalShopsVisitedTillDate": 67980,
-      "supposedShopCounts": 104921,
-      "totalSellinShopsTillDate": "64755",
-      "focusBilled": 63852
-    },
-    "todayOutletVisitedCardData": {
-      "totalShopsVisitedToday": 12,
-      "supposedShop": 33190,
-      "totalSellinShopsToday": 12
-    },
-    "focusVisitTillDateAmountCardData": {
-      "totalFocusBilled": 1,
-      "minimumSupposedShop": 250652
-    },
-    "slideCardData": [
+    "sectionList": [
       {
-        "value1": "30270",
-        "text1": "Target",
-        "value1Class": "text-c-black",
-        "value2": 13778,
-        "text2": "Visited",
-        "value2Class": "text-c-black",
-        "value3": "45.52 %",
-        "text3": "Percent",
-        "iconClass": "feather icon-layout f-18 text-black m-r-10",
-        "iconText": "",
-        "title": "Outlets Visited",
-        "color": "light-grey",
-        "color1": ""
+        "label": "All",
+        "value": "all"
       },
       {
-        "value1": "30270",
-        "text1": "Target",
-        "value1Class": "text-c-black",
-        "value2": 12829,
-        "text2": " Billed",
-        "value2Class": "text-c-black",
-        "value3": "42.38 %",
-        "text3": "Percent",
-        "iconClass": "feather icon-layout f-18 text-black m-r-10",
-        "iconText": "",
-        "title": "Outlets Billed",
-        "color": "light-grey",
-        "color1": ""
+        "label": "AH1001 - Ahm City 1-CFP",
+        "value": "AH1001"
       },
       {
-        "value1": "30270",
-        "text1": "Target",
-        "value1Class": "text-c-black",
-        "value2": 11549,
-        "text2": " Billed",
-        "value2Class": "text-c-black",
-        "value3": "38.15 %",
-        "text3": "Percent",
-        "iconClass": "feather icon-layout f-18 text-black m-r-10",
-        "iconText": "",
-        "title": "Focus Brands Billed",
-        "color": "text-black",
-        "color1": ""
+        "label": "AH1001 - Jaipur Upcountry",
+        "value": "AH1001"
+      },
+      {
+        "label": "AH1002 - Ahm City 2-CFP",
+        "value": "AH1002"
+      }
+    ],
+    "wdCodeList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "AH20621 - RAJKOT (M CORP.) - AAKASH ENTERPRISE",
+        "value": "AH20621"
+      },
+      {
+        "label": "AH2119 -  - MUKHI AGENCY",
+        "value": "AH2119"
+      },
+      {
+        "label": "AH21431 - AHMADABAD (M CORP.) - MAHADEV AGENCIES",
+        "value": "AH21431"
+      }
+    ],
+    "teamType": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "Van DS",
+        "value": 0
+      },
+      {
+        "label": "Town SWD",
+        "value": 2
+      },
+      {
+        "label": "NPSR",
+        "value": 5
+      }
+    ],
+    "teamList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "1CG BALAKRISHNAN",
+        "value": 19858
+      },
+      {
+        "label": "A Basha",
+        "value": 20272
+      },
+      {
+        "label": "A RAJU",
+        "value": 20025
+      },
+      {
+        "label": "A Raza",
+        "value": 1459
+      },
+      {
+        "label": "A SRINIVASAN",
+        "value": 19768
+      }
+    ],
+    "wdMarketList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "ABHAYAPURI (TC)",
+        "value": "ABHAYAPURI (TC)"
+      },
+      {
+        "label": "ABOHAR (M CL)",
+        "value": "ABOHAR (M CL)"
+      },
+      {
+        "label": "ABU ROAD (M)",
+        "value": "ABU ROAD (M)"
+      }
+    ],
+    "wdPopGroupList": [
+      {
+        "label": "All",
+        "value": "all"
+      },
+      {
+        "label": "<2",
+        "value": "<2"
+      },
+      {
+        "label": ">1000",
+        "value": ">1000"
+      },
+      {
+        "label": ">1000000",
+        "value": ">1000000"
       }
     ],
     "graphs": {
@@ -1120,47 +664,45 @@
           "seriesData": [
             {
               "data": [
-                0,
-                0,
-                10,
-                19,
-                11,
-                0,
-                55,
-                38,
-                81,
-                2033,
-                3498,
-                5439,
-                1994,
-                7004,
-                7738,
-                8302,
-                8817,
-                8537,
-                7820,
-                2471,
-                7850,
-                8294,
-                8343,
-                8841,
-                9293,
-                9376,
-                3339,
-                9545,
-                9296,
-                9409,
-                10042
+                38098,
+                39264,
+                38516,
+                39106,
+                11903,
+                38212,
+                38577,
+                38738,
+                37033,
+                39171,
+                38743,
+                12559,
+                38615,
+                36974,
+                36907,
+                38725,
+                39097,
+                38476,
+                12646,
+                37005,
+                37890,
+                38932,
+                37144,
+                38481,
+                37614,
+                12635,
+                36305,
+                36555,
+                34865,
+                33615
               ]
             },
             {
               "data": [
-                11914,
-                11869,
-                3554,
-                12822,
-                13856,
-                13965
+                31510,
+                37194,
+                11508,
+                35912,
+                28970
               ]
             }
           ],
@@ -1197,8 +739,8 @@
             30,
             31
           ],
-          "lastMonthName": "July 2025",
-          "currentMonthName": "August 2025"
+          "lastMonthName": "April 2026",
+          "currentMonthName": "May 2026"
         },
         "height": "800px"
       },
@@ -1207,47 +749,45 @@
           "seriesData": [
             {
               "data": [
-                0,
-                0,
-                10,
-                26,
-                37,
-                37,
-                83,
-                116,
-                175,
-                2051,
-                5266,
-                10351,
-                12199,
-                18871,
-                26231,
-                34148,
-                42509,
-                50683,
-                58109,
-                60437,
-                67845,
-                75614,
-                83531,
-                91902,
-                100701,
-                109541,
-                112717,
-                121801,
-                130739,
-                139683,
-                149239
+                33377,
+                67545,
+                101034,
+                135076,
+                145741,
+                179189,
+                212501,
+                245874,
+                278185,
+                312235,
+                346080,
+                357327,
+                391112,
+                423484,
+                455880,
+                489992,
+                524102,
+                557771,
+                568981,
+                601602,
+                634980,
+                669323,
+                701875,
+                735754,
+                768824,
+                780120,
+                812260,
+                844236,
+                874929,
+                904859
               ]
             },
             {
               "data": [
-                11261,
-                22602,
-                25986,
-                38216,
-                51480,
-                64755
+                28418,
+                61582,
+                72294,
+                104339,
+                130351
               ]
             }
           ],
@@ -1284,8 +824,8 @@
             30,
             31
           ],
-          "lastMonthName": "July 2025",
-          "currentMonthName": "August 2025"
+          "lastMonthName": "April 2026",
+          "currentMonthName": "May 2026"
         },
         "height": "800px"
       },
@@ -1323,18 +863,16 @@
                 0,
                 0,
                 0,
-                0,
                 0
               ]
             },
             {
               "data": [
-                11633,
-                11626,
-                3517,
-                12504,
-                13579,
-                13657
+                31556,
+                37246,
+                11496,
+                35958,
+                28972
               ]
             }
           ],
@@ -1371,8 +909,8 @@
             30,
             31
           ],
-          "lastYearMonthName": "August 2024",
-          "currentYearMonthName": "August 2025"
+          "lastYearMonthName": "May 2025",
+          "currentYearMonthName": "May 2026"
         },
         "height": "800px"
       },
@@ -1387,24 +925,21 @@
                 0,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
+                215988,
+                494208,
+                751544,
+                878056,
+                938596,
+                1020570
               ]
             },
             {
               "data": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                157495,
-                67980
+                1060780,
+                1172062,
+                1060263,
+                1032401,
+                145094
               ]
             }
           ],
@@ -1422,8 +957,8 @@
             "Nov",
             "Dec"
           ],
-          "lastYear": "2024",
-          "currentYear": "2025"
+          "lastYear": "2025",
+          "currentYear": "2026"
         },
         "height": "800px"
       },
@@ -1461,18 +996,16 @@
                 0,
                 0,
                 0,
-                0,
                 0
               ]
             },
             {
               "data": [
-                11261,
-                22602,
-                25986,
-                38216,
-                51480,
-                64755
+                28418,
+                61582,
+                72294,
+                104339,
+                130351
               ]
             }
           ],
@@ -1509,8 +1042,8 @@
             30,
             31
           ],
-          "lastYearMonthName": "August 2024",
-          "currentYearMonthName": "August 2025"
+          "lastYearMonthName": "May 2025",
+          "currentYearMonthName": "May 2026"
         },
         "height": "800px"
       },
@@ -1525,24 +1058,21 @@
                 0,
                 0,
                 0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0
+                185380,
+                611424,
+                1234910,
+                1967984,
+                2760096,
+                3624624
               ]
             },
             {
               "data": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                149239,
-                213994
+                907239,
+                1936408,
+                2848611,
+                3753470,
+                3883821
               ]
             }
           ],
@@ -1560,8 +1090,8 @@
             "Nov",
             "Dec"
           ],
-          "lastYear": "2024",
-          "currentYear": "2025"
+          "lastYear": "2025",
+          "currentYear": "2026"
         },
         "height": "800px"
       },
@@ -1570,47 +1100,45 @@
           "seriesData": [
             {
               "data": [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                58,
-                1853,
-                4992,
-                9834,
-                11658,
-                18242,
-                25489,
-                33307,
-                41565,
-                49621,
-                56873,
-                59171,
-                66445,
-                74109,
-                81958,
-                90231,
-                98878,
-                107635,
-                110772,
-                119710,
-                128542,
-                137390,
-                146791
+                35597,
+                72346,
+                108288,
+                144597,
+                155620,
+                191253,
+                226845,
+                262843,
+                297273,
+                333605,
+                369694,
+                381344,
+                417440,
+                451806,
+                486099,
+                522307,
+                558533,
+                594299,
+                605960,
+                640616,
+                675902,
+                712417,
+                747235,
+                783317,
+                818356,
+                830123,
+                864416,
+                898518,
+                931363,
+                963155
               ]
             },
             {
               "data": [
-                11090,
-                22256,
-                25576,
-                37624,
-                50730,
-                63852
+                29763,
+                64967,
+                75904,
+                109925,
+                137378
               ]
             }
           ],
@@ -1647,8 +1175,8 @@
             30,
             31
           ],
-          "lastMonthName": "July 2025",
-          "currentMonthName": "August 2025"
+          "lastMonthName": "April 2026",
+          "currentMonthName": "May 2026"
         },
         "height": "800px"
       },
@@ -1686,18 +1214,16 @@
                 0,
                 0,
                 0,
-                0,
                 0
               ]
             },
             {
               "data": [
-                11090,
-                22256,
-                25576,
-                37624,
-                50730,
-                63852
+                29763,
+                64967,
+                75904,
+                109925,
+                137418
               ]
             }
           ],
@@ -1734,8 +1260,8 @@
             30,
             31
           ],
-          "lastYearMonthName": "August 2024",
-          "currentYearMonthName": "August 2025"
+          "lastYearMonthName": "May 2025",
+          "currentYearMonthName": "May 2026"
         },
         "height": "800px"
       }

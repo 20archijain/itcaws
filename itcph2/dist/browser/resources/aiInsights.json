@@ -2,36 +2,62 @@
   "status": 200,
   "message": [],
   "data": {
-    "query": "Analyse Gold Flake sales in South Delhi",
-    "dateRange": {
-      "startDate": "2026-02-01",
-      "endDate": "2026-02-07",
-      "days": 7
+    "success": true,
+    "query_type": "product_sales",
+    "query_name": "Product Sales Analysis",
+    "data": {
+      "query_name": "Product Sales Analysis",
+      "description": "Product performance and sales breakdown",
+      "record_count": 5,
+      "records": [
+        {
+          "productName": "GFFT",
+          "totalSales": 33067.34,
+          "sharePercent": 8.89
+        },
+        {
+          "productName": "GFP",
+          "totalSales": 32718.95,
+          "sharePercent": 8.8
+        },
+        {
+          "productName": "GF Indie Mint",
+          "totalSales": 25927.35,
+          "sharePercent": 6.97
+        },
+        {
+          "productName": "Flake Spl DSFT",
+          "totalSales": 19694.26,
+          "sharePercent": 5.3
+        },
+        {
+          "productName": "Classic Connect",
+          "totalSales": 18758.41,
+          "sharePercent": 5.05
+        }
+      ],
+      "metrics": {
+        "total_sales": 371775.78,
+        "avg_daily_sales": 61962.63,
+        "unique_products": 5
+      },
+      "ai_text": "#### 1. Top Performers\n- **GFFT** leads with total sales of 33067.34 units, capturing 8.89% of total sales.\n- **GFP** closely follows with 32718.95 units sold, representing 8.8% market share.\n- **GF Indie Mint** ranks third with 25927.35 units, accounting for 6.97% of total sales.\n\n#### 2. Sales Concentration\n- The top three products (GFFT, GFP, GF Indie Mint) together contribute 24.66% of total sales.\n- The cumulative sales of the top five products amount to 139366.31 units, which is 37.48% of total sales.\n- This indicates a moderate concentration in the top products, suggesting potential for diversification.\n\n#### 3. Underperformers\n- Products outside the top five are not listed, indicating a need to analyze their performance further.\n- The current top five products dominate sales, which may overshadow potential growth opportunities in other offerings.\n- Identifying and addressing the reasons for lower sales in other products could enhance overall performance.\n\n#### 4. Recommendations\n- Focus on marketing and promotional strategies for the top three products to maintain momentum and increase market share.\n- Conduct a detailed analysis of underperforming products to identify barriers to sales and potential improvements.\n- Consider bundling lower-performing products with top sellers to boost their visibility and sales.",
+      "show_worst": false
     },
+    "ai_text": "#### 1. Top Performers\n- **GFFT** leads with total sales of 33067.34 units, capturing 8.89% of total sales.\n- **GFP** closely follows with 32718.95 units sold, representing 8.8% market share.\n- **GF Indie Mint** ranks third with 25927.35 units, accounting for 6.97% of total sales.\n\n#### 2. Sales Concentration\n- The top three products (GFFT, GFP, GF Indie Mint) together contribute 24.66% of total sales.\n- The cumulative sales of the top five products amount to 139366.31 units, which is 37.48% of total sales.\n- This indicates a moderate concentration in the top products, suggesting potential for diversification.\n\n#### 3. Underperformers\n- Products outside the top five are not listed, indicating a need to analyze their performance further.\n- The current top five products dominate sales, which may overshadow potential growth opportunities in other offerings.\n- Identifying and addressing the reasons for lower sales in other products could enhance overall performance.\n\n#### 4. Recommendations\n- Focus on marketing and promotional strategies for the top three products to maintain momentum and increase market share.\n- Conduct a detailed analysis of underperforming products to identify barriers to sales and potential improvements.\n- Consider bundling lower-performing products with top sellers to boost their visibility and sales.",
     "filters": {
-      "district": "South Delhi",
-      "product": "Gold Flake"
+      "date_from": "2026-05-01",
+      "date_to": "2026-05-06"
     },
-    "metrics": {
-      "totalSales": 1245.5,
-      "totalAmount": 382000.75,
-      "avgDailySales": 177.93
+    "detected_filters": [
+      "Date: This month"
+    ],
+    "date_range": {
+      "from": "2026-05-01",
+      "to": "2026-05-06",
+      "display": "May 01, 2026 to May 06, 2026"
     },
-    "topProducts": [
-      { "productName": "Gold Flake", "totalSales": 1245.5 },
-      { "productName": "Wills Classic", "totalSales": 842.2 },
-      { "productName": "Navy Cut", "totalSales": 602.8 }
-    ],
-    "topWdCodes": [
-      { "wdCode": "SDL01", "totalSales": 520.4 },
-      { "wdCode": "SDL02", "totalSales": 418.3 },
-      { "wdCode": "SDL03", "totalSales": 306.8 }
-    ],
-    "detectedFilters": [
-      "product: Gold Flake",
-      "district: South Delhi"
-    ],
-    "aiText": "• Gold Flake leads sales in South Delhi for the selected period, contributing the largest share of total sales.\n• WD code SDL01 is the top-performing pocket; consider reinforcing stock and visibility here.\n• Avg daily sales are steady; there may be upside by expanding distribution in SDL02 and SDL03.\n\nRecommended actions:\n1) Prioritize replenishment for Gold Flake across SDL01–SDL03.\n2) Increase call frequency in SDL02 to close the gap with SDL01.\n3) Validate outlet coverage in SDL03 to identify whitespace."
+    "timestamp": "2026-05-06 14:26:32"
   },
   "hidePopup": true
 }

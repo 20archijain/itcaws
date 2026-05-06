@@ -18,7 +18,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ProductiveDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  url = environment.viewSalesDashboardDataUrl;
+  url = environment.viewProductiveDashboardDataUrl;
   group!: UntypedFormGroup;
   // chartData;
   columnSize = 12;

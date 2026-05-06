@@ -15,7 +15,7 @@
     "client": {
       "logo": "https:\/\/upimg2.radardashboard.com\/logo\/dummy_pic.jpg"
     },
-    "token": "c2e11d8ddb8a7a30ef5e49f0f7a2d9be0025f9e04b5aabf4b49bde09e1cdfc00",
+    "token": "a0c0afd1e65b8567de6dda317dc136cea40b4974d9e474980ebb3ad2f662db4b",
     "modules": {
       "MP01": {
         "breadcrumbs": false,
@@ -51,6 +51,19 @@
             "pmodc": "DSH01",
             "fold": "dashboard\/index.php",
             "componentName": "DashboardComponent",
+            "submodules": [],
+            "actions": []
+          },
+          "DSH07": {
+            "breadcrumbs": false,
+            "id": 126,
+            "name": "AI Insights",
+            "hidden": false,
+            "icon": null,
+            "modc": "DSH07",
+            "pmodc": "DSH01",
+            "fold": "ai-insights\/aiInsights.php",
+            "componentName": "AiInsightsComponent",
             "submodules": [],
             "actions": []
           },
@@ -106,13 +119,13 @@
             "submodules": [],
             "actions": []
           },
-          "DSH07": {
+          "DSH08": {
             "breadcrumbs": false,
             "id": 132,
             "name": "Breeze Dashboard",
             "hidden": false,
             "icon": "",
-            "modc": "DSH07",
+            "modc": "DSH08",
             "pmodc": "DSH01",
             "fold": "breeze-dashboard\/breezeDashboard.php",
             "componentName": "BreezeDashboardComponent",
@@ -120,19 +133,6 @@
             "actions": []
           }
         },
-        "actions": []
-      },
-      "ACN01": {
-        "breadcrumbs": false,
-        "id": 84,
-        "name": "Actionable",
-        "hidden": false,
-        "icon": "icon-activity",
-        "modc": "ACN01",
-        "pmodc": "0",
-        "fold": "actionable\/",
-        "componentName": null,
-        "submodules": [],
         "actions": []
       },
       "ATN01": {
@@ -172,65 +172,65 @@
             "submodules": [],
             "actions": []
           },
-          "SOM03": {
+          "ATN07": {
             "breadcrumbs": false,
             "id": 63,
             "name": "Route Tracker",
             "hidden": false,
             "icon": "icon-map-pin",
-            "modc": "SOM03",
+            "modc": "ATN07",
             "pmodc": "ATN01",
             "fold": "sites-on-map\/tracker.php",
             "componentName": "RouteTrackerComponent",
             "submodules": [],
             "actions": []
           },
-          "SOM02": {
+          "ATN06": {
             "breadcrumbs": false,
             "id": 62,
             "name": "Locations Covered",
             "hidden": false,
             "icon": "icon-map-pin",
-            "modc": "SOM02",
+            "modc": "ATN06",
             "pmodc": "ATN01",
             "fold": "sites-on-map\/location.php",
             "componentName": "LocationsCoveredComponent",
             "submodules": [],
             "actions": []
           },
-          "SOM05": {
+          "ATN08": {
             "breadcrumbs": false,
             "id": 86,
             "name": "Outlet Universe",
             "hidden": false,
             "icon": "icon-map-pin",
-            "modc": "SOM05",
+            "modc": "ATN08",
             "pmodc": "ATN01",
             "fold": "sites-on-map\/universe-data.php",
             "componentName": "UniverseDataComponent",
             "submodules": [],
             "actions": []
           },
-          "SOM06": {
+          "ATN09": {
             "breadcrumbs": false,
             "id": 100,
             "name": "MDO Route Traker",
             "hidden": false,
             "icon": "icon-map-pin",
-            "modc": "SOM06",
+            "modc": "ATN09",
             "pmodc": "ATN01",
             "fold": "sites-on-map\/mdoTracker.php",
             "componentName": "MdoRouteTrackerComponent",
             "submodules": [],
             "actions": []
           },
-          "SOM07": {
+          "ATN10": {
             "breadcrumbs": false,
             "id": 101,
             "name": "MDO Outlet Universe",
             "hidden": false,
             "icon": "icon-map-pin",
-            "modc": "SOM07",
+            "modc": "ATN10",
             "pmodc": "ATN01",
             "fold": "sites-on-map\/mdo-universe-data.php",
             "componentName": "MdoUniverseDataComponent",
@@ -339,13 +339,13 @@
               "RESTORE"
             ]
           },
-          "ADDMDO": {
+          "PM20": {
             "breadcrumbs": false,
             "id": 90,
             "name": "Add MDO Team",
             "hidden": false,
             "icon": null,
-            "modc": "ADDMDO",
+            "modc": "PM20",
             "pmodc": "PM01",
             "fold": "team\/mdoAddTeam.php",
             "componentName": "AddMdoTeamComponent",
@@ -394,13 +394,13 @@
             "submodules": [],
             "actions": []
           },
-          "EDPT": {
+          "PM21": {
             "breadcrumbs": false,
             "id": 77,
             "name": "Edit Product Price",
             "hidden": false,
             "icon": null,
-            "modc": "EDPT",
+            "modc": "PM21",
             "pmodc": "PM01",
             "fold": "edit-product-price\/editProductPrice.php",
             "componentName": "EditProductPriceComponent",
@@ -726,10 +726,23 @@
             "submodules": [],
             "actions": []
           },
+          "DWN09": {
+            "breadcrumbs": false,
+            "id": 85,
+            "name": "Leaderboard Data",
+            "hidden": false,
+            "icon": null,
+            "modc": "DWN09",
+            "pmodc": "DWN01",
+            "fold": "downloadReports\/leaderboardReport.php",
+            "componentName": "LeaderBoardComponent",
+            "submodules": [],
+            "actions": []
+          },
           "DWN11": {
             "breadcrumbs": false,
             "id": 91,
-            "name": "wd mapping management",
+            "name": "WD mapping management",
             "hidden": false,
             "icon": null,
             "modc": "DWN11",

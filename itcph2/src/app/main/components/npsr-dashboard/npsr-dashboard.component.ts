@@ -19,7 +19,7 @@ import { Functions } from 'src/app/core/utils/functions.list';
 })
 export class NpsrDashboardComponent implements OnDestroy, OnInit {
   private subscription: Subscription[] = [];
-  url = environment.viewSalesDashboardDataUrl;
+  url = environment.viewNpsrDashboardDataUrl;
   group!: UntypedFormGroup;
   // chartData;
   columnSize = 12;
