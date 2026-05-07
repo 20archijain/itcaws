@@ -585,7 +585,7 @@ class generatePDFCronjob
 
         $sAction = null;
         $iRows = 0;
-        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number, b.team_name, a.resp_enddatetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0" .
+        $sQuery = "SELECT a.summary_id, a.team_id, a.attendance_datetime, a.dayend_datetime, b.ae_number, b.ae_name, b.team_name, a.resp_enddatetime FROM tblvands_summary as a , tblproject_team as b WHERE a.dstatus = 0 AND b.dstatus = 0" .
             " AND a.team_id = b.team_id AND a.attendance_datetime is not null AND a.dayend_datetime is not null AND b.is_type in (0,5) AND a.pdf_generated = '0' $sDateCond LIMIT 100";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -600,6 +600,7 @@ class generatePDFCronjob
                 }
                 $team_id = $row["team_id"];
                 $ae_number = $row["ae_number"];
+                $ae_name = $row["ae_name"];
                 $team_name = $row["team_name"];
                 $notificationTitle = "Survey Summary";
 
@@ -620,8 +621,12 @@ class generatePDFCronjob
                         $arrParams = array($team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
                         $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
                         // Send the QR code image via WhatsApp
-                        $qrSent = $this->sendWhatsAppMessage('91' . $ae_number, $actualPdfUrl, $team_name, 'vnsai');
+                        $resp = $this->sendWhatsAppMessage('91' . $ae_number, $actualPdfUrl, $team_name, 'vnsai');
                         updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", array(1));
+                        $cols = "ae_name, ae_number, team_id, api_response, capture_date";
+                        $vals = "?, ?, ?, ?, ?";
+                        $arrParams = array($ae_name, $ae_number, $team_id, $resp, $currentDate);
+                        addRecord($this->_dbConn, "tblwhatsapp_pdf_logs", $cols, $vals, $arrParams);
                     } else {
                         // debug_log(
                         //     "\r\nData Not Added to Notification Table for Team ID: $team_id date - $currentDate\r\n" .
@@ -761,7 +766,7 @@ Sharing Day End Report of {$team_name}. PDF attached.",
         }
 
         curl_close($ch);
-        return $success;
+        return $response;
     }
 }
 
