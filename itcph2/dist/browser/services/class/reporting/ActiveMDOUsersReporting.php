@@ -785,8 +785,12 @@ class ActiveMdoUsersReporting
                 "app.reporting.activeUSers.branch",
                 "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.circle",
+                "Circle Name",
                 "app.reporting.activeUSers.section",
+                "Section Name",
                 "app.reporting.activeUSers.wdCode",
+                "WD Market",
+                "WD Firm Name",
                 "AE Name",
                 "AE Number",
                 "MDO ID",
@@ -800,8 +804,12 @@ class ActiveMdoUsersReporting
                 "branchName",
                 "region",
                 "circle",
+                "circleName",
                 "section",
+                "sectionName",
                 "wdCode",
+                "wdCodeName",
+                "wdFirmName",
                 "aeName",
                 "aeNumber",
                 "mdoId",
@@ -878,9 +886,13 @@ class ActiveMdoUsersReporting
                                 "dsName" => $arrData["team_name"],
                                 "region" => $arrData["branch_name"],
                                 "branchName" => $arrData["main_branch"],
-                                "circle" => trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
-                                "section" => trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
-                                "wdCode" => trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                                "circle" => trim($arrData["circle"]),
+                                "circleName" => $arrData["circle_name"],
+                                "section" => trim($arrData["section"]),
+                                "sectionName" => $arrData["section_name"],
+                                "wdCode" => trim($arrData["wd_code"]),
+                                "wdCodeName" => $arrData["wd_market"],
+                                "wdFirmName" => $arrData["wd_firm_name"],
                                 "dsType" => isset($ARR_TEAM_TYPES[$teamType]) ? $ARR_TEAM_TYPES[$teamType] : (string) $teamType,
                                 "dsNum" => $arrData["ds_number"],
                                 "creationDate" => $creationDate
@@ -1022,11 +1034,15 @@ class ActiveMdoUsersReporting
                             $aeName = getRowColumn($this->_dbConn, $projectTeamTable, "ae_name", "wd_code = '$wdCode'");
                             $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "wd_code = '$wdCode'");
                             $arrBody[] = array(
-                                $arrData["branch_name"],
                                 $arrData["main_branch"],
-                                trim($arrData["circle"] . " - " . $arrData["circle_name"], " -"),
-                                trim($arrData["section"] . " - " . $arrData["section_name"], " -"),
-                                trim($arrData["wd_code"] . " - " . $arrData["wd_market"] . " - " . $arrData["wd_firm_name"], " -"),
+                                $arrData["branch_name"],
+                                trim($arrData["circle"]),
+                                $arrData["circle_name"],
+                                trim($arrData["section"]),
+                                $arrData["section_name"],
+                                trim($arrData["wd_code"]),
+                                $arrData["wd_market"],
+                                $arrData["wd_firm_name"],
                                 $aeName,
                                 $aeNumber,
                                 $mdoId,
@@ -1040,7 +1056,7 @@ class ActiveMdoUsersReporting
                     }
                 }
             }
-            $header = array("Region", "Branch", "Circle", "Section", "WD Code", "AE Name", "AE Number", "MDO ID", "MDO Name", "DS ID", "DS Name", "DS Type",);
+            $header = array("Branch", "Region",  "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Market", "WD Firm Name", "AE Name", "AE Number", "MDO ID", "MDO Name", "DS ID", "DS Name", "DS Type",);
             $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
             $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
             echo json_encode($arrMessage);
