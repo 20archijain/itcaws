@@ -116,6 +116,10 @@ class VanDswhatsAppSummary
                                 "image_url_for_send" => $imageUrlForSend,
                                 "whatsapp_response" => $whatsAppResponse
                             );
+                            $cols = "ae_name, ae_number, section, api_response, capture_date";
+                            $vals = "?, ?, ?, ?, ?";
+                            $arrParams = array($aeName, $phoneNumber, $section, $whatsAppResponse, $currentDate);
+                            addRecord($this->_dbConn, "tblwhatsapp_section_summary_logs", $cols, $vals, $arrParams);
                         }
                     }
                 }
@@ -338,7 +342,7 @@ Below are the Team Summary of your Section.",
         }
 
         curl_close($ch);
-        return $success;
+        return $response;
     }
 
     private function clearOldImageDateFolders($currentDate)

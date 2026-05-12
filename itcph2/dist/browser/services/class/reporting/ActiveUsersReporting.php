@@ -643,8 +643,12 @@ class ActiveUsersReporting
                 "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.branch",
                 "app.reporting.activeUSers.circle",
+                "Circle Name",
                 "app.reporting.activeUSers.section",
+                "Section Name",
                 "app.reporting.activeUSers.wdCode",
+                "WD Market",
+                "WD Firm Name",
                 "app.reporting.activeUSers.dsType",
                 "app.team.add.status",
                 "app.reporting.activeUSers.creationDate"
@@ -655,8 +659,12 @@ class ActiveUsersReporting
                 "region",
                 "branchName",
                 "circle",
+                "circleName",
                 "section",
+                "sectionName",
                 "wdCode",
+                "wdMarket",
+                "wdFirmName",
                 "dsType",
                 "status",
                 "creationDate",
@@ -739,9 +747,13 @@ class ActiveUsersReporting
                     "dsName" => $arrData["team_name"],
                     "region" => $arrData["branch_name"],
                     "branchName" => $mainBranch,
-                    "circle" => $arrData["circle"] . ' - ' . $arrData["circle_name"],
-                    "section" => $arrData["section"] . ' - ' . $arrData["section_name"],
-                    "wdCode" => $arrData["wd_code"] . ' - ' . $arrData['wd_market'] . ' - ' . $arrData['wd_firm_name'],
+                    "circle" => $arrData["circle"],
+                    "circleName" => $arrData["circle_name"],
+                    "section" => $arrData["section"],
+                    "sectionName" => $arrData["section_name"],
+                    "wdCode" => $arrData["wd_code"],
+                    "wdMarket" => $arrData['wd_market'],
+                    "wdFirmName" => $arrData['wd_firm_name'],
                     "dsType" =>  $types[$teamType],
                     "dsNum" =>  $arrData["ds_number"],
                     "status" => $istatus,
@@ -786,7 +798,7 @@ class ActiveUsersReporting
         $sAction = null;
         $iRows = 0;
         $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $sQuery = "SELECT a.project_id, a.team_id,a.is_type, a.team_name,a.ds_number,a.circle,a.section" .
+        $sQuery = "SELECT c.circle_name, c.section_name, c.wd_market, c.wd_firm_name, a.project_id, a.team_id,a.is_type, a.team_name,a.ds_number,a.circle,a.section" .
             ", a.wd_code,a.rcd, b.district, b.branch_name,b.main_branch FROM $projectTeamTable AS a, $branchTable AS b, $wdMappingTable as c WHERE a.dstatus = 0 AND a.branch_id = b.branch_id AND a.s_id = '99'  AND a.wd_code = c.wd_code $where $dwnCond $sOrderCond";
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -803,13 +815,17 @@ class ActiveUsersReporting
                     $arrData["branch_name"],
                     $arrData["main_branch"],
                     $arrData["circle"],
+                    $arrData["circle_name"],
                     $arrData["section"],
+                    $arrData["section_name"],
                     $arrData["wd_code"],
+                    $arrData["wd_market"],
+                    $arrData["wd_firm_name"],
                     $types[$teamType],
                     $creationDate,
                 );
             }
-            $header = array("DS ID", "DS Name", "DS Mob No.", "District", "Region", "Branch", "Circle", "Section", "WD Code", "DS Type", "Date of Creation");
+            $header = array("DS ID", "DS Name", "DS Mob No.", "District", "Region", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Market", "WD Firm Name", "DS Type", "Date of Creation");
             $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
             $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
             echo json_encode($arrMessage);
