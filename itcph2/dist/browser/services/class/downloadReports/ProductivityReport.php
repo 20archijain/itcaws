@@ -15,7 +15,6 @@ class ProductivityReport
     private $_projectId = 1;
     private $_arrAccessInfo = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo)
     {
         $this->_data = $data;
@@ -29,7 +28,7 @@ class ProductivityReport
         $arrResult["yearList"] = getYearList();
         $arrResult["monthList"] = getMonthList();
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -106,7 +105,6 @@ class ProductivityReport
                 }
                 $percentDsMoreThan6Outlets = $noOfDsRegistered > 0 ? ($dsMoreThan6Outlets / $noOfDsRegistered) * 100 : 0;
 
-
                 // Number of DS with attendance >= 15 days
                 $noOfDsWithAttendanceGreaterthen15days = getRowColumn(
                     $this->_dbConn,
@@ -135,7 +133,7 @@ class ProductivityReport
         $fp = fopen($filename, 'w');
 
         if ($fp === false) {
-            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            $arrMessage = responseMessage(["Failed to create CSV file"], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -154,12 +152,12 @@ class ProductivityReport
 
         fclose($fp);
 
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 }

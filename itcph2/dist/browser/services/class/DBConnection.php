@@ -13,14 +13,14 @@ class DBConnection
             $this->_db = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8mb4", $username, $password);
             $this->_db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            $errorMessage = responseMessage(array("Connection Error: " . $e->getMessage()));
+            $errorMessage = responseMessage(["Connection Error: " . $e->getMessage()]);
             echo json_encode($errorMessage);
-            die;
+            return;
         }
     }
 
     // phpcs:ignore
-    final public function ExecuteSelectQuery($sql_statement, &$result_resource, &$returned_rows_count, $arrParams = array())
+    final public function ExecuteSelectQuery($sql_statement, &$result_resource, &$returned_rows_count, $arrParams = [])
     {
         try {
             $result_resource = $this->_db->prepare($sql_statement);
@@ -28,15 +28,15 @@ class DBConnection
             $returned_rows_count = $result_resource->rowCount();
             return 1;
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             debug_log("ExecuteSelectQuery\r\n$sql_statement\r\n" . json_encode($arrParams) . "\r\n" . $e->getMessage() . "\r\n" . $e->getTraceAsString(), $this->_logFileName);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
     // phpcs:ignore
-    final public function ExecuteQuery($sql_statement, &$result_resource, &$returned_rows_count, $arrParams = array())
+    final public function ExecuteQuery($sql_statement, &$result_resource, &$returned_rows_count, $arrParams = [])
     {
         try {
             $result_resource = $this->_db->prepare($sql_statement);
@@ -52,10 +52,10 @@ class DBConnection
             $returned_rows_count = $result_resource->rowCount();
             return 1;
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             debug_log("ExecuteQuery\r\n$sql_statement\r\n" . json_encode($arrParams) . "\r\n" . $e->getMessage() . "\r\n" . $e->getTraceAsString(), $this->_logFileName);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
@@ -69,10 +69,10 @@ class DBConnection
             }
             return 0;
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             debug_log("GetData\r\n" . $e->getMessage() . "\r\n" . $e->getTraceAsString(), $this->_logFileName);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
@@ -82,9 +82,9 @@ class DBConnection
         try {
             $last_insert_id = $this->_db->lastInsertId();
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
@@ -94,9 +94,9 @@ class DBConnection
         try {
             $this->_db->beginTransaction();
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
@@ -106,9 +106,9 @@ class DBConnection
         try {
             $this->_db->commit();
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 
@@ -118,9 +118,9 @@ class DBConnection
         try {
             $this->_db->rollBack();
         } catch (PDOException $e) {
-            $error_message = responseMessage(array($e->getMessage()));
+            $error_message = responseMessage([$e->getMessage()]);
             echo json_encode($error_message);
-            die;
+            return;
         }
     }
 

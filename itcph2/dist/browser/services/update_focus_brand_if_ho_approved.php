@@ -44,7 +44,7 @@ class UpdatFocusBrandIfHOApproved
                 $branch_id = $row['branch_id'];
                 $sAction1 = null;
                 $iRows1 = 0;
-                $arrListAllocation = array();
+                $arrListAllocation = [];
                 $sQuery1 = "SELECT rec_id, category_name, product_name, summary_column_name FROM tblbranch_pickupstock_products_allocation WHERE dstatus = 0" .
                     "  AND branch_id = '$branch_id' AND month = '$nextMonth' AND year = '$nextYear' AND team_type = 5 AND dspm_focus = 1 AND filled_by_ho = 1";
                 // echo $sQuery;die;
@@ -52,17 +52,17 @@ class UpdatFocusBrandIfHOApproved
 
                 if ($iRows1 > 0) {
                     while ($row1 = $this->_dbConn->GetData($sAction1)) {
-                        $arrListAllocation[] = array(
+                        $arrListAllocation[] = [
                             $row1['rec_id'],
                             $row1['category_name'],
                             $row1['product_name'],
                             $row1['summary_column_name'],
-                        );
+                        ];
                     };
                 }
                 $sAction2 = null;
                 $iRows2 = 0;
-                $arrListMonth = array();
+                $arrListMonth = [];
                 $sQuery2 = "SELECT rec_id, category_name, product_name, summary_column_name FROM tblbranch_products_month_wise WHERE dstatus = 0" .
                     "  AND branch_id = '$branch_id' AND month = '$nextMonth' AND year = '$nextYear' AND team_type = 5 AND is_focusbrand = 1";
                 // echo $sQuery;die;
@@ -70,31 +70,31 @@ class UpdatFocusBrandIfHOApproved
 
                 if ($iRows2 > 0) {
                     while ($row2 = $this->_dbConn->GetData($sAction2)) {
-                        $arrListMonth[] = array(
+                        $arrListMonth[] = [
                             $row2['rec_id'],
                             $row2['category_name'],
                             $row2['product_name'],
                             $row2['summary_column_name'],
-                        );
+                        ];
                     };
                 }
-                $arrUpdateList = array();
+                $arrUpdateList = [];
                 if (isset($arrListAllocation) && count($arrListAllocation) == 2 && isset($arrListMonth) && count($arrListMonth) == 2) {
                     if ($arrListAllocation[0][3] != $arrListMonth[0][3]) {
-                        $arrUpdateList[] = array(
+                        $arrUpdateList[] = [
                             $arrListMonth[0][0],
                             $arrListAllocation[0][1],
                             $arrListAllocation[0][2],
                             $arrListAllocation[0][3],
-                        );
+                        ];
                     }
                     if ($arrListAllocation[1][3] != $arrListMonth[1][3]) {
-                        $arrUpdateList[] = array(
+                        $arrUpdateList[] = [
                             $arrListMonth[1][0],
                             $arrListAllocation[1][1],
                             $arrListAllocation[1][2],
                             $arrListAllocation[1][3],
-                        );
+                        ];
                     }
 
                     if (isset($arrUpdateList) && count($arrUpdateList) == 2) {

@@ -44,7 +44,7 @@ class UpdateDataCronjob
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
-            $arrTeamBranch = array();
+            $arrTeamBranch = [];
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $attId = $row["att_id"];
                 $teamId = $row["team_id"];
@@ -71,10 +71,10 @@ class UpdateDataCronjob
 
                     $colsQty = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
                     $valsQty = "?, ?, 0, ?, ?, ?";
-                    $arrParamsQty = array($teamId, $captureDate, $attId, $rcd, $rdt);
+                    $arrParamsQty = [$teamId, $captureDate, $attId, $rcd, $rdt];
 
-                    $arrOtherDetails = $otherDetails ? json_decode($otherDetails, true) : array();
-                    $arrPickupDetails = isset($arrOtherDetails["pickupDetails"]) ? $arrOtherDetails["pickupDetails"] : array();
+                    $arrOtherDetails = $otherDetails ? json_decode($otherDetails, true) : [];
+                    $arrPickupDetails = isset($arrOtherDetails["pickupDetails"]) ? $arrOtherDetails["pickupDetails"] : [];
                     // Get branch stock pickup products
                     $arrStockProductColumns = $this->getBranchWiseStockPickupProducts($branchId, $jsonId, $teamType);
                     // print_r($arrOtherDetails);die;
@@ -82,7 +82,7 @@ class UpdateDataCronjob
                     $arrStock = getGridDataAsArray($arrPickupDetails["ansGrid"], 2, count($arrStockProductColumns));
                     // Add stock for each product
                     if (isNonEmptyArray($arrStockProductColumns)) {
-                        $arrUsedColumns = array();
+                        $arrUsedColumns = [];
                         foreach ($arrStockProductColumns as $productIndex => $productSummaryColumn) {
                             $iQty = isset($arrStock[1][$productIndex]) && floatval($arrStock[1][$productIndex]) ? floatval($arrStock[1][$productIndex]) : 0;
 
@@ -102,7 +102,6 @@ class UpdateDataCronjob
             }
         }
     }
-
 
     // private function getBranchWiseStockPickupProducts($branchId = null, $jsonId = null)
     // {
@@ -145,7 +144,7 @@ class UpdateDataCronjob
                     $branchProductsTable,
                     "branch_id, json_id, summary_column_name",
                     "dstatus = 0 AND team_type = '$teamType' AND branch_id = '$branchId' ORDER BY json_id, sort_order",
-                    array(),
+                    [],
                     true
                 );
 
@@ -155,7 +154,7 @@ class UpdateDataCronjob
                     $summaryColumnName = $arrBranchColumns[2];
 
                     if (!isset($this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType])) {
-                        $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType] = array();
+                        $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType] = [];
                     }
                     $this->_jsonWiseAndbranchWiseStockpickupProductsColumns[$jsonId][$branchId][$teamType][] = $summaryColumnName;
                 }
@@ -250,13 +249,13 @@ class UpdateDataCronjob
                             if ($isExist > 0) {
                                 $values = "uob = ?, sales = ?, rdt = ?";
                                 $condition = "team_id = ? AND rcd = ? AND product_name = ?";
-                                $arrParamsUpdate = array($distinctShops, $totalSale, date('Y-m-d H:i:s'), $teamId, $captureDate, $productName);
+                                $arrParamsUpdate = [$distinctShops, $totalSale, date('Y-m-d H:i:s'), $teamId, $captureDate, $productName];
                                 // Update existing record
                                 updateRecord($this->_dbConn, "tblwdapp_uob_sales_data", $values, $condition, $arrParamsUpdate);
                             } else {
                                 $colsQty = "team_id, month, product_name, uob, sales, rcd, rdt";
                                 $valsQty = "?, ?, ?, ?, ?, ?, ?";
-                                $arrParamsQty = array($teamId, $currentMonthName, $productName, $distinctShops, $totalSale, $captureDate, date('Y-m-d H:i:s'));
+                                $arrParamsQty = [$teamId, $currentMonthName, $productName, $distinctShops, $totalSale, $captureDate, date('Y-m-d H:i:s')];
                                 addRecord($this->_dbConn, "tblwdapp_uob_sales_data", $colsQty, $valsQty, $arrParamsQty);
                             }
                         }
@@ -377,7 +376,7 @@ class UpdateDataCronjob
                                    week_3uob = ?, week_3sales = ?, week_4uob = ?, week_4sales = ?,
                                    monthy_uob = ?, monthy_sales = ?, rdt = ?";
                             $condition = "team_id = ? AND month = ? AND product_name = ?";
-                            $arrParamsUpdate = array(
+                            $arrParamsUpdate = [
                                 $weeklyData['week_1uob'],
                                 $weeklyData['week_1sales'],
                                 $weeklyData['week_2uob'],
@@ -392,13 +391,13 @@ class UpdateDataCronjob
                                 $teamId,
                                 $currentMonthName,
                                 $productName
-                            );
+                            ];
                             updateRecord($this->_dbConn, "tblwdapp_uob_sales_data_weekly", $values, $condition, $arrParamsUpdate);
                         } else {
                             $colsQty = "team_id, month, product_name, week_1uob, week_1sales, week_2uob, week_2sales,
                                     week_3uob, week_3sales, week_4uob, week_4sales, monthy_uob, monthy_sales, rcd, rdt";
                             $valsQty = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                            $arrParamsQty = array(
+                            $arrParamsQty = [
                                 $teamId,
                                 $currentMonthName,
                                 $productName,
@@ -414,7 +413,7 @@ class UpdateDataCronjob
                                 $weeklyData['monthy_sales'],
                                 date('Y-m-d'),
                                 date('Y-m-d H:i:s')
-                            );
+                            ];
                             addRecord($this->_dbConn, "tblwdapp_uob_sales_data_weekly", $colsQty, $valsQty, $arrParamsQty);
                         }
                     }
@@ -437,7 +436,7 @@ class UpdateDataCronjob
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
-            $arrShops = array();
+            $arrShops = [];
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $proId = $row["pro_id"];
                 $shopDoneLt = $row["lt"];
@@ -454,7 +453,7 @@ class UpdateDataCronjob
                             $routeDetailsTable,
                             "lt, lg",
                             "rec_id = ?",
-                            array($shopId)
+                            [$shopId]
                         );
                     }
 
@@ -481,7 +480,7 @@ class UpdateDataCronjob
                     $respTable,
                     "update_distance = ?, distance_in_meter = ?",
                     "pro_id = $proId",
-                    array($updateDistance, $distanceInM)
+                    [$updateDistance, $distanceInM]
                 );
             }
         }

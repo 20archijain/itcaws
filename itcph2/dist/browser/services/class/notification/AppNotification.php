@@ -27,14 +27,13 @@ class AppNotification
         $this->_tables = $GLOBALS['TABLES'];
     }
 
-
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -49,10 +48,10 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -61,11 +60,11 @@ class AppNotification
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -85,25 +84,24 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -122,10 +120,10 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -134,11 +132,11 @@ class AppNotification
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -157,24 +155,23 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -193,24 +190,23 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -229,10 +225,10 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -241,11 +237,11 @@ class AppNotification
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -264,23 +260,22 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
         global $ARR_TEAM_TYPES; // use your global team types mapping
-        $arrData = array(
-            array("label" => "All", "value" => "all")
-        );
+        $arrData = [
+            ["label" => "All", "value" => "all"]
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -302,25 +297,23 @@ class AppNotification
                 $isType = $row['is_type'];
                 $label = isset($ARR_TEAM_TYPES[$isType]) ? $ARR_TEAM_TYPES[$isType] : "Unknown";
 
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $label,
                     "value" => $isType
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -338,10 +331,10 @@ class AppNotification
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -350,7 +343,7 @@ class AppNotification
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
             "circleList" => $this->getCircleList(),
@@ -361,9 +354,9 @@ class AppNotification
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "branchFilter" => true,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -376,7 +369,7 @@ class AppNotification
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -388,7 +381,7 @@ class AppNotification
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -400,7 +393,7 @@ class AppNotification
         $circle = getFormData($this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -412,7 +405,7 @@ class AppNotification
         $section = getFormData($this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -424,7 +417,7 @@ class AppNotification
         $wdCode = getFormData($this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -436,7 +429,7 @@ class AppNotification
         $wdMarket = getFormData($this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -448,7 +441,7 @@ class AppNotification
         $wdPopGroup = getFormData($this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -460,7 +453,7 @@ class AppNotification
         $teamType = getFormData($this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -473,7 +466,7 @@ class AppNotification
         $dsName = getFormData($this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -494,14 +487,13 @@ class AppNotification
         return $where;
     }
 
-
     final public function getBranch($district = "district")
     {
         $district = $this->_data['district'];
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -510,7 +502,7 @@ class AppNotification
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -519,9 +511,9 @@ class AppNotification
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -530,9 +522,9 @@ class AppNotification
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -542,7 +534,7 @@ class AppNotification
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -551,7 +543,7 @@ class AppNotification
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -559,9 +551,9 @@ class AppNotification
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -571,9 +563,9 @@ class AppNotification
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -584,7 +576,7 @@ class AppNotification
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -593,26 +585,26 @@ class AppNotification
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -623,7 +615,7 @@ class AppNotification
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -633,24 +625,24 @@ class AppNotification
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -661,7 +653,7 @@ class AppNotification
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -670,18 +662,18 @@ class AppNotification
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -691,7 +683,7 @@ class AppNotification
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -699,19 +691,18 @@ class AppNotification
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function addNotification()
     {
@@ -733,7 +724,7 @@ class AppNotification
         }
 
         if (empty($teamIds)) {
-            $arrMessage = responseMessage(array($GLOBALS['DS_NOT_FOUND']), 2);
+            $arrMessage = responseMessage([$GLOBALS['DS_NOT_FOUND']], 2);
             echo json_encode($arrMessage);
             return;
         }
@@ -762,7 +753,7 @@ class AppNotification
             // Add to database
             $cols = "team_id, notification_type, notification_title, notification_text, notification_date, notification_datetime, rcd, rdt";
             $vals = "?, ?, ?, ?, ?, ?, ?, ?";
-            $arrParams = array($teamId, $notificationType, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
+            $arrParams = [$teamId, $notificationType, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT];
 
             $this->_dbConn->BeginTransaction();
             $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
@@ -770,7 +761,7 @@ class AppNotification
 
             if (in_array(0, $arrStatus)) {
                 $this->_dbConn->RollbackTransaction();
-                $arrMessage = responseMessage(array($GLOBALS['NOTIFICATION_NOT_ADDED']), 2);
+                $arrMessage = responseMessage([$GLOBALS['NOTIFICATION_NOT_ADDED']], 2);
                 echo json_encode($arrMessage);
                 return;
             }
@@ -801,7 +792,7 @@ class AppNotification
             $this->_dbConn->CommitTransaction();
         }
 
-        $arrMessage = responseMessage(array($GLOBALS['NOTIFICATION_ADDED']), 1);
+        $arrMessage = responseMessage([$GLOBALS['NOTIFICATION_ADDED']], 1);
         echo json_encode($arrMessage);
     }
 }

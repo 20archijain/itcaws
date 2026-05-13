@@ -15,7 +15,6 @@ class DistrictSkuAllocation
     private $_arrAccessInfo = [];
     private $_tables = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
@@ -31,10 +30,10 @@ class DistrictSkuAllocation
         // filter query
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
-            array(
-                "branch" => array("a.branch_id", 0, true, true),
-                "dsType" => array("a.team_type", 1),
-            ),
+            [
+                "branch" => ["a.branch_id", 0, true, true],
+                "dsType" => ["a.team_type", 1],
+            ],
             $this->_dbConn
         );
 
@@ -47,36 +46,35 @@ class DistrictSkuAllocation
         $submittedData = $this->getSubmittedData();
         $selectedData = $this->getSelectedRecord();
         if (isset($submittedData[0]) && $submittedData[0]) {
-            $arrResult = array(
-                "productList" => array(),
+            $arrResult = [
+                "productList" => [],
                 "statusFlag" => true,
                 "submittedList" => $submittedData[1],
-                "isDspmList" => array(),
-                "isFocusList" => array(),
-                "selectedDataList" => array(),
-            );
+                "isDspmList" => [],
+                "isFocusList" => [],
+                "selectedDataList" => [],
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getBranchProduct(),
                 "statusFlag" => false,
-                "submittedList" => array(),
+                "submittedList" => [],
                 "isDspmList" => $selectedData[0],
                 "isFocusList" => $selectedData[1],
                 "selectedDataList" => $selectedData[2],
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getSubmittedData()
     {
-        $arrData = array();
+        $arrData = [];
         $region = $this->_data['region'];
         $teamType = $this->_data['teamType'];
         $year  = date('Y', strtotime('+1 month'));
         $month = date('m', strtotime('+1 month'));
-
 
         $foundRecord = false;
         // echo $where;die;
@@ -90,18 +88,18 @@ class DistrictSkuAllocation
             $foundRecord = true;
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $branchData = getRowColumns($this->_dbConn, "tblbranch", "main_branch, branch_name", " branch_id = '$region'");
-                $arrData[] = array(
+                $arrData[] = [
                     "branch" => $branchData[0],
                     "region" => $branchData[1],
                     "category_name" => $row['category_name'],
                     "product_name" => $row['product_name'],
                     "dspm_focus" => $row['dspm_focus'] == 1 ? "Yes" : "",
                     "is_focusbrand" => $row['is_focusbrand'] == 1 ? "Yes" : "",
-                );
+                ];
             }
         }
 
-        return array($foundRecord, $arrData);
+        return [$foundRecord, $arrData];
     }
 
     final public function getSelectedRecord()
@@ -111,9 +109,9 @@ class DistrictSkuAllocation
         $year  = date('Y', strtotime('+1 month'));
         $month = date('m', strtotime('+1 month'));
 
-        $arrDspm = array();
-        $arrIsFocus = array();
-        $arrData = array();
+        $arrDspm = [];
+        $arrIsFocus = [];
+        $arrData = [];
         $rsAction = null;
         $iActionRows = 0;
         $query = "select category_name, product_name, dspm_focus, is_focusbrand, summary_column_name from tblbranch_pickupstock_products_allocation where dstatus = 0 AND month = '$month' AND year = '$year' AND branch_id = '$region' AND team_type = '$teamType' AND filled_by_branch = 1";
@@ -128,15 +126,15 @@ class DistrictSkuAllocation
                 if (isset($row['is_focusbrand']) && $row['is_focusbrand']) {
                     $arrIsFocus[$row['summary_column_name']] = true;
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "category" => $row['category_name'],
                     "name" => $row['product_name'],
                     "id" => $row['summary_column_name'],
-                );
+                ];
             }
         }
 
-        return array($arrDspm, $arrIsFocus, $arrData);
+        return [$arrDspm, $arrIsFocus, $arrData];
     }
 
     final public function getDefaultData()
@@ -147,18 +145,18 @@ class DistrictSkuAllocation
         } else {
             $skuDefaultAllocation = true;
         }
-        $arrResult = array(
+        $arrResult = [
             "mainBranchList" => $this->getMainBranchList(),
             "skuDefaultAllocation" => $skuDefaultAllocation,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getBranchProduct()
     {
-        $arrData = array();
+        $arrData = [];
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT distinct category_name, product_name, summary_column_name from tblbranch_pickupstock_products" .
@@ -167,11 +165,11 @@ class DistrictSkuAllocation
 
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "category" => $row['category_name'],
                     "label" => $row['product_name'],
                     "value" => $row['summary_column_name'],
-                );
+                ];
             }
         }
 
@@ -204,8 +202,8 @@ class DistrictSkuAllocation
         $arrDataHolder = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $focusType = array(0 => "No", 1 => "Yes");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
+        $focusType = [0 => "No", 1 => "Yes"];
 
         $sQuery = "SELECT a.branch_id, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
 
@@ -235,8 +233,8 @@ class DistrictSkuAllocation
             }
         }
 
-        $arrResult = formatDownloadData("Active_SKU", array($header), $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("Active_SKU", [$header], $arrDataHolder);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
@@ -251,21 +249,21 @@ class DistrictSkuAllocation
             $isFocus = "0";
         }
         $cols = "is_focusbrand = ?";
-        $arrParams = array($isFocus, $recId);
+        $arrParams = [$isFocus, $recId];
 
         $iStatus = updateRecord($this->_dbConn, "tblbranch_pickupstock_products", $cols, " rec_id = ?", $arrParams);
 
         if ($iStatus === 1) {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_UPDATED_SUCCESSFULL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['DATA_UPDATED_SUCCESSFULL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_UPDATED']));
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_UPDATED']]);
         }
         echo json_encode($arrMessage);
     }
 
     final public function getMainBranchList($cond = "")
     {
-        $arrData = array();
+        $arrData = [];
         // $arrData[] = array(
         //     "label" => "All",
         //     "value" => "all",
@@ -290,10 +288,10 @@ class DistrictSkuAllocation
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['main_branch'],
                     "value" => $row['main_branch'],
-                );
+                ];
             }
         }
 
@@ -302,7 +300,7 @@ class DistrictSkuAllocation
 
     final public function getRegionList($cond = "")
     {
-        $arrData = array();
+        $arrData = [];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -322,10 +320,10 @@ class DistrictSkuAllocation
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
-                );
+                ];
             }
         }
 
@@ -334,7 +332,7 @@ class DistrictSkuAllocation
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
+        $arrData = [];
         // $arrData[] = array(
         //     "label" => "All",
         //     "value" => "all"
@@ -368,10 +366,10 @@ class DistrictSkuAllocation
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => (string)$row['is_type']
-                );
+                ];
             }
         }
 
@@ -384,7 +382,7 @@ class DistrictSkuAllocation
         $mainBranchCond = "";
         if (!empty($mainBranch)) {
             if (!is_array($mainBranch)) {
-                $mainBranch = array($mainBranch);
+                $mainBranch = [$mainBranch];
             }
             if (in_array('all', $mainBranch)) {
                 $mainBranchCond = ""; // No condition for 'all'
@@ -393,15 +391,15 @@ class DistrictSkuAllocation
                 $mainBranchCond = " AND a.main_branch IN ($mainBranch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "regionList" => $this->getRegionList($mainBranchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "regionList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -412,7 +410,7 @@ class DistrictSkuAllocation
         if ($region) {
             if ($region) {
                 if (!is_array($region)) {
-                    $region = array($region);
+                    $region = [$region];
                 }
                 if (in_array('all', $region)) {
                     $regionCond = ""; // No condition for 'all'
@@ -421,19 +419,18 @@ class DistrictSkuAllocation
                     $regionCond = " AND b.branch_id IN ($region)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamTypeList" => $this->getDsTypeList($regionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamTypeList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function submitData()
     {
@@ -447,7 +444,6 @@ class DistrictSkuAllocation
         $rdt = currentDateTime();
         $user = $this->_iUserId;
 
-
         $this->_dbConn->BeginTransaction();
         foreach ($selectedProducts as $record) {
             $categoryName = $record['category'];
@@ -458,13 +454,13 @@ class DistrictSkuAllocation
             $rec_id = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_allocation", "rec_id", " year = '$year' AND month = '$month' AND summary_column_name = '$summary_column_name' AND category_name = '$categoryName' AND product_name = '$product_name'");
 
             if ($rec_id > 0) {
-                updateRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", "dspm_focus = ?, is_focusbrand = ?, filled_by_district = ?, user_id = ?", "rec_id = $rec_id", array($dspm_focus, $is_focusbrand, 1, $user));
+                updateRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", "dspm_focus = ?, is_focusbrand = ?, filled_by_district = ?, user_id = ?", "rec_id = $rec_id", [$dspm_focus, $is_focusbrand, 1, $user]);
 
                 $arrStatus[] = 2;
             } else {
                 $cols = "month, year, branch_id, team_type, dspm_focus, is_focusbrand, category_name, product_name, summary_column_name, filled_by_district, rcd, rdt, user_id";
                 $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                $arrParams = array($month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt, $user);
+                $arrParams = [$month, $year, $region, $teamType, $dspm_focus, $is_focusbrand, $categoryName, $product_name, $summary_column_name, 1, $rcd, $rdt, $user];
 
                 $iStatus = addRecord($this->_dbConn, "tblbranch_pickupstock_products_allocation", $cols, $vals, $arrParams);
 
@@ -474,11 +470,11 @@ class DistrictSkuAllocation
 
         if (in_array(0, $arrStatus)) {
             $this->_dbConn->RollbackTransaction();
-            $arrMessage = responseMessage(array($GLOBALS['PRODUCT_NOT_ADDED']));
+            $arrMessage = responseMessage([$GLOBALS['PRODUCT_NOT_ADDED']]);
         } else {
             // All success, commit
             $this->_dbConn->CommitTransaction();
-            $arrMessage = responseMessage(array($GLOBALS['PRODUCT_ADDED']), 1);
+            $arrMessage = responseMessage([$GLOBALS['PRODUCT_ADDED']], 1);
         }
 
         echo json_encode($arrMessage);

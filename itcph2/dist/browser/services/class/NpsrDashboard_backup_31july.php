@@ -22,11 +22,11 @@ class NpsrDashboard
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -41,10 +41,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -53,11 +53,11 @@ class NpsrDashboard
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -77,11 +77,11 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -90,11 +90,11 @@ class NpsrDashboard
 
     final public function getCategoryList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -108,24 +108,23 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['category_name'],
                     "value" => $row['category_name']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getProductList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -138,10 +137,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['product_name']
-                );
+                ];
             }
         }
 
@@ -150,11 +149,11 @@ class NpsrDashboard
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -173,10 +172,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -185,11 +184,11 @@ class NpsrDashboard
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -208,24 +207,23 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -244,10 +242,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -256,11 +254,11 @@ class NpsrDashboard
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -279,10 +277,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -291,11 +289,11 @@ class NpsrDashboard
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -314,24 +312,23 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -363,24 +360,23 @@ class NpsrDashboard
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -398,10 +394,10 @@ class NpsrDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -432,7 +428,7 @@ class NpsrDashboard
 
         // echo "<pre>";
         // print_r($branchList );die;
-        $arrResult = array(
+        $arrResult = [
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
             "circleList" => $this->getCircleList(),
@@ -446,9 +442,9 @@ class NpsrDashboard
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "branchFilter" => true,
             "showMapStyleDropdown" => true,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -458,7 +454,7 @@ class NpsrDashboard
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -470,7 +466,7 @@ class NpsrDashboard
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -482,7 +478,7 @@ class NpsrDashboard
         $circle = getFormData($this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -494,7 +490,7 @@ class NpsrDashboard
         $section = getFormData($this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -506,7 +502,7 @@ class NpsrDashboard
         $wdCode = getFormData($this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -518,7 +514,7 @@ class NpsrDashboard
         $wdMarket = getFormData($this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -530,7 +526,7 @@ class NpsrDashboard
         $wdPopGroup = getFormData($this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -542,7 +538,7 @@ class NpsrDashboard
         $teamType = getFormData($this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -555,7 +551,7 @@ class NpsrDashboard
         $dsName = getFormData($this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -573,14 +569,13 @@ class NpsrDashboard
         return $condition;
     }
 
-
     final public function getConditionForCategoryAndProduct()
     {
         $condition = "";
         $category = getFormData($this->_data, "category");
         if ($category) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $condition .= " ";
@@ -592,7 +587,7 @@ class NpsrDashboard
         $product = getFormData($this->_data, "product");
         if ($product) {
             if (!is_array($product)) {
-                $product = array($product);
+                $product = [$product];
             }
             if (in_array('all', $product)) {
                 $condition .= " ";
@@ -605,14 +600,13 @@ class NpsrDashboard
         return $condition;
     }
 
-
     final public function getBranch($district = "district")
     {
         $district = $this->_data['district'];
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -621,7 +615,7 @@ class NpsrDashboard
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -632,9 +626,9 @@ class NpsrDashboard
                 "productList" => $this->getProductList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -645,12 +639,11 @@ class NpsrDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getProduct()
     {
@@ -658,7 +651,7 @@ class NpsrDashboard
         $categoryCond = "";
         if (!empty($category)) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $categoryCond = ""; // No condition for 'all'
@@ -667,18 +660,17 @@ class NpsrDashboard
                 $categoryCond = " AND b.category_name IN ($category)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getProductList($categoryCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -686,7 +678,7 @@ class NpsrDashboard
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -695,7 +687,7 @@ class NpsrDashboard
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -705,9 +697,9 @@ class NpsrDashboard
                 "productList" => $this->getProductList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -717,9 +709,9 @@ class NpsrDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -730,7 +722,7 @@ class NpsrDashboard
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -739,26 +731,26 @@ class NpsrDashboard
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -769,7 +761,7 @@ class NpsrDashboard
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -779,24 +771,24 @@ class NpsrDashboard
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -807,7 +799,7 @@ class NpsrDashboard
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -816,18 +808,18 @@ class NpsrDashboard
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -837,7 +829,7 @@ class NpsrDashboard
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -845,32 +837,32 @@ class NpsrDashboard
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getCardData()
     {
-        $arrResult = array(
+        $arrResult = [
             "monthlySalesData" => $this->getMonthlySalesData(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     private function getSumPart($arrSalesColumns)
     {
-        $arrSum = array();
+        $arrSum = [];
         foreach ($arrSalesColumns as $branch_id => $salesColumns) {
             $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
             $arrSum[] = "SUM(IF(b.branch_id = $branch_id, $sSalesColumns, 0)) AS totalSales_$branch_id";
@@ -888,11 +880,11 @@ class NpsrDashboard
         if ($where) {
             $where = str_replace(" team_id", " b.team_id", $where);
         }
-        $arrResponse = array();
-        $arrSalesColumns = array(); // Reset the sales columns array here
-        $arrMonthYear = array();
-        $monthWiseSales = array();
-        $totalSumDistrictLevelSale = array();
+        $arrResponse = [];
+        $arrSalesColumns = []; // Reset the sales columns array here
+        $arrMonthYear = [];
+        $monthWiseSales = [];
+        $totalSumDistrictLevelSale = [];
 
         // Get all sales-related columns
         $query = "SELECT a.summary_column_name, a.branch_id FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, tblbranch as d, tblmapping_wd as e" .
@@ -943,7 +935,6 @@ class NpsrDashboard
             //     $arrMonthYear[] = $months[$targetMonth - 1] . " " . $targetYear;
             // }
 
-
             // $yearFilled = $this->_data['year'];
             $monthFilled = $this->_data['month'];
 
@@ -975,7 +966,7 @@ class NpsrDashboard
             // foreach ($arrSalesColumns as $branch_id => $salesColumns) {
             // Reset $arrSalesColumns for the next branch
             // $sSalesColumns = implode("+", $salesColumns);  // Create sum for current branch
-            $arrWeekWiselabel = array();
+            $arrWeekWiselabel = [];
             foreach ($arrMonthYear as $monthAndYear) {
                 list($monthAlphabetic, $year) = explode(" ", $monthAndYear);
                 $shortMonth = substr($monthAlphabetic, 0, 3);
@@ -1032,7 +1023,7 @@ class NpsrDashboard
                     $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
 
                     if ($iActionRows1 > 0) {
-                        $arrBranchNames = array();
+                        $arrBranchNames = [];
                         while ($row1 = $this->_dbConn->GetData($rsAction1)) {
                             $branch_id = $row1['branch_id'];
                             $district = $row1['district'];
@@ -1053,26 +1044,25 @@ class NpsrDashboard
                             // District Level Sales
                             $districtIndex = array_search($district, array_column($monthWiseSales, "district"));
                             if ($districtIndex === false) {
-                                $monthWiseSales[] = array(
+                                $monthWiseSales[] = [
                                     "district" => $district,
-                                    "districtLevelSale" => array(),
-                                    "branchData" => array()
-                                );
+                                    "districtLevelSale" => [],
+                                    "branchData" => []
+                                ];
                                 $districtIndex = count($monthWiseSales) - 1;
                             }
                             $monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] =
                                 round(($monthWiseSales[$districtIndex]["districtLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
 
-
                             // Branch Level Sales
                             $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
                             if ($branchIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][] = [
                                     "branch_id" => $branch_id,
                                     "branch_name" => $branch_name,
-                                    "branchLevelSale" => array(),
-                                    "circleData" => array()
-                                );
+                                    "branchLevelSale" => [],
+                                    "circleData" => []
+                                ];
                                 $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$monthYear] =
@@ -1081,11 +1071,11 @@ class NpsrDashboard
                             // Circle Level Sales
                             $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
                             if ($circleIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = [
                                     "circle" => $circle,
-                                    "circleLevelSale" => array(),
-                                    "sectionData" => array()
-                                );
+                                    "circleLevelSale" => [],
+                                    "sectionData" => []
+                                ];
                                 $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] =
@@ -1094,11 +1084,11 @@ class NpsrDashboard
                             // Section Level Sales
                             $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
                             if ($sectionIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = [
                                     "section" => $section,
-                                    "sectionLevelSale" => array(),
-                                    "wdData" => array(),
-                                );
+                                    "sectionLevelSale" => [],
+                                    "wdData" => [],
+                                ];
                                 $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] =
@@ -1107,12 +1097,12 @@ class NpsrDashboard
                             // WD Level Sales
                             $WDIndex = array_search($wd_code, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"], "wd_code"));
                             if ($WDIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = [
                                     "wd_code" => $wd_code,
                                     "wdCode" => $wd_code,
-                                    "wdLevelSale" => array(),
-                                    "teamData" => array(),
-                                );
+                                    "wdLevelSale" => [],
+                                    "teamData" => [],
+                                ];
                                 $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
                             }
                             // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
@@ -1123,11 +1113,11 @@ class NpsrDashboard
                             // Team Sales
                             $teamIndex = array_search($team_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"], "team_name"));
                             if ($teamIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = [
                                     "team_name" => $team_name,
-                                    "teamLevelSale" => array(),
-                                    "routeData" => array(),
-                                );
+                                    "teamLevelSale" => [],
+                                    "routeData" => [],
+                                ];
                                 $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"]) - 1;
                             }
                             // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
@@ -1135,24 +1125,21 @@ class NpsrDashboard
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] =
                                 round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["teamLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
 
-
                             // Route Sales
                             $routeIndex = array_search($route_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"], "route_name"));
                             if ($routeIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][] = [
                                     "route_name" => $route_name,
-                                    "routeLevelSale" => array(),
-                                    "outletData" => array(),
-                                );
+                                    "routeLevelSale" => [],
+                                    "outletData" => [],
+                                ];
                                 $routeIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"]) - 1;
                             }
                             // Round WD level sales
                             // $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] = round($totalSales, 2);
 
-
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] =
                                 round(($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["routeLevelSale"][$monthYear] ?? 0) + $totalSales, 2);
-
 
                             // Outlet Sales
                             $outletIndex = array_search(
@@ -1160,10 +1147,10 @@ class NpsrDashboard
                                 array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"], "outlet_name")
                             );
                             if ($outletIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"][] = [
                                     "outlet_name" => $outlet_name,
-                                    "outletLevelSale" => array(),
-                                );
+                                    "outletLevelSale" => [],
+                                ];
                                 $outletIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][$teamIndex]["routeData"][$routeIndex]["outletData"]) - 1;
                             }
                             // Round WD level sales
@@ -1198,12 +1185,12 @@ class NpsrDashboard
         }
 
         // Response Data
-        $arrResponse = array(
+        $arrResponse = [
             "MonthsAndYears" => $arrWeekWiselabel,
             "districtData" => $monthWiseSales,
             "TotalSum" => $totalSumDistrictLevelSale,
             "Title" => "Survey in M"
-        );
+        ];
 
         return $arrResponse;
     }
@@ -1223,10 +1210,10 @@ class NpsrDashboard
         $orangeDot = "/orange-dot.png";
 
         $where = "";
-        $arrData = array();
+        $arrData = [];
         $arrData["columnSize"] = 12; // size of map column, values can be 1 to 12
         $arrData["repeatMapBy"] = 1; // times to repeat same map, values can be >=1
-        $arrData["markers"] = array();
+        $arrData["markers"] = [];
         $branch = $this->_data['branch_id'] ?? "";
         $circle = $this->_data['circle'] ?? "";
         $section = $this->_data['section'] ?? "";
@@ -1283,13 +1270,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($branchLevelSale) && is_array($branchLevelSale) && !empty($branchLevelSale) && isset($branch) && $branch) {
@@ -1332,13 +1319,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($circleLevelSale) && is_array($circleLevelSale) && !empty($circleLevelSale) && isset($circle) && $circle) {
@@ -1381,13 +1368,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($sectionLevelSale) && is_array($sectionLevelSale) && !empty($sectionLevelSale) && isset($section) && $section) {
@@ -1430,13 +1417,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($wdCodeLevelSale) && is_array($wdCodeLevelSale) && !empty($wdCodeLevelSale)) {
@@ -1480,13 +1467,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($teamLevelSale) && is_array($teamLevelSale) && !empty($teamLevelSale)) {
@@ -1534,13 +1521,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($routeLevelSale) && is_array($routeLevelSale) && !empty($routeLevelSale)) {
@@ -1587,13 +1574,13 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         } elseif (isset($outletLevelSale) && is_array($outletLevelSale) && !empty($outletLevelSale)) {
@@ -1641,22 +1628,21 @@ class NpsrDashboard
                   </table>
                 </div>";
 
-                    $arrData["markers"][] = array(
+                    $arrData["markers"][] = [
                         "latitude" => $row["lt"],
                         "longitude" => $row["lg"],
                         "markerUrl" => $GLOBALS['MARKER_URL'] . $orangeDot, // default icon is green
                         "markerTitle" => "", // text to display on hover of marker
                         "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                    );
+                    ];
                 }
             }
         }
 
-
         if (isNonEmptyArray($arrData["markers"])) {
-            $arrMessage = responseMessage(array(), 1, $arrData, true);
+            $arrMessage = responseMessage([], 1, $arrData, true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
@@ -1664,17 +1650,17 @@ class NpsrDashboard
 
     private function getLastMonthsData($months = 12)
     {
-        $arrData = array();
+        $arrData = [];
         $current = new DateTime();
 
         for ($i = 0; $i < $months; $i++) {
             $label = $current->format('M y');
             $value = $current->format('F Y');
 
-            $arrData[] = array(
+            $arrData[] = [
                 "label" => $label,
                 "value" => $value,
-            );
+            ];
 
             // Move to previous month
             $current->modify('-1 month');

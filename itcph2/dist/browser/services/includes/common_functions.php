@@ -15,27 +15,27 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 //generate response msg to send
-function responseMessage($message = array(), $status = 0, $data = "", $hidePopup = false)
+function responseMessage($message = [], $status = 0, $data = "", $hidePopup = false)
 {
-    $statusArr = array(
+    $statusArr = [
         0 => constant('FAILED'),
         1 => constant('SUCCESS'),
         2 => constant('WARNING'),
-    );
+    ];
 
-    $arrMsg = array(
+    $arrMsg = [
         "status" => $statusArr[$status],
         "message" => $message,
         "data" => $data,
         "hidePopup" => $hidePopup,
-    );
+    ];
     return $arrMsg;
 }
 
 //get module info array
 function getModuleSchema($module, $isHiddenModule = false)
 {
-    return array(
+    return [
         "breadcrumbs" => $module['show_breadcrumb'] == 1 ? true : false,
         "id" => $module['module_id'],
         "name" => $module['module_name'],
@@ -45,13 +45,13 @@ function getModuleSchema($module, $isHiddenModule = false)
         "pmodc" => $module['parent_module_code'],
         "fold" => $module['module_url_link'],
         "componentName" => $module['module_component'],
-        "submodules" => array(),
-        "actions" => array(),
-    );
+        "submodules" => [],
+        "actions" => [],
+    ];
 }
 
 //upload file precheck
-function fileUploadPrecheck($file, $allowedExtension = array("jpg", "jpeg", "png", "gif"))
+function fileUploadPrecheck($file, $allowedExtension = ["jpg", "jpeg", "png", "gif"])
 {
     $extension = strtolower(getExtension($file['name'])); //get the extension of the file in a lower case format
 
@@ -61,17 +61,17 @@ function fileUploadPrecheck($file, $allowedExtension = array("jpg", "jpeg", "png
 
         //valid size
         if ($size <= constant("MAX_SIZE_IN_BYTES")) {
-            return array("status" => 0, "message" => array(), "extension" => $extension);
+            return ["status" => 0, "message" => [], "extension" => $extension];
         }
-        return array("status" => 1, "message" => array("Max size of image to upload is " . (constant("MAX_SIZE_IN_BYTES") / 1000000) . " MB"));
+        return ["status" => 1, "message" => ["Max size of image to upload is " . (constant("MAX_SIZE_IN_BYTES") / 1000000) . " MB"]];
     }
-    return array("status" => 1, "message" => array("Invalid file"));
+    return ["status" => 1, "message" => ["Invalid file"]];
 }
 
 //upload file
-function uploadFile($file, $destination, $image_name = "", $genThumbnail = false, $allowedExtension = array("jpg", "jpeg", "png", "gif"))
+function uploadFile($file, $destination, $image_name = "", $genThumbnail = false, $allowedExtension = ["jpg", "jpeg", "png", "gif"])
 {
-    $arrResult = array();
+    $arrResult = [];
 
     //check file validity
     $imageResult = fileUploadPrecheck($file, $allowedExtension);
@@ -94,7 +94,7 @@ function uploadFile($file, $destination, $image_name = "", $genThumbnail = false
             if (is_array($error->getMessage())) {
                 $result = $error->getMessage();
             } else {
-                $result = array($error->getMessage());
+                $result = [$error->getMessage()];
             }
             $arrResult["errors"] = 1;
             $arrResult["messages"] = $result;
@@ -103,7 +103,7 @@ function uploadFile($file, $destination, $image_name = "", $genThumbnail = false
         return $arrResult;
     }
 
-    return array("errors" => 1, "messages" => $imageResult["message"]);
+    return ["errors" => 1, "messages" => $imageResult["message"]];
 }
 
 //get file extension
@@ -218,7 +218,7 @@ function getFormData($field_name, $key = "")
 }
 
 // create mail template
-function generateMailTemplate($title, $body, $createBodyTable = false, $arrHeader = array())
+function generateMailTemplate($title, $body, $createBodyTable = false, $arrHeader = [])
 {
     if ($createBodyTable && count($body) > 0) {
         $sData = "";
@@ -257,9 +257,9 @@ function generateMailTemplate($title, $body, $createBodyTable = false, $arrHeade
 }
 
 //mail function w/o attachment
-function sendMail($to, $subject, $message, $cc = array(), $from = MAIL_FROM, $bcc = array())
+function sendMail($to, $subject, $message, $cc = [], $from = MAIL_FROM, $bcc = [])
 {
-    $headers = array();
+    $headers = [];
     $headers[] = 'MIME-Version: 1.0';
     $headers[] = 'Content-type: text/html; charset=iso-8859-1';
 
@@ -303,7 +303,7 @@ function generatePassword($l = 8, $c = 1, $n = 0, $s = 0)
     if ($count) {
         // split base password to array; create special chars array
         $tmp1 = str_split($out);
-        $tmp2 = array();
+        $tmp2 = [];
 
         // add required special character(s) to second array
         for ($i = 0; $i < $c; $i++) {
@@ -391,38 +391,38 @@ function getLandingPageList($dbConn, $fromListing)
 // get year list
 function getYearList()
 {
-    return array(
-        array("label" => 2024, "value" => 2024),
-        array("label" => 2025, "value" => 2025),
-        array("label" => 2026, "value" => 2026),
-    );
+    return [
+        ["label" => 2024, "value" => 2024],
+        ["label" => 2025, "value" => 2025],
+        ["label" => 2026, "value" => 2026],
+    ];
 }
 
 // get year list
 function getYearListNew()
 {
-    return array(
-        array("label" => 2025, "value" => 2025),
-    );
+    return [
+        ["label" => 2025, "value" => 2025],
+    ];
 }
 
 // get month list
 function getMonthList()
 {
-    return array(
-        array("label" => "January", "value" => "01"),
-        array("label" => "February", "value" => "02"),
-        array("label" => "March", "value" => "03"),
-        array("label" => "April", "value" => "04"),
-        array("label" => "May", "value" => "05"),
-        array("label" => "June", "value" => "06"),
-        array("label" => "July", "value" => "07"),
-        array("label" => "August", "value" => "08"),
-        array("label" => "September", "value" => "09"),
-        array("label" => "October", "value" => "10"),
-        array("label" => "November", "value" => "11"),
-        array("label" => "December", "value" => "12"),
-    );
+    return [
+        ["label" => "January", "value" => "01"],
+        ["label" => "February", "value" => "02"],
+        ["label" => "March", "value" => "03"],
+        ["label" => "April", "value" => "04"],
+        ["label" => "May", "value" => "05"],
+        ["label" => "June", "value" => "06"],
+        ["label" => "July", "value" => "07"],
+        ["label" => "August", "value" => "08"],
+        ["label" => "September", "value" => "09"],
+        ["label" => "October", "value" => "10"],
+        ["label" => "November", "value" => "11"],
+        ["label" => "December", "value" => "12"],
+    ];
 }
 
 //for clean csv data
@@ -552,7 +552,6 @@ function getTimeDifferenceInMinutes($startDatetime, $endDatetime)
     return $timeSpentInMin;
 }
 
-
 // Convert no of seconds into time string
 function getTimeStringFromSeconds($seconds)
 {
@@ -589,24 +588,25 @@ function getCurrentWeekDates()
         $weekStartDate = date("Y-m-d", strtotime("-" . ($day - 1) . " days"));
     }
 
-    return array($weekStartDate, $weekEndDate);
+    return [$weekStartDate, $weekEndDate];
 }
 
 // Send mail with CSV Or Xlsx attached
-function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, $sSubject, $arrTo, $arrCC = array(), $shareLink = false)
+function sendMailWithCSVOrXlsxAttached($isCSV, $fileName, $arrHeader, $arrData, $sSubject, $arrTo, $arrCC = [], $shareLink = false)
 {
     global $SAVE_SPREADSHEET_PATH;
 
     $filename = "$SAVE_SPREADSHEET_PATH/$fileName";
     if ($isCSV) {
         //generate csv file
-        $fh = fopen($filename, 'w') or die("Can't open $filename");
+        $fh = fopen($filename, 'w');
 
         array_unshift($arrData, $arrHeader);
 
         foreach ($arrData as $data) {
             if (fputcsv($fh, $data) === false) {
-                die("Can't write CSV line");
+                echo "Can't write CSV line";
+                return;
             }
         }
         fclose($fh);
@@ -723,12 +723,12 @@ function getCallStatus($dbConn, $otpTable, $mobileNo, $otpCode, $skipMobileNoChe
     } else {
         $otpCode = strtoupper($otpCode);
         $cond = "AND rec_who = ?";
-        $arrParams = array($mobileNo);
+        $arrParams = [$mobileNo];
 
         // skip mobile no check
         if ($skipMobileNoCheck) {
             $cond = "AND token = ?";
-            $arrParams = array($otpCode);
+            $arrParams = [$otpCode];
         }
 
         //get all miss calls
@@ -764,7 +764,7 @@ function getCallStatus($dbConn, $otpTable, $mobileNo, $otpCode, $skipMobileNoChe
                         $rsAction1 = null;
                         $iActionRows1 = 0;
                         $sQuery1 = "SELECT rec_who, rdt FROM $otpTable WHERE dstatus = 0 AND token = ? AND dup_process = '0' ORDER BY rec_id DESC";
-                        $dbConn->ExecuteSelectQuery($sQuery1, $rsAction1, $iActionRows1, array($tableOtpCode));
+                        $dbConn->ExecuteSelectQuery($sQuery1, $rsAction1, $iActionRows1, [$tableOtpCode]);
 
                         if ($iActionRows1 > 0) {
                             $isValidCallFound = false;
@@ -802,7 +802,7 @@ function getCallStatus($dbConn, $otpTable, $mobileNo, $otpCode, $skipMobileNoChe
                         if ($skipMobileNoCheck) {
                             // It maybe possible that user has given multiple missed calls from same mobile and receive new OTP every time
                             // so check if any record exists with this mobile number and having process = 1 which means duplicate call
-                            $arrAnotherCall = getRowColumns($otpTable, "dup_process, rdt", "AND rec_who = ? ORDER BY dup_process DESC, rec_id DESC", array($updateRecWho));
+                            $arrAnotherCall = getRowColumns($otpTable, "dup_process, rdt", "AND rec_who = ? ORDER BY dup_process DESC, rec_id DESC", [$updateRecWho]);
 
                             // duplicate call
                             if (isset($arrAnotherCall) && $arrAnotherCall[0] == 1) {
@@ -856,12 +856,12 @@ function getCallStatus($dbConn, $otpTable, $mobileNo, $otpCode, $skipMobileNoChe
             if ($updateRecWho) {
                 $currentDateTime = currentDateTime();
                 $updateCond = "rec_who = ?";
-                $arrParams = array("mobileNo" => $updateRecWho);
+                $arrParams = ["mobileNo" => $updateRecWho];
 
                 updateRecord($dbConn, $otpTable, "dup_process = '1', dup_processed_on = '$currentDateTime', process = '1'", $updateCond, $arrParams);
             }
         }
     }
 
-    return array($dup_status, $updateRecWho);
+    return [$dup_status, $updateRecWho];
 }

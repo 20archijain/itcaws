@@ -41,11 +41,11 @@ class GenerateCaptcha
 
     final public function generateCaptcha()
     {
-        $fonts = array(
+        $fonts = [
             $GLOBALS["CAPTCHA_FONTS_PATH"] . "/monofont.ttf",
             $GLOBALS["CAPTCHA_FONTS_PATH"] . "/segoeprb.ttf",
             $GLOBALS["CAPTCHA_FONTS_PATH"] . "/georgiai.ttf",
-        );
+        ];
 
         $text = $this->getCaptchaText();
         $image = $this->getCaptchaImage();
@@ -73,7 +73,7 @@ class GenerateCaptcha
         imagepng($image, $captchaUploadPath);
         imagedestroy($image);
 
-        $arrMessage = responseMessage(array(), 1, $captchaDownloadPath, true);
+        $arrMessage = responseMessage([], 1, $captchaDownloadPath, true);
         echo json_encode($arrMessage);
     }
 
@@ -115,7 +115,7 @@ class GenerateCaptcha
         $numbers = implode("", range(0, 9));
         $specialCharacters = "@#$%";
 
-        $arrCaptchaText = array();
+        $arrCaptchaText = [];
 
         // get special characters
         if ($this->_includeSpecialChar) {
@@ -150,7 +150,7 @@ class GenerateCaptcha
 
     private function getRandomString($inputString, $length)
     {
-        $arrString = array();
+        $arrString = [];
 
         while ($length > 0) {
             $randomChar = $inputString[mt_rand(0, strlen($inputString) - 1)];

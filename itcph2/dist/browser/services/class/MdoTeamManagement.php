@@ -12,15 +12,15 @@ class MdoTeamManagement
     private $_tables = [];
     private $_valErrors = [];
     private $_validationLength = [];
-    private $_arrSeperator = array(
+    private $_arrSeperator = [
         1 => " ",
         2 => "-",
         3 => "_",
-    );
-    private $_accessList = array(
-        array("label" => "Wd Code Level", "value" => "1"),
-        array("label" => "Team Level", "value" => "2")
-    );
+    ];
+    private $_accessList = [
+        ["label" => "Wd Code Level", "value" => "1"],
+        ["label" => "Team Level", "value" => "2"]
+    ];
 
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
@@ -99,19 +99,19 @@ class MdoTeamManagement
 
     private function checkTeamAndPhoneIfExists($project, $arrTeams)
     {
-        $arrExists = array(
+        $arrExists = [
             "hasError" => false,
-            "errors" => array(),
-        );
+            "errors" => [],
+        ];
 
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $cloudAuthPinTable = $this->_tables["CLOUD_AUTHPIN_TABLE"];
 
         foreach ($arrTeams as $team) {
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "project_id = ? AND ds_number = ?", array($project, $team["dsPhone"]));
+            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "project_id = ? AND ds_number = ?", [$project, $team["dsPhone"]]);
             // Don't use dstatus = 0
-            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "mobile = ?", array($team["dsPhone"]), true);
+            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "mobile = ?", [$team["dsPhone"]], true);
 
             if ($iStatus === 1 || $iStatusCloud === 1) {
                 $arrExists["hasError"] = true;
@@ -128,7 +128,7 @@ class MdoTeamManagement
         $token = sha1(rand() . time() . $teamId);
 
         // Don't use dstatus = 0
-        $isExist = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "token = ?", array($token), true);
+        $isExist = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "token = ?", [$token], true);
 
         // if exist, generate new token
         if ($isExist === 1) {
@@ -140,30 +140,30 @@ class MdoTeamManagement
 
     final public function getAddTeamData()
     {
-        $arrResult = array(
+        $arrResult = [
             "projectList" => getProjectOptions($this->_dbConn, "", 0, true, "dstatus = 0"),
             "branchList" => getBranchList($this->_dbConn, true, "dstatus = 0"),
-            "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "dstatus = 0", array(), 1),
-            "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "dstatus = 0", array(), 1),
-            "wdList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "dstatus = 0 AND s_id = '99'", array(), 1),
-            "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0", array(), 1),
+            "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "dstatus = 0", [], 1),
+            "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "dstatus = 0", [], 1),
+            "wdList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "dstatus = 0 AND s_id = '99'", [], 1),
+            "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0", [], 1),
             "dsTypeList" => getTeamType($this->_dbConn),
             "teamList" => getTeamsOptions($this->_dbConn, "", "", 0, true, "s_id = '99'"),
-            "separatorList" => array(
-                array("label" => "Space", "value" => "1"),
-                array("label" => "Hyphen (-)", "value" => "2"),
-                array("label" => "Underscore (_)", "value" => "3"),
-            ),
-            "jsonIdList" => array(
-                array("label" => "MDO App", "value" => "10"),
-            ),
-            "accessList" => array(
-                array("label" => "WD Code", "value" => "1"),
-                array("label" => "Team", "value" => "2"),
-            )
-        );
+            "separatorList" => [
+                ["label" => "Space", "value" => "1"],
+                ["label" => "Hyphen (-)", "value" => "2"],
+                ["label" => "Underscore (_)", "value" => "3"],
+            ],
+            "jsonIdList" => [
+                ["label" => "MDO App", "value" => "10"],
+            ],
+            "accessList" => [
+                ["label" => "WD Code", "value" => "1"],
+                ["label" => "Team", "value" => "2"],
+            ]
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -173,24 +173,24 @@ class MdoTeamManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             $branch = "'" . implode("','", $branch) . "'";
             $branchCond .= "branch_id IN ($branch)";
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
-                "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "$branchCond", array(), 1),
-                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "$branchCond", array(), 1),
+                "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "$branchCond", [], 1),
+                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "$branchCond", [], 1),
 
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -201,24 +201,24 @@ class MdoTeamManagement
         $circleCond = "";
         if (isset($circle)) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             $circle = "'" . implode("','", $circle) . "'";
             $circleCond .= " AND circle IN ($circle)";
 
-            $arrResult = array(
-                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", " dstatus = '0'  $circleCond", array(), 1, "NULL", true),
-            );
+            $arrResult = [
+                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", " dstatus = '0'  $circleCond", [], 1, "NULL", true),
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -228,21 +228,21 @@ class MdoTeamManagement
         $sectionCond = "";
         if (isset($section)) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             $section = "'" . implode("','", $section) . "'";
             $sectionCond .= " AND section IN ($section)";
 
-            $arrResult = array(
-                "wdList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", " dstatus = '0' AND s_id = '99' $sectionCond", array(), 1),
-            );
+            $arrResult = [
+                "wdList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", " dstatus = '0' AND s_id = '99' $sectionCond", [], 1),
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "wdList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -251,19 +251,19 @@ class MdoTeamManagement
         $wdCode = $this->_data['wdCode'];
         if (isset($wdCode)) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             $wdCode = implode("','", $wdCode);
-            $arrResult = array(
+            $arrResult = [
                 "dsTypeList" => getTeamType($this->_dbConn, "", $wdCode),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsTypeList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -274,33 +274,33 @@ class MdoTeamManagement
         $where = "";
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             $wdCode = "'" . implode("','", $wdCode) . "'";
             $where .= " AND wd_code IN ($wdCode)";
         }
         if (isset($dsType) || isset($wdCode)) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             $dsType = "'" . implode("','", $dsType) . "'";
             $where .= " AND is_type IN ($dsType)";
             if ($dsType == 4 || $dsType == 6) {
-                $arrResult = array(
+                $arrResult = [
                     "teamList" => getOptions($this->_dbConn, "", "", 0, true, $where)
-                );
+                ];
             } else {
-                $arrResult = array(
+                $arrResult = [
                     "teamList" => getTeamsOptions($this->_dbConn, "", "", 0, true, "s_id = '99' $where")
-                );
+                ];
             }
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -310,22 +310,22 @@ class MdoTeamManagement
         $sectionCond = "";
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
 
             $section = "'" . implode("','", $section) . "'";
             $sectionCond .= "AND section IN ($section)";
 
-            $arrResult = array(
-                "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0  $sectionCond", array(), 1),
-            );
+            $arrResult = [
+                "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0  $sectionCond", [], 1),
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "aeNameList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -335,14 +335,14 @@ class MdoTeamManagement
         if ($jsonId) {
             switch ($jsonId) {
                 case 10:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "mdoapp_2025.json",
-                    );
+                    ];
                     break;
             }
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -366,7 +366,7 @@ class MdoTeamManagement
         $project = getFormData($this->_data, "project");
         $separator = getFormData($this->_data, "separator");
         $startIndex = getFormData($this->_data, "startIndex");
-        $teams = isset($this->_data["teams"]) ? $this->_data["teams"] : array();
+        $teams = isset($this->_data["teams"]) ? $this->_data["teams"] : [];
         $isValidated = $this->checkAddTeamValidation(
             $project,
             $branch,
@@ -403,20 +403,20 @@ class MdoTeamManagement
                 foreach ($teams as $index => $team) {
                     // set username if not set
                     if (!isset($team["username"]) || !$team["username"]) {
-                        $teams[$index]["username"] = strtolower($userNamePrefix . str_replace(array(" ", ".", "_", "-"), "", $team["dsName"]));
+                        $teams[$index]["username"] = strtolower($userNamePrefix . str_replace([" ", ".", "_", "-"], "", $team["dsName"]));
                     } else {
                         $teams[$index]["username"] = strtolower($userNamePrefix . $team["username"]);
                     }
                 }
             } else {
                 // by index
-                $teams = array();
+                $teams = [];
                 for ($i = $startIndex; $i <= $endIndex; $i++) {
                     $sTeamName = $dsName . $this->_arrSeperator[$separator] . $i;
-                    $teams[] = array(
+                    $teams[] = [
                         "teamName" => $sTeamName,
-                        "username" => strtolower($userNamePrefix . str_replace(array(" ", ".", "_", "-"), "", $sTeamName)),
-                    );
+                        "username" => strtolower($userNamePrefix . str_replace([" ", ".", "_", "-"], "", $sTeamName)),
+                    ];
                 }
             }
 
@@ -433,16 +433,16 @@ class MdoTeamManagement
 
                 // Begin Transaction
                 $this->_dbConn->BeginTransaction();
-                $arrStatus = array();
+                $arrStatus = [];
                 $aeNumber = "";
                 $amName = "";
                 $amNumber = "";
 
-                $client = getRowColumn($this->_dbConn, $projectsTable, "client_id", "dstatus = 0 AND project_id = ?", array($project));
+                $client = getRowColumn($this->_dbConn, $projectsTable, "client_id", "dstatus = 0 AND project_id = ?", [$project]);
                 if ($aeName) {
-                    $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "dstatus = 0 AND ae_name = ?", array($aeName));
-                    $amName = getRowColumn($this->_dbConn, $projectTeamTable, "am_name", "dstatus = 0 AND ae_name = ?", array($aeName));
-                    $amNumber = getRowColumn($this->_dbConn, $projectTeamTable, "am_number", "dstatus = 0 AND ae_name = ?", array($aeName));
+                    $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "dstatus = 0 AND ae_name = ?", [$aeName]);
+                    $amName = getRowColumn($this->_dbConn, $projectTeamTable, "am_name", "dstatus = 0 AND ae_name = ?", [$aeName]);
+                    $amNumber = getRowColumn($this->_dbConn, $projectTeamTable, "am_number", "dstatus = 0 AND ae_name = ?", [$aeName]);
                 }
                 // $password = strtolower(constant("CUSTOMER_NAME")) . "." . ($password ? $password : $client . $project);
                 $password = $password ? $password : $client . $project;
@@ -451,13 +451,13 @@ class MdoTeamManagement
                 $customerFolder = constant("CUSTOMER_FOLDER");
 
                 // Don't use dstatus = 0
-                $arrClient = getRowColumns($this->_dbConn, $clientsTable, "client_name, client_dir_path", "client_id = ?", array($client));
+                $arrClient = getRowColumns($this->_dbConn, $clientsTable, "client_name, client_dir_path", "client_id = ?", [$client]);
 
                 foreach ($teams as $team) {
                     // Add Team
                     $cols = "project_id, s_id, is_type, team_name, branch_id, circle, section, ds_number, ae_name, ae_number, am_name, am_number, mdo_access_type, creator_id, rcd, rdt";
                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                    $arrParams = array($project, $jsonId, 7, $team["dsName"], $branch, $circle, $section, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $accessType, $this->_iUserId, $cD, $cDT);
+                    $arrParams = [$project, $jsonId, 7, $team["dsName"], $branch, $circle, $section, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $accessType, $this->_iUserId, $cD, $cDT];
 
                     $iStatus = addRecord($this->_dbConn, $projectTeamTable, $cols, $vals, $arrParams);
                     $arrStatus[] = $iStatus;
@@ -471,21 +471,21 @@ class MdoTeamManagement
                         foreach ($arrTeams as $accesteam) {
                             $accessCol = "mdo_id, teams, is_type, rcd, rdt";
                             $accessVal = "?, ?, ?, ?, ?";
-                            $arraccessParams = array($teamId, $accesteam[0], $accesteam[1], $cD, $cDT);
+                            $arraccessParams = [$teamId, $accesteam[0], $accesteam[1], $cD, $cDT];
                             addRecord($this->_dbConn, "tblmdo_access", $accessCol, $accessVal, $arraccessParams);
                         }
 
                         foreach ($arrWdId as $wdId) {
                             $wdCol = "mdo_id, wd_id, rcd, rdt";
                             $wdVal = "?, ?, ?, ?";
-                            $arrWdParams = array($teamId, $wdId, $cD, $cDT);
+                            $arrWdParams = [$teamId, $wdId, $cD, $cDT];
                             addRecord($this->_dbConn, "tblmdo_wd_mapping", $wdCol, $wdVal, $arrWdParams);
                         }
 
                         // Add username in cloud table
                         $colsCloud = "s_id, client_res, proj_res_folder, username, mobile, password, client_name, client_id, project_id, team_id, team_name, db_user, db_pwd, db_name, c_subdomain, c_init_xml, token, creator_id, rcd, rdt";
                         $valsCloud = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrCloudParams = array(
+                        $arrCloudParams = [
                             $jsonId,
                             $customerFolder,
                             $arrClient[1],
@@ -506,7 +506,7 @@ class MdoTeamManagement
                             $this->_iUserId,
                             $cD,
                             $cDT
-                        );
+                        ];
 
                         $iStatus = addRecord($this->_dbConn, $cloudAuthPinTable, $colsCloud, $valsCloud, $arrCloudParams, true);
                         $arrStatus[] = $iStatus;
@@ -516,11 +516,11 @@ class MdoTeamManagement
                 // Some error, rollback
                 if (in_array(0, $arrStatus)) {
                     $this->_dbConn->RollbackTransaction();
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_NOT_ADDED']));
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_NOT_ADDED']]);
                 } else {
                     // All success, commit
                     $this->_dbConn->CommitTransaction();
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_ADDED']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_ADDED']], 1);
                 }
             }
         } else {
@@ -534,27 +534,27 @@ class MdoTeamManagement
     {
         $arrDsTeamList = getOptions($this->_dbConn, $this->_tables["PROJECT_TEAM_TABLE"], "team_name", "team_id", "dstatus = 0 AND is_type = 0 AND team_name is not null AND team_name != ''");
         $arrRmdTeamList = getOptions($this->_dbConn, "tblbreeze_team", "team_name", "team_id", "dstatus = 0 AND team_name is not null AND team_name != ''");
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "branchList" => getBranchList($this->_dbConn),
             "accessList" => $this->_accessList,
             "wdCodeList" => getOptions($this->_dbConn, "tblmapping_wd", "wd_code", "rec_id", "dstatus = 0 AND wd_code is not null AND wd_code != ''"),
             "teamList" => array_merge($arrDsTeamList, $arrRmdTeamList),
-            "sortOptions" => array(
-                array("label" => "Team Name", "value" => "a.team_name"),
-                array("label" => "Branch Name", "value" => "b.branch_name"),
-                array("label" => "Username", "value" => "c.username"),
-                array("label" => "Date Created - ASC", "value" => "a.rdt"),
-            ),
-            "mdoTypeList" => array(
-                array("label" => "MDO A", "value" => "7"),
-                array("label" => "MDO B", "value" => "10"),
-            ),
-            "statusList" => array(
-                array("label" => "Active", "value" => '0'),
-                array("label" => "Deleted", "value" => '1'),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Team Name", "value" => "a.team_name"],
+                ["label" => "Branch Name", "value" => "b.branch_name"],
+                ["label" => "Username", "value" => "c.username"],
+                ["label" => "Date Created - ASC", "value" => "a.rdt"],
+            ],
+            "mdoTypeList" => [
+                ["label" => "MDO A", "value" => "7"],
+                ["label" => "MDO B", "value" => "10"],
+            ],
+            "statusList" => [
+                ["label" => "Active", "value" => '0'],
+                ["label" => "Deleted", "value" => '1'],
+            ],
+            "viewHeader" => [
                 "MDO ID",
                 "MDO Name",
                 "MDO Type",
@@ -565,8 +565,8 @@ class MdoTeamManagement
                 "auth.login.form.password",
                 "app.team.add.json",
                 "app.team.add.status",
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "teamName",
                 "dsType",
@@ -577,10 +577,10 @@ class MdoTeamManagement
                 "password",
                 "json",
                 "deleteStatus"
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -600,16 +600,16 @@ class MdoTeamManagement
         // filter by search query
         $where = getFilterResult(
             $this->_data['searchbar'],
-            array(
-                "branch" => array("a.branch_id", -1),
-                "json" => array("c.c_init_xml", 1),
+            [
+                "branch" => ["a.branch_id", -1],
+                "json" => ["c.c_init_xml", 1],
                 // "password" => array("c.password", 1),
-                "mdoName" => array("a.team_name", 1),
-                "mdoType" => array("a.is_type", 1),
-                "wdCode" => array("a.wd_code", 1),
-                "teamStatus" => array("a.dstatus", 1),
-                "phone" => array("c.mobile", 1),
-            )
+                "mdoName" => ["a.team_name", 1],
+                "mdoType" => ["a.is_type", 1],
+                "wdCode" => ["a.wd_code", 1],
+                "teamStatus" => ["a.dstatus", 1],
+                "phone" => ["c.mobile", 1],
+            ]
         );
 
         // user has some specific permission
@@ -620,7 +620,7 @@ class MdoTeamManagement
             $where .= " AND a.team_id IN $teamList";
         }
 
-        $dsType = array(7 => "MDO A", 10 => "MDO B");
+        $dsType = [7 => "MDO A", 10 => "MDO B"];
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
@@ -636,20 +636,20 @@ class MdoTeamManagement
                 $teamId = $arrData["team_id"];
                 $userTypeIndex = array_search($arrData['mdo_access_type'], array_column($this->_accessList, "value"));
                 $accessType = $this->_accessList[$userTypeIndex]["label"];
-                $arrAccess = array();
+                $arrAccess = [];
                 if (matchValue($arrData['mdo_access_type'], 1)) {
-                    $arrAccess = array(
-                        "team" => array(),
+                    $arrAccess = [
+                        "team" => [],
                         "wdCode" => getRowsColumn($this->_dbConn, "tblmdo_wd_mapping", "wd_id", "dstatus = 0 AND mdo_id = $teamId"),
-                    );
+                    ];
                 } elseif (matchValue($arrData['mdo_access_type'], 2)) {
-                    $arrAccess = array(
+                    $arrAccess = [
                         "team" => array_map('intval', getRowsColumn($this->_dbConn, "tblmdo_access", "teams", "dstatus = 0 AND mdo_id = $teamId")),
-                        "wdCode" => array(),
-                    );
+                        "wdCode" => [],
+                    ];
                 }
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $teamId,
                     "teamName" => $arrData["team_name"],
                     "dsType" => $dsType[$arrData["is_type"]],
@@ -667,13 +667,13 @@ class MdoTeamManagement
                     "team" => isset($arrAccess['team']) ? $arrAccess['team'] : "",
                     "type" => ($arrData['mdo_access_type']) . '',
                     "userType" => $accessType,
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -691,14 +691,14 @@ class MdoTeamManagement
         // filter by search query
         $where = getFilterResult(
             $this->_data,
-            array(
-                "branch" => array("b.branch_id", 1),
-                "json" => array("d.c_init_xml", 1),
+            [
+                "branch" => ["b.branch_id", 1],
+                "json" => ["d.c_init_xml", 1],
                 // "password" => array("d.password", 1),
-                "wdCode" => array("b.wd_code", 1),
-                "dsName" => array("b.team_name", 1),
-                "phone" => array("c.mobile", 1),
-            )
+                "wdCode" => ["b.wd_code", 1],
+                "dsName" => ["b.team_name", 1],
+                "phone" => ["c.mobile", 1],
+            ]
         );
 
         $projectList = $this->_arrAccessInfo["user_projects"];
@@ -713,7 +713,7 @@ class MdoTeamManagement
         }
 
         // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrBody = array();
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.project_name, b.team_name, b.wd_code, c.branch_name, b.circle, b.section, d.username, d.password, d.mobile FROM $projectsTable AS a, $projectTeamTable AS b, $branchTable AS c, $cloudDBName.$cloudAuthPinTable AS d" .
@@ -723,7 +723,7 @@ class MdoTeamManagement
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $arrBody[] = array(
+                $arrBody[] = [
                     $arrData["project_name"],
                     $arrData["team_name"],
                     $arrData["branch_name"],
@@ -732,14 +732,14 @@ class MdoTeamManagement
                     $arrData["wd_code"],
                     $arrData["mobile"],
                     // $arrData["password"],
-                );
+                ];
             }
         }
 
-        $header = array("Project Name", "Team Name", "Branch", "Circle", "Section", "WD Code", "Phone Number");
+        $header = ["Project Name", "Team Name", "Branch", "Circle", "Section", "WD Code", "Phone Number"];
 
-        $arrResult = formatDownloadData("Team_details", array($header), $arrBody);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("Team_details", [$header], $arrBody);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
@@ -767,9 +767,9 @@ class MdoTeamManagement
 
             //check if team or username exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "team_id != ? AND project_id = ? AND ds_number = ?", array($teamId, $projectId, $phone));
+            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "team_id != ? AND project_id = ? AND ds_number = ?", [$teamId, $projectId, $phone]);
             // Don't use dstatus = 0
-            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "rec_id != ? AND mobile = ?", array($recId, $phone), true);
+            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "rec_id != ? AND mobile = ?", [$recId, $phone], true);
 
             // Team not exist, edit
             if ($iStatus === 0 && $iStatusCloud === 0) {
@@ -794,7 +794,7 @@ class MdoTeamManagement
                         $arrDsTeams = getRowsColumns($this->_dbConn, "tblproject_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) $typeCon");
                         $arrRmdTeams = getRowsColumns($this->_dbConn, "tblbreeze_team", "team_id, is_type, wd_code", "dstatus = 0 AND team_id IN ($teamIds) $typeCon");
                         $arrTeams = array_merge($arrDsTeams, $arrRmdTeams);
-                        $arrWdCode = array();
+                        $arrWdCode = [];
                         foreach ($arrTeams as $accesWdCodes) {
                             $arrWdCode[] = $accesWdCodes[2];
                         }
@@ -803,22 +803,22 @@ class MdoTeamManagement
                     }
                 }
                 $cols = "team_name = ?, ds_number = ?, modif_id = ?";
-                $arrParams = array($teamName, $phone, $this->_iUserId, $teamId);
+                $arrParams = [$teamName, $phone, $this->_iUserId, $teamId];
 
                 $iStatus = updateRecord($this->_dbConn, $projectTeamTable, $cols, "dstatus = 0 AND team_id = ?", $arrParams);
 
                 $colsCloud = "team_name = ?, mobile = ?, modif_id = ?";
-                $arrParamsCloud = array($teamName, $phone, $this->_iUserId, $recId);
+                $arrParamsCloud = [$teamName, $phone, $this->_iUserId, $recId];
 
                 $iStatusCloud = updateRecord($this->_dbConn, $cloudAuthPinTable, $colsCloud, "dstatus = 0 AND rec_id = ?", $arrParamsCloud, true);
 
                 // Delete old records
-                deleteRecord($this->_dbConn, "tblmdo_access", "mdo_id", $this->_iUserId, "", array($teamId));
-                deleteRecord($this->_dbConn, "tblmdo_wd_mapping", "mdo_id", $this->_iUserId, "", array($teamId));
+                deleteRecord($this->_dbConn, "tblmdo_access", "mdo_id", $this->_iUserId, "", [$teamId]);
+                deleteRecord($this->_dbConn, "tblmdo_wd_mapping", "mdo_id", $this->_iUserId, "", [$teamId]);
                 foreach ($arrTeams as $accesteam) {
                     $accessCol = "mdo_id, teams, is_type, rcd, rdt";
                     $accessVal = "?, ?, ?, ?, ?";
-                    $arraccessParams = array($teamId, $accesteam[0], $accesteam[1], $cD, $cDT);
+                    $arraccessParams = [$teamId, $accesteam[0], $accesteam[1], $cD, $cDT];
                     $iAddStatus = addRecord($this->_dbConn, "tblmdo_access", $accessCol, $accessVal, $arraccessParams);
                 }
                 updateRecord($this->_dbConn, "tblproject_team", "mdo_access_type = $accessType", "dstatus = 0 AND team_id = $teamId");
@@ -826,21 +826,21 @@ class MdoTeamManagement
                 foreach ($wdCode as $wdId) {
                     $wdCol = "mdo_id, wd_id, rcd, rdt";
                     $wdVal = "?, ?, ?, ?";
-                    $arrWdParams = array($teamId, $wdId, $cD, $cDT);
+                    $arrWdParams = [$teamId, $wdId, $cD, $cDT];
                     $iAddStatus = addRecord($this->_dbConn, "tblmdo_wd_mapping", $wdCol, $wdVal, $arrWdParams);
                 }
 
                 // team modified
                 if ($iStatus === 1 || $iStatusCloud === 1 || $iAddStatus === 2) {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                    $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                 }
             } else {
                 if ($iStatus === 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_EXISTS']]);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['USERNAME_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['USERNAME_EXISTS']]);
                 }
             }
         } else {

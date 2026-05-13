@@ -12,11 +12,11 @@ class TeamManagement
     private $_tables = [];
     private $_valErrors = [];
     private $_validationLength = [];
-    private $_arrSeperator = array(
+    private $_arrSeperator = [
         1 => " ",
         2 => "-",
         3 => "_",
-    );
+    ];
 
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
@@ -108,21 +108,21 @@ class TeamManagement
 
     private function checkTeamAndPhoneIfExists($project, $arrTeams, $jsonId)
     {
-        $arrExists = array(
+        $arrExists = [
             "hasError" => false,
-            "errors" => array(),
-        );
+            "errors" => [],
+        ];
 
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $cloudAuthPinTable = $this->_tables["CLOUD_AUTHPIN_TABLE"];
 
         foreach ($arrTeams as $team) {
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "project_id = ? AND ds_number = ?", array($project, $team["dsPhone"]));
+            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "project_id = ? AND ds_number = ?", [$project, $team["dsPhone"]]);
             // Don't use dstatus = 0
-            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "mobile = ?", array($team["dsPhone"]), true);
+            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "mobile = ?", [$team["dsPhone"]], true);
             // Don't use dstatus = 0
-            $iStatusCloudUser = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "username = ?", array($team["username"]), true);
+            $iStatusCloudUser = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "username = ?", [$team["username"]], true);
             if ($iStatus === 1 || $iStatusCloud === 1) {
                 if ($jsonId != '100' && $jsonId != '101') {
                     $arrExists["hasError"] = true;
@@ -142,7 +142,7 @@ class TeamManagement
         $token = sha1(rand() . time() . $teamId);
 
         // Don't use dstatus = 0
-        $isExist = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "token = ?", array($token), true);
+        $isExist = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "token = ?", [$token], true);
 
         // if exist, generate new token
         if ($isExist === 1) {
@@ -154,27 +154,27 @@ class TeamManagement
 
     final public function getAddTeamData()
     {
-        $arrResult = array(
+        $arrResult = [
             "projectList" => getProjectOptions($this->_dbConn, "", 0, true, "dstatus = 0"),
             "branchList" => getBranchList($this->_dbConn, true, "dstatus = 0"),
-            "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "dstatus = 0", array(), 1),
-            "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "dstatus = 0", array(), 1),
-            "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0", array(), 1),
+            "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "dstatus = 0", [], 1),
+            "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "dstatus = 0", [], 1),
+            "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0", [], 1),
             "dsTypeList" => getTeamType($this->_dbConn),
-            "separatorList" => array(
-                array("label" => "Space", "value" => "1"),
-                array("label" => "Hyphen (-)", "value" => "2"),
-                array("label" => "Underscore (_)", "value" => "3"),
-            ),
-            "jsonIdList" => array(
-                array("label" => "DS App", "value" => "99"),
-                array("label" => "WD App", "value" => "100"),
-                array("label" => "AE App", "value" => "101"),
-                array("label" => "NPSR App", "value" => "1"), // Real Json Id of this (99) This value is for Select Jsom Name Automatically
-            ),
-        );
+            "separatorList" => [
+                ["label" => "Space", "value" => "1"],
+                ["label" => "Hyphen (-)", "value" => "2"],
+                ["label" => "Underscore (_)", "value" => "3"],
+            ],
+            "jsonIdList" => [
+                ["label" => "DS App", "value" => "99"],
+                ["label" => "WD App", "value" => "100"],
+                ["label" => "AE App", "value" => "101"],
+                ["label" => "NPSR App", "value" => "1"], // Real Json Id of this (99) This value is for Select Jsom Name Automatically
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -184,24 +184,24 @@ class TeamManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             $branch = "'" . implode("','", $branch) . "'";
             $branchCond .= "branch_id IN ($branch)";
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
-                "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "$branchCond", array(), 1),
-                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "$branchCond", array(), 1),
+                "circleList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "$branchCond", [], 1),
+                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "$branchCond", [], 1),
 
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -212,24 +212,24 @@ class TeamManagement
         $circleCond = "";
         if (isset($circle)) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             $circle = "'" . implode("','", $circle) . "'";
             $circleCond .= " AND circle IN ($circle)";
 
-            $arrResult = array(
-                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", " dstatus = '0'  $circleCond", array(), 1, "NULL", true),
-            );
+            $arrResult = [
+                "sectionList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", " dstatus = '0'  $circleCond", [], 1, "NULL", true),
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -239,22 +239,22 @@ class TeamManagement
         $sectionCond = "";
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
 
             $section = "'" . implode("','", $section) . "'";
             $sectionCond .= "AND section IN ($section)";
 
-            $arrResult = array(
-                "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0  $sectionCond", array(), 1),
-            );
+            $arrResult = [
+                "aeNameList" => getOptionsWithNull($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "ae_name", "ae_name", "dstatus = 0  $sectionCond", [], 1),
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "aeNameList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -264,34 +264,34 @@ class TeamManagement
         if ($jsonId) {
             switch ($jsonId) {
                 case 99:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "vanDSPilot_2024.json",
-                    );
+                    ];
                     break;
                 case 100:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "Wd_priceScheme.json",
-                    );
+                    ];
                     break;
                 case 101:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "Ae_app.json",
-                    );
+                    ];
                     break;
                 case 1:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "vanNpsr_2025.json",
-                    );
+                    ];
                     break;
                 default:
-                    $arrResult = array(
+                    $arrResult = [
                         "jsonName" => "",
-                    );
+                    ];
                     break;
             }
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -316,7 +316,7 @@ class TeamManagement
         $project = getFormData($this->_data, "project");
         $separator = getFormData($this->_data, "separator");
         $startIndex = getFormData($this->_data, "startIndex");
-        $teams = isset($this->_data["teams"]) ? $this->_data["teams"] : array();
+        $teams = isset($this->_data["teams"]) ? $this->_data["teams"] : [];
         $isValidated = $this->checkAddTeamValidation(
             $project,
             $branch,
@@ -344,20 +344,20 @@ class TeamManagement
                 foreach ($teams as $index => $team) {
                     // set username if not set
                     if (!isset($team["username"]) || !$team["username"]) {
-                        $teams[$index]["username"] = strtolower($userNamePrefix . str_replace(array(" ", ".", "_", "-"), "", $team["dsName"]));
+                        $teams[$index]["username"] = strtolower($userNamePrefix . str_replace([" ", ".", "_", "-"], "", $team["dsName"]));
                     } else {
                         $teams[$index]["username"] = strtolower($userNamePrefix . $team["username"]);
                     }
                 }
             } else {
                 // by index
-                $teams = array();
+                $teams = [];
                 for ($i = $startIndex; $i <= $endIndex; $i++) {
                     $sTeamName = $dsName . $this->_arrSeperator[$separator] . $i;
-                    $teams[] = array(
+                    $teams[] = [
                         "teamName" => $sTeamName,
-                        "username" => strtolower($userNamePrefix . str_replace(array(" ", ".", "_", "-"), "", $sTeamName)),
-                    );
+                        "username" => strtolower($userNamePrefix . str_replace([" ", ".", "_", "-"], "", $sTeamName)),
+                    ];
                 }
             }
 
@@ -377,16 +377,16 @@ class TeamManagement
 
                 // Begin Transaction
                 $this->_dbConn->BeginTransaction();
-                $arrStatus = array();
+                $arrStatus = [];
                 $aeNumber = "";
                 $amName = "";
                 $amNumber = "";
 
-                $client = getRowColumn($this->_dbConn, $projectsTable, "client_id", "dstatus = 0 AND project_id = ?", array($project));
+                $client = getRowColumn($this->_dbConn, $projectsTable, "client_id", "dstatus = 0 AND project_id = ?", [$project]);
                 if ($aeName) {
-                    $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "dstatus = 0 AND ae_name = ?", array($aeName));
-                    $amName = getRowColumn($this->_dbConn, $projectTeamTable, "am_name", "dstatus = 0 AND ae_name = ?", array($aeName));
-                    $amNumber = getRowColumn($this->_dbConn, $projectTeamTable, "am_number", "dstatus = 0 AND ae_name = ?", array($aeName));
+                    $aeNumber = getRowColumn($this->_dbConn, $projectTeamTable, "ae_number", "dstatus = 0 AND ae_name = ?", [$aeName]);
+                    $amName = getRowColumn($this->_dbConn, $projectTeamTable, "am_name", "dstatus = 0 AND ae_name = ?", [$aeName]);
+                    $amNumber = getRowColumn($this->_dbConn, $projectTeamTable, "am_number", "dstatus = 0 AND ae_name = ?", [$aeName]);
                 }
                 // $password = strtolower(constant("CUSTOMER_NAME")) . "." . ($password ? $password : $client . $project);
                 $password = $password ? $password : $client . $project;
@@ -395,7 +395,7 @@ class TeamManagement
                 $customerFolder = constant("CUSTOMER_FOLDER");
 
                 // Don't use dstatus = 0
-                $arrClient = getRowColumns($this->_dbConn, $clientsTable, "client_name, client_dir_path", "client_id = ?", array($client));
+                $arrClient = getRowColumns($this->_dbConn, $clientsTable, "client_name, client_dir_path", "client_id = ?", [$client]);
 
                 foreach ($teams as $team) {
                     // Add Team
@@ -408,7 +408,7 @@ class TeamManagement
                     }
                     $cols = "project_id, s_id, is_type, team_name, branch_id, circle, section, wd_code, ds_number, ae_name, ae_number, am_name, am_number, creator_id, rcd, rdt";
                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                    $arrParams = array($project, $jsonId, $type, $team["dsName"], $branch, $circle, $section, $wdCode, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $this->_iUserId, $cD, $cDT);
+                    $arrParams = [$project, $jsonId, $type, $team["dsName"], $branch, $circle, $section, $wdCode, $team["dsPhone"], $aeName, $aeNumber, $amName, $amNumber, $this->_iUserId, $cD, $cDT];
 
                     $iStatus = addRecord($this->_dbConn, $projectTeamTable, $cols, $vals, $arrParams);
                     $arrStatus[] = $iStatus;
@@ -422,7 +422,7 @@ class TeamManagement
                         // Add username in cloud table
                         $colsCloud = "s_id, client_res, proj_res_folder, username, mobile, password, client_name, client_id, project_id, team_id, team_name, db_user, db_pwd, db_name, c_subdomain, c_init_xml, token, creator_id, rcd, rdt";
                         $valsCloud = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrCloudParams = array(
+                        $arrCloudParams = [
                             $jsonId,
                             $customerFolder,
                             $arrClient[1],
@@ -443,7 +443,7 @@ class TeamManagement
                             $this->_iUserId,
                             $cD,
                             $cDT
-                        );
+                        ];
 
                         $iStatus = addRecord($this->_dbConn, $cloudAuthPinTable, $colsCloud, $valsCloud, $arrCloudParams, true);
                         $arrStatus[] = $iStatus;
@@ -453,11 +453,11 @@ class TeamManagement
                 // Some error, rollback
                 if (in_array(0, $arrStatus)) {
                     $this->_dbConn->RollbackTransaction();
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_NOT_ADDED']));
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_NOT_ADDED']]);
                 } else {
                     // All success, commit
                     $this->_dbConn->CommitTransaction();
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_ADDED']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_ADDED']], 1);
                 }
             }
         } else {
@@ -469,28 +469,28 @@ class TeamManagement
 
     final public function getViewTeamData()
     {
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "branchList" => getBranchList($this->_dbConn),
-            "sortOptions" => array(
-                array("label" => "Team Name", "value" => "a.team_name"),
-                array("label" => "Branch Name", "value" => "b.branch_name"),
-                array("label" => "Username", "value" => "c.username"),
-                array("label" => "Date Created - ASC", "value" => "a.rdt"),
-            ),
-            "dsTypeList" => array(
-                array("label" => "DS", "value" => "0"),
-                array("label" => "Town SWD", "value" => "2"),
-                array("label" => "SCP", "value" => "4"),
-                array("label" => "NSPR", "value" => "5"),
-                array("label" => "MDO A", "value" => "7"),
-                array("label" => "MDO B", "value" => "10"),
-            ),
-            "statusList" => array(
-                array("label" => "Active", "value" => '0'),
-                array("label" => "Deleted", "value" => '1'),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Team Name", "value" => "a.team_name"],
+                ["label" => "Branch Name", "value" => "b.branch_name"],
+                ["label" => "Username", "value" => "c.username"],
+                ["label" => "Date Created - ASC", "value" => "a.rdt"],
+            ],
+            "dsTypeList" => [
+                ["label" => "DS", "value" => "0"],
+                ["label" => "Town SWD", "value" => "2"],
+                ["label" => "SCP", "value" => "4"],
+                ["label" => "NSPR", "value" => "5"],
+                ["label" => "MDO A", "value" => "7"],
+                ["label" => "MDO B", "value" => "10"],
+            ],
+            "statusList" => [
+                ["label" => "Active", "value" => '0'],
+                ["label" => "Deleted", "value" => '1'],
+            ],
+            "viewHeader" => [
                 "app.team.view.teamId",
                 "app.team.add.name",
                 "app.team.add.dsType",
@@ -501,8 +501,8 @@ class TeamManagement
                 "auth.login.form.password",
                 "app.team.add.json",
                 "app.team.add.status",
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "teamName",
                 "dsType",
@@ -513,13 +513,13 @@ class TeamManagement
                 "password",
                 "json",
                 "deleteStatus"
-            ),
+            ],
             "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "circle", "circle", "dstatus = 0"),
             "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "section", "section", "dstatus = 0"),
             "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['WD_MAPPING_TABLE'], "wd_code", "wd_code", "dstatus = 0"),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -539,16 +539,16 @@ class TeamManagement
         // filter by search query
         $where = getFilterResult(
             $this->_data['searchbar'],
-            array(
-                "branch" => array("a.branch_id", -1),
-                "json" => array("c.c_init_xml", 1),
+            [
+                "branch" => ["a.branch_id", -1],
+                "json" => ["c.c_init_xml", 1],
                 // "password" => array("c.password", 1),
-                "dsName" => array("a.team_name", 1),
-                "dsType" => array("a.is_type", -1),
-                "wdCode" => array("a.wd_code", 1),
-                "teamStatus" => array("a.dstatus", 1),
-                "phone" => array("c.mobile", 1),
-            )
+                "dsName" => ["a.team_name", 1],
+                "dsType" => ["a.is_type", -1],
+                "wdCode" => ["a.wd_code", 1],
+                "teamStatus" => ["a.dstatus", 1],
+                "phone" => ["c.mobile", 1],
+            ]
         );
 
         // user has some specific permission
@@ -559,7 +559,7 @@ class TeamManagement
             $where .= " AND a.team_id IN $teamList";
         }
 
-        $dsType = array(0 => "DS", 2 => "Town SWD", 4 => "SCP", 5 => "NPSR", 7 => "MDO A", 10 => "MDO B");
+        $dsType = [0 => "DS", 2 => "Town SWD", 4 => "SCP", 5 => "NPSR", 7 => "MDO A", 10 => "MDO B"];
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
@@ -574,7 +574,7 @@ class TeamManagement
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $teamId = $arrData["team_id"];
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $teamId,
                     "teamName" => $arrData["team_name"],
                     "dsType" => $dsType[$arrData["is_type"]],
@@ -593,13 +593,13 @@ class TeamManagement
                     "section" => $arrData['section'],
                     "wd_code" => $arrData['wd_code'],
                     "deleteStatus" => $GLOBALS["ARR_DELETE_STATUS"][$arrData['dstatus']],
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -617,15 +617,15 @@ class TeamManagement
         // filter by search query
         $where = getFilterResult(
             $this->_data,
-            array(
-                "branch" => array("b.branch_id", 1),
-                "json" => array("d.c_init_xml", 1),
+            [
+                "branch" => ["b.branch_id", 1],
+                "json" => ["d.c_init_xml", 1],
                 // "password" => array("d.password", 1),
-                "wdCode" => array("b.wd_code", 1),
-                "dsName" => array("b.team_name", 1),
-                "dsType" => array("b.is_type", 1),
-                "phone" => array("c.mobile", 1),
-            )
+                "wdCode" => ["b.wd_code", 1],
+                "dsName" => ["b.team_name", 1],
+                "dsType" => ["b.is_type", 1],
+                "phone" => ["c.mobile", 1],
+            ]
         );
 
         $projectList = $this->_arrAccessInfo["user_projects"];
@@ -640,7 +640,7 @@ class TeamManagement
         }
 
         // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrBody = array();
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT a.project_name, b.team_name, b.is_Type, b.wd_code, c.branch_name, b.circle, b.section, d.username, d.password, d.mobile FROM $projectsTable AS a, $projectTeamTable AS b, $branchTable AS c, $cloudDBName.$cloudAuthPinTable AS d" .
@@ -650,7 +650,7 @@ class TeamManagement
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $arrBody[] = array(
+                $arrBody[] = [
                     $arrData["project_name"],
                     $arrData["team_name"],
                     $arrData["is_Type"],
@@ -660,14 +660,14 @@ class TeamManagement
                     $arrData["wd_code"],
                     $arrData["mobile"],
                     // $arrData["password"],
-                );
+                ];
             }
         }
 
-        $header = array("Project Name", "Team Name", "Team Type", "Branch", "Circle", "Section", "WD Code", "Phone Number");
+        $header = ["Project Name", "Team Name", "Team Type", "Branch", "Circle", "Section", "WD Code", "Phone Number"];
 
-        $arrResult = formatDownloadData("Team_details", array($header), $arrBody);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("Team_details", [$header], $arrBody);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
@@ -694,19 +694,19 @@ class TeamManagement
 
             //check if team or username exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "team_id != ? AND project_id = ? AND ds_number = ?", array($teamId, $projectId, $phone));
+            $iStatus = isRecordExist($this->_dbConn, $projectTeamTable, "team_id", "team_id != ? AND project_id = ? AND ds_number = ?", [$teamId, $projectId, $phone]);
             // Don't use dstatus = 0
-            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "rec_id != ? AND mobile = ?", array($recId, $phone), true);
+            $iStatusCloud = isRecordExist($this->_dbConn, $cloudAuthPinTable, "rec_id", "rec_id != ? AND mobile = ?", [$recId, $phone], true);
 
             // Team not exist, edit
             if ($iStatus === 0 && $iStatusCloud === 0) {
                 $cols = "team_name = ?, ds_number = ?, modif_id = ?, circle = ?, section = ?, wd_code = ?, is_type = ?";
-                $arrParams = array($teamName, $phone, $this->_iUserId, $circle, $section, $wdCode, $is_type, $teamId);
+                $arrParams = [$teamName, $phone, $this->_iUserId, $circle, $section, $wdCode, $is_type, $teamId];
 
                 $iStatus = updateRecord($this->_dbConn, $projectTeamTable, $cols, "dstatus = 0 AND team_id = ?", $arrParams);
 
                 $colsCloud = "team_name = ?, mobile = ?, modif_id = ?";
-                $arrParamsCloud = array($teamName, $phone, $this->_iUserId, $recId);
+                $arrParamsCloud = [$teamName, $phone, $this->_iUserId, $recId];
 
                 $iStatusCloud = updateRecord($this->_dbConn, $cloudAuthPinTable, $colsCloud, "dstatus = 0 AND rec_id = ?", $arrParamsCloud, true);
 
@@ -714,19 +714,19 @@ class TeamManagement
                 if ($iStatus === 1 || $iStatusCloud === 1) {
                     if ($iStatus === 1 && isset($wdCode)) {
                         $colsRoute = " wd_code = ?";
-                        $arrParamsRoute = array($wdCode, $teamId);
+                        $arrParamsRoute = [$wdCode, $teamId];
 
                         $iStatusRoute = updateRecord($this->_dbConn, $routeTable, $colsRoute, "dstatus = 0 AND team_id = ?", $arrParamsRoute);
                     }
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                    $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                 }
             } else {
                 if ($iStatus === 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['TEAM_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['TEAM_EXISTS']]);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['USERNAME_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['USERNAME_EXISTS']]);
                 }
             }
         } else {

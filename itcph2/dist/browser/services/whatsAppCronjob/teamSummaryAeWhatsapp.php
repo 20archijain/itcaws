@@ -58,8 +58,8 @@ class VanDswhatsAppSummary
                 "AND COALESCE(b.summary_sent, 0) = 0  GROUP BY b.section ORDER BY b.section LIMIT 15";
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-            $createdImages = array();
-            $processedSections = array();
+            $createdImages = [];
+            $processedSections = [];
             if ($iRows > 0) {
                 while ($row = $this->_dbConn->GetData($sAction)) {
                     $aeName = $row["ae_name"];
@@ -107,7 +107,7 @@ class VanDswhatsAppSummary
                             $imageUrlForSend = $imageUrl . (strpos($imageUrl, '?') === false ? '?' : '&') . 'v=' . $cacheBuster;
                             $whatsAppResponse = $this->sendWhatsAppMessage('91' . $phoneNumber, $imageUrlForSend, $aeName, 'vnsai');
                             $processedSections[$section] = true;
-                            $createdImages[] = array(
+                            $createdImages[] = [
                                 "ae_name" => $aeName,
                                 "ae_number" => $phoneNumber,
                                 "section" => $section,
@@ -115,10 +115,10 @@ class VanDswhatsAppSummary
                                 "image_url" => $imageUrl,
                                 "image_url_for_send" => $imageUrlForSend,
                                 "whatsapp_response" => $whatsAppResponse
-                            );
+                            ];
                             $cols = "ae_name, ae_number, section, api_response, capture_date";
                             $vals = "?, ?, ?, ?, ?";
-                            $arrParams = array($aeName, $phoneNumber, $section, $whatsAppResponse, $currentDate);
+                            $arrParams = [$aeName, $phoneNumber, $section, $whatsAppResponse, $currentDate];
                             addRecord($this->_dbConn, "tblwhatsapp_section_summary_logs", $cols, $vals, $arrParams);
                         }
                     }
@@ -126,7 +126,7 @@ class VanDswhatsAppSummary
             }
 
             if (count($processedSections) > 0) {
-                $sectionList = array();
+                $sectionList = [];
                 foreach (array_keys($processedSections) as $sentSection) {
                     $sectionList[] = "'" . addslashes($sentSection) . "'";
                 }
@@ -151,20 +151,20 @@ class VanDswhatsAppSummary
                 $this->clearGeneratedImagesForDate($currentDate);
             }
 
-            echo json_encode(array(
+            echo json_encode([
                 "status" => 1,
                 "capture_date" => $currentDate,
                 "total_images" => count($createdImages),
                 "images" => $createdImages
-            ));
+            ]);
         } catch (Exception $e) {
-            echo json_encode(array(
+            echo json_encode([
                 "status" => 400,
-                "message" => array($e->getMessage()),
+                "message" => [$e->getMessage()],
                 "debug_step" => $debugStep,
                 "data" => "",
                 "hidePopup" => false
-            ));
+            ]);
         }
     }
 
@@ -385,7 +385,7 @@ Below are the Team Summary of your Section.",
         @rmdir($dirPath);
     }
 
-    private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = array(), $typeBifurcation = array())
+    private function createAeSummaryImage($currentDate, $aeName, $wdCode, $section, $teamStrength, $npsrToday, $npsrMtd, $vanDsToday, $vanDsMtd, $sectionTypeFlags = [], $typeBifurcation = [])
     {
         if (!function_exists('imagecreatetruecolor')) {
             return "";
@@ -418,37 +418,37 @@ Below are the Team Summary of your Section.",
         $footerH = 56;
 
         // ---------- Build row data (color names; resolve later) ----------
-        $npsrTodayRows = $hasNpsr ? array(
-            array("Average Outlets Visited", $this->formatCompactNumber($npsrToday["avg_outlets_visited"]), "blue"),
-            array("Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), "blue"),
-            array("Average Strike Rate", $npsrToday["avg_strike_rate"], "blue"),
-            array("Lowest Strike Rate", $npsrToday["lowest_strike_rate"], "orange", $npsrToday["lowest_strike_team"]),
-            array("Total Infra Volume", $npsrToday["infra_volume"], "purple"),
-            array("Infra Below 2 Ms", $npsrToday["infra_below_limit"], "red", $npsrToday["infra_below_limit_names"]),
-            array("Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), "green"),
-            array("Average Time Spent", $npsrToday["avg_time_spent"], "blue"),
-            array("Below 6 Hours", $npsrToday["below_6_hours"], "red", $npsrToday["below_6_hours_names"])
-        ) : array();
-        $npsrMtdRows = $hasNpsr ? array(
-            array("Avg Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), "green"),
-            array("Avg Daily Infra Volume", $npsrMtd["avg_daily_volume"], "green"),
-            array($npsrMtd["incentive_brand_1_label"], $npsrMtd["incentive_brand_1"], "purple"),
-            array($npsrMtd["incentive_brand_2_label"], $npsrMtd["incentive_brand_2"], "orange")
-        ) : array();
-        $vanTodayRows = $hasVan ? array(
-            array("Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), "blue"),
-            array("Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), "blue"),
-            array("Average Strike Rate", $vanDsToday["avg_strike_rate"], "blue"),
-            array("Total Infra Volume", $vanDsToday["infra_volume"], "purple"),
-            array("Infra Below 20 Ms", $vanDsToday["infra_below_limit"], "red", $vanDsToday["infra_below_limit_names"]),
-            array("Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), "green"),
-            array("Average Time Spent", $vanDsToday["avg_time_spent"], "blue"),
-            array("Below 6 Hours", $vanDsToday["below_6_hours"], "red", $vanDsToday["below_6_hours_names"])
-        ) : array();
-        $vanMtdRows = $hasVan ? array(
-            array("Avg Daily Outlets Billed", $this->formatCompactNumber($vanDsMtd["avg_daily_outlets_billed"]), "purple"),
-            array("Avg Daily Volume", $vanDsMtd["avg_daily_volume"], "purple")
-        ) : array();
+        $npsrTodayRows = $hasNpsr ? [
+            ["Average Outlets Visited", $this->formatCompactNumber($npsrToday["avg_outlets_visited"]), "blue"],
+            ["Average Outlets Billed", $this->formatCompactNumber($npsrToday["avg_outlets_billed"]), "blue"],
+            ["Average Strike Rate", $npsrToday["avg_strike_rate"], "blue"],
+            ["Lowest Strike Rate", $npsrToday["lowest_strike_rate"], "orange", $npsrToday["lowest_strike_team"]],
+            ["Total Infra Volume", $npsrToday["infra_volume"], "purple"],
+            ["Infra Below 2 Ms", $npsrToday["infra_below_limit"], "red", $npsrToday["infra_below_limit_names"]],
+            ["Average Line Cut", $this->formatCompactNumber($npsrToday["avg_line_cut"]), "green"],
+            ["Average Time Spent", $npsrToday["avg_time_spent"], "blue"],
+            ["Below 6 Hours", $npsrToday["below_6_hours"], "red", $npsrToday["below_6_hours_names"]]
+        ] : [];
+        $npsrMtdRows = $hasNpsr ? [
+            ["Avg Daily Outlets Billed", $this->formatCompactNumber($npsrMtd["avg_daily_outlets_billed"]), "green"],
+            ["Avg Daily Infra Volume", $npsrMtd["avg_daily_volume"], "green"],
+            [$npsrMtd["incentive_brand_1_label"], $npsrMtd["incentive_brand_1"], "purple"],
+            [$npsrMtd["incentive_brand_2_label"], $npsrMtd["incentive_brand_2"], "orange"]
+        ] : [];
+        $vanTodayRows = $hasVan ? [
+            ["Average Outlets Visited", $this->formatCompactNumber($vanDsToday["avg_outlets_visited"]), "blue"],
+            ["Average Outlets Billed", $this->formatCompactNumber($vanDsToday["avg_outlets_billed"]), "blue"],
+            ["Average Strike Rate", $vanDsToday["avg_strike_rate"], "blue"],
+            ["Total Infra Volume", $vanDsToday["infra_volume"], "purple"],
+            ["Infra Below 20 Ms", $vanDsToday["infra_below_limit"], "red", $vanDsToday["infra_below_limit_names"]],
+            ["Average Line Cut", $this->formatCompactNumber($vanDsToday["avg_line_cut"]), "green"],
+            ["Average Time Spent", $vanDsToday["avg_time_spent"], "blue"],
+            ["Below 6 Hours", $vanDsToday["below_6_hours"], "red", $vanDsToday["below_6_hours_names"]]
+        ] : [];
+        $vanMtdRows = $hasVan ? [
+            ["Avg Daily Outlets Billed", $this->formatCompactNumber($vanDsMtd["avg_daily_outlets_billed"]), "purple"],
+            ["Avg Daily Volume", $vanDsMtd["avg_daily_volume"], "purple"]
+        ] : [];
 
         // ---------- Pre-compute dynamic heights ----------
         $npsrTodayH = $this->computeMetricsPanelHeight($npsrTodayRows);
@@ -493,16 +493,16 @@ Below are the Team Summary of your Section.",
 
         imagefill($img, 0, 0, $bg);
 
-        $colorMap = array(
+        $colorMap = [
             "blue" => $blue,
             "green" => $green,
             "orange" => $orange,
             "red" => $red,
             "purple" => $purple,
             "dark" => $dark
-        );
+        ];
         $resolveRows = function ($rows) use ($colorMap, $dark) {
-            $out = array();
+            $out = [];
             foreach ($rows as $r) {
                 $newR = $r;
                 $key = isset($r[2]) ? (string) $r[2] : "dark";
@@ -573,14 +573,14 @@ Below are the Team Summary of your Section.",
         $card1W = (int) (($panelW - 8) / 2);
         $totalSalesmenValue = "Total " . (string) $totalSm;
         $strengthSubLine = "VAN DS: " . $vanCount . "  |  NPSR: " . $npsrCount;
-        $donutData = array(
+        $donutData = [
             "qualified" => $qualifiedSm,
             "unqualified" => $unqualifiedSm,
             "absent" => $absentSm,
             "qualified_color" => $green,
             "unqualified_color" => $orange,
             "absent_color" => $red
-        );
+        ];
         $this->drawStrengthCardWithDonut($img, $margin, $cursorY, $card1W, $strengthRow1H, "TEAM SALESMEN", $totalSalesmenValue, $blue, $donutData, $white, $line, $dark, $muted, $strengthSubLine);
         $qualSub = $totalSm > 0 ? "of " . $totalSm . " salesmen" : "";
         $this->drawStatCard($img, $margin + $card1W + 8, $cursorY, $card1W, $strengthRow1H, "QUALIFIED TODAY", (string) $qualifiedSm, $green, $qualSub, $qualPct, $white, $line, $dark, $muted);
@@ -599,7 +599,7 @@ Below are the Team Summary of your Section.",
             $cursorY += $npsrTodayH + $gap;
             $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $npsrMtdH, "NPSR SNAPSHOT (MONTH TILL DATE)", $green, $npsrMtdRowsR, $line, $dark, "N");
             $cursorY += $npsrMtdH + $gap;
-            $npsrSeries = isset($npsrMtd["daily_volume_series"]) ? $npsrMtd["daily_volume_series"] : array();
+            $npsrSeries = isset($npsrMtd["daily_volume_series"]) ? $npsrMtd["daily_volume_series"] : [];
             $this->drawSparklineStrip($img, $margin, $cursorY, $panelW, $sparklineH, "NPSR  -  DAILY INFRA VOLUME (MTD)", $npsrSeries, $green, $white, $line, $dark, $muted);
             $cursorY += $sparklineH + $gap;
         }
@@ -610,7 +610,7 @@ Below are the Team Summary of your Section.",
             $cursorY += $vanTodayH + $gap;
             $this->drawMetricsPanel($img, $margin, $cursorY, $panelW, $vanMtdH, "VAN DS SNAPSHOT (MONTH TILL DATE)", $purple, $vanMtdRowsR, $line, $dark, "V");
             $cursorY += $vanMtdH + $gap;
-            $vanSeries = isset($vanDsMtd["daily_volume_series"]) ? $vanDsMtd["daily_volume_series"] : array();
+            $vanSeries = isset($vanDsMtd["daily_volume_series"]) ? $vanDsMtd["daily_volume_series"] : [];
             $this->drawSparklineStrip($img, $margin, $cursorY, $panelW, $sparklineH, "VAN DS  -  DAILY INFRA VOLUME (MTD)", $vanSeries, $purple, $white, $line, $dark, $muted);
             $cursorY += $sparklineH + $gap;
         }
@@ -640,7 +640,7 @@ Below are the Team Summary of your Section.",
         return $absolutePath;
     }
 
-    private function drawHeaderMeta($img, $aeName, $section, $currentDate, $color, $typeBifurcation = array())
+    private function drawHeaderMeta($img, $aeName, $section, $currentDate, $color, $typeBifurcation = [])
     {
         $aeNameText = isset($aeName) ? strtoupper(trim((string) $aeName)) : "";
         $sectionText = isset($section) ? strtoupper(trim((string) $section)) : "";
@@ -673,7 +673,7 @@ Below are the Team Summary of your Section.",
             return;
         }
         $maxWidth = max(20, $x2 - $x1);
-        $lines = array();
+        $lines = [];
         $paragraphs = preg_split("/\\r\\n|\\n|\\r/", $text);
         foreach ($paragraphs as $paragraph) {
             $paragraph = trim((string) $paragraph);
@@ -734,7 +734,7 @@ Below are the Team Summary of your Section.",
         $contentBottom = $y + $h - 8;
         $count = count($rows) > 0 ? count($rows) : 1;
         $availableHeight = max(10, ($contentBottom - $contentTop));
-        $weights = array();
+        $weights = [];
         $totalWeight = 0;
         for ($i = 0; $i < $count; $i++) {
             $note = isset($rows[$i][3]) ? trim((string) $rows[$i][3]) : "";
@@ -747,7 +747,7 @@ Below are the Team Summary of your Section.",
         }
         $midX = $x + (int) floor($w * 0.58);
         imageline($img, $midX, $contentTop, $midX, $contentBottom, $line);
-        $rowBoundaries = array();
+        $rowBoundaries = [];
         $cursor = $contentTop;
         for ($i = 0; $i < $count; $i++) {
             $rowHeight = (int) floor(($availableHeight * $weights[$i]) / $totalWeight);
@@ -756,7 +756,7 @@ Below are the Team Summary of your Section.",
             } else {
                 $rowBottom = $cursor + max(28, $rowHeight);
             }
-            $rowBoundaries[$i] = array($cursor, $rowBottom);
+            $rowBoundaries[$i] = [$cursor, $rowBottom];
             if ($i < $count - 1) {
                 imageline($img, $x + 8, $rowBottom, $x + $w - 8, $rowBottom, $line);
             }
@@ -912,11 +912,11 @@ Below are the Team Summary of your Section.",
         $cy = $y + (int) ($h / 2) + 4;
         $rOuter = 46;
         $rInner = 30;
-        $segments = array(
-            array("value" => (float) $donutData["qualified"], "color" => $donutData["qualified_color"]),
-            array("value" => (float) $donutData["unqualified"], "color" => $donutData["unqualified_color"]),
-            array("value" => (float) $donutData["absent"], "color" => $donutData["absent_color"])
-        );
+        $segments = [
+            ["value" => (float) $donutData["qualified"], "color" => $donutData["qualified_color"]],
+            ["value" => (float) $donutData["unqualified"], "color" => $donutData["unqualified_color"]],
+            ["value" => (float) $donutData["absent"], "color" => $donutData["absent_color"]]
+        ];
         $this->drawDonutChart($img, $cx, $cy, $rOuter, $rInner, $segments, $white, $line);
         $total = (int) ($donutData["qualified"] + $donutData["unqualified"] + $donutData["absent"]);
         $this->drawCenterText($img, $cx - $rInner, $cy - 14, $cx + $rInner, $cy + 14, (string) $total, 4, $dark);
@@ -950,10 +950,10 @@ Below are the Team Summary of your Section.",
         $cy = $y + (int) ($h / 2) + 4;
         $rOuter = 46;
         $rInner = 36;
-        $segments = array(
-            array("value" => max(0, (float) $pct), "color" => $valueColor),
-            array("value" => max(0, 100 - (float) $pct), "color" => $line)
-        );
+        $segments = [
+            ["value" => max(0, (float) $pct), "color" => $valueColor],
+            ["value" => max(0, 100 - (float) $pct), "color" => $line]
+        ];
         $this->drawDonutChart($img, $cx, $cy, $rOuter, $rInner, $segments, $white, $line);
         $this->drawCenterText($img, $cx - $rInner, $cy - 14, $cx + $rInner, $cy + 14, ((int) round($pct)) . "%", 4, $dark);
 
@@ -989,8 +989,8 @@ Below are the Team Summary of your Section.",
 
         $this->drawTextLeft($img, $x + 14, $y + 10, $title, 3, $muted);
 
-        $values = array();
-        $dates = array();
+        $values = [];
+        $dates = [];
         if (is_array($series)) {
             ksort($series);
             foreach ($series as $date => $val) {
@@ -1040,16 +1040,16 @@ Below are the Team Summary of your Section.",
 
         // Compute points
         $stepX = $count > 1 ? $chartW / ($count - 1) : 0;
-        $points = array();
+        $points = [];
         for ($i = 0; $i < $count; $i++) {
             $px = $count > 1 ? (int) round($chartX1 + $i * $stepX) : (int) round(($chartX1 + $chartX2) / 2);
             $py = (int) round($chartY2 - ($values[$i] / $max) * $chartH);
-            $points[] = array($px, $py);
+            $points[] = [$px, $py];
         }
 
         // Filled area beneath the line (subtle gradient effect via lightened color)
         if ($count >= 2 && function_exists('imagefilledpolygon')) {
-            $poly = array();
+            $poly = [];
             $poly[] = $points[0][0];
             $poly[] = $chartY2;
             foreach ($points as $p) {
@@ -1188,7 +1188,7 @@ Below are the Team Summary of your Section.",
         if ($text === "") {
             return 0;
         }
-        $lines = array();
+        $lines = [];
         $paragraphs = preg_split("/\\r\\n|\\n|\\r/", $text);
         foreach ($paragraphs as $paragraph) {
             $paragraph = trim((string) $paragraph);
@@ -1312,7 +1312,7 @@ Below are the Team Summary of your Section.",
             $this->_resolvedSansFont = $projectFont;
             return $this->_resolvedSansFont;
         }
-        $candidates = array(
+        $candidates = [
             // Server-friendly fallbacks when bundled font is unavailable.
             "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
             "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
@@ -1321,7 +1321,7 @@ Below are the Team Summary of your Section.",
             "C:/Windows/Fonts/segoeui.ttf",
             "C:/Windows/Fonts/calibri.ttf",
             "C:/Windows/Fonts/arial.ttf"
-        );
+        ];
         foreach ($candidates as $path) {
             if (file_exists($path)) {
                 $this->_resolvedSansFont = $path;
@@ -1411,8 +1411,8 @@ Below are the Team Summary of your Section.",
     private function getTeamStrengthData($aeNumber, $section, $dailyRows, $totalSalesmen, $minTotalShops, $minQualifiedAttendanceTimeInSec)
     {
         $qualified = 0;
-        $presentTeams = array();
-        $unqualifiedTeams = array();
+        $presentTeams = [];
+        $unqualifiedTeams = [];
         foreach ($dailyRows as $row) {
             $teamName = isset($row["team_name"]) ? trim((string) $row["team_name"]) : "";
             $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
@@ -1432,7 +1432,7 @@ Below are the Team Summary of your Section.",
         $unqualified = max(0, $present - $qualified);
         $absent = max(0, $totalSalesmen - $present);
         $allTeams = $this->getSectionTeamDetails($aeNumber, $section);
-        $absentTeams = array();
+        $absentTeams = [];
         foreach ($allTeams as $team) {
             $teamId = isset($team["team_id"]) ? trim((string) $team["team_id"]) : "";
             $entry = isset($team["entry"]) ? trim((string) $team["entry"]) : "";
@@ -1441,17 +1441,17 @@ Below are the Team Summary of your Section.",
             }
         }
 
-        return array(
+        return [
             "total" => $totalSalesmen,
             "qualified" => $qualified,
             "unqualified" => $unqualified,
             "absent" => $absent,
             "unqualified_names" => $this->formatTeamNames(array_values($unqualifiedTeams)),
             "absent_names" => $this->formatTeamNames(array_values($absentTeams))
-        );
+        ];
     }
 
-    private function getSnapshotTodayData($dailyRows, $teamType, $infraLimit, $teamDetails = array())
+    private function getSnapshotTodayData($dailyRows, $teamType, $infraLimit, $teamDetails = [])
     {
         $rows = $this->filterByType($dailyRows, $teamType);
         $count = count($rows);
@@ -1467,8 +1467,8 @@ Below are the Team Summary of your Section.",
         $sumMarketMins = 0.0;
         $infraBelow = 0;
         $below6Hours = 0;
-        $infraBelowNames = array();
-        $below6HoursNames = array();
+        $infraBelowNames = [];
+        $below6HoursNames = [];
         $lowestStrikeRate = null;
         $lowestTeamName = "";
 
@@ -1514,7 +1514,7 @@ Below are the Team Summary of your Section.",
             }
         }
 
-        return array(
+        return [
             "avg_outlets_visited" => (string) round($sumVisited / $count),
             "avg_outlets_billed" => (string) round($sumBilled / $count),
             "avg_strike_rate" => (string) round($sumStrikeRate / $count) . "%",
@@ -1529,7 +1529,7 @@ Below are the Team Summary of your Section.",
             "avg_time_spent" => $this->formatDurationFromMinutes($sumMarketMins / $count),
             "below_6_hours" => (string) $below6Hours,
             "below_6_hours_names" => $this->formatTeamNames(array_keys($below6HoursNames))
-        );
+        ];
     }
 
     private function getSnapshotMtdData($mtdRows, $teamType, $currentDate, $aeNumber, $section)
@@ -1539,26 +1539,26 @@ Below are the Team Summary of your Section.",
         $year = date("Y", strtotime($currentDate));
         $branchIdList = $this->getSectionBranchIdList($rows, $aeNumber, $section);
         $focusBrandProducts = $this->getFocusBrandOneProducts($branchIdList, $month, $year);
-        $brandMeta1 = isset($focusBrandProducts[0]) ? $focusBrandProducts[0] : array("columns" => array(), "label" => "Incentive Brand 1");
-        $brandMeta2 = isset($focusBrandProducts[1]) ? $focusBrandProducts[1] : array("columns" => array(), "label" => "Incentive Brand 2");
+        $brandMeta1 = isset($focusBrandProducts[0]) ? $focusBrandProducts[0] : ["columns" => [], "label" => "Incentive Brand 1"];
+        $brandMeta2 = isset($focusBrandProducts[1]) ? $focusBrandProducts[1] : ["columns" => [], "label" => "Incentive Brand 2"];
         $teamIdList = $this->getSectionTeamIdList($rows, $aeNumber, $section);
         $incentiveBrand1Percent = $this->calculateIncentivePercentByColumns($teamIdList, $currentDate, $brandMeta1["columns"]);
         $incentiveBrand2Percent = $this->calculateIncentivePercentByColumns($teamIdList, $currentDate, $brandMeta2["columns"]);
         if (count($rows) === 0) {
-            return array(
+            return [
                 "avg_daily_outlets_billed" => "0",
                 "avg_daily_volume" => "0 Ms",
                 "incentive_brand_1_label" => $brandMeta1["label"],
                 "incentive_brand_1" => $incentiveBrand1Percent,
                 "incentive_brand_2_label" => $brandMeta2["label"],
                 "incentive_brand_2" => $incentiveBrand2Percent,
-                "daily_volume_series" => array(),
-                "daily_billed_series" => array()
-            );
+                "daily_volume_series" => [],
+                "daily_billed_series" => []
+            ];
         }
 
-        $dailyBilled = array();
-        $dailyVolume = array();
+        $dailyBilled = [];
+        $dailyVolume = [];
         foreach ($rows as $row) {
             $date = $row["activity_date"];
             if (!isset($dailyBilled[$date])) {
@@ -1572,7 +1572,7 @@ Below are the Team Summary of your Section.",
         $days = count($dailyBilled);
         $avgDailyBilled = $days > 0 ? array_sum($dailyBilled) / $days : 0;
         $avgDailyVolume = $days > 0 ? array_sum($dailyVolume) / $days : 0;
-        return array(
+        return [
             "avg_daily_outlets_billed" => (string) round($avgDailyBilled),
             "avg_daily_volume" => (string) round($avgDailyVolume) . " Ms",
             "incentive_brand_1_label" => $brandMeta1["label"],
@@ -1581,12 +1581,12 @@ Below are the Team Summary of your Section.",
             "incentive_brand_2" => $incentiveBrand2Percent,
             "daily_volume_series" => $dailyVolume,
             "daily_billed_series" => $dailyBilled
-        );
+        ];
     }
 
     private function getSectionTeamIdList($rows, $aeNumber, $section)
     {
-        $teamIds = array();
+        $teamIds = [];
         foreach ($rows as $row) {
             $teamId = isset($row["team_id"]) ? (int) $row["team_id"] : 0;
             if ($teamId > 0) {
@@ -1620,8 +1620,8 @@ Below are the Team Summary of your Section.",
         $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $monthStartDate = date("Y-m-01", strtotime($currentDate));
 
-        $targetExprParts = array();
-        $saleExprParts = array();
+        $targetExprParts = [];
+        $saleExprParts = [];
         foreach ($columns as $col) {
             $targetExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
             $saleExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
@@ -1660,7 +1660,7 @@ Below are the Team Summary of your Section.",
     private function getFocusBrandOneProducts($branchIdList, $month, $year)
     {
         if ($branchIdList === "") {
-            return array();
+            return [];
         }
         $brandProductsTable = "tblbranch_products_month_wise";
         $action = null;
@@ -1670,7 +1670,7 @@ Below are the Team Summary of your Section.",
             "AND summary_column_name IS NOT NULL AND summary_column_name != '' ORDER BY sort_order, rec_id";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rowsCount);
 
-        $products = array();
+        $products = [];
         if ($rowsCount > 0) {
             while ($row = $this->_dbConn->GetData($action)) {
                 $col = isset($row["summary_column_name"]) ? trim((string) $row["summary_column_name"]) : "";
@@ -1680,17 +1680,17 @@ Below are the Team Summary of your Section.",
                 }
                 $label = $name !== "" ? ($name . " (Incentive Brand) ") : "NA";
                 if (!isset($products[$label])) {
-                    $products[$label] = array("columns" => array(), "label" => $label);
+                    $products[$label] = ["columns" => [], "label" => $label];
                 }
                 $products[$label]["columns"][$col] = true;
             }
         }
-        $result = array();
+        $result = [];
         foreach ($products as $meta) {
-            $result[] = array(
+            $result[] = [
                 "columns" => array_keys($meta["columns"]),
                 "label" => $meta["label"]
-            );
+            ];
             if (count($result) >= 2) {
                 break;
             }
@@ -1700,7 +1700,7 @@ Below are the Team Summary of your Section.",
 
     private function calculateIncentiveBrandMeta($rows, $teamType, $currentDate, $focusBrand, $aeNumber, $section)
     {
-        $teamIds = array();
+        $teamIds = [];
         foreach ($rows as $row) {
             $teamId = isset($row["team_id"]) ? (int) $row["team_id"] : 0;
             if ($teamId > 0) {
@@ -1708,7 +1708,7 @@ Below are the Team Summary of your Section.",
             }
         }
         if (count($teamIds) === 0) {
-            return array("label" => "Incentive Brand " . $focusBrand, "percent" => "0%");
+            return ["label" => "Incentive Brand " . $focusBrand, "percent" => "0%"];
         }
 
         $month = date("m", strtotime($currentDate));
@@ -1716,22 +1716,22 @@ Below are the Team Summary of your Section.",
         $teamIdList = implode(",", array_keys($teamIds));
         $branchIdList = $this->getSectionBranchIdList($rows, $aeNumber, $section);
         if ($branchIdList === "") {
-            return array("label" => "Incentive Brand " . $focusBrand, "percent" => "0%");
+            return ["label" => "Incentive Brand " . $focusBrand, "percent" => "0%"];
         }
 
         $brandMeta = $this->getIncentiveBrandColumnsAndNames($branchIdList, $month, $year, $teamType, $focusBrand);
         $columns = $brandMeta["columns"];
         $label = $brandMeta["label"];
         if (count($columns) === 0) {
-            return array("label" => $label, "percent" => "0%");
+            return ["label" => $label, "percent" => "0%"];
         }
 
         $targetTable = "tblassign_target";
         $summaryTable = $this->_tables["VANDS_SUMMARY_TABLE"];
         $monthStartDate = date("Y-m-01", strtotime($currentDate));
 
-        $targetExprParts = array();
-        $saleExprParts = array();
+        $targetExprParts = [];
+        $saleExprParts = [];
         foreach ($columns as $col) {
             $targetExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
             $saleExprParts[] = "COALESCE(SUM(COALESCE($col,0)),0)";
@@ -1762,18 +1762,18 @@ Below are the Team Summary of your Section.",
         }
 
         if ($targetValue <= 0) {
-            return array("label" => $label, "percent" => "0%");
+            return ["label" => $label, "percent" => "0%"];
         }
         $percent = ($saleValue / $targetValue) * 100;
-        return array(
+        return [
             "label" => $label,
             "percent" => $this->formatNumber($percent, 2) . "%"
-        );
+        ];
     }
 
     private function getSectionBranchIdList($rows, $aeNumber, $section)
     {
-        $branchIds = array();
+        $branchIds = [];
         foreach ($rows as $row) {
             $branchId = isset($row["branch_id"]) ? (int) $row["branch_id"] : 0;
             if ($branchId > 0) {
@@ -1809,8 +1809,8 @@ Below are the Team Summary of your Section.",
             "AND summary_column_name IS NOT NULL AND summary_column_name != '' ORDER BY product_name";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rowsCount);
 
-        $columns = array();
-        $names = array();
+        $columns = [];
+        $names = [];
         if ($rowsCount > 0) {
             while ($row = $this->_dbConn->GetData($action)) {
                 $col = isset($row["summary_column_name"]) ? trim((string) $row["summary_column_name"]) : "";
@@ -1825,10 +1825,10 @@ Below are the Team Summary of your Section.",
         }
         $nameList = array_keys($names);
         $label = count($nameList) > 0 ? implode(", ", $nameList) : ("Incentive Brand " . $focusBrand);
-        return array(
+        return [
             "columns" => array_keys($columns),
             "label" => $label
-        );
+        ];
     }
 
     private function getAeSummaryRows($aeNumber, $section, $dateFrom, $dateTo)
@@ -1844,7 +1844,7 @@ Below are the Team Summary of your Section.",
             " AND b.ae_number = '$aeNumber' AND b.section = '$section' AND a.activity_date BETWEEN '$dateFrom' AND '$dateTo'";
         $this->_dbConn->ExecuteSelectQuery($query, $summaryAction, $summaryRows);
 
-        $rows = array();
+        $rows = [];
         if ($summaryRows > 0) {
             while ($summaryRow = $this->_dbConn->GetData($summaryAction)) {
                 $rows[] = $summaryRow;
@@ -1860,19 +1860,19 @@ Below are the Team Summary of your Section.",
         $rows = 0;
         $query = "SELECT DISTINCT team_id, team_name, wd_code FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND is_type IN (0,2,5)";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
-        $teams = array();
+        $teams = [];
         if ($rows > 0) {
             while ($row = $this->_dbConn->GetData($action)) {
                 $teamId = isset($row["team_id"]) ? trim((string) $row["team_id"]) : "";
                 $name = isset($row["team_name"]) ? trim((string) $row["team_name"]) : "";
                 $wdCode = isset($row["wd_code"]) ? trim((string) $row["wd_code"]) : "";
                 if ($teamId !== "" && $name !== "") {
-                    $teams[$teamId] = array(
+                    $teams[$teamId] = [
                         "team_id" => $teamId,
                         "team_name" => $name,
                         "wd_code" => $wdCode,
                         "entry" => $name . ($wdCode !== "" ? " (" . $wdCode . ")" : "")
-                    );
+                    ];
                 }
             }
         }
@@ -1898,10 +1898,10 @@ Below are the Team Summary of your Section.",
                 }
             }
         }
-        return array(
+        return [
             "has_npsr" => $hasNpsr,
             "has_van" => $hasVan
-        );
+        ];
     }
 
     private function getSectionTypeBifurcationCounts($aeNumber, $section)
@@ -1914,7 +1914,7 @@ Below are the Team Summary of your Section.",
             "COUNT(DISTINCT CASE WHEN is_type = 5 THEN team_id END) AS npsr_count " .
             "FROM $projectTeamTable WHERE dstatus = 0 AND s_id = 99 AND ae_number = '$aeNumber' AND section = '$section' AND is_type IN (0,2,5)";
         $this->_dbConn->ExecuteSelectQuery($query, $action, $rows);
-        $result = array("van_ds_count" => 0, "npsr_count" => 0);
+        $result = ["van_ds_count" => 0, "npsr_count" => 0];
         if ($rows > 0) {
             $data = $this->_dbConn->GetData($action);
             $result["van_ds_count"] = isset($data["van_ds_count"]) ? (int) $data["van_ds_count"] : 0;
@@ -1956,7 +1956,7 @@ Below are the Team Summary of your Section.",
 
     private function filterByType($rows, $teamType)
     {
-        $result = array();
+        $result = [];
         foreach ($rows as $row) {
             $type = isset($row["is_type"]) ? (int) $row["is_type"] : -1;
             if ((int) $teamType === 0) {
@@ -1982,7 +1982,7 @@ Below are the Team Summary of your Section.",
 
     private function buildProductSaleVolumeFormula()
     {
-        $formulaParts = array();
+        $formulaParts = [];
         for ($index = 1; $index <= 145; $index++) {
             $formulaParts[] = "COALESCE(a.total_sale_product$index,0)";
         }
@@ -1991,7 +1991,7 @@ Below are the Team Summary of your Section.",
 
     private function buildLineCutCountFormula()
     {
-        $formulaParts = array();
+        $formulaParts = [];
         for ($index = 1; $index <= 145; $index++) {
             $formulaParts[] = "CASE WHEN COALESCE(a.total_sale_product$index,0) > 0 THEN 1 ELSE 0 END";
         }
@@ -2025,7 +2025,7 @@ Below are the Team Summary of your Section.",
 
     private function emptyTodaySnapshot()
     {
-        return array(
+        return [
             "avg_outlets_visited" => "0",
             "avg_outlets_billed" => "0",
             "avg_strike_rate" => "0%",
@@ -2040,7 +2040,7 @@ Below are the Team Summary of your Section.",
             "avg_time_spent" => "0h 0m",
             "below_6_hours" => "0",
             "below_6_hours_names" => ""
-        );
+        ];
     }
 }
 

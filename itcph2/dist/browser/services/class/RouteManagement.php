@@ -12,11 +12,11 @@ class RouteManagement
     private $_tables = [];
     private $_valErrors = [];
     private $_validationLength = [];
-    private $_arrSeperator = array(
+    private $_arrSeperator = [
         1 => " ",
         2 => "-",
         3 => "_",
-    );
+    ];
 
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
@@ -30,13 +30,13 @@ class RouteManagement
 
     final public function getAddTeamData()
     {
-        $arrResult = array(
+        $arrResult = [
             "branchList" => getBranchList($this->_dbConn, true, "dstatus = 0"),
             "teamList" => getTeamsOptions($this->_dbConn, true, "dstatus = 0"),
             "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "rec_id"),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -46,22 +46,22 @@ class RouteManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             $branch = "'" . implode("','", $branch) . "'";
             $branchCond .= "branch_id IN ($branch)";
 
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "$branchCond"),
 
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
                 "routeList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -71,39 +71,39 @@ class RouteManagement
         $teamCond = "";
         if ($team) {
             if (!is_array($team)) {
-                $team = array($team);
+                $team = [$team];
             }
             $team = "'" . implode("','", $team) . "'";
             $teamCond .= "team_id IN ($team) AND dstatus = 0";
 
-            $arrResult = array(
+            $arrResult = [
                 "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name", "$teamCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "routeList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getViewRouteData()
     {
-        $arrResult = array(
+        $arrResult = [
             "branchList" => getBranchList($this->_dbConn),
             "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "dstatus = 0"),
             "routeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['ROUTE_DETAILS_TABLE'], "route_name", "route_name", "dstatus = 0"),
-            "sortOptions" => array(
-                array("label" => "Team Name", "value" => "b.team_name"),
-                array("label" => "Team ID", "value" => "a.team_id"),
-                array("label" => "Date Created - ASC", "value" => "a.rlm"),
-            ),
-            "statusList" => array(
-                array("label" => "Active", "value" => '0'),
-                array("label" => "Deleted", "value" => '1'),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Team Name", "value" => "b.team_name"],
+                ["label" => "Team ID", "value" => "a.team_id"],
+                ["label" => "Date Created - ASC", "value" => "a.rlm"],
+            ],
+            "statusList" => [
+                ["label" => "Active", "value" => '0'],
+                ["label" => "Deleted", "value" => '1'],
+            ],
+            "viewHeader" => [
                 "Rec_ID",
                 "Team ID",
                 "Wd Code",
@@ -114,8 +114,8 @@ class RouteManagement
                 "Outlet Mobile",
                 "KYC Status",
                 "Status"
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "teamId",
                 "wdCode",
@@ -126,10 +126,10 @@ class RouteManagement
                 "outletMobile",
                 "kycStatus",
                 "deleteStatus"
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -200,7 +200,7 @@ class RouteManagement
                 $recId = $arrData["rec_id"];
                 $teamId = $arrData["team_id"];
                 $kycDone = (isset($arrData['kyc_done']) && $arrData['kyc_done'] == '1') ? 'Yes' : 'No';
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $recId,
                     "teamId" => $teamId,
                     "wdCode" => $arrData["wd_code"],
@@ -212,13 +212,13 @@ class RouteManagement
                     "kycStatus" => $kycDone,
                     "dstatus" => (int)$arrData['dstatus'],
                     "deleteStatus" => $GLOBALS["ARR_DELETE_STATUS"][$arrData['dstatus']],
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 

@@ -1,6 +1,6 @@
 <?php
 
-$ACTION_LIST = array(
+$ACTION_LIST = [
     'ADD_DATA' => 'add_data',
     'CAPTCHA' => 'captcha',
     'CHANGE_PASSWORD' => 'change_password',
@@ -57,4 +57,4 @@ $ACTION_LIST = array(
     'SUBMIT_DATA' => 'submit_data',
     'GET_AI_INSIGHTS' => 'get_ai_insights',
     'GET_AI_SCOPE_OPTIONS' => 'get_ai_scope_options',
-);
+];

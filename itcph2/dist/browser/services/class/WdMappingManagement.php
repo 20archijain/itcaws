@@ -29,7 +29,7 @@ class WdMappingManagement
         $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -41,7 +41,7 @@ class WdMappingManagement
         $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -53,7 +53,7 @@ class WdMappingManagement
         $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -65,7 +65,7 @@ class WdMappingManagement
         $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -77,7 +77,7 @@ class WdMappingManagement
         $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -89,7 +89,7 @@ class WdMappingManagement
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -101,7 +101,7 @@ class WdMappingManagement
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -121,11 +121,11 @@ class WdMappingManagement
 
     final public function getAddProjectData()
     {
-        $arrResult = array(
+        $arrResult = [
             "districtList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['BRANCH_TABLE'], "district", "district", "dstatus = 0"),
             "branchList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['BRANCH_TABLE'], "main_branch", "main_branch", "dstatus = 0"),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -147,7 +147,7 @@ class WdMappingManagement
 
         //check if wd exists
         // Don't use dstatus = 0
-        $iStatus = isRecordExist($this->_dbConn, $mappingTable, "wd_code", "wd_code = ?", array($wdCode));
+        $iStatus = isRecordExist($this->_dbConn, $mappingTable, "wd_code", "wd_code = ?", [$wdCode]);
 
         // Not exist
         if ($iStatus == 0) {
@@ -156,29 +156,27 @@ class WdMappingManagement
 
             $cols = "district, branch, circle, circle_name, section, section_name, wd_code, wd_firm_name, wd_market, wd_pop_group, rcd, rdt";
             $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-            $arrParams = array($district, $branch, $circle, $circle_name, $section, $section_name, $wdCode, $wd_firm_name, $wd_market, $wd_pop_group, $cD, $cDT);
+            $arrParams = [$district, $branch, $circle, $circle_name, $section, $section_name, $wdCode, $wd_firm_name, $wd_market, $wd_pop_group, $cD, $cDT];
 
             // Add wd
             $iStatus = addRecord($this->_dbConn, $mappingTable, $cols, $vals, $arrParams);
 
             // wd added
             if ($iStatus == 2) {
-                $arrMessage = responseMessage(array($GLOBALS['DATA_ADDED']), 1);
+                $arrMessage = responseMessage([$GLOBALS['DATA_ADDED']], 1);
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_ADDED']));
+                $arrMessage = responseMessage([$GLOBALS['DATA_NOT_ADDED']]);
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['WD_EXISTS']));
+            $arrMessage = responseMessage([$GLOBALS['WD_EXISTS']]);
         }
-
 
         echo json_encode($arrMessage);
     }
 
-
     final public function getViewWDMappingData()
     {
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -187,7 +185,7 @@ class WdMappingManagement
             "wdCodeList" => $this->getWdCodeList(),
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
-            "viewHeader" => array(
+            "viewHeader" => [
                 "app.wdMapping.mappingID",
                 "app.wdMapping.district",
                 "app.wdMapping.branch",
@@ -200,8 +198,8 @@ class WdMappingManagement
                 "app.wdMapping.wd_market",
                 "app.wdMapping.wd_pop_group",
                 "WD Status"
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "district",
                 "branch",
@@ -214,9 +212,9 @@ class WdMappingManagement
                 "wd_market",
                 "wd_pop_group",
                 "wdStatus",
-            ),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+            ],
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -225,7 +223,7 @@ class WdMappingManagement
     {
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
-        $arrResult = array();
+        $arrResult = [];
 
         $where = $this->getCondition();
 
@@ -247,7 +245,7 @@ class WdMappingManagement
                 } else {
                     $status = "Inactive";
                 }
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $arrData['rec_id'],
                     "district" => $arrData['district'],
                     "branch" => $arrData['branch'],
@@ -260,12 +258,12 @@ class WdMappingManagement
                     "wd_market" => $arrData['wd_market'],
                     "wd_pop_group" => $arrData['wd_pop_group'],
                     "wdStatus" => $status,
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -273,7 +271,7 @@ class WdMappingManagement
     {
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $wdMappingTable = $this->_tables["WD_MAPPING_TABLE"];
-        $arrBody = array();
+        $arrBody = [];
 
         $where = $this->getCondition();
 
@@ -288,7 +286,7 @@ class WdMappingManagement
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $arrBody[] = array(
+                $arrBody[] = [
                     $arrData['rec_id'],
                     $arrData['district'],
                     $arrData['branch'],
@@ -300,24 +298,24 @@ class WdMappingManagement
                     $arrData['wd_firm_name'],
                     $arrData['wd_market'],
                     $arrData['wd_pop_group'],
-                );
+                ];
             }
         }
 
-        $header = array("Mapping ID", "District", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Firm Name", "WD Market", "WD POP Group");
+        $header = ["Mapping ID", "District", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Firm Name", "WD Market", "WD POP Group"];
 
-        $arrResult = formatDownloadData("Mapping Details_details", array($header), $arrBody);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("Mapping Details_details", [$header], $arrBody);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -332,10 +330,10 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -344,11 +342,11 @@ class WdMappingManagement
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -368,25 +366,24 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -405,10 +402,10 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -417,11 +414,11 @@ class WdMappingManagement
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -440,10 +437,10 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -452,11 +449,11 @@ class WdMappingManagement
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -475,10 +472,10 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -487,11 +484,11 @@ class WdMappingManagement
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -510,24 +507,23 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -546,10 +542,10 @@ class WdMappingManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -562,7 +558,7 @@ class WdMappingManagement
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -571,25 +567,25 @@ class WdMappingManagement
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
                 "wdCodeList" => $this->getWdCodeList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -599,7 +595,7 @@ class WdMappingManagement
         $branchCond = "";
         if (!empty($branch)) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -608,23 +604,23 @@ class WdMappingManagement
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -634,7 +630,7 @@ class WdMappingManagement
         $circleCond = "";
         if (!empty($circle)) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $circleCond = ""; // No condition for 'all'
@@ -643,24 +639,23 @@ class WdMappingManagement
                 $circleCond = " AND b.circle IN ($circle)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getWdCode()
     {
@@ -668,7 +663,7 @@ class WdMappingManagement
         $sectionCond = "";
         if (!empty($section)) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $sectionCond = ""; // No condition for 'all'
@@ -677,19 +672,19 @@ class WdMappingManagement
                 $sectionCond = " AND b.section IN ($section)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 }

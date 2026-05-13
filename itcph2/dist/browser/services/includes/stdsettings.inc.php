@@ -136,17 +136,16 @@ $PHP_FPDF_PATH = $LIB_PATH . "/fpdf186/fpdf.php";
 $DB_DBNAME_CLOUD = 'itcawsportal_mobiappilaryauth';
 
 // Watermark Position
-$ARR_WATERMARK_POSITION = array(
+$ARR_WATERMARK_POSITION = [
     "TOP" => "top",
     "BOTTOM" => "bottom",
     "LEFT" => "left",
     "RIGHT" => "right",
     "CENTER_HORIZONTAL" => "centerHorizontal",
-);
-
+];
 
 // Team Types
-$ARR_TEAM_TYPES = array(
+$ARR_TEAM_TYPES = [
     0 => "Van DS",
     1 => "CSR",
     2 => "Town SWD",
@@ -158,4 +157,4 @@ $ARR_TEAM_TYPES = array(
     8 => "Stockiest DS",
     9 => "Common FMCG Lite DS",
     10 => "FSO",
-);
+];

@@ -132,17 +132,19 @@ class Ppt
             $offsetX = $this->_slideEdgeMarginX +
                 (
                     ($this->_imageWidth + $this->_marginXBwImage) *
-                    (($imageNoInRow !== 0 ? $imageNoInRow : $this->_noOfImagesInRow) - 1));
+                    (($imageNoInRow !== 0 ? $imageNoInRow : $this->_noOfImagesInRow) - 1)
+                );
 
             $offsetY = $this->_headingheight + $this->_slideEdgeOffsetY +
                 (
                     ($this->_imageheight + $this->_marginYBwImage + $textBelowImageSpace) *
-                    (($imageNoInColumn !== 0 ? $imageNoInColumn : $this->_noOfRowsInEachSlide) - 1));
+                    (($imageNoInColumn !== 0 ? $imageNoInColumn : $this->_noOfRowsInEachSlide) - 1)
+                );
 
-            $this->_arrImageCoordinates[] = array(
+            $this->_arrImageCoordinates[] = [
                 "offsetX" => $offsetX,
                 "offsetY" => $offsetY,
-            );
+            ];
         }
     }
 
@@ -243,10 +245,10 @@ class Ppt
         if ($isDownloadFile) {
             header("Location: $downloadUrl");
         } else {
-            $fileDetails = array(
+            $fileDetails = [
                 "downloadUrl" => $downloadUrl,
                 "savePath" => $savePath,
-            );
+            ];
 
             return $fileDetails;
         }

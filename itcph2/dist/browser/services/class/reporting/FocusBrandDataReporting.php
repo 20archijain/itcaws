@@ -15,7 +15,6 @@ class FocusBrandDataReporting
     private $_arrAccessInfo = [];
     private $_tables = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
@@ -31,10 +30,10 @@ class FocusBrandDataReporting
         // filter query
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
-            array(
-                "branch" => array("a.branch_id", 0, true, true),
-                "dsType" => array("a.team_type", 1),
-            ),
+            [
+                "branch" => ["a.branch_id", 0, true, true],
+                "dsType" => ["a.team_type", 1],
+            ],
             $this->_dbConn
         );
 
@@ -54,41 +53,40 @@ class FocusBrandDataReporting
             $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
             $branchFilter = true;
         }
-        $arrResult = array(
+        $arrResult = [
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
             "branchList" => $branchList,
-            "reportTypeList" => array(
-                array(
+            "reportTypeList" => [
+                [
                     "label" => "District-wise",
                     "value" => "1",
-                ),
-                array(
+                ],
+                [
                     "label" => "Region-wise",
                     "value" => "2",
-                ),
-                array(
+                ],
+                [
                     "label" => "Branch-wise",
                     "value" => "3",
-                ),
-            ),
-            "brandTypeList" => array(
-                array(
+                ],
+            ],
+            "brandTypeList" => [
+                [
                     "label" => "Focus Brands",
                     "value" => "1",
-                ),
-                array(
+                ],
+                [
                     "label" => "OverAll",
                     "value" => "2",
-                ),
-            ),
+                ],
+            ],
             "dsTypeList" => getTeamType($this->_dbConn),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function downloadMasterData()
     {
@@ -120,14 +118,14 @@ class FocusBrandDataReporting
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
 
-        $arrExcelHeaderCheck = array();
+        $arrExcelHeaderCheck = [];
         // Don't use a.dstatus = 0 AND c.dstatus = 0
         $arrExcelData = [];
-        $arrExcelData[] = array("District", "DS Type");
-        $arrBody = array();
+        $arrExcelData[] = ["District", "DS Type"];
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $sQuery = "SELECT distinct a.team_type, a.product_name, b.district FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -143,7 +141,7 @@ class FocusBrandDataReporting
         foreach ($arrBody as $exDistrict => $arrDistrict) {
             foreach ($arrDistrict as $exDsType => $arrDsType) {
                 $arrExcelHeaderCheck[] = $arrDsType;
-                $localArr = array($exDistrict, $types[$exDsType]);
+                $localArr = [$exDistrict, $types[$exDsType]];
                 $arrExcelData[] = array_merge($localArr, $arrDsType);
             }
         }
@@ -200,14 +198,14 @@ class FocusBrandDataReporting
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
 
-        $arrExcelHeaderCheck = array();
+        $arrExcelHeaderCheck = [];
         // Don't use a.dstatus = 0 AND c.dstatus = 0
         $arrExcelData = [];
-        $arrExcelData[] = array("District", "Branch", "Region", "DS Type");
-        $arrBody = array();
+        $arrExcelData[] = ["District", "Branch", "Region", "DS Type"];
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $sQuery = "SELECT distinct a.team_type, a.product_name, b.district,  b.branch_name, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0  AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -228,7 +226,7 @@ class FocusBrandDataReporting
                 foreach ($arrMainBranch as $exBranchName => $arrBranchName) {
                     foreach ($arrBranchName as $exDsType => $arrDsType) {
                         $arrExcelHeaderCheck[] = $arrDsType;
-                        $localArr = array($exDistrict, $exMainBranch, $exBranchName, $types[$exDsType]);
+                        $localArr = [$exDistrict, $exMainBranch, $exBranchName, $types[$exDsType]];
                         $arrExcelData[] = array_merge($localArr, $arrDsType);
                     }
                 }
@@ -270,7 +268,6 @@ class FocusBrandDataReporting
         echo json_encode($arrMessage);
     }
 
-
     final public function downloadMasterDataBranch()
     {
         $dwnCond = $this->getCondition();
@@ -288,14 +285,14 @@ class FocusBrandDataReporting
         // order by condition
         $sOrderCond = getOrderByCond("a.rcd");
 
-        $arrExcelHeaderCheck = array();
+        $arrExcelHeaderCheck = [];
         // Don't use a.dstatus = 0 AND c.dstatus = 0
         $arrExcelData = [];
-        $arrExcelData[] = array("District", "Branch", "DS Type");
-        $arrBody = array();
+        $arrExcelData[] = ["District", "Branch", "DS Type"];
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $sQuery = "SELECT distinct a.team_type, a.product_name, b.district, b.main_branch FROM $branchPickupTable AS a, $branchTable AS b WHERE a.dstatus = 0 AND b.dstatus = 0 AND a.branch_id = b.branch_id $brandCond $dwnCond $sOrderCond";
         // echo $sQuery;die;
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -314,7 +311,7 @@ class FocusBrandDataReporting
             foreach ($arrDistrict as $exMainBranch => $arrMainBranch) {
                 foreach ($arrMainBranch as $exDsType => $arrDsType) {
                     $arrExcelHeaderCheck[] = $arrDsType;
-                    $localArr = array($exDistrict, $exMainBranch, $types[$exDsType]);
+                    $localArr = [$exDistrict, $exMainBranch, $types[$exDsType]];
                     $arrExcelData[] = array_merge($localArr, $arrDsType);
                 }
             }

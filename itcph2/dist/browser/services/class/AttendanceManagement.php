@@ -145,11 +145,11 @@ class AttendanceManagement
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -164,10 +164,10 @@ class AttendanceManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -176,11 +176,11 @@ class AttendanceManagement
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -199,10 +199,10 @@ class AttendanceManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -211,11 +211,11 @@ class AttendanceManagement
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -234,10 +234,10 @@ class AttendanceManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -246,11 +246,11 @@ class AttendanceManagement
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -269,10 +269,10 @@ class AttendanceManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -281,11 +281,11 @@ class AttendanceManagement
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -303,10 +303,10 @@ class AttendanceManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -315,11 +315,11 @@ class AttendanceManagement
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -349,10 +349,10 @@ class AttendanceManagement
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -366,7 +366,7 @@ class AttendanceManagement
         $branchFilter = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
 
             if (in_array('all', $district)) {
@@ -379,7 +379,7 @@ class AttendanceManagement
                 $branchFilter = "district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => getBranchList($this->_dbConn, false, "$branchFilter", "", 1, false, true, "mainBranch"),
                 "teamType" => getTeamType($this->_dbConn, $district),
                 "circleList" => $this->getCircleList($districtCond),
@@ -387,9 +387,9 @@ class AttendanceManagement
                 "wdCodeList" => $this->getWdCodeList($districtCond),
                 "teamList" => $this->getTeamsList($districtCond),
                 "teamType" => $this->getDsTypeList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -400,9 +400,9 @@ class AttendanceManagement
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -412,7 +412,7 @@ class AttendanceManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -421,24 +421,24 @@ class AttendanceManagement
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
                 "teamType" => $this->getDsTypeList($branchCond),
                 "teamList" => $this->getTeamsList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -449,7 +449,7 @@ class AttendanceManagement
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -458,23 +458,23 @@ class AttendanceManagement
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -485,7 +485,7 @@ class AttendanceManagement
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -495,21 +495,21 @@ class AttendanceManagement
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -520,7 +520,7 @@ class AttendanceManagement
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -529,19 +529,19 @@ class AttendanceManagement
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -560,7 +560,7 @@ class AttendanceManagement
         if ($dsType >= 0 || $wdCode || $branch || $circle || $section) {
             if (isset($dsType) && $dsType != "" && $dsType >= 0) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $dsTypeCond = ""; // No condition for 'all'
@@ -571,7 +571,7 @@ class AttendanceManagement
             }
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -582,7 +582,7 @@ class AttendanceManagement
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -593,7 +593,7 @@ class AttendanceManagement
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -604,7 +604,7 @@ class AttendanceManagement
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -614,26 +614,26 @@ class AttendanceManagement
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id IN ('99',10) $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     private function getAttendanceTimeList()
     {
-        $arrOptions = array(
-            array("label" => "Morning", "value" => "0"),
-            array("label" => "Day End", "value" => "1"),
-        );
+        $arrOptions = [
+            ["label" => "Morning", "value" => "0"],
+            ["label" => "Day End", "value" => "1"],
+        ];
 
         return $arrOptions;
     }
@@ -645,17 +645,17 @@ class AttendanceManagement
         $arrResult["yearList"] = getYearList();
         $arrResult["monthList"] = getMonthList();
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     private function viewAttendance()
     {
         global $ARR_TEAM_TYPES;
-        $arrData = array(
-            "tracker" => array(),
-            "locator" => array(),
-        );
+        $arrData = [
+            "tracker" => [],
+            "locator" => [],
+        ];
 
         $date = getFormData($this->_data, "date");
         $date = $date ? currentDate(getValidDate($date)) : currentDate();
@@ -676,7 +676,7 @@ class AttendanceManagement
         $where = $this->getAttendanceCondition();
         $where .= " AND a.capture_date = ?";
         $where .= " AND a.call_type = ?";
-        $arrParams = array($date, $attendanceTime);
+        $arrParams = [$date, $attendanceTime];
 
         // $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD", 5 => "NPSR");
         $rsAction = null;
@@ -718,13 +718,13 @@ class AttendanceManagement
                 $arrData["tracker"][] = formatListingImage($imgPath, $imgName, $smallImage, false, $description, $row["att_id"], $row["team_name"], $time);
 
                 // attandance locator
-                $arrData["locator"][] = array(
+                $arrData["locator"][] = [
                     "latitude" => (float) $row["lt"],
                     "longitude" => (float) $row["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $pinColor,
                     "markerTitle" => $row["team_name"],
                     "windowTitle" => $trackerDescription,
-                );
+                ];
             }
         }
 
@@ -736,19 +736,19 @@ class AttendanceManagement
     {
         $arrResult = $this->viewAttendance();
 
-        $arrResponse = array("totalPresent" => $arrResult["total"], "totalTeams" => $this->_totalTeams, "images" => $arrResult["tracker"]);
+        $arrResponse = ["totalPresent" => $arrResult["total"], "totalTeams" => $this->_totalTeams, "images" => $arrResult["tracker"]];
         if ($arrResult["total"] > 0) {
-            $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+            $arrMessage = responseMessage([], 1, $arrResponse, true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0, $arrResponse);
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']], 0, $arrResponse);
         }
         echo json_encode($arrMessage);
     }
 
     final public function getDownloadData()
     {
-        $arrInfo = array();
-        $arrBody = array();
+        $arrInfo = [];
+        $arrBody = [];
 
         $month = getFormData($this->_data, "month");
         $month = $month ? $month : date("m");
@@ -762,7 +762,7 @@ class AttendanceManagement
         $where = $this->getAttendanceCondition("c.district", "b.branch_id", "b.is_type");
         $where2 = "AND a.capture_date LIKE ?";
         $where2 .= " AND a.call_type = ?";
-        $arrParams = array("$year-$month-%");
+        $arrParams = ["$year-$month-%"];
         if ($attendanceTime != '') {
             $arrParams[] = $attendanceTime;
         } else {
@@ -771,7 +771,7 @@ class AttendanceManagement
 
         // create header
         $days = date("t", strtotime("$year-$month-01"));
-        $header = array();
+        $header = [];
         $header = range(1, $days);
         array_unshift($header, "District");
         array_unshift($header, "Team ID");
@@ -798,10 +798,10 @@ class AttendanceManagement
                 $section = $row['section'];
 
                 if (!isset($arrInfo[$sData_3])) {
-                    $arrInfo[$sData_3] = array();
+                    $arrInfo[$sData_3] = [];
                 }
 
-                $arrInfo[$sData_3][] = array(
+                $arrInfo[$sData_3][] = [
                     "dayPresent" => (int) date("d", strtotime($sData_0)),
                     "branchName" => $row['main_branch'],
                     "teamName" => $sData_1,
@@ -809,7 +809,7 @@ class AttendanceManagement
                     "district" => $row['district'],
                     "circle" => $row['circle'],
                     "section" => $row['section'],
-                );
+                ];
             }
         }
 
@@ -866,7 +866,7 @@ class AttendanceManagement
                 $sData_7 = $row2['circle'];
                 $sData_8 = $row2['section'];
 
-                $arrAtt = array($sData_6, $sData_7, $sData_8, $sData_3, $sData_4, $sData_2, $sData_5);
+                $arrAtt = [$sData_6, $sData_7, $sData_8, $sData_3, $sData_4, $sData_2, $sData_5];
                 // insert each day attendance
                 for ($day = 1; $day <= $days; $day++) {
                     $arrAtt[] = "A";
@@ -879,8 +879,8 @@ class AttendanceManagement
             }
         }
 
-        $arrResult = formatDownloadData("Attendance_report", array($header), $arrBody);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("Attendance_report", [$header], $arrBody);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
@@ -888,7 +888,7 @@ class AttendanceManagement
     {
         $arrResult = $this->getTeamsAndTimeOptions();
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -897,9 +897,9 @@ class AttendanceManagement
         $arrResult = $this->viewAttendance();
 
         if ($arrResult["total"] > 0) {
-            $arrMessage = responseMessage(array(), 1, array("total" => $arrResult["total"], "markers" => $arrResult["locator"]), true);
+            $arrMessage = responseMessage([], 1, ["total" => $arrResult["total"], "markers" => $arrResult["locator"]], true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
         echo json_encode($arrMessage);
     }
@@ -925,7 +925,7 @@ class AttendanceManagement
         if ($teamList) {
             $where .= " AND team_id IN $teamList";
         }
-        return array(
+        return [
             "attendanceTimeList" => $this->getAttendanceTimeList(),
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
@@ -936,7 +936,7 @@ class AttendanceManagement
             "circleList" => $this->getCircleList(),
             "sectionList" => $this->getSectionList(),
             "wdCodeList" => $this->getWdCodeList(),
-        );
+        ];
     }
 
     final public function getBranchTeamTypeList($wdCode = "wd_code")
@@ -944,7 +944,7 @@ class AttendanceManagement
         $wdCode = $this->_data['wdCode'];
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $wdCodeCond = ""; // No condition for 'all'
@@ -969,13 +969,13 @@ class AttendanceManagement
                 }
             }
         }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "teamType" => getTeamType($this->_dbConn, $where),
             "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  $wdCodeCond"),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 

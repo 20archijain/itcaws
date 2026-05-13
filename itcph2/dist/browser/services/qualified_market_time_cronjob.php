@@ -136,7 +136,7 @@ class processUpdateQualifiedMarketTime
                 } else {
                     $table = $routeTable;
                 }
-                $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", [], true);
                 $productCols = [];
                 $productNames = [];
 

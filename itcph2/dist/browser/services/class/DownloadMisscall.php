@@ -27,9 +27,9 @@ class DownloadMisscall
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "dataBaseList" => $this->getDatabaseName(),
-            "viewHeader" => array(
+            "viewHeader" => [
                 "Id",
                 "OTP",
                 "Mobile Number",
@@ -38,8 +38,8 @@ class DownloadMisscall
                 "RCD",
                 "RDT"
 
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "token",
                 "rec_who",
@@ -47,10 +47,10 @@ class DownloadMisscall
                 "processed_on",
                 "rcd",
                 "rdt"
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -59,9 +59,9 @@ class DownloadMisscall
         $where = "";
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("rcd", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["rcd", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         // if (
@@ -98,13 +98,13 @@ class DownloadMisscall
         $sQuery = "Show DATABASES like '$databaseName'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
         if ($iRows > 0) {
-            $arrData = array();
+            $arrData = [];
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $dataBases = array_values($row)[0];  // Get the first column value dynamically
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $dataBases,
                     "value" => $dataBases
-                );
+                ];
             }
         }
         return $arrData;
@@ -120,23 +120,23 @@ class DownloadMisscall
 
         $sQuery = "SHOW TABLES IN $database LIKE '$tableName'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
-        $arrResult = array();
+        $arrResult = [];
         if ($iRows > 0) {
-            $arrData = array();
+            $arrData = [];
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $tables = array_values($row)[0];  // Get the first column value dynamically
 
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $tables,
                     "value" => $tables
-                );
+                ];
             }
-            $arrResult = array(
+            $arrResult = [
                 "projectList" => $arrData
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -200,7 +200,7 @@ class DownloadMisscall
         $fp = fopen($filename, 'w');
 
         if ($fp === false) {
-            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            $arrMessage = responseMessage(["Failed to create CSV file"], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -219,12 +219,12 @@ class DownloadMisscall
 
         fclose($fp);
 
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
@@ -234,7 +234,7 @@ class DownloadMisscall
         $phoneCond = "";
         $database = getFormData($this->_data['searchbar'], 'database');
         $project = getFormData($this->_data['searchbar'], 'project');
-        $arrData = array();
+        $arrData = [];
         $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
         $sQuery = "SELECT rec_id, token, rec_who, process, processed_on, rcd, rdt, dstatus FROM $database.$project  WHERE dstatus = 0 $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
@@ -253,7 +253,7 @@ class DownloadMisscall
                 } else {
                     $showVerified = "Not Verified";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "id" => $row['rec_id'],
                     "token" => $row["token"],
                     "rec_who" => $row["rec_who"],
@@ -261,14 +261,14 @@ class DownloadMisscall
                     "processed_on" => $row["processed_on"],
                     "rcd" => $row["rcd"],
                     "rdt" => $row["rdt"],
-                );
+                ];
             }
         }
-        $arrData[] = array(
+        $arrData[] = [
             "total" => $limit["total"]
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrData), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrData], true);
         echo json_encode($arrMessage);
     }
 

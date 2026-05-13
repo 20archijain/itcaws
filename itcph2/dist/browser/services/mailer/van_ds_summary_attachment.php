@@ -44,7 +44,7 @@ class VanDsMailer
         $minQualifiedAttendanceTimeInMin =  (int) getRowColumn($this->_dbConn, $constantsTable, "con_value", "con_name = 'minWorkingTimeInMin'");
         $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
-        $fileName = "VanDS_Summary_" . str_replace(array(" ", ":"), "_", $currentDatetime) . ".xlsx";
+        $fileName = "VanDS_Summary_" . str_replace([" ", ":"], "_", $currentDatetime) . ".xlsx";
 
         $sBranchAction = null;
         $iBranchRows = 0;
@@ -55,17 +55,17 @@ class VanDsMailer
             while ($branchRow = $this->_dbConn->GetData($sBranchAction)) {
                 $branchId = $branchRow["branch_id"];
                 $branchName = $branchRow["branch_name"];
-                $arrTo = isset($branchRow["to_email"]) && $branchRow["to_email"] ? explode(",", $branchRow["to_email"]) : array();
-                $arrCc = isset($branchRow["cc_email"]) && $branchRow["cc_email"] ? explode(",", $branchRow["cc_email"]) : array();
+                $arrTo = isset($branchRow["to_email"]) && $branchRow["to_email"] ? explode(",", $branchRow["to_email"]) : [];
+                $arrCc = isset($branchRow["cc_email"]) && $branchRow["cc_email"] ? explode(",", $branchRow["cc_email"]) : [];
 
                 if (isNonEmptyArray($arrTo) || isNonEmptyArray($arrCc)) {
                     // create header based on branch
-                    $arrHeader = array("WD Code", "Team Name", "Start Time", "End Time", "Total Time Spent", "Outlet Order", "Sell-in Shops", "Other Shops", "KM Travelled", "Total Shops", "Qualified Attendance");
+                    $arrHeader = ["WD Code", "Team Name", "Start Time", "End Time", "Total Time Spent", "Outlet Order", "Sell-in Shops", "Other Shops", "KM Travelled", "Total Shops", "Qualified Attendance"];
 
                     // Get products
-                    $arrProducts = array();
-                    $arrProductsColumn = array();
-                    $arrQueryProductsColumn = array();
+                    $arrProducts = [];
+                    $arrProductsColumn = [];
+                    $arrQueryProductsColumn = [];
                     $sProductAction = null;
                     $iProductRows = 0;
                     $sProductQuery = "SELECT DISTINCT product_name, summary_column_name FROM $branchProductsTable WHERE dstatus = 0 AND branch_id = $branchId ORDER BY product_name";
@@ -96,7 +96,7 @@ class VanDsMailer
                     }
 
                     // get today's stock for each team
-                    $arrTeamWiseStock = array();
+                    $arrTeamWiseStock = [];
                     $sStockAction = null;
                     $iStockRows = 0;
                     $sStockQuery = "SELECT team_id, stock_type $sStockColumns FROM $stockSummaryTable WHERE dstatus = 0 AND capture_date = '$currentDate' AND stock_type IN (0, 1)";
@@ -107,7 +107,7 @@ class VanDsMailer
                             $teamId = $rowStock["team_id"];
                             $stockType = $rowStock["stock_type"];
 
-                            $arrTeamWiseStock[$teamId][$stockType] = array();
+                            $arrTeamWiseStock[$teamId][$stockType] = [];
                             foreach ($arrStockProducts as $product) {
                                 $arrTeamWiseStock[$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
                             }
@@ -123,7 +123,7 @@ class VanDsMailer
                         ", b.team_id, b.team_name, b.wd_code FROM $summaryTable AS a, $projectTeamTable AS b WHERE a.dstatus = 0 AND a.team_id = b.team_id AND a.activity_date = '$currentDate' AND b.branch_id = $branchId GROUP BY a.team_id ORDER BY b.team_name";
                     $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-                    $arrData = array();
+                    $arrData = [];
                     if ($iRows > 0) {
                         $i = 0;
                         while ($row = $this->_dbConn->GetData($sAction)) {
@@ -132,7 +132,7 @@ class VanDsMailer
                             $totalShops = $row["total_roc_deliveries"] + $row["total_other_shops"];
                             $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "Yes" : "No";
 
-                            $arrData[$i] = array(
+                            $arrData[$i] = [
                                 $row["wd_code"],
                                 $row["team_name"],
                                 currentDateTime($row["start_datetime"], "h:i:s A"),
@@ -144,7 +144,7 @@ class VanDsMailer
                                 isset($row["total_meter_travelled"]) ? round($row["total_meter_travelled"] / 1000, 2) : 0,
                                 $totalShops,
                                 $isQualifiedAttendance,
-                            );
+                            ];
 
                             // insert sale
                             foreach ($arrProductsColumn as $column) {
@@ -153,7 +153,7 @@ class VanDsMailer
 
                             // insert pickup stock Qty and Avg sale
                             foreach ($arrStockProducts as $product) {
-                                $arrStock = isset($arrTeamWiseStock[$teamId]) ? $arrTeamWiseStock[$teamId] : array();
+                                $arrStock = isset($arrTeamWiseStock[$teamId]) ? $arrTeamWiseStock[$teamId] : [];
                                 $arrData[$i][] = isset($arrStock[0][$product[1]]) ? $arrStock[0][$product[1]] : "";
                                 // $arrData[$i][] = isset($arrStock[1][$product[1]]) ? $arrStock[1][$product[1]] : "";
                             }
@@ -170,16 +170,16 @@ class VanDsMailer
 
                     if ($iTeamRows) {
                         while ($rowTeam = $this->_dbConn->GetData($rsTeamAction)) {
-                            $arrData[] = array(
+                            $arrData[] = [
                                 $rowTeam["wd_code"],
                                 $rowTeam["team_name"],
-                            );
+                            ];
                         }
                     }
 
                     $subject = "$branchName - Van DS Summary report for " . currentDate($currentDate, "d-m-Y");
                     // print_r($arrData);die;
-                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, array("kunalrajput8218@gmail.com"), array("hnys342@gmail.com"), true);
+                    sendMailWithCSVOrXlsxAttached(false, $fileName, $arrHeader, $arrData, $subject, ["kunalrajput8218@gmail.com"], ["hnys342@gmail.com"], true);
                 }
             }
         }
@@ -189,7 +189,7 @@ class VanDsMailer
     {
         if ($branchId) {
             return isset($this->arrBranchWiseStockProducts[$branchId]) && $this->arrBranchWiseStockProducts[$branchId] ?
-                $this->arrBranchWiseStockProducts[$branchId] : array();
+                $this->arrBranchWiseStockProducts[$branchId] : [];
         } else {
             $branchPickupstockProducts = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
 
@@ -205,9 +205,9 @@ class VanDsMailer
                     $summaryColumnName = $rowProduct["summary_column_name"];
 
                     if (!isset($this->arrBranchWiseStockProducts[$branchId])) {
-                        $this->arrBranchWiseStockProducts[$branchId] = array();
+                        $this->arrBranchWiseStockProducts[$branchId] = [];
                     }
-                    $this->arrBranchWiseStockProducts[$branchId][] = array($productName, $summaryColumnName);
+                    $this->arrBranchWiseStockProducts[$branchId][] = [$productName, $summaryColumnName];
                 }
             }
         }

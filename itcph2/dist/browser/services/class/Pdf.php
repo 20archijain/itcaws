@@ -31,7 +31,7 @@ class Pdf extends FPDF
     /**
      * Add title text to the page
      */
-    final public function addTitle($text, $fontSize = 24, $color = array(192, 0, 0))
+    final public function addTitle($text, $fontSize = 24, $color = [192, 0, 0])
     {
         $this->SetFont('Arial', 'B', $fontSize);
         $this->SetTextColor($color[0], $color[1], $color[2]);
@@ -69,10 +69,10 @@ class Pdf extends FPDF
         $y = null,
         $tableWidth = 277,
         $fontSize = 11,
-        $headerBgColor = array(255, 87, 51),
-        $headerTextColor = array(255, 255, 255),
-        $bodyTextColor = array(0, 0, 0),
-        $columnWidths = array()
+        $headerBgColor = [255, 87, 51],
+        $headerTextColor = [255, 255, 255],
+        $bodyTextColor = [0, 0, 0],
+        $columnWidths = []
     ) {
         if ($x === null) {
             $x = $this->_margin;
@@ -84,12 +84,12 @@ class Pdf extends FPDF
         $this->SetXY($x, $y);
 
         // Calculate dynamic column widths if not provided
-        $cellWidths = array();
+        $cellWidths = [];
         if (!empty($columnWidths) && count($columnWidths) === $cols) {
             $cellWidths = $columnWidths;
         } else {
             // Calculate max width needed for each column based on content
-            $maxWidths = array();
+            $maxWidths = [];
             $this->SetFont('Arial', 'B', $fontSize); // Set font for measurement
 
             for ($colIndex = 0; $colIndex < $cols; $colIndex++) {
@@ -128,7 +128,7 @@ class Pdf extends FPDF
 
         for ($rowIndex = 0; $rowIndex < $rows; $rowIndex++) {
             // Pre-process: wrap text for all cells in this row and calculate max lines
-            $wrappedCells = array();
+            $wrappedCells = [];
             $maxLines = 1;
 
             for ($colIndex = 0; $colIndex < $cols; $colIndex++) {
@@ -307,12 +307,12 @@ class Pdf extends FPDF
     private function wrapText($text, $maxWidth, $fontSize = 11)
     {
         if (empty($text)) {
-            return array('');
+            return [''];
         }
 
         $this->SetFont('Arial', '', $fontSize);
         $words = explode(' ', $text);
-        $lines = array();
+        $lines = [];
         $currentLine = '';
 
         foreach ($words as $word) {
@@ -331,7 +331,7 @@ class Pdf extends FPDF
             $lines[] = $currentLine;
         }
 
-        return empty($lines) ? array('') : $lines;
+        return empty($lines) ? [''] : $lines;
     }
 
     /**
@@ -348,10 +348,10 @@ class Pdf extends FPDF
         if ($isDownloadFile) {
             header("Location: $downloadUrl");
         } else {
-            $fileDetails = array(
+            $fileDetails = [
                 "downloadUrl" => $downloadUrl,
                 "savePath" => $savePath,
-            );
+            ];
 
             return $fileDetails;
         }

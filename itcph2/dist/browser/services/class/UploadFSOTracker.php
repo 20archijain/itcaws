@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-
 // phpcs:ignore
 class UploadFSOTracker
 {
@@ -30,16 +29,15 @@ class UploadFSOTracker
         $this->_validationLength = $GLOBALS['VALIDATOR_LENGTH'];
     }
 
-
     final public function downloadExcelHeaders()
     {
 
-        $products = array();
-        $arrData = array(
+        $products = [];
+        $arrData = [
             "Rec ID",
             "Month",
             "Year"
-        );
+        ];
 
         $products = getRowsColumn($this->_dbConn, "tblbranch_pickupstock_products", "product_name", "branch_id IN ('42','43')");
 
@@ -53,7 +51,7 @@ class UploadFSOTracker
         // Create data row with default values
         $currentMonth = date('m'); // Current month in mm format
         $currentYear = date('Y'); // Current year in yyyy format
-        $dataRow = array("1", $currentMonth, $currentYear);
+        $dataRow = ["1", $currentMonth, $currentYear];
 
         // Add "1" for each product column
         if (isNonEmptyArray($products)) {
@@ -62,7 +60,7 @@ class UploadFSOTracker
         }
 
         // Combine header and data row
-        $arr_merged = array($headerRow, $dataRow);
+        $arr_merged = [$headerRow, $dataRow];
         if (!empty($arr_merged)) {
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -79,9 +77,9 @@ class UploadFSOTracker
             $styleHeader->getFont()->setBold(false);
             $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFA500');
             $allStyle = [
-                'alignment' => array(
+                'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ),
+                ],
             ];
             $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
@@ -89,24 +87,23 @@ class UploadFSOTracker
             $fileName = "SWD_RETAILER_TARGET_FORMAT" . ".xlsx";
             $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
             $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
+            $fileDetails = [
                 "filePath" => $downloadFileLocation,
                 "fileName" => $fileName,
-            );
+            ];
             $writer = new Xlsx($spreadsheet);
             try {
                 $writer->save($filename);
-                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+                $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
             } catch (PhpOffice\PhpSpreadsheet\Writer\Exception $e) {
                 echo "Error saving spreadsheet: " . $e->getMessage();
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
     }
-
 
     public function uploadData()
     {
@@ -158,7 +155,6 @@ class UploadFSOTracker
                 'I' => 'MTD Ach',
                 'J' => 'Ach %',
             ];
-
 
             $headerRow = $data[1];
             // print_r($data);die;
@@ -218,10 +214,10 @@ class UploadFSOTracker
                     }
 
                     //If record already exist in table
-                    $iStatus = isRecordExist($this->_dbConn, "tbl_fso_tracker", "fso_id, rcd", "fso_id = ? AND rcd < ?", array($fso_id, $rcd));
+                    $iStatus = isRecordExist($this->_dbConn, "tbl_fso_tracker", "fso_id, rcd", "fso_id = ? AND rcd < ?", [$fso_id, $rcd]);
                     if ($iStatus == 1) {
                         //update d_status = 1 in table
-                        $arrUpdateParams = array(1);
+                        $arrUpdateParams = [1];
                         $rcdOld = getRowColumn($this->_dbConn, "tbl_fso_tracker", "rcd", "fso_id = '$fso_id'");
                         updateRecord($this->_dbConn, "tbl_fso_tracker", "dstatus = ?", "fso_id = '$fso_id' AND rcd = '$rcdOld'", $arrUpdateParams);
                     }

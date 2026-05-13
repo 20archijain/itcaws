@@ -15,12 +15,12 @@ class Validation
     protected $var_minValue; //Minimum value, By default is null
     protected $var_maxValue; //Maximum value, By default is null
 
-    public $arrErrors = array(); //Return Errors
-    private $_arrValidator = array();
+    public $arrErrors = []; //Return Errors
+    private $_arrValidator = [];
 
     public function addValidation($var_name, $var_value, $var_type, $var_req_flag = 0, $var_minLength = 0, $var_maxLength = 100, $var_message = 'is invalid', $min_value = null, $max_value = null)
     {
-        $arrValid = array();
+        $arrValid = [];
         $this->var_name = $var_name;
         $this->var_value = filter($var_value);
         $this->var_type = $var_type;
@@ -38,7 +38,7 @@ class Validation
 
     public function getErrors()
     {
-        $arrErrors = array();
+        $arrErrors = [];
 
         if (isNonEmptyArray($this->arrErrors)) {
             foreach ($this->arrErrors as $error) {

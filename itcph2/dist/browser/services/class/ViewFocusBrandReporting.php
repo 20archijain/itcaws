@@ -25,7 +25,7 @@ class ViewFocusBrandReporting
 
     final public function getBranchProduct()
     {
-        $arrData = array();
+        $arrData = [];
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT distinct product_name, summary_column_name from tblbranch_pickupstock_products" .
@@ -34,10 +34,10 @@ class ViewFocusBrandReporting
 
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['summary_column_name'],
-                );
+                ];
             }
         }
 
@@ -46,13 +46,13 @@ class ViewFocusBrandReporting
 
     final public function getViewTeamData()
     {
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "yearList" => getYearList(),
             "monthList" => getMonthList(),
             "branchList" => getBranchList($this->_dbConn),
             "productList" => $this->getBranchProduct(),
-            "viewHeader" => array(
+            "viewHeader" => [
                 "app.focusBrandReporting.id",
                 "app.focusBrandReporting.branch",
                 "app.focusBrandReporting.year",
@@ -60,8 +60,8 @@ class ViewFocusBrandReporting
                 "app.focusBrandReporting.category_name",
                 "app.focusBrandReporting.product_name",
                 "app.focusBrandReporting.summary_column_name",
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "branch",
                 "year",
@@ -69,10 +69,10 @@ class ViewFocusBrandReporting
                 "category_name",
                 "product_name",
                 "summary_column_name",
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -84,12 +84,12 @@ class ViewFocusBrandReporting
         // filter by search query
         $where = getFilterResult(
             $this->_data['searchbar'],
-            array(
-                "branch" => array("branch_id", -1),
-                "month" => array("month", -1),
+            [
+                "branch" => ["branch_id", -1],
+                "month" => ["month", -1],
                 // "password" => array("c.password", 1),
-                "year" => array("year", -1),
-            )
+                "year" => ["year", -1],
+            ]
         );
 
         // echo $where;die;
@@ -107,7 +107,7 @@ class ViewFocusBrandReporting
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $branchId = $arrData["branch_id"];
                 $branchName = getRowColumn($this->_dbConn, "tblbranch", "branch_name", "dstatus = 0 AND branch_id = $branchId");
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $arrData['rec_id'],
                     "category_name" => $arrData["category_name"],
                     "product_name" => $arrData["product_name"],
@@ -115,13 +115,13 @@ class ViewFocusBrandReporting
                     "branch" => $branchName,
                     "month" => $arrData["month"],
                     "year" => $arrData["year"],
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -136,18 +136,18 @@ class ViewFocusBrandReporting
 
         if (isset($productAndCatogoryName[0]) && $productAndCatogoryName[0] && isset($productAndCatogoryName[1]) && $productAndCatogoryName[1]) {
             $cols = "category_name = ?, product_name = ?, summary_column_name = ?";
-            $arrParams = array($productAndCatogoryName[0], $productAndCatogoryName[1], $summary_column_name, $id);
+            $arrParams = [$productAndCatogoryName[0], $productAndCatogoryName[1], $summary_column_name, $id];
 
             $iStatus = updateRecord($this->_dbConn, $monthWiseTable, $cols, "dstatus = 0 AND rec_id = ?", $arrParams);
 
             // team modified
             if ($iStatus === 1) {
-                $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
         }
 
         echo json_encode($arrMessage);

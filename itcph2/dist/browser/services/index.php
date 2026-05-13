@@ -70,22 +70,22 @@ if (isNonEmptyArray($jsondata)) {
                         include_once $include_path . 'modules/auth/logout.php';
                         break;
                     default:
-                        $errorMessage = responseMessage(array($GLOBALS['INVALID_MODULE_REQUEST']));
+                        $errorMessage = responseMessage([$GLOBALS['INVALID_MODULE_REQUEST']]);
                         echo json_encode($errorMessage);
                 }
             } else {
-                $errorMessage = responseMessage(array($GLOBALS['NO_MODULE_DATA']));
+                $errorMessage = responseMessage([$GLOBALS['NO_MODULE_DATA']]);
                 echo json_encode($errorMessage);
             }
         } else {
-            $errorMessage = responseMessage(array($GLOBALS['NO_MODULE_REQUESTED']));
+            $errorMessage = responseMessage([$GLOBALS['NO_MODULE_REQUESTED']]);
             echo json_encode($errorMessage);
         }
     } else {
         //dynamic modules
         //check if token is coming or not
         if (isEmptyString($jsondata['auth_token']) || strlen($jsondata['auth_token']) !== 64) {
-            $errorMessage = responseMessage(array($GLOBALS['INVALID_SESSION']));
+            $errorMessage = responseMessage([$GLOBALS['INVALID_SESSION']]);
             echo json_encode($errorMessage);
         } else {
             $sToken = $jsondata['auth_token'];
@@ -93,7 +93,7 @@ if (isNonEmptyArray($jsondata)) {
             //check if valid token and user exists
             $userSessionTokenTable = $TABLES["USER_SESSION_TOKEN_TABLE"];
             $sQuery = "SELECT user_id, permitted_ids FROM $userSessionTokenTable WHERE csrf_token = ? AND dstatus = 0 LIMIT 1";
-            $arrParams = array($sToken);
+            $arrParams = [$sToken];
             $dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
             //User found
@@ -115,7 +115,7 @@ if (isNonEmptyArray($jsondata)) {
                     //check if valid module and permission exists
                     $modulesTable = $TABLES["MODULES_TABLE"];
                     $sQuery2 = "SELECT module_id, module_url_link FROM $modulesTable WHERE module_code = ? AND parent_module_code = ? AND dstatus = 0 LIMIT 1";
-                    $arrParams2 = array($requestModule['modc'], $requestModule['pmodc']);
+                    $arrParams2 = [$requestModule['modc'], $requestModule['pmodc']];
                     $dbConn->ExecuteSelectQuery($sQuery2, $sAction2, $iRows2, $arrParams2);
 
                     //module exists
@@ -127,7 +127,7 @@ if (isNonEmptyArray($jsondata)) {
                         //check permission
                         $userGroupRoleView = $TABLES["USERGROUPROLE_VIEW"];
                         $sQuery3 = "SELECT role_permission FROM $userGroupRoleView WHERE user_id = ? AND dstatus = 0 LIMIT 1";
-                        $arrParams3 = array($iUserId);
+                        $arrParams3 = [$iUserId];
                         $dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3, $arrParams3);
 
                         if ($iRows3 === 1) {
@@ -140,33 +140,33 @@ if (isNonEmptyArray($jsondata)) {
                             if (in_array($iModuleId, $arrModuleIds)) {
                                 // get allowed access
                                 $arrAccessInfo = $arResult["permitted_ids"] ?
-                                    json_decode($arResult["permitted_ids"], true) : array();
+                                    json_decode($arResult["permitted_ids"], true) : [];
 
                                 include_once $include_path . 'modules/' . $iModuleFile;
-                                die;
+                                return;
                             } else {
-                                $errorMessage = responseMessage(array($GLOBALS['NO_MODULE_PERMISSION']));
+                                $errorMessage = responseMessage([$GLOBALS['NO_MODULE_PERMISSION']]);
                                 echo json_encode($errorMessage);
                             }
                         } else {
-                            $errorMessage = responseMessage(array($GLOBALS['NO_ROLE_ASSIGNED']));
+                            $errorMessage = responseMessage([$GLOBALS['NO_ROLE_ASSIGNED']]);
                             echo json_encode($errorMessage);
                         }
                     } else {
-                        $errorMessage = responseMessage(array($GLOBALS['INVALID_MODULE_REQUEST']));
+                        $errorMessage = responseMessage([$GLOBALS['INVALID_MODULE_REQUEST']]);
                         echo json_encode($errorMessage);
                     }
                 } else {
-                    $errorMessage = responseMessage(array($GLOBALS['INVALID_MODULE_REQUEST']));
+                    $errorMessage = responseMessage([$GLOBALS['INVALID_MODULE_REQUEST']]);
                     echo json_encode($errorMessage);
                 }
             } else {
-                $errorMessage = responseMessage(array($GLOBALS['UNAUTHORIZED_ACCESS']));
+                $errorMessage = responseMessage([$GLOBALS['UNAUTHORIZED_ACCESS']]);
                 echo json_encode($errorMessage);
             }
         }
     }
 } else {
-    $errorMessage = responseMessage(array($GLOBALS['INVALID_MODULE_REQUEST']));
+    $errorMessage = responseMessage([$GLOBALS['INVALID_MODULE_REQUEST']]);
     echo json_encode($errorMessage);
 }

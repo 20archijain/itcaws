@@ -8,7 +8,6 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
-
 // phpcs:ignore
 class SWDRetailerAssignTarget
 {
@@ -30,18 +29,17 @@ class SWDRetailerAssignTarget
         $this->_validationLength = $GLOBALS['VALIDATOR_LENGTH'];
     }
 
-
     final public function downloadExcelHeaders()
     {
 
-        $products = array();
-        $arrData = array(
+        $products = [];
+        $arrData = [
             "Rec ID",
             "Month",
             "Year"
-        );
+        ];
 
-        $products = getRowsColumn($this->_dbConn, "tblbranch_pickupstock_products", "product_name", "branch_id IN ('42','43')", array(), true);
+        $products = getRowsColumn($this->_dbConn, "tblbranch_pickupstock_products", "product_name", "branch_id IN ('42','43')", [], true);
 
         // Create header row
         if (isNonEmptyArray($products)) {
@@ -53,7 +51,7 @@ class SWDRetailerAssignTarget
         // Create data row with default values
         $currentMonth = date('m'); // Current month in mm format
         $currentYear = date('Y'); // Current year in yyyy format
-        $dataRow = array("1", $currentMonth, $currentYear);
+        $dataRow = ["1", $currentMonth, $currentYear];
 
         // Add "1" for each product column
         if (isNonEmptyArray($products)) {
@@ -62,7 +60,7 @@ class SWDRetailerAssignTarget
         }
 
         // Combine header and data row
-        $arr_merged = array($headerRow, $dataRow);
+        $arr_merged = [$headerRow, $dataRow];
         if (!empty($arr_merged)) {
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -79,9 +77,9 @@ class SWDRetailerAssignTarget
             $styleHeader->getFont()->setBold(false);
             $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFA500');
             $allStyle = [
-                'alignment' => array(
+                'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ),
+                ],
             ];
             $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
@@ -89,24 +87,23 @@ class SWDRetailerAssignTarget
             $fileName = "SWD_RETAILER_TARGET_FORMAT" . ".xlsx";
             $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
             $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
+            $fileDetails = [
                 "filePath" => $downloadFileLocation,
                 "fileName" => $fileName,
-            );
+            ];
             $writer = new Xlsx($spreadsheet);
             try {
                 $writer->save($filename);
-                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+                $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
             } catch (PhpOffice\PhpSpreadsheet\Writer\Exception $e) {
                 echo "Error saving spreadsheet: " . $e->getMessage();
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
     }
-
 
     public function uploadData()
     {
@@ -164,7 +161,7 @@ class SWDRetailerAssignTarget
             }
 
             // Get product mapping from database: product_name => summary_column_name
-            $productMapping = array();
+            $productMapping = [];
             $productColumns = getRowsColumns(
                 $this->_dbConn,
                 "tblbranch_pickupstock_products",
@@ -182,7 +179,7 @@ class SWDRetailerAssignTarget
 
             // Map Excel columns to database columns
             // Header row: A=Rec ID, B=Month, C=Year, D onwards = Product names
-            $excelColumnMap = array(); // Maps Excel column letter to database column name
+            $excelColumnMap = []; // Maps Excel column letter to database column name
 
             // Process product columns from header (starting from column D)
             // Iterate through all columns in header row

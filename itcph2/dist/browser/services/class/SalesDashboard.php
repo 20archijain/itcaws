@@ -39,7 +39,7 @@ class SalesDashboard
         // if ($teamList) {
         //     $where .= " AND team_id IN $teamList";
         // }
-        $arrResult = array(
+        $arrResult = [
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
             "circleList" => $this->getCircleList(),
@@ -52,9 +52,9 @@ class SalesDashboard
             "monthList" => getMonthList(),
             "yearList" => getYearList(),
             "branchFilter" => true,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -67,7 +67,7 @@ class SalesDashboard
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -79,7 +79,7 @@ class SalesDashboard
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -91,7 +91,7 @@ class SalesDashboard
         $circle = getFormData($this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -103,7 +103,7 @@ class SalesDashboard
         $section = getFormData($this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -115,7 +115,7 @@ class SalesDashboard
         $wdCode = getFormData($this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -127,7 +127,7 @@ class SalesDashboard
         $wdMarket = getFormData($this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -139,7 +139,7 @@ class SalesDashboard
         $wdPopGroup = getFormData($this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -151,7 +151,7 @@ class SalesDashboard
         $teamType = getFormData($this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -164,7 +164,7 @@ class SalesDashboard
         $dsName = getFormData($this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -197,7 +197,7 @@ class SalesDashboard
         $category = getFormData($this->_data, "category");
         if ($category) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $condition .= " ";
@@ -209,7 +209,7 @@ class SalesDashboard
         $product = getFormData($this->_data, "product");
         if ($product) {
             if (!is_array($product)) {
-                $product = array($product);
+                $product = [$product];
             }
             if (in_array('all', $product)) {
                 $condition .= " ";
@@ -224,11 +224,11 @@ class SalesDashboard
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -243,10 +243,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -255,11 +255,11 @@ class SalesDashboard
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -279,11 +279,11 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -292,11 +292,11 @@ class SalesDashboard
 
     final public function getCategoryList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -310,24 +310,23 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['category_name'],
                     "value" => $row['category_name']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getProductList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -340,10 +339,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['product_name']
-                );
+                ];
             }
         }
 
@@ -352,11 +351,11 @@ class SalesDashboard
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -375,10 +374,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -387,11 +386,11 @@ class SalesDashboard
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -410,10 +409,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -422,11 +421,11 @@ class SalesDashboard
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -445,10 +444,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -457,11 +456,11 @@ class SalesDashboard
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -480,10 +479,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -492,11 +491,11 @@ class SalesDashboard
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -515,10 +514,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -527,11 +526,11 @@ class SalesDashboard
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -561,10 +560,10 @@ class SalesDashboard
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -573,11 +572,11 @@ class SalesDashboard
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -595,10 +594,10 @@ class SalesDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -611,7 +610,7 @@ class SalesDashboard
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -620,7 +619,7 @@ class SalesDashboard
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -631,9 +630,9 @@ class SalesDashboard
                 "productList" => $this->getProductList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -644,9 +643,9 @@ class SalesDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -656,7 +655,7 @@ class SalesDashboard
         $categoryCond = "";
         if (!empty($category)) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $categoryCond = ""; // No condition for 'all'
@@ -665,15 +664,15 @@ class SalesDashboard
                 $categoryCond = " AND b.category_name IN ($category)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getProductList($categoryCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -683,7 +682,7 @@ class SalesDashboard
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -692,7 +691,7 @@ class SalesDashboard
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -702,9 +701,9 @@ class SalesDashboard
                 "productList" => $this->getProductList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -714,9 +713,9 @@ class SalesDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -727,7 +726,7 @@ class SalesDashboard
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -736,26 +735,26 @@ class SalesDashboard
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -766,7 +765,7 @@ class SalesDashboard
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -776,24 +775,24 @@ class SalesDashboard
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -804,7 +803,7 @@ class SalesDashboard
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -813,18 +812,18 @@ class SalesDashboard
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -834,7 +833,7 @@ class SalesDashboard
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -842,16 +841,16 @@ class SalesDashboard
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -890,7 +889,7 @@ class SalesDashboard
         }
         $where = $this->getCondition(true);
         $categoryAndProductCond = $this->getConditionForCategoryAndProduct("category_name", "product_name");
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -928,7 +927,7 @@ class SalesDashboard
         $tillSaleAmountInCrore = $tillSaleAmount[0] / 10000000;
         $todaySaleAmountInCrore = $todaySaleAmount[0] / 10000000;
 
-        $arrResult = array(
+        $arrResult = [
             "todaySaleDone" => round($todayTotalSale, 1),
             "todaySaleAmount" => number_format($todaySaleAmountInCrore, 2) . " cr", // Format to 2 decimal places
             "tillDateSaleDone" => round($mtdTotalSale, 1),
@@ -942,17 +941,17 @@ class SalesDashboard
             "monthlySalesData" => $this->getMonthlySalesData(),
             // "outletVisitedTableData" => $this->getOutletVisitedTableData(),
             "chartsData" => $this->getChartData(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     public function getChartData()
     {
-        return array(
+        return [
             // "cigSaleCategoryWise" => $this->getcigSaleCategoryWise(),
-        );
+        ];
     }
 
     // Function to calculate cumulative sum for each day
@@ -1035,9 +1034,9 @@ class SalesDashboard
 
         $sAction = null;
         $iRows = 0;
-        $branch = array();
+        $branch = [];
 
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1166,7 +1165,7 @@ class SalesDashboard
             }
         }
 
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1293,7 +1292,7 @@ class SalesDashboard
                 }
             }
         }
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1415,7 +1414,7 @@ class SalesDashboard
             }
         }
 
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1512,7 +1511,7 @@ class SalesDashboard
         $currentYearSales = array_fill(0, 12, 0);  // Monthly cumulative sales for current year
         $lastYearSales = array_fill(0, 12, 0);     // Monthly cumulative sales for last year
 
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1551,7 +1550,6 @@ class SalesDashboard
                 }
             }
         }
-
 
         $this->calculateCumulativeSum($lastYearSales);
         $this->calculateCumulativeSum($currentYearSales);
@@ -1606,7 +1604,7 @@ class SalesDashboard
         $iRows = 0;
         $currentYearSales = array_fill(0, 12, 0);  // Monthly cumulative sales for current year
         $lastYearSales = array_fill(0, 12, 0);     // Monthly cumulative sales for last year
-        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", array(), true);
+        $allBrandCols = getRowsColumn($this->_dbConn, $branchPickupStockTable, "summary_column_name", "dstatus = 0 AND is_focusbrand = 1 $branchCond $categoryAndProductCond", [], true);
         // Prepare SUM columns for SQL
         $summaryColumns = implode(") + SUM(", $allBrandCols);
         $sumColumns = "SUM($summaryColumns)";
@@ -1674,11 +1672,11 @@ class SalesDashboard
         // if ($where) {
         //     $where = str_replace(" team_id", " b.team_id", $where);
         // }
-        $arrResponse = array();
-        $arrSalesColumns = array(); // Reset the sales columns array here
-        $arrMonthYear = array();
-        $monthWiseSales = array();
-        $totalSumBranchLevelSale = array();
+        $arrResponse = [];
+        $arrSalesColumns = []; // Reset the sales columns array here
+        $arrMonthYear = [];
+        $monthWiseSales = [];
+        $totalSumBranchLevelSale = [];
 
         // Get all sales-related columns
         $query = "SELECT a.summary_column_name, a.branch_id, b.team_id, b.circle, b.section, b.wd_code FROM tblbranch_pickupstock_products AS a, tblproject_team AS b, $branchTable as d, $mappingTable as e" .
@@ -1733,12 +1731,12 @@ class SalesDashboard
                             // Branch Level Sales
                             $branchIndex = array_search($branch_id, array_column($monthWiseSales, "branch_id"));
                             if ($branchIndex === false) {
-                                $monthWiseSales[] = array(
+                                $monthWiseSales[] = [
                                     "branch_id" => $branch_id,
                                     "branch_name" => $branch_name,
-                                    "branchLevelSale" => array(),
-                                    "circleData" => array()
-                                );
+                                    "branchLevelSale" => [],
+                                    "circleData" => []
+                                ];
                                 $branchIndex = count($monthWiseSales) - 1;
                             }
                             $monthWiseSales[$branchIndex]["branchLevelSale"][$monthYear] =
@@ -1747,11 +1745,11 @@ class SalesDashboard
                             // Circle Level Sales
                             $circleIndex = array_search($circle, array_column($monthWiseSales[$branchIndex]["circleData"], "circle"));
                             if ($circleIndex === false) {
-                                $monthWiseSales[$branchIndex]["circleData"][] = array(
+                                $monthWiseSales[$branchIndex]["circleData"][] = [
                                     "circle" => $circle,
-                                    "circleLevelSale" => array(),
-                                    "sectionData" => array()
-                                );
+                                    "circleLevelSale" => [],
+                                    "sectionData" => []
+                                ];
                                 $circleIndex = count($monthWiseSales[$branchIndex]["circleData"]) - 1;
                             }
                             $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$monthYear] =
@@ -1760,11 +1758,11 @@ class SalesDashboard
                             // Section Level Sales
                             $sectionIndex = array_search($section, array_column($monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
                             if ($sectionIndex === false) {
-                                $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
+                                $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][] = [
                                     "section" => $section,
-                                    "sectionLevelSale" => array(),
-                                    "wdData" => array(),
-                                );
+                                    "sectionLevelSale" => [],
+                                    "wdData" => [],
+                                ];
                                 $sectionIndex = count($monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
                             }
                             $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$monthYear] =
@@ -1773,11 +1771,11 @@ class SalesDashboard
                             // WD Level Sales
                             $WDIndex = array_search($wd_code, array_column($monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"], "wd_code"));
                             if ($WDIndex === false) {
-                                $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
+                                $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = [
                                     "wd_code" => $wd_code,
                                     "wdCode" => $wd_code,
-                                    "wdLevelSale" => array(),
-                                );
+                                    "wdLevelSale" => [],
+                                ];
                                 $WDIndex = count($monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
                             }
                             $monthWiseSales[$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["wdLevelSale"][$monthYear] = round($totalSales, 2); // Round WD level sales
@@ -1798,16 +1796,15 @@ class SalesDashboard
         }
 
         // Response Data
-        $arrResponse = array(
+        $arrResponse = [
             "MonthsAndYears" => $arrMonthYear,
             "BranchData" => $monthWiseSales,
             "TotalSum" => $totalSumBranchLevelSale,
             "Title" => "Monthly Survey in M (Cigarettes)"
-        );
+        ];
 
         return $arrResponse;
     }
-
 
     // public function getcigSaleCategoryWise()
     // {
@@ -1958,7 +1955,6 @@ class SalesDashboard
     //         // Remove the trailing comma and space
     //         $sProductSaleColumns = rtrim($sProductSaleColumns, ", ");
 
-
     //         $rsAction = null;
     //         $iRows = 0;
 
@@ -1967,7 +1963,6 @@ class SalesDashboard
     //          ORDER BY a.activity_date DESC";
     //         print_r($sQuery);
     //         die;
-
 
     //         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
@@ -2060,7 +2055,6 @@ class SalesDashboard
     //     foreach ($arrMonthYear as $monthYear) {
     // $queryNew = "SELECT COUNT(DISTINCT a.ques_3) as outletVisited, b.branch_id, b.circle, b.section, b.wd_code, b.team_id, DATE_FORMAT(a.capture_date, '%M %Y') AS monthYear FROM tblsurvey_response_details AS a, tblproject_team AS b WHERE a.team_id = b.team_id" .
     // " AND a.dstatus = 0 AND b.dstatus = 0 AND b.s_id = '99'  AND DATE_FORMAT(a.capture_date, '%M %Y') = '$monthYear'  $where GROUP BY monthYear, b.branch_id, b.circle, b.section, b.wd_code ORDER BY b.branch_id, b.circle, b.section, b.wd_code";
-
 
     //         $rsAction1 = null;
     //         $iActionRows1 = 0;
@@ -2172,7 +2166,6 @@ class SalesDashboard
     //             ];
     //         }
 
-
     //         // Batch fetch all visited outlets at once
     //         $allVisitedShops = [];
     //         $queryVisited = "SELECT a.team_id, a.ques_3 AS shop_id, DATE_FORMAT(a.capture_date, '%M %Y') AS monthYear
@@ -2228,7 +2221,6 @@ class SalesDashboard
     //         }
     //     }
 
-
     //     // Calculate Total NOt Visit at Branch Level
     //     // foreach ($monthVisited as $branch) {
     //     //     foreach ($branch["branchLevelNotVisited"] as $monthYear => $value) {
@@ -2238,7 +2230,6 @@ class SalesDashboard
     //     //         $totalSumBranchLevelNotVisited[$monthYear] = $totalSumBranchLevelNotVisited[$monthYear] + $value;
     //     //     }
     //     // }
-
 
     //     // Response Data
     //     $arrResponse = array(

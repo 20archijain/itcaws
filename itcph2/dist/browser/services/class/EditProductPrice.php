@@ -20,19 +20,19 @@ class EditProductPrice
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "branchList" => getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch"),
             "wdList" => getOptions($this->_dbConn, "tblproject_team", "wd_code", "wd_code", "dstatus = 0"),
             "showTransactionDownloadBtn" => true,
             "showSummaryDownloadBtn" => true,
-        );
+        ];
         $arrResult["editProductHeading"] = "Edit Product Price";
         $arrResult["branchLabel"] = "Branch";
         $arrResult["wdLabel"] = "WD Code";
         $arrResult["teamTypeLabel"] = "Team Type";
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -40,16 +40,16 @@ class EditProductPrice
     {
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
-            $arrResult = array(
+            $arrResult = [
                 "teamsTypeList" => getTeamType($this->_dbConn, $branch),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamsTypeList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -61,7 +61,7 @@ class EditProductPrice
         $branch = getFormData($this->_data, "branchId");
         $wdCode = getFormData($this->_data, "wdCode");
         $teamType = getFormData($this->_data, "teamType");
-        $arrProductDetails = array();
+        $arrProductDetails = [];
         if ($branch) {
             $where .= " AND branch_id = $branch";
         }
@@ -83,13 +83,13 @@ class EditProductPrice
                     $productPrice = $row['net_rate'];
                     $productId = $row['rec_id'];
                     $wdCode = $row['wd_code'];
-                    $arrProductDetails[] = array(
+                    $arrProductDetails[] = [
                         "productName" => $productName,
                         "sellingPrice" => $productPrice,
                         "productId" => $productId,
                         "wdCode" => $wdCode,
                         "branchId" => "",
-                    );
+                    ];
                 }
             } else {
                 $branch_id = getRowColumn($this->_dbConn, "tblproject_team", "branch_id", " dstatus = 0 $where2");
@@ -105,13 +105,13 @@ class EditProductPrice
                         $productId = $rowProduct['rec_id'];
                         $branchId = $rowProduct['branch_id'];
                         $wd_code = getRowColumn($this->_dbConn, "tblproject_team", "wd_code", " dstatus = 0 AND branch_id = $branchId");
-                        $arrProductDetails[] = array(
+                        $arrProductDetails[] = [
                             "productName" => $productName,
                             "sellingPrice" => $productPrice,
                             "productId" => $productId,
                             "wdCode" => $wd_code,
                             "branchId" => "",
-                        );
+                        ];
                     }
                 }
             }
@@ -127,22 +127,22 @@ class EditProductPrice
                     $productPrice = $rowProduct['net_rate'];
                     $productId = $rowProduct['rec_id'];
                     $branchId = $rowProduct['branch_id'];
-                    $arrProductDetails[] = array(
+                    $arrProductDetails[] = [
                         "productName" => $productName,
                         "sellingPrice" => $productPrice,
                         "productId" => $productId,
                         "branchId" => $branchId,
                         "wdCode" => "",
-                    );
+                    ];
                 }
             }
         }
 
-        $arrResponse = array(
+        $arrResponse = [
             "productsList" => $arrProductDetails,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+        $arrMessage = responseMessage([], 1, $arrResponse, true);
         echo json_encode($arrMessage);
     }
 
@@ -195,11 +195,11 @@ class EditProductPrice
                                 // Add old and new price in notification
                                 $cols = "wd_code, product_name, old_net_rate, new_net_rate, rcd, rdt";
                                 $val = "?, ?, ?, ?, ?, ?";
-                                $arrParam = array($wdCode, $productName, $currentPrice, $productPrice, $currentDate, $currentDateTime);
+                                $arrParam = [$wdCode, $productName, $currentPrice, $productPrice, $currentDate, $currentDateTime];
                                 addRecord($this->_dbConn, "tbl_notification", $cols, $val, $arrParam);
                                 $colsh = "wd_code, product_name, net_rate, rcd, rdt";
                                 $valh = "?, ?, ?, ?, ?";
-                                $arrParam = array($wdCode, $productName, $productPrice, $currentDate, $currentDateTime);
+                                $arrParam = [$wdCode, $productName, $productPrice, $currentDate, $currentDateTime];
                                 addRecord($this->_dbConn, "tbl_price_history", $colsh, $valh, $arrParam);
                             }
                         }
@@ -207,7 +207,7 @@ class EditProductPrice
                 } else {
                     $cols = "wd_code, product_name, net_rate, rcd, rdt";
                     $val = "?, ?, ?, ?, ?";
-                    $arrParam = array($wdCode, $productName, $productPrice, $currentDate, $currentDateTime);
+                    $arrParam = [$wdCode, $productName, $productPrice, $currentDate, $currentDateTime];
                     $status = addRecord($this->_dbConn, "tblwd_product_net_rate_update", $cols, $val, $arrParam);
                 }
             } else {
@@ -226,17 +226,17 @@ class EditProductPrice
 
                         $cols = "branch_id, wd_code, product_name, old_net_rate, new_net_rate, is_branch_update, rcd, rdt";
                         $val = "?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParam = array($branch, $wd_code, $productName, $currentSellingPrice, $productPrice, '1', $currentDate, $currentDateTime);
+                        $arrParam = [$branch, $wd_code, $productName, $currentSellingPrice, $productPrice, '1', $currentDate, $currentDateTime];
                         addRecord($this->_dbConn, "tbl_notification", $cols, $val, $arrParam);
                         $colsh = "wd_code, product_name, net_rate, rcd, rdt";
                         $valh = "?, ?, ?, ?, ?";
-                        $arrParam = array($wdCode, $productName, $productPrice, $currentDate, $currentDateTime);
+                        $arrParam = [$wdCode, $productName, $productPrice, $currentDate, $currentDateTime];
                         addRecord($this->_dbConn, "tbl_price_history", $colsh, $valh, $arrParam);
                     }
                 }
             }
         }
-        $arrMessage = responseMessage(array($GLOBALS['UPDATE_SUCCESS']), 1, $status ?? null);
+        $arrMessage = responseMessage([$GLOBALS['UPDATE_SUCCESS']], 1, $status ?? null);
         echo json_encode($arrMessage);
     }
 }

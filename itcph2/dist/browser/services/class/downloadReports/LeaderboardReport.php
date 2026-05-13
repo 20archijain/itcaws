@@ -25,7 +25,6 @@ class LeaderboardData
         $this->_tables = $GLOBALS['TABLES'];
     }
 
-
     // CIRCLE
     final public function getCircle($branch = "branch_id")
     {
@@ -33,7 +32,7 @@ class LeaderboardData
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -42,24 +41,24 @@ class LeaderboardData
                 $branchCond = " AND branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $branch),
                 "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -73,7 +72,7 @@ class LeaderboardData
         if ($circle || $branch) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -84,7 +83,7 @@ class LeaderboardData
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -106,23 +105,23 @@ class LeaderboardData
                     }
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $where),
                 "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99' $branchCond  $circleCond"),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -143,7 +142,7 @@ class LeaderboardData
         if ($section || $branch || $section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -154,7 +153,7 @@ class LeaderboardData
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -165,7 +164,7 @@ class LeaderboardData
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -175,21 +174,21 @@ class LeaderboardData
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $where),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond $where"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond $where"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -207,7 +206,7 @@ class LeaderboardData
         if ($wdCode || $branch || $circle || $section) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -218,7 +217,7 @@ class LeaderboardData
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -229,7 +228,7 @@ class LeaderboardData
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -240,7 +239,7 @@ class LeaderboardData
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -249,19 +248,19 @@ class LeaderboardData
                     $branchCond = " AND branch_id IN ($branch)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -281,7 +280,7 @@ class LeaderboardData
         if ($dsType || $wdCode || $branch || $circle || $section) {
             if ($dsType) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $dsTypeCond = ""; // No condition for 'all'
@@ -292,7 +291,7 @@ class LeaderboardData
             }
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -303,7 +302,7 @@ class LeaderboardData
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -314,7 +313,7 @@ class LeaderboardData
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -325,7 +324,7 @@ class LeaderboardData
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -335,17 +334,17 @@ class LeaderboardData
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -365,7 +364,7 @@ class LeaderboardData
         if ($teamList) {
             $where .= " AND team_id IN $teamList";
         }
-        $arrResult = array(
+        $arrResult = [
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
             "branchList" => getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch"),
@@ -374,9 +373,9 @@ class LeaderboardData
             "wdCodeList" => getOptions($this->_dbConn, "tblproject_team", "wd_code", "wd_code", " s_id = '99' $where"),
             "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id ='99'"),
             "dsType" => getTeamType($this->_dbConn),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -386,15 +385,15 @@ class LeaderboardData
         // filter query
         $dwnCond = getFilterResult(
             $this->_data,
-            array(
-                "dateFrom" => array($capDate, 4, "dateTo", true),
-                "branch" => array("c.branch_id", 0, true, true),
-                "circle" => array("a.circle", 0, true, true),
-                "section" => array("a.section", 0, true, true),
-                "dsName" => array("c.team_id", 0, true, true),
-                "wdCode" => array("a.wd_code", 0, true, true),
-                "dsType" => array("a.is_type", 1),
-            ),
+            [
+                "dateFrom" => [$capDate, 4, "dateTo", true],
+                "branch" => ["c.branch_id", 0, true, true],
+                "circle" => ["a.circle", 0, true, true],
+                "section" => ["a.section", 0, true, true],
+                "dsName" => ["c.team_id", 0, true, true],
+                "wdCode" => ["a.wd_code", 0, true, true],
+                "dsType" => ["a.is_type", 1],
+            ],
             $this->_dbConn
         );
         // print_r($dwnCond);
@@ -426,7 +425,7 @@ class LeaderboardData
         }
 
         // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrBody = array();
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
         // $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD");
@@ -435,8 +434,8 @@ class LeaderboardData
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         if ($iRows > 0) {
-            $arrData = array(
-                array(
+            $arrData = [
+                [
                     "Date",
                     "District",
                     "Branch",
@@ -456,8 +455,8 @@ class LeaderboardData
                     "FB2 Billed",
                     "FB2 UOB",
                     "Final Leaderboard Score",
-                ),
-            );
+                ],
+            ];
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $teamId = $row['team_id'];
                 $captureDate = $row['capture_date'];
@@ -480,7 +479,7 @@ class LeaderboardData
                 $branch_name = $row['branch_name'];
                 $main_branch = $row['main_branch'];
 
-                $arrData[] = array(
+                $arrData[] = [
                     $captureDate,
                     $district,
                     $branch_name,
@@ -500,7 +499,7 @@ class LeaderboardData
                     $fb2uob,
                     $para4_score,
                     $total_score,
-                );
+                ];
             }
         }
 
@@ -520,9 +519,9 @@ class LeaderboardData
             $styleHeader->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setARGB('FFFFFF00');
 
             $allStyle = [
-                'alignment' => array(
+                'alignment' => [
                     'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-                ),
+                ],
             ];
             $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
@@ -530,19 +529,19 @@ class LeaderboardData
             $fileName = "LEADERBOARD_REPORT_" . date('Y-m-d_H-i-s') . ".xlsx";
             $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
             $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-            $fileDetails = array(
+            $fileDetails = [
                 "filePath" => $downloadFileLocation,
                 "fileName" => $fileName,
-            );
+            ];
             $writer = new Xlsx($spreadsheet);
             try {
                 $writer->save($filename);
-                $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+                $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
             } catch (PhpOffice\PhpSpreadsheet\Writer\Exception $e) {
                 echo "Error saving spreadsheet: " . $e->getMessage();
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);

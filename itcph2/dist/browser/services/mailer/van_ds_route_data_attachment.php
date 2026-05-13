@@ -41,12 +41,12 @@ class VanDsMailer
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
 
-        $toEmails = array("kunalrajput8218@gmail.com"); // Specify recipients for the group
-        $ccEmails = array("shiva@appilary.com"); // CC recipients
+        $toEmails = ["kunalrajput8218@gmail.com"]; // Specify recipients for the group
+        $ccEmails = ["shiva@appilary.com"]; // CC recipients
 
         $respTable = getRespTable(1, 1);
-        $arrTeamType = array(0 => "VAN DS", 2 => "Town SWD", 5 => "NPSR");
-        $arrHeader = array(
+        $arrTeamType = [0 => "VAN DS", 2 => "Town SWD", 5 => "NPSR"];
+        $arrHeader = [
             "Rec Id",
             "DS Id",
             "DS Name",
@@ -65,22 +65,22 @@ class VanDsMailer
             "Lt",
             "Lg",
             "Shop Last Visited"
-        );
+        ];
 
         // Define groups of branch IDs
-        $group1 = array(1, 2, 3, 4, 5, 6, 21, 30);
-        $group2 = array(7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,);
-        $group3 = array(23, 24, 25, 26, 27, 28, 31);
+        $group1 = [1, 2, 3, 4, 5, 6, 21, 30];
+        $group2 = [7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, ];
+        $group3 = [23, 24, 25, 26, 27, 28, 31];
 
-        $groups = array(
+        $groups = [
             'North' => $group1,
             'East' => $group2,
             'West' => $group3
-        );
+        ];
 
         // Send emails for each group
         foreach ($groups as $groupName => $branchIds) {
-            $arrData = array();  // Initialize data array for each group
+            $arrData = [];  // Initialize data array for each group
 
             // Loop through each branch in the group and collect data
             $branchIdsString = implode(",", $branchIds);
@@ -111,7 +111,7 @@ class VanDsMailer
                         "dstatus = 0 $cond"
                     );
 
-                    $rowData = array(
+                    $rowData = [
                         $row["rec_id"],
                         $row["team_id"],
                         $row["team_name"],
@@ -130,7 +130,7 @@ class VanDsMailer
                         $row["lt"],
                         $row["lg"],
                         isset($lastVisitedAndCountofVisited) ? $lastVisitedAndCountofVisited : "",
-                    );
+                    ];
 
                     $arrData[] = $rowData;
                 }

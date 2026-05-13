@@ -1,7 +1,7 @@
 <?php
 
 // TABLES
-$TABLES = array(
+$TABLES = [
     "USERGROUPROLE_VIEW" => "v_usergrouprole",
     "CLOUD_AUTHPIN_TABLE" => "tblcloud_auth_pin_angular",
     "USER_ACCESS_TABLE" => "tbluser_access",
@@ -30,4 +30,4 @@ $TABLES = array(
     "BREEZE_TEAM_TABLE" => "tblbreeze_team",
     "MDO_ACCESS_TABLE" => "tblmdo_access",
     "ROUTE_DETAILS_BREEZE_TABLE" => "tblroute_details_breeze",
-);
+];

@@ -2545,7 +2545,7 @@ class InsightsExecutor
                 $bl         = $dowBaseline[$d] ?? null;
                 $useWeekday = $bl && $bl['count'] >= 2 && $bl['stdDev'] > 0;
 
-                $mean       = $useWeekday ? $bl['mean']   : $overallMean;
+                $mean       = $useWeekday ? $bl['mean'] : $overallMean;
                 $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
                 $expectedDs = $useWeekday ? $bl['dsMean'] : $overallDsMean;
 
@@ -2965,7 +2965,7 @@ class InsightsExecutor
                     $bl         = $dowBaseline[$d] ?? null;
                     $useWeekday = $bl && $bl['count'] >= 2 && $bl['stdDev'] > 0;
 
-                    $mean       = $useWeekday ? $bl['mean']   : $overallMean;
+                    $mean       = $useWeekday ? $bl['mean'] : $overallMean;
                     $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
                     $expectedDs = $useWeekday ? $bl['dsMean'] : $overallDsMean;
 
@@ -6207,7 +6207,7 @@ class InsightsExecutor
                 $d          = $day['dow'];
                 $bl         = $dowBaseline[$d] ?? null;
                 $useWeekday = $bl && $bl['count'] >= 2 && $bl['stdDev'] > 0;
-                $mean       = $useWeekday ? $bl['mean']   : $overallMean;
+                $mean       = $useWeekday ? $bl['mean'] : $overallMean;
                 $stdDev     = $useWeekday ? $bl['stdDev'] : $overallStdDev;
                 if ($stdDev == 0) {
                     continue;

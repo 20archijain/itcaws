@@ -47,11 +47,11 @@ class ProjectManagement
     {
         $modulesTable = $this->_tables["MODULES_TABLE"];
 
-        $arrResult = array(
+        $arrResult = [
             "clientList" => getClients($this->_dbConn, 0, "dstatus = 0"),
             "landingPageList" => getOptions($this->_dbConn, $modulesTable, "module_name", "module_id", "dstatus = 0"),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -76,30 +76,30 @@ class ProjectManagement
 
             //check if project exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectsTable, "project_id", "client_id = ? AND project_name = ?", array($client, $projectName));
+            $iStatus = isRecordExist($this->_dbConn, $projectsTable, "project_id", "client_id = ? AND project_name = ?", [$client, $projectName]);
 
             // Not exist
             if ($iStatus == 0) {
                 $cDT = currentDateTime();
                 $cD = currentDate();
 
-                $arrLandingPage = getRowColumns($this->_dbConn, $modulesTable, "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", array($landingPage));
+                $arrLandingPage = getRowColumns($this->_dbConn, $modulesTable, "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", [$landingPage]);
 
                 $cols = "client_id, project_name, dsh_modc, dsh_pmodc, creator_id, rcd, rdt";
                 $vals = "?, ?, ?, ?, ?, ?, ?";
-                $arrParams = array($client, $projectName, $arrLandingPage[0], $arrLandingPage[1], $this->_iUserId, $cD, $cDT);
+                $arrParams = [$client, $projectName, $arrLandingPage[0], $arrLandingPage[1], $this->_iUserId, $cD, $cDT];
 
                 // Add project
                 $iStatus = addRecord($this->_dbConn, $projectsTable, $cols, $vals, $arrParams);
 
                 // project added
                 if ($iStatus == 2) {
-                    $arrMessage = responseMessage(array($GLOBALS['PROJECT_ADDED']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['PROJECT_ADDED']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['PROJECT_NOT_ADDED']));
+                    $arrMessage = responseMessage([$GLOBALS['PROJECT_NOT_ADDED']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['PROJECT_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['PROJECT_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -112,25 +112,25 @@ class ProjectManagement
     {
         $modulesTable = $this->_tables["MODULES_TABLE"];
 
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "clientList" => getClients($this->_dbConn, 1),
             // Don't use dstatus = 0
             "landingPageList" => getOptions($this->_dbConn, $modulesTable, "module_name", "module_id"),
-            "sortOptions" => array(
-                array("label" => "Client Name", "value" => "b.client_name"),
-                array("label" => "Project Name", "value" => "a.project_name"),
-                array("label" => "Project Added - ASC", "value" => "a.rdt"),
-                array("label" => "Project Added - DESC", "value" => "a.rdt DESC"),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Client Name", "value" => "b.client_name"],
+                ["label" => "Project Name", "value" => "a.project_name"],
+                ["label" => "Project Added - ASC", "value" => "a.rdt"],
+                ["label" => "Project Added - DESC", "value" => "a.rdt DESC"],
+            ],
+            "viewHeader" => [
                 "app.project.view.id", "app.project.add.name", "app.client.add.name", "app.user.user.add.landingPage"
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id", "projectName", "clientName", "landingPage"
-            ),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+            ],
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -140,7 +140,7 @@ class ProjectManagement
         $clientsTable = $this->_tables["CLIENTS_TABLE"];
         $projectsTable = $this->_tables["PROJECTS_TABLE"];
         $modulesTable = $this->_tables["MODULES_TABLE"];
-        $arrResult = array();
+        $arrResult = [];
 
         $clientList = $this->_arrAccessInfo["user_clients"];
         $projectList = $this->_arrAccessInfo["user_projects"];
@@ -148,7 +148,7 @@ class ProjectManagement
         // order by condition
         $sOrderCond = getOrderByCond("a.rdt", $this->_data["sort"]);
         // filter by search query
-        $where = getFilterResult($this->_data['searchbar'], array("projectName" => array("a.project_name", 1), "client" => array("a.client_id", -1)));
+        $where = getFilterResult($this->_data['searchbar'], ["projectName" => ["a.project_name", 1], "client" => ["a.client_id", -1]]);
 
         // user has some specific permission
         if ($clientList) {
@@ -176,21 +176,21 @@ class ProjectManagement
                 // Get landing page
                 // Don't use dstatus = 0
                 $arrLandingPage = getRowColumns($this->_dbConn, $modulesTable, "module_id, module_name", "module_code = '$modc' AND parent_module_code = '$pmodc'");
-                $arrLandingPage = $arrLandingPage ? $arrLandingPage : array("", "");
+                $arrLandingPage = $arrLandingPage ? $arrLandingPage : ["", ""];
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "projectName" => $arrData['project_name'],
                     "clientId" => $arrData['client_id'],
                     "clientName" => $arrData['client_name'],
                     "id" => $projectId,
                     "landingPage" => $arrLandingPage[1],
                     "landingPageId" => $arrLandingPage[0],
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -210,29 +210,29 @@ class ProjectManagement
 
             //check if project exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $projectsTable, "project_id", "project_id != ? AND client_id = ? AND project_name = ?", array($projectId, $clientId, $projectName));
+            $iStatus = isRecordExist($this->_dbConn, $projectsTable, "project_id", "project_id != ? AND client_id = ? AND project_name = ?", [$projectId, $clientId, $projectName]);
 
             // Project not exist, edit
             if ($iStatus === 0) {
-                $arrLandingPage = getRowColumns($this->_dbConn, $modulesTable, "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", array($landingPage));
+                $arrLandingPage = getRowColumns($this->_dbConn, $modulesTable, "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", [$landingPage]);
 
                 if (isset($arrLandingPage, $arrLandingPage[0]) && $arrLandingPage[0]) {
                     $cols = "project_name = ?, dsh_modc = ?, dsh_pmodc = ?, modif_id = ?";
-                    $arrParams = array($projectName, $arrLandingPage[0], $arrLandingPage[1], $this->_iUserId, $projectId);
+                    $arrParams = [$projectName, $arrLandingPage[0], $arrLandingPage[1], $this->_iUserId, $projectId];
 
                     $iStatus = updateRecord($this->_dbConn, $projectsTable, $cols, "dstatus = 0 AND project_id = ?", $arrParams);
 
                     // project modified
                     if ($iStatus === 1) {
-                        $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                        $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                        $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                     }
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['LANDING_PAGE_NO_LONGER_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['LANDING_PAGE_NO_LONGER_EXISTS']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['PROJECT_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['PROJECT_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);

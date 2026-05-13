@@ -86,26 +86,26 @@ class RouteDataUpload
                             }
                         }
 
-                        $arrResult = array(
+                        $arrResult = [
                             "excelHeader" => $headers,
                             "excelData" => $groupedData,
                             "tableColumns" => $filteredColumns,
-                        );
+                        ];
 
-                        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+                        $arrMessage = responseMessage([], 1, $arrResult, true);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS["INVALID_EXCEL_FILE"]));
+                        $arrMessage = responseMessage([$GLOBALS["INVALID_EXCEL_FILE"]]);
                     }
                 }
             } else {
                 if (!isNonEmptyArray($columns)) {
-                    $arrMessage = responseMessage(array($GLOBALS["NO_COLUMN_FOUND"]));
+                    $arrMessage = responseMessage([$GLOBALS["NO_COLUMN_FOUND"]]);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS["NO_FILE_SELECTED"]));
+                    $arrMessage = responseMessage([$GLOBALS["NO_FILE_SELECTED"]]);
                 }
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS["NO_COLUMN_FOUND"]));
+            $arrMessage = responseMessage([$GLOBALS["NO_COLUMN_FOUND"]]);
         }
 
         echo json_encode($arrMessage);
@@ -126,12 +126,12 @@ class RouteDataUpload
 
         $columns = $this->_data['columns'];
 
-        $arrColumnTypesMapping = array(
-            1 => array("int", "bigint", "double", "decimal", "float", "tinyint", "smallint", "mediumint", "numeric", "real", "serial", "boolean"),
-            2 => array("datetime", "timestamp"),
-            3 => array("date"),
-            4 => array("time"),
-            5 => array("char", "varchar", "text", "nchar", "nvarchar", "binary", "varbinary", "blob", "clob", "json", "enum"),
+        $arrColumnTypesMapping = [
+            1 => ["int", "bigint", "double", "decimal", "float", "tinyint", "smallint", "mediumint", "numeric", "real", "serial", "boolean"],
+            2 => ["datetime", "timestamp"],
+            3 => ["date"],
+            4 => ["time"],
+            5 => ["char", "varchar", "text", "nchar", "nvarchar", "binary", "varbinary", "blob", "clob", "json", "enum"],
 
             "bigint" => 1,
             "int" => 1,
@@ -165,7 +165,7 @@ class RouteDataUpload
             "json" => 5,
             "enum" => 5,
 
-        );
+        ];
 
         // Get columns in which data has to be inserted
         if (isset($this->_data['columns']) && is_array($this->_data['columns'])) {
@@ -184,7 +184,7 @@ class RouteDataUpload
 
             // Loop through each row
             foreach ($arrExcelData[$arrExcelDataColumnHeader[0]] as $index => $data) {
-                $arrSubData = array();
+                $arrSubData = [];
                 $isAnyDataFound = false;
                 if ($index > 0) {
                     // Loop through each selected column
@@ -205,7 +205,7 @@ class RouteDataUpload
                             if ($columnData === '' || $columnData === null || trim($columnData) === '') {
                                 $errorMessage = ["Mobile number is required"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
 
                             $columnData = trim($columnData);
@@ -216,28 +216,28 @@ class RouteDataUpload
                             if ($columnData === '' || $columnData == 0) {
                                 $errorMessage = ["Mobile number is required"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
 
                             // ---- LENGTH CHECK ----
                             if (strlen($columnData) !== 10) {
                                 $errorMessage = ["Mobile must be exactly 10 digits: $columnData"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
 
                             // ---- START DIGIT CHECK ----
                             if (!preg_match('/^[6-9]/', $columnData)) {
                                 $errorMessage = ["Mobile must start with 6, 7, 8, or 9 : $columnData"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
 
                             // ---- REPEATED DIGITS CHECK ----
                             if (preg_match('/^(.)\1{9}$/', $columnData)) {
                                 $errorMessage = ["Invalid mobile number pattern : $columnData"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
 
                             // ---- DUPLICATE CHECK ONLY IN SAME FIELD ----
@@ -254,7 +254,7 @@ class RouteDataUpload
                             if ($isExist == 1) {
                                 $errorMessage = ["Mobile Number Already Exist : $columnData"];
                                 echo json_encode(responseMessage([$errorMessage]));
-                                exit();
+                                return;
                             }
                         }
 
@@ -336,15 +336,15 @@ class RouteDataUpload
                             if ($exData) {
                                 if (!($exData == 'ROC' || $exData == 'OTHERS')) {
                                     $errorMessage = $GLOBALS["INCORRECT_OUTLET_TYPES"] . strtolower($errorColumns . " at row " . $errorRow . " so data can not be inserted.");
-                                    $arrMessage = responseMessage(array($errorMessage));
+                                    $arrMessage = responseMessage([$errorMessage]);
                                     echo json_encode($arrMessage);
-                                    exit();
+                                    return;
                                 }
                             } else {
                                 $errorMessage = $GLOBALS["EMPTY_OUTLET_COLUMN"] . strtolower($errorColumns . " at row " . $errorRow . " so data can not be inserted.");
-                                $arrMessage = responseMessage(array($errorMessage));
+                                $arrMessage = responseMessage([$errorMessage]);
                                 echo json_encode($arrMessage);
-                                exit();
+                                return;
                             }
                         }
                     }
@@ -361,13 +361,13 @@ class RouteDataUpload
             }
 
             $errorMessage = $GLOBALS["DATA_TYPE_NOT_MATCH"] . strtolower(implode(', ', $errorColumns));
-            $arrMessage = responseMessage(array($errorMessage));
+            $arrMessage = responseMessage([$errorMessage]);
             echo json_encode($arrMessage);
-            exit();
+            return;
         }
 
         $this->_dbConn->BeginTransaction();
-        $arrStatus = array();
+        $arrStatus = [];
 
         foreach ($arrData as $arrEachRow) {
             $arrStatus[] = addRecord($this->_dbConn, $routeDetailsTable, $sSelectedColumns, $sValues, $arrEachRow);
@@ -375,15 +375,14 @@ class RouteDataUpload
 
         if (count($arrStatus) == 0 || in_array(0, $arrStatus)) {
             $this->_dbConn->RollbackTransaction();
-            $arrMessage = responseMessage(array($GLOBALS["DATA_NOT_UPLOADED"]));
+            $arrMessage = responseMessage([$GLOBALS["DATA_NOT_UPLOADED"]]);
         } else {
             $this->_dbConn->CommitTransaction();
-            $arrMessage = responseMessage(array($GLOBALS["DATA_UPLOADED"]), 1);
+            $arrMessage = responseMessage([$GLOBALS["DATA_UPLOADED"]], 1);
         }
 
         echo json_encode($arrMessage);
     }
-
 
     final public function getDownloadData()
     {
@@ -437,13 +436,13 @@ class RouteDataUpload
         }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
 
         echo json_encode($arrMessage);
     }

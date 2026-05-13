@@ -15,7 +15,6 @@ class ActiveSKUReporting
     private $_arrAccessInfo = [];
     private $_tables = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
@@ -31,10 +30,10 @@ class ActiveSKUReporting
         // filter query
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
-            array(
-                "branch" => array("a.branch_id", 0, true, true),
-                "dsType" => array("a.team_type", 1),
-            ),
+            [
+                "branch" => ["a.branch_id", 0, true, true],
+                "dsType" => ["a.team_type", 1],
+            ],
             $this->_dbConn
         );
 
@@ -54,22 +53,22 @@ class ActiveSKUReporting
             $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
             $branchFilter = true;
         }
-        $arrResult = array(
-            "focusTypeList" => array(
-                array("label" => "No", "value" => "No"),
-                array("label" => "Yes", "value" => "Yes"),
-            ),
+        $arrResult = [
+            "focusTypeList" => [
+                ["label" => "No", "value" => "No"],
+                ["label" => "Yes", "value" => "Yes"],
+            ],
             "branchFilter" => $branchFilter,
             // Don't use dstatus = 0
             "branchList" => $branchList,
             "dsTypeList" => getTeamType($this->_dbConn),
             "isSelectable" => false,
-            "sortOptions" => array(
-                array("label" => "Focus Brand", "value" => "a.is_focusbrand"),
-                array("label" => "DS Type", "value" => "a.team_type"),
-                array("label" => "SKU Name", "value" => "a.product_name"),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Focus Brand", "value" => "a.is_focusbrand"],
+                ["label" => "DS Type", "value" => "a.team_type"],
+                ["label" => "SKU Name", "value" => "a.product_name"],
+            ],
+            "viewHeader" => [
                 "app.reporting.activeUSers.branch",
                 "app.reporting.activeUSers.region",
                 "app.reporting.activeUSers.dsType",
@@ -78,8 +77,8 @@ class ActiveSKUReporting
                 "app.reporting.activeUSers.skucategory",
                 "app.reporting.activeUSers.skuName",
                 "app.reporting.activeUSers.baseRate",
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "region",
                 "branchName",
                 "dsType",
@@ -88,10 +87,10 @@ class ActiveSKUReporting
                 "category",
                 "skuName",
                 "prodRate",
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
     //DS DETAILS
@@ -110,24 +109,23 @@ class ActiveSKUReporting
         $teamList = $this->_arrAccessInfo["user_teams"];
         if ($teamList) {
             $where .= " AND team_id IN $teamList";
-            $branchIds = getRowsColumn($this->_dbConn, $projectTeamTable, "branch_id", "dstatus = 0 $where", array(), true);
+            $branchIds = getRowsColumn($this->_dbConn, $projectTeamTable, "branch_id", "dstatus = 0 $where", [], true);
             if (isNonEmptyArray($branchIds)) {
                 if (!is_array($branchIds)) {
-                    $branchIds = array($branchIds);
+                    $branchIds = [$branchIds];
                 }
                 $branchIds = "'" . implode("','", $branchIds) . "'";
                 $branchCond .= " AND b.branch_id IN ($branchIds)";
             }
         }
 
-
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
         $currentMonth = date('m'); // 01 to 12
         $currentYear  = date('Y'); // 4-digit year (e.g., 2026)
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $focusType = array(0 => "No", 1 => "Yes");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
+        $focusType = [0 => "No", 1 => "Yes"];
         $sQuery = "SELECT a.rec_id, a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name,a.product_name,a.net_rate, a.rcd, b.branch_name,b.main_branch  FROM $branchPickupTable AS a, $branchTable AS b" .
             " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id $branchCond  $searchCondition $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
@@ -153,7 +151,7 @@ class ActiveSKUReporting
                 $creationDate = !empty($arrData["rcd"]) ? date("Y-m-d", strtotime($arrData["rcd"])) : null;
                 $prodRate = $arrData["net_rate"];
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "recId" => $arrData["rec_id"],
                     "branchName" => $arrData["branch_name"],
                     "region" => $mainBranch,
@@ -164,13 +162,13 @@ class ActiveSKUReporting
                     "skuName" =>  $skuName,
                     "creationDate" => $creationDate,
                     "prodRate" => $prodRate,
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -203,8 +201,8 @@ class ActiveSKUReporting
         $arrDataHolder = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $focusType = array(0 => "No", 1 => "Yes");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
+        $focusType = [0 => "No", 1 => "Yes"];
 
         $sQuery = "SELECT a.branch_id, a.summary_column_name, a.team_type, a.is_focusbrand, a.category_name, a.product_name, a.net_rate, a.rcd, b.district, b.branch_name, b.main_branch FROM $branchPickupTable AS a" .
             ", $branchTable AS b WHERE a.dstatus = 0 AND a.branch_id = b.branch_id $dwnCond $sOrderCond";
@@ -254,7 +252,7 @@ class ActiveSKUReporting
         $fp = fopen($filename, 'w');
 
         if ($fp === false) {
-            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            $arrMessage = responseMessage(["Failed to create CSV file"], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -273,12 +271,12 @@ class ActiveSKUReporting
 
         fclose($fp);
 
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
@@ -293,14 +291,14 @@ class ActiveSKUReporting
             $isFocus = "0";
         }
         $cols = "is_focusbrand = ?";
-        $arrParams = array($isFocus, $recId);
+        $arrParams = [$isFocus, $recId];
 
         $iStatus = updateRecord($this->_dbConn, "tblbranch_pickupstock_products", $cols, " rec_id = ?", $arrParams);
 
         if ($iStatus === 1) {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_UPDATED_SUCCESSFULL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['DATA_UPDATED_SUCCESSFULL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_UPDATED']));
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_UPDATED']]);
         }
         echo json_encode($arrMessage);
     }

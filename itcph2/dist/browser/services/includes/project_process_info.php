@@ -1,148 +1,148 @@
 <?php
 
-$COMMON_PROCESS_SETTINGS = array(
-    "ALLOWED_PID" => array(1),
+$COMMON_PROCESS_SETTINGS = [
+    "ALLOWED_PID" => [1],
     "PROCESS_TABLE" => "tblsurvey_response_new",
     "RESPONSE_TABLE" => "tblsurvey_response_details",
     "IMG_TABLE" => "tblsurvey_response_file_new",
 
     // ITC Client, Van DS Project
-    "NO_OF_QUESTIONS" => array(3, 2, 2, 2, 5, 2, 2, 2, 1),
-    "PROCESS_BASED_ON_SKIP_LOGIC" => array(
-        1 => array(
+    "NO_OF_QUESTIONS" => [3, 2, 2, 2, 5, 2, 2, 2, 1],
+    "PROCESS_BASED_ON_SKIP_LOGIC" => [
+        1 => [
             "QUES_ID" => 1,
             // needs to be in lowercase
-            "attendance" => array(1, 8),
-            "outlet survey" => array(1, 2),
-            "outlet order" => array(1, 2),
-            "add outlet" => array(1, 5),
-            "day end selfie" => array(1, 9)
-        ),
-        2 => array(
+            "attendance" => [1, 8],
+            "outlet survey" => [1, 2],
+            "outlet order" => [1, 2],
+            "add outlet" => [1, 5],
+            "day end selfie" => [1, 9]
+        ],
+        2 => [
             "QUES_ID" => 2,
             // needs to be in lowercase
-            "yes" => array(2, 3),
-            "no" => array(2, 4)
-        ),
-        5 => array(
+            "yes" => [2, 3],
+            "no" => [2, 4]
+        ],
+        5 => [
             "QUES_ID" => 5,
             // needs to be in lowercase
-            "yes" => array(5, 6),
-            "no" => array(5, 7)
-        ),
-    ),
+            "yes" => [5, 6],
+            "no" => [5, 7]
+        ],
+    ],
     "PROCESS_ATTENDANCE" => true,
-    "ATTENDANCE_FORM" => array(1, 1),           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
-    "ATTENDANCE_MOBIMGID_FORM" => array(8, 2),  // Attendance unique mob id (8 = Page Id, 2 = Ques ID)
-    "ATTENDANCE_DATA" => array(
-        array("label" => "route", "valueIndex" => array(1, 2)),
-        array("label" => "beatAdherenceReason", "valueIndex" => array(1, 3)),
-        array("label" => "pickupDetails", "valueIndex" => array(8, 1)),
-    ),
+    "ATTENDANCE_FORM" => [1, 1],           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
+    "ATTENDANCE_MOBIMGID_FORM" => [8, 2],  // Attendance unique mob id (8 = Page Id, 2 = Ques ID)
+    "ATTENDANCE_DATA" => [
+        ["label" => "route", "valueIndex" => [1, 2]],
+        ["label" => "beatAdherenceReason", "valueIndex" => [1, 3]],
+        ["label" => "pickupDetails", "valueIndex" => [8, 1]],
+    ],
 
     "PROCESS_DAYEND" => true,
-    "DAYEND_FORM" => array(1, 1),               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
-    "DAYEND_MOBIMGID_FORM" => array(9, 1),      // Dayend unique mob id (9 = Page Id, 1 = Ques ID)
-    "DAYEND_DATA" => array(
-        array("label" => "route", "valueIndex" => array(1, 2)),
-    ),
+    "DAYEND_FORM" => [1, 1],               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
+    "DAYEND_MOBIMGID_FORM" => [9, 1],      // Dayend unique mob id (9 = Page Id, 1 = Ques ID)
+    "DAYEND_DATA" => [
+        ["label" => "route", "valueIndex" => [1, 2]],
+    ],
 
     "PROCESS_OTHER" => true,                    // JSON contains other items other than Attendance and Day end selfie
-);
+];
 
-$PROJECT_SPECIFIC_SETTINGS = array(
+$PROJECT_SPECIFIC_SETTINGS = [
     // ITC Client
-    1 => array(
+    1 => [
         // Van DS PH2 Project
-        1 => array(
+        1 => [
             // vandify
-            99 => array(
+            99 => [
                 "PROCESS_TABLE" => "tblsurvey_response_new",
                 "RESPONSE_TABLE" => "tblsurvey_response_details",
                 "IMG_TABLE" => "tblsurvey_response_file_new",
-                "NO_OF_QUESTIONS" => array(3, 2, 2, 2, 5, 2, 2, 2, 1),
-                "PROCESS_BASED_ON_SKIP_LOGIC" => array(
-                    1 => array(
+                "NO_OF_QUESTIONS" => [3, 2, 2, 2, 5, 2, 2, 2, 1],
+                "PROCESS_BASED_ON_SKIP_LOGIC" => [
+                    1 => [
                         "QUES_ID" => 1,
                         // needs to be in lowercase
-                        "attendance" => array(1, 8),
-                        "morning survey" => array(1, 8),
-                        "outlet survey" => array(1, 2),
-                        "outlet order" => array(1, 2),
-                        "add outlet" => array(1, 5),
-                        "day end selfie" => array(1, 9)
-                    ),
-                    2 => array(
+                        "attendance" => [1, 8],
+                        "morning survey" => [1, 8],
+                        "outlet survey" => [1, 2],
+                        "outlet order" => [1, 2],
+                        "add outlet" => [1, 5],
+                        "day end selfie" => [1, 9]
+                    ],
+                    2 => [
                         "QUES_ID" => 2,
                         // needs to be in lowercase
-                        "yes" => array(2, 3),
-                        "no" => array(2, 4)
-                    ),
-                    5 => array(
+                        "yes" => [2, 3],
+                        "no" => [2, 4]
+                    ],
+                    5 => [
                         "QUES_ID" => 5,
                         // needs to be in lowercase
-                        "yes" => array(5, 6),
-                        "no" => array(5, 7)
-                    ),
-                ),
+                        "yes" => [5, 6],
+                        "no" => [5, 7]
+                    ],
+                ],
                 "PROCESS_ATTENDANCE" => true,
-                "ATTENDANCE_FORM" => array(1, 1),           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
-                "ATTENDANCE_MOBIMGID_FORM" => array(8, 2),  // Attendance unique mob id (8 = Page Id, 2 = Ques ID)
-                "ATTENDANCE_DATA" => array(
-                    array("label" => "route", "valueIndex" => array(1, 2)),
-                    array("label" => "beatAdherenceReason", "valueIndex" => array(1, 3)),
-                    array("label" => "pickupDetails", "valueIndex" => array(8, 1)),
-                ),
+                "ATTENDANCE_FORM" => [1, 1],           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
+                "ATTENDANCE_MOBIMGID_FORM" => [8, 2],  // Attendance unique mob id (8 = Page Id, 2 = Ques ID)
+                "ATTENDANCE_DATA" => [
+                    ["label" => "route", "valueIndex" => [1, 2]],
+                    ["label" => "beatAdherenceReason", "valueIndex" => [1, 3]],
+                    ["label" => "pickupDetails", "valueIndex" => [8, 1]],
+                ],
 
                 "PROCESS_DAYEND" => true,
-                "DAYEND_FORM" => array(1, 1),               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
-                "DAYEND_MOBIMGID_FORM" => array(9, 1),      // Dayend unique mob id (9 = Page Id, 1 = Ques ID)
-                "DAYEND_DATA" => array(
-                    array("label" => "route", "valueIndex" => array(1, 2)),
-                ),
+                "DAYEND_FORM" => [1, 1],               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
+                "DAYEND_MOBIMGID_FORM" => [9, 1],      // Dayend unique mob id (9 = Page Id, 1 = Ques ID)
+                "DAYEND_DATA" => [
+                    ["label" => "route", "valueIndex" => [1, 2]],
+                ],
 
                 "PROCESS_OTHER" => true,
-            ),
+            ],
             // WD Price Update App
-            100 => array(
-                "NO_OF_QUESTIONS" => array(1),
+            100 => [
+                "NO_OF_QUESTIONS" => [1],
                 "PROCESS_OTHER" => true,
-            ),
+            ],
             // MDO
-            10 => array(
+            10 => [
                 "PROCESS_TABLE" => "tblsurvey_response_new",
                 "RESPONSE_TABLE" => "tblsurvey_response_details_mdo",
                 "IMG_TABLE" => "tblsurvey_response_file_new",
-                "NO_OF_QUESTIONS" => array(4, 1, 9, 9, 9, 9, 9, 9, 9, 2, 4, 4),
-                "PROCESS_BASED_ON_SKIP_LOGIC" => array(
-                    1 => array(
+                "NO_OF_QUESTIONS" => [4, 1, 9, 9, 9, 9, 9, 9, 9, 2, 4, 4],
+                "PROCESS_BASED_ON_SKIP_LOGIC" => [
+                    1 => [
                         "QUES_ID" => 1,
                         // needs to be in lowercase
-                        "attendance" => array(1, 0),
-                        "day end selfie" => array(1, 11),
-                        "infradetails" => array(1, 12),
-                    ),
-                ),
+                        "attendance" => [1, 0],
+                        "day end selfie" => [1, 11],
+                        "infradetails" => [1, 12],
+                    ],
+                ],
                 "PROCESS_ATTENDANCE" => true,
-                "ATTENDANCE_FORM" => array(1, 1),           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
-                "ATTENDANCE_DATA" => array(
-                    array("label" => "workingWith", "valueIndex" => array(1, 2)),
-                    array("label" => "selectRouteYouAreGoingOn", "valueIndex" => array(1, 3))
-                ),
+                "ATTENDANCE_FORM" => [1, 1],           // Attendance radio answer (1 = Page Id, 1 = Ques ID)
+                "ATTENDANCE_DATA" => [
+                    ["label" => "workingWith", "valueIndex" => [1, 2]],
+                    ["label" => "selectRouteYouAreGoingOn", "valueIndex" => [1, 3]]
+                ],
 
                 "PROCESS_DAYEND" => true,
-                "DAYEND_FORM" => array(1, 1),               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
-                "DAYEND_DATA" => array(
-                    array("label" => "outlet", "valueIndex" => array(11, 1)),
-                    array("label" => "SalesVolume", "valueIndex" => array(11, 2)),
-                    array("label" => "SalesValue", "valueIndex" => array(11, 3)),
-                ),
+                "DAYEND_FORM" => [1, 1],               // Dayend radio answer (1 = Page Id, 1 = Ques ID)
+                "DAYEND_DATA" => [
+                    ["label" => "outlet", "valueIndex" => [11, 1]],
+                    ["label" => "SalesVolume", "valueIndex" => [11, 2]],
+                    ["label" => "SalesValue", "valueIndex" => [11, 3]],
+                ],
 
                 "PROCESS_OTHER" => true,
-            ),
-        ),
-    ),
-);
+            ],
+        ],
+    ],
+];
 
 function getRespTable($clientId = null, $projectId = null, $jsonId = null)
 {
