@@ -1,5 +1,5 @@
-$loader-bg-color: rgba(0, 0, 0, 0);
-$parent-bg-color: rgba(26, 188, 156, .8);
+$loader-bg-color: rgb(0 0 0 / 0%);
+$parent-bg-color: rgb(26 188 156 / 80%);
 
 .sk-line-material {
   margin: auto;
@@ -8,7 +8,6 @@ $parent-bg-color: rgba(26, 188, 156, .8);
   width: 100%;
 
   .sk-child {
-    -webkit-animation: sk-line-material 2s ease-in-out 0s infinite both;
     animation: sk-line-material 2s ease-in-out 0s infinite both;
     display: inline-block;
     height: 4px;
@@ -19,29 +18,13 @@ $parent-bg-color: rgba(26, 188, 156, .8);
   }
 }
 
-@-webkit-keyframes sk-line-material {
-
-  0%,
-  80%,
-  100% {
-    -webkit-transform: scaleX(0);
-    transform: scaleX(0);
-  }
-
-  40% {
-    -webkit-transform: scaleX(1);
-    transform: scaleX(1);
-  }
-}
-
 @keyframes sk-line-material {
+
   0% {
-    -webkit-transform: scaleX(0);
     transform: scaleX(0);
   }
 
   100% {
-    -webkit-transform: scaleX(1);
     transform: scaleX(1);
   }
 }

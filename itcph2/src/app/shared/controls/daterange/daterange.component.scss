@@ -1,16 +1,12 @@
 $disabled-color: #ccc;
 $focused-color: #e6e6e6;
-$blue-color: rgb(2, 117, 216);
-$faded-blue-color: rgba(2, 117, 216, .5);
+$blue-color: rgb(2 117 216);
+$faded-blue-color: rgb(2 117 216 / 50%);
 $white-color: #fff;
 
 ::ng-deep {
+
   .ngb-dp-day {
-    &.disabled {
-      .custom-day {
-        color: $disabled-color;
-      }
-    }
 
     .custom-day {
       display: inline-block;
@@ -20,8 +16,17 @@ $white-color: #fff;
       width: 2rem;
     }
 
-    &:not(.disabled) {
+    &.disabled {
+
       .custom-day {
+        color: $disabled-color;
+      }
+    }
+
+    &:not(.disabled) {
+
+      .custom-day {
+
         &.focused {
           background-color: $focused-color;
         }

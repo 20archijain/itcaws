@@ -242,9 +242,9 @@ class WdMappingManagement
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $wdStatus = $arrData['wd_active_status'];
-                if($wdStatus == 0){
+                if ($wdStatus == 0) {
                     $status = "Active";
-                }else{
+                } else {
                     $status = "Inactive";
                 }
                 $arrResult[] = array(
@@ -259,7 +259,7 @@ class WdMappingManagement
                     "wd_firm_name" => $arrData['wd_firm_name'],
                     "wd_market" => $arrData['wd_market'],
                     "wd_pop_group" => $arrData['wd_pop_group'],
-                    "wdStatus"=> $status,
+                    "wdStatus" => $status,
                 );
             }
         }

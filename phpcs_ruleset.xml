@@ -1,18 +1,42 @@
 <?xml version="1.0"?>
-<ruleset name="Custom Standard">
-    <rule ref="PSR12">
-        <exclude name="Generic.Files.LineEndings" />
-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
-        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
-    </rule>
+<ruleset name="Modern PSR-12 Standard">
+
+    <!-- Base standard -->
+    <rule ref="PSR12" />
+
+    <!-- Line length: keep reasonable, but not excessive -->
     <rule ref="Generic.Files.LineLength">
         <properties>
             <property name="lineLimit" value="300" />
             <property name="absoluteLineLimit" value="300" />
         </properties>
     </rule>
+
+    <!-- Enforce Unix line endings (recommended for cross-platform repos) -->
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\n" />
+        </properties>
+    </rule>
+
+    <!-- Exclude only what is commonly acceptable in real projects -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+    </rule>
+
+    <!-- Allow classes without namespace ONLY if you're not fully namespacing legacy code -->
+    <rule ref="PSR1.Classes">
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+    </rule>
+
+    <!-- Do NOT enforce underscore properties rule (PSR-12 already prefers modern visibility usage) -->
+    <rule ref="PSR2.Classes.PropertyDeclaration">
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+    </rule>
+
+    <!-- Hide “no code found” noise in empty files -->
     <rule ref="Internal.NoCodeFound">
         <severity>0</severity>
     </rule>
+
 </ruleset>

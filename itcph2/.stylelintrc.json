@@ -1,0 +1,69 @@
+{
+  "extends": "stylelint-config-standard-scss",
+  "plugins": [
+    "stylelint-scss",
+    "stylelint-order"
+  ],
+  "ignoreFiles": [
+    "node_modules/**/*.scss",
+    "src/scss/layout-dark.scss",
+    "src/scss/layout-rtl.scss",
+    "src/scss/ng-module/**/*.scss",
+    "src/scss/settings/**/*.scss",
+    "src/scss/themes/**/*.scss",
+    "src/app/main/components/dashboard/dashboard.component.scss",
+    "src/app/main/components/npsr-dashboard/npsr-dashboard.component.scss",
+    "src/app/main/components/productive-dashboard/productive-dashboard.component.scss",
+    "src/app/main/components/sales-dashboard/sales-dashboard.component.scss",
+    "src/app/shared/components/npsr-accordion/npsr-accordion.component.scss",
+    "src/app/shared/components/productive-accordion/productive-accordion.component.scss",
+    "src/app/main/components/notification/app.notification.component.scss",
+    "src/app/main/components/download-db-table/download-db-table.component.scss",
+    "src/app/main/components/swd-retailer-target/swd-retailer-target.component.scss",
+    "src/app/shared/components/breeze-accordion/breeze-accordion.component.scss",
+    "src/app/main/components/breeze-dashboard/breeze-dashboard.component.scss",
+    "src/app/main/components/ai-insights/ai-insights.component.scss",
+    "src/app/main/components/npsr-dashboard/npsr-dashboard2.component.scss",
+    "src/app/main/components/reporting/skuSetting/branchProductAllocation.component.scss"
+  ],
+  "rules": {
+    "at-rule-no-unknown": null,
+    "color-no-invalid-hex": true,
+    "color-no-hex": null,
+    "color-named": "never",
+    "comment-no-empty": true,
+    "declaration-no-important": null,
+    "no-duplicate-selectors": true,
+    "no-empty-source": true,
+    "no-invalid-double-slash-comments": true,
+    "no-unknown-animations": true,
+    "property-no-vendor-prefix": [
+      true,
+      {
+        "ignoreProperties": [
+          "ms",
+          "webkit"
+        ]
+      }
+    ],
+    "selector-max-id": 0,
+    "selector-max-universal": 2,
+    "selector-no-qualifying-type": null,
+    "max-nesting-depth": 6,
+    "declaration-block-single-line-max-declarations": 1,
+    "block-no-empty": true,
+    "length-zero-no-unit": true,
+    "font-family-no-missing-generic-family-keyword": true,
+    "selector-class-pattern": null,
+    "rule-empty-line-before": "always",
+    "order/properties-alphabetical-order": true,
+    "selector-pseudo-element-no-unknown": [
+      true,
+      {
+        "ignorePseudoElements": [
+          "ng-deep"
+        ]
+      }
+    ]
+  }
+}

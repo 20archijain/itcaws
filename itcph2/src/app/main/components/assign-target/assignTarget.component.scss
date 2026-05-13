@@ -5,7 +5,7 @@ $whitish1: #f9f9f9;
 $whitish2: #ddd;
 $lightgray: #d3d3d3;
 $steelblue: #4682b4;
-$red: rgb(225, 9, 9);
+$red: rgb(225 9 9);
 
 .fixed-header {
   background-color: $white;
@@ -22,8 +22,11 @@ $red: rgb(225, 9, 9);
 }
 
 .fixed-table-header {
+
   .table {
+
     th {
+
       &.highlight {
         background-color: $green !important;
         color: $white;
@@ -33,6 +36,7 @@ $red: rgb(225, 9, 9);
 }
 
 // sass-lint:disable no-universal-selectors
+
 .table> :not(caption)>*>* {
   padding: .3rem .6rem !important;
 }
@@ -82,6 +86,7 @@ $red: rgb(225, 9, 9);
 }
 
 @keyframes blink {
+
   0% {
     opacity: 1;
   }

@@ -17,7 +17,15 @@
     "test": "ng test",
     "test-coverage": "ng test --code-coverage",
     "lint": "ng lint",
-    "postlint": "sass-lint --verbose --no-exit && phpcs --ignore=.js,.css --standard=../phpcs_ruleset.xml dist/"
+    "postlint": "npm run scss_lint_using_sass_lint && npm run php_lint_using_phpcs",
+    "lint:fix": "npm run fix_ts_lint && npm run fix_scss_lint_using_stylelint && npm run fix_php_lint_using_phpcs",
+    "scss_lint_using_sass_lint": "sass-lint --verbose --no-exit",
+    "scss_lint_using_stylelint": "npx stylelint \"**/*.scss\"",
+    "php_lint_using_phpcs": "phpcs --ignore=.js,.css --standard=../phpcs_ruleset.xml dist/",
+    "fix_ts_lint": "ng lint --fix",
+    "fix_scss_lint_using_stylelint": "npx stylelint \"**/*.scss\" --fix",
+    "fix_php_lint_using_phpcs": "phpcbf --ignore=.js,.css --standard=../phpcs_ruleset.xml dist/",
+    "phpstan": "php ../uproots/php_libs/vendor/bin/phpstan analyse -c phpstan.neon --memory-limit=1G"
   },
   "private": true,
   "dependencies": {
@@ -83,6 +91,10 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "karma-spec-reporter": "^0.0.36",
+    "stylelint": "^16.26.1",
+    "stylelint-config-standard-scss": "^16.0.0",
+    "stylelint-order": "^8.1.1",
+    "stylelint-scss": "^6.14.0",
     "ts-node": "~8.3.0",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.58.2"

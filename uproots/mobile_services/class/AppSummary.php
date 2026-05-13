@@ -2228,6 +2228,12 @@ class AppSummary extends Utilities
                 "wdCodeData" => $arrWdcodeData
             ];
         } else {
+            $notificationLabelList = array();
+            $type = $this->tableUtil->getRowColumn(
+                "$dbName.tblproject_team",
+                "is_type",
+                "dstatus = 0 AND team_id = $teamId"
+            );
             $arrTodaySummary = $this->tableUtil->getRowColumns(
                 "$dbName.tblmobile_summary",
                 "planned_outlets, oulet_covered_today, sell_in_shops_count_today, total_sales_today, time_spent_today, total_meter_travelled, planned_outlets_mtd, oulet_covered_mtd" .
@@ -2300,7 +2306,59 @@ class AppSummary extends Utilities
                 ),
             );
 
+            if ($teamId == '1846' && ($type == 0 || $type == 5)) {
+                $minTotalShops =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minTotalShops' AND team_type = '$type'");
 
+                $minQualifiedAttendanceTimeInMin =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minWorkingTimeInMin' AND team_type = '$type'");
+
+                $minDailySalesInM =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'minDailySaleInM' AND team_type = '$type'");
+
+                $maxDailySalesInM =  (int) $this->tableUtil->getRowColumn("$dbName.tblconstants", "con_value", "con_name = 'maxDailySaleInM' AND team_type = '$type'");
+                // $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
+                if (isset($todaySummaryKey4) && $todaySummaryKey4) {
+                    $timeSpent = $todaySummaryKey4;
+                    $totalMinutes = 0;
+
+                    // Parse hours
+                    if (preg_match('/(\d+)\s*h/', $timeSpent, $matches)) {
+                        $totalMinutes += (int)$matches[1] * 60;
+                    }
+                    // Parse minutes
+                    if (preg_match('/(\d+)\s*m/', $timeSpent, $matches)) {
+                        $totalMinutes += (int)$matches[1];
+                    }
+                    // For seconds only, round to nearest minute
+                    if (preg_match('/^(\d+)s$/', $timeSpent, $matches)) {
+                        $totalMinutes = round((int)$matches[1] / 60);
+                    }
+
+                    $timeSpentInMinutes = $totalMinutes;
+                }
+
+                // App Notifcation For Qualification
+                $notificationLabelList = array(
+                    array(
+                        "label1" => "Outlets Target",
+                        "value1" => (string)$minTotalShops,
+                        "label2" => "Outlets Achieved",
+                        "value2" => isset($todayOutletCovered) ? "$todayOutletCovered" : 0,
+                    ),
+                    array(
+                        "label1" => "Time Target",
+                        "value1" => (string)$minQualifiedAttendanceTimeInMin,
+                        "label2" => "Time Achieved",
+                        "value2" => isset($timeSpentInMinutes) ? "$timeSpentInMinutes" : 0,
+                    ),
+                    array(
+                        "label1" => "Min Sales Target",
+                        "value1" => (string)$minDailySalesInM,
+                        "label2" => "Max Sales Target",
+                        "value2" => (string)$maxDailySalesInM,
+                        "label3" => "Sales Achieved",
+                        "value3" => isset($todaySummaryKey3) ? "$todaySummaryKey3" : 0,
+                    ),
+                );
+            }
             // Output summary
             $arrOtherSummary[] = $this->getFormattedSummary(
                 $appType,
@@ -2693,6 +2751,14 @@ class AppSummary extends Utilities
                         $showTitleOnly
                     );
                 }
+            }
+            if ($teamId == '1846' && ($type == 0 || $type == 5)) {
+                // Output summary
+                $arrOtherSummary[] = $this->getFormattedSummary(
+                    $appType,
+                    "Qualification Criteria",
+                    $notificationLabelList
+                );
             }
         }
         return $arrOtherSummary;

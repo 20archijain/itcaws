@@ -1,7 +1,8 @@
 $size: 5px;
-$sort-color: rgba(0, 0, 0, .3);
+$sort-color: rgb(0 0 0 / 30%);
 
 .table-listing {
+
   .card-header {
     padding: 0;
   }
@@ -12,6 +13,7 @@ $sort-color: rgba(0, 0, 0, .3);
 }
 
 .sort {
+
   &::after {
     border: $size solid transparent;
     border-bottom: $size solid $sort-color;
@@ -23,8 +25,8 @@ $sort-color: rgba(0, 0, 0, .3);
   }
 
   &.desc {
+
     &::after {
-      -webkit-transform: rotate(-180deg);
       margin-bottom: -2px;
       transform: rotate(-180deg);
     }

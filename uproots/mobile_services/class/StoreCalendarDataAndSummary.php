@@ -213,7 +213,7 @@ class StoreCalendarDataAndSummary
                         $endTime = $arrDayEnd ? $arrDayEnd[1] : "";
                         $timeSpentInSec = $this->commonFunctions->getTimeDifference($startTime, $endTime, true);
                     } else {
-                        $responseTime = $this->tableUtil->getRowColumnS("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND ques_0 NOT IN ('Infra Details','InfraDetails') AND team_id = $teamId AND capture_date = '$date'");
+                        $responseTime = $this->tableUtil->getRowColumns("$dbName.tblsurvey_response_details_mdo", "MIN(capture_datetime), MAX(capture_datetime)", "dstatus = 0 AND ques_0 NOT IN ('Infra Details','InfraDetails') AND team_id = $teamId AND capture_date = '$date'");
                         $responseDistanceInKm = $this->tableUtil->getRowColumn("$dbName.tblsurvey_response_details_mdo", "distance_in_meter", "dstatus = 0 AND team_id = $teamId AND capture_date = '$date' ORDER BY pro_id DESC");
                         $startTime =  (!empty($responseTime[0]) ? $responseTime[0] : 0);
                         $endTime =  (!empty($responseTime[1]) ? $responseTime[1] : 0);

@@ -647,6 +647,10 @@ class LineCutReport
                             $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
                         }
 
+                        // echo "<pre>";
+
+                        // print_r($arrColumnsAllProduct);die;
+
                         if (isset($arrColumnsAllProduct) && !empty($arrColumnsAllProduct)) {
                             if ($branchId == 40) {
                                 $routeTable = "tblroute_details_delhi";
