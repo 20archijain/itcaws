@@ -180,9 +180,9 @@ class MdoSitesOnMapManagement
             if (!$matchAll) {
                 if (isNonEmptyArray($circle)) {
                     $circleIds = "'" . implode("','", $circle) . "'";
-                    $condition .= " AND b.circle IN ($circleIds)";
+                    $condition .= " AND c.circle IN ($circleIds)";
                 } else {
-                    $condition .= " AND b.circle = '$circle'";
+                    $condition .= " AND c.circle = '$circle'";
                 }
             }
         }
@@ -192,9 +192,9 @@ class MdoSitesOnMapManagement
             if (!$matchAll) {
                 if (isNonEmptyArray($section)) {
                     $sectionIds = "'" . implode("','", $section) . "'";
-                    $condition .= " AND b.section IN ($sectionIds)";
+                    $condition .= " AND c.section IN ($sectionIds)";
                 } else {
-                    $condition .= " AND b.section = '$section'";
+                    $condition .= " AND c.section = '$section'";
                 }
             }
         }

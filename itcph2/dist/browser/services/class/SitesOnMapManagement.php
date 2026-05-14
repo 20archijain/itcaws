@@ -406,7 +406,7 @@ class SitesOnMapManagement
 
             $arrResult = [
                 "branchList" => getBranchList($this->_dbConn, false, "$districtAllCond", "", 1, false, true, "mainBranch"),
-                "teamType" => getTeamType($this->_dbConn, $district),
+                // "teamType" => getTeamType($this->_dbConn, $district),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
                 "wdCodeList" => $this->getWdCodeList($districtCond),

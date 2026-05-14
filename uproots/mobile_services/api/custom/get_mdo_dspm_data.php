@@ -189,6 +189,14 @@ class getMdoDSPM extends Utilities
 
                 $incentiveCriteria1 = min(($daysCriteria1 / $targetDays) * 1500, 1500);
                 $incentiveCriteria2 = min(($daysCriteria2 / $targetDays) * 4000, 4000);
+                
+                if ($incentiveCriteria2 == 4000) {
+                    $incentiveCriteria1 = 0;
+                }
+                
+                if ($incentiveCriteria1 > 0) {
+                    $incentiveCriteria2 = 0;
+                }
             }
 
             $totalEarned = $totalIncentive + $totalIncentive2 + $incentiveCriteria1 + $incentiveCriteria2;
