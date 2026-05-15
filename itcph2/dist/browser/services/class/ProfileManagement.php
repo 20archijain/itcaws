@@ -57,12 +57,12 @@ class ProfileManagement
         if ($isValidated) {
             $cols = "usr_fullname = ?, usr_email = ?";
 
-            $iStatus = updateRecord($this->_dbConn, $this->_tables["USER_AUTHDETAILS_TABLE"], $cols, "dstatus = 0 AND user_id = ?", array($name, $email, $this->_iUserId));
+            $iStatus = updateRecord($this->_dbConn, $this->_tables["USER_AUTHDETAILS_TABLE"], $cols, "dstatus = 0 AND user_id = ?", [$name, $email, $this->_iUserId]);
 
             if ($iStatus == 1) {
-                $arrMessage = responseMessage(array($GLOBALS['PROFILE_UPDATED_SUCCESSFULL']), 1);
+                $arrMessage = responseMessage([$GLOBALS['PROFILE_UPDATED_SUCCESSFULL']], 1);
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['PROFILE_NOT_UPDATED']));
+                $arrMessage = responseMessage([$GLOBALS['PROFILE_NOT_UPDATED']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -83,16 +83,16 @@ class ProfileManagement
         if ($isValidated) {
             //password criteria not match
             if (constant("STRONG_PASSWORD_CHECK_FUNC") && !strongPwdCheck($new)) {
-                $arrMessage = responseMessage(array($GLOBALS['WEAK_PASSWORD']));
+                $arrMessage = responseMessage([$GLOBALS['WEAK_PASSWORD']]);
             } elseif (!matchValue($new, $confirmnew, true)) {
                 //new and confirm password not match
-                $arrMessage = responseMessage(array($GLOBALS['PASSWORD_MISMATCH']));
+                $arrMessage = responseMessage([$GLOBALS['PASSWORD_MISMATCH']]);
             } else {
                 $sAction = null;
                 $iRows = 0;
                 $userAuthdetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
                 $sQuery = "SELECT auth_pwd FROM $userAuthdetailsTable WHERE user_id = ? AND dstatus = 0 LIMIT 1";
-                $arrParams = array($this->_iUserId);
+                $arrParams = [$this->_iUserId];
                 $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
                 //user found
@@ -105,29 +105,29 @@ class ProfileManagement
                     if (matchValue(validPassword($current, $iHashPwd), true, true)) {
                         // check if new password is same as current or not
                         if (matchValue(validPassword($new, $iHashPwd), true, true)) {
-                            $arrMessage = responseMessage(array($GLOBALS['CHOOSE_DIFFERENT_PASSWORD']));
+                            $arrMessage = responseMessage([$GLOBALS['CHOOSE_DIFFERENT_PASSWORD']]);
                         } else {
                             $sauth_salt = pseudoRandomKey(32);
 
                             $usr_pwd = securePassword($new, $sauth_salt);
 
                             $last_update = currentDateTime();
-                            $arrParams = array($usr_pwd, $last_update, $this->_iUserId);
+                            $arrParams = [$usr_pwd, $last_update, $this->_iUserId];
                             $cols = "temp_pwd = '', temp_flag = 0, auth_pwd = ?, last_pwd_update = ?";
 
                             $iStatus = updateRecord($this->_dbConn, $userAuthdetailsTable, $cols, "dstatus = 0 AND user_id = ?", $arrParams);
 
                             if (matchValue($iStatus, 1, true)) {
-                                $arrMessage = responseMessage(array($GLOBALS['PASSWORD_CHANGED_SUCCESS']), 1);
+                                $arrMessage = responseMessage([$GLOBALS['PASSWORD_CHANGED_SUCCESS']], 1);
                             } else {
-                                $arrMessage = responseMessage(array($GLOBALS['PASSWORD_CHANGED_FAILED']));
+                                $arrMessage = responseMessage([$GLOBALS['PASSWORD_CHANGED_FAILED']]);
                             }
                         }
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['WRONG_CURRENT_PASSWORD']));
+                        $arrMessage = responseMessage([$GLOBALS['WRONG_CURRENT_PASSWORD']]);
                     }
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['UNAUTHORIZED_ACCESS']));
+                    $arrMessage = responseMessage([$GLOBALS['UNAUTHORIZED_ACCESS']]);
                 }
             }
         } else {

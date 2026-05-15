@@ -16,7 +16,6 @@ class LineCutReport
     private $_arrAccessInfo = [];
     private $arrBranchwiseProducts = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo)
     {
         $this->_data = $data;
@@ -94,7 +93,7 @@ class LineCutReport
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -106,7 +105,7 @@ class LineCutReport
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -156,11 +155,9 @@ class LineCutReport
         return $where;
     }
 
-
-
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -172,19 +169,19 @@ class LineCutReport
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "monthList" => $this->monthLabelAndValue(),
-            "reportTypeList" => array(
-                array(
+            "reportTypeList" => [
+                [
                     "label" => "DS Level",
                     "value" => "1",
-                ),
-                array(
+                ],
+                [
                     "label" => "Outlet Level",
                     "value" => "2",
-                )
-            )
-        );
+                ]
+            ]
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -243,29 +240,29 @@ class LineCutReport
 
     final public function getProducts()
     {
-        $arrResult = array(
+        $arrResult = [
             "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"], $this->_data["type"]),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getBranchTeamTypeList()
     {
         if ($this->_data["branch"]) {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => getTeamType($this->_dbConn, $this->_data["branch"]),
                 "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"]),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "productList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -303,7 +300,6 @@ class LineCutReport
                 $teamTypeCond .= " AND b.is_type = $teamType";
             }
         }
-
 
         $arrExcelData = [];
         $arrExcelData[] = [
@@ -360,8 +356,8 @@ class LineCutReport
                     // die;
                     $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
-                    $arrProductColumnsAllProduct = array();
-                    $arrColumnsAllProduct = array();
+                    $arrProductColumnsAllProduct = [];
+                    $arrColumnsAllProduct = [];
                     if ($iRows3 > 0) {
                         while ($row3 = $this->_dbConn->GetData($sAction3)) {
                             // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
@@ -376,13 +372,12 @@ class LineCutReport
                         $skuForQuery = $skuForQuery . ", ";
                     }
 
-
                     if ($branchId == 40) {
                         $allShops = getRowColumn(
                             $this->_dbConn,
                             "tblroute_details_delhi",
                             "COUNT(rec_id) AS total",
-                            "dstatus = 0 AND team_id = $team_id"
+                            "dstatus = 0 AND ho_team_id = $team_id"
                         );
                     } else {
                         $allShops = getRowColumn(
@@ -408,12 +403,10 @@ class LineCutReport
                         $showTeamType = "NPSR";
                     }
 
-
                     $arrMonth = $this->_data['month'];
                     foreach ($arrMonth as $month) {
                         $firstDate = date('Y-m-01', strtotime($month));
                         $lastDate  = date('Y-m-t', strtotime($month));
-
 
                         $queryNew = "SELECT $skuForQuery a.pro_id, a.ques_3, a.team_id FROM tblsurvey_response_details AS a" .
                             " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
@@ -426,12 +419,10 @@ class LineCutReport
                         $iActionRows1 = 0;
                         $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
 
-
                         if ($iActionRows1 > 0) {
                             while ($row1 = $this->_dbConn->GetData($rsAction1)) {
                                 $pro_id = $row1['pro_id'];
                                 $shopID = $row1['ques_3'];
-
 
                                 foreach ($arrColumnsAllProduct as $col) {
                                     if (array_key_exists($col, $row1)) {
@@ -525,7 +516,6 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-
     public function getDownloadDataOutletWise()
     {
         $currentDateTime = currentDateTime();
@@ -549,7 +539,6 @@ class LineCutReport
                 $teamTypeCond .= " AND b.is_type = $teamType";
             }
         }
-
 
         $arrExcelData = [];
         $arrExcelData[] = ["Month", "District", "Branch", "Region", "Circle", "Section", "WD Code", "WD Name", "WD Pop Group", "WD Market", "DS Type", "DS Id", "DS Name", "Route Name", "Outlet Name", "Outlet ID", "Total SKU", "Total LIne Cut", "Total Transaction", "ALC", "ULC"];
@@ -632,8 +621,8 @@ class LineCutReport
                         // echo $sQuery3;die;
                         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
-                        $arrProductColumnsAllProduct = array();
-                        $arrColumnsAllProduct = array();
+                        $arrProductColumnsAllProduct = [];
+                        $arrColumnsAllProduct = [];
                         if ($iRows3 > 0) {
                             while ($row3 = $this->_dbConn->GetData($sAction3)) {
                                 // $arrProductColumnsAllProduct[] = "SUM(a.{$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
@@ -647,19 +636,27 @@ class LineCutReport
                             $skuForQuery = implode(", ", $arrProductColumnsAllProduct);
                         }
 
+                        // echo "<pre>";
+
+                        // print_r($arrColumnsAllProduct);die;
+
                         if (isset($arrColumnsAllProduct) && !empty($arrColumnsAllProduct)) {
-                            $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, tblroute_details as b" .
+                            if ($branchId == 40) {
+                                $routeTable = "tblroute_details_delhi";
+                            } else {
+                                $routeTable = "tblroute_details";
+                            }
+                            $queryNew = "SELECT $skuForQuery, a.pro_id, b.shop_uniq_code, b.route_name, b.outlet_name FROM tblsurvey_response_details AS a, $routeTable as b" .
                                 " WHERE a.dstatus = 0 AND a.team_id = '$team_id' AND a.capture_date BETWEEN '$firstDate' AND '$lastDate'" .
                                 " AND a.ques_3 = b.rec_id AND b.dstatus = 0";
                             // echo $queryNew;die;
 
                             $extractedData = [];
-                            $outletArray = array();
+                            $outletArray = [];
 
                             $rsAction1 = null;
                             $iActionRows1 = 0;
                             $this->_dbConn->ExecuteSelectQuery($queryNew, $rsAction1, $iActionRows1);
-
 
                             if ($iActionRows1 > 0) {
                                 while ($row1 = $this->_dbConn->GetData($rsAction1)) {
@@ -667,11 +664,10 @@ class LineCutReport
                                     $shopID = $row1['shop_uniq_code'];
                                     $outlet_name = $row1['outlet_name'];
                                     $route_name = $row1['route_name'];
-                                    $outletArray[$shopID] = array(
+                                    $outletArray[$shopID] = [
                                         $outlet_name,
                                         $route_name,
-                                    );
-
+                                    ];
 
                                     foreach ($arrColumnsAllProduct as $col) {
                                         if (array_key_exists($col, $row1)) {
@@ -683,8 +679,8 @@ class LineCutReport
                                 }
                             }
 
-                            $totalLineCutArr = array();
-                            $productsWithSales = array();
+                            $totalLineCutArr = [];
+                            $productsWithSales = [];
 
                             if (isset($extractedData) && !empty($extractedData)) {
                                 foreach ($extractedData as $shop => $shopArr) {
@@ -700,7 +696,6 @@ class LineCutReport
                                     }
                                 }
                             }
-
 
                             foreach ($extractedData as $index => $shopArr) {
                                 $totalLine = $totalLineCutArr[$index] ?? 0;
@@ -753,7 +748,6 @@ class LineCutReport
         echo json_encode($arrMessage);
     }
 
-
     final public function getBranchListWithoutAll($cond = "")
     {
         $teamList = $this->_arrAccessInfo["user_teams"];
@@ -781,7 +775,6 @@ class LineCutReport
         return $arrData;
     }
 
-
     final public function getResult($table, $products, $where)
     {
         $sAction3 = null;
@@ -803,7 +796,7 @@ class LineCutReport
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -812,7 +805,7 @@ class LineCutReport
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -821,9 +814,9 @@ class LineCutReport
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -832,9 +825,9 @@ class LineCutReport
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -844,7 +837,7 @@ class LineCutReport
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -853,7 +846,7 @@ class LineCutReport
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"]),
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
@@ -862,9 +855,9 @@ class LineCutReport
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -873,9 +866,9 @@ class LineCutReport
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -886,7 +879,7 @@ class LineCutReport
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -895,26 +888,26 @@ class LineCutReport
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -925,7 +918,7 @@ class LineCutReport
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -935,24 +928,24 @@ class LineCutReport
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -963,7 +956,7 @@ class LineCutReport
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -972,18 +965,18 @@ class LineCutReport
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -993,7 +986,7 @@ class LineCutReport
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -1001,26 +994,26 @@ class LineCutReport
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -1035,10 +1028,10 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -1047,11 +1040,11 @@ class LineCutReport
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -1071,11 +1064,11 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -1084,11 +1077,11 @@ class LineCutReport
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1107,10 +1100,10 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -1119,11 +1112,11 @@ class LineCutReport
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1142,24 +1135,23 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1178,24 +1170,23 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1214,10 +1205,10 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -1226,11 +1217,11 @@ class LineCutReport
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1249,24 +1240,23 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -1298,20 +1288,19 @@ class LineCutReport
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => (string)$row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
+        $arrData = [];
         // $arrData[] = array(
         //     "label" => "All",
         //     "value" => "all"
@@ -1333,10 +1322,10 @@ class LineCutReport
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 

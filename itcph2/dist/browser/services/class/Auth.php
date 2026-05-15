@@ -80,7 +80,7 @@ class Auth
             $userSessionTokenTable = $this->_tables["USER_SESSION_TOKEN_TABLE"];
             $userGrouproleView = $this->_tables["USERGROUPROLE_VIEW"];
             $sQuery = "SELECT user_id, landing_modc, landing_pmodc, usr_fullname, usr_email, auth_pwd, temp_flag, last_pwd_update, login_attempts FROM $userAuthdetailsTable WHERE auth_name = ? AND dstatus = 0 LIMIT 1";
-            $arrParams = array($username);
+            $arrParams = [$username];
 
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
@@ -92,7 +92,7 @@ class Auth
 
                 //Maximum Attempts
                 if (constant("MAX_LOGIN_ATTEMPTS_FUNC") && $iLoginAttempts >= constant("MAX_LOGIN_ATTEMPTS")) {
-                    $arrMessage = responseMessage(array($GLOBALS['ACCOUNT_LOCKED_MSG']));
+                    $arrMessage = responseMessage([$GLOBALS['ACCOUNT_LOCKED_MSG']]);
                 } else {
                     //Check valid password and captcha
                     if (
@@ -108,25 +108,25 @@ class Auth
 
                         //If password change functionality active and user did not change password after password expire
                         if (constant("PASSWORD_CHANGE_ALERT_FUNC") && $days > constant("PASSWORD_CHANGE_MAX_DAYS")) {
-                            $arrMessage = responseMessage(array($GLOBALS['PASSWORD_EXPIRE_MSG']));
+                            $arrMessage = responseMessage([$GLOBALS['PASSWORD_EXPIRE_MSG']]);
                         } else {
                             $iCSRF_Con_salt = pseudoRandomKey(18);
                             $iCSRF_Confirm_key = uniqueHashValue($iCSRF_Con_salt);
 
                             //set login attempts to 0
-                            $arrParams = array(
+                            $arrParams = [
                                 "iUserId" => $iUserId,
-                            );
+                            ];
                             updateRecord($this->_dbConn, $userAuthdetailsTable, "login_attempts = 0", "dstatus = 0 AND user_id = ?", $arrParams);
 
                             //Store user details to send
-                            $arrUser = array();
+                            $arrUser = [];
 
                             //Check whether user belongs to any group or not
                             $sAction2 = null;
                             $iRows2 = 0;
                             $Module_Allowed = "SELECT group_id, role_permission AS mod_ids FROM $userGrouproleView WHERE dstatus = 0 AND user_id = ? LIMIT 1";
-                            $arrParams = array($iUserId);
+                            $arrParams = [$iUserId];
                             $this->_dbConn->ExecuteSelectQuery($Module_Allowed, $sAction2, $iRows2, $arrParams);
 
                             //user group found
@@ -152,10 +152,10 @@ class Auth
                                     $logo = $GLOBALS['LOGO_URL'] . "/" . constant("CUSTOMER_LOGO");
 
                                     //landing page
-                                    $landing = array(
+                                    $landing = [
                                         "landing_modc" => $arResult['landing_modc'],
                                         "landing_pmodc" => $arResult['landing_pmodc'],
-                                    );
+                                    ];
 
                                     $alert_Password_Change = false;
                                     $iAlert_Password_Change = 0;
@@ -192,17 +192,17 @@ class Auth
                                         $this->_dbConn->ExecuteQuery($update_query, $sAction, $iNum_rows);
                                     }
 
-                                    $arrUser['user'] = array(
+                                    $arrUser['user'] = [
                                         "name" => $arResult['usr_fullname'],
                                         "email" => $arResult['usr_email'],
-                                    );
-                                    $arrUser['landing'] = array(
+                                    ];
+                                    $arrUser['landing'] = [
                                         "modc" => $landing['landing_modc'],
                                         "pmodc" => $landing['landing_pmodc'],
-                                    );
-                                    $arrUser['client'] = array(
+                                    ];
+                                    $arrUser['client'] = [
                                         "logo" => $logo,
-                                    );
+                                    ];
                                     $arrUser['token'] = $iCSRF_Confirm_key;
                                     $arrUser['modules'] = $arrModules;
 
@@ -210,7 +210,7 @@ class Auth
                                     if ($alert_Password_Change) {
                                         // user using temporary password
                                         if (matchValue($iAlert_Password_Change, 1, true)) {
-                                            $arrMessage = responseMessage(array($GLOBALS['LOGIN_SUCCESSFULL_MSG_TMP_PWD']), 2, $arrUser);
+                                            $arrMessage = responseMessage([$GLOBALS['LOGIN_SUCCESSFULL_MSG_TMP_PWD']], 2, $arrUser);
                                         } else {
                                             // user using temporary password but has reached the minimum number of days for warning
                                             if (matchValue($iAlert_Password_Change, 2, true)) {
@@ -224,16 +224,16 @@ class Auth
                                             } else {
                                                 $daysStr = "in $Diff days";
                                             }
-                                            $arrMessage = responseMessage(array($error . $daysStr), 2, $arrUser);
+                                            $arrMessage = responseMessage([$error . $daysStr], 2, $arrUser);
                                         }
                                     } else {
-                                        $arrMessage = responseMessage(array($GLOBALS['LOGIN_SUCCESSFULL_MSG']), 1, $arrUser);
+                                        $arrMessage = responseMessage([$GLOBALS['LOGIN_SUCCESSFULL_MSG']], 1, $arrUser);
                                     }
                                 } else {
-                                    $arrMessage = responseMessage(array($GLOBALS['NO_MODULE_FOUND']));
+                                    $arrMessage = responseMessage([$GLOBALS['NO_MODULE_FOUND']]);
                                 }
                             } else {
-                                $arrMessage = responseMessage(array($GLOBALS['NO_ROLE_ASSIGNED']));
+                                $arrMessage = responseMessage([$GLOBALS['NO_ROLE_ASSIGNED']]);
                             }
                         }
                     } else {
@@ -243,31 +243,31 @@ class Auth
 
                             //user reached max attempts
                             if ($iLoginAttempts >= constant("MAX_LOGIN_ATTEMPTS")) {
-                                $arrMessage = responseMessage(array($GLOBALS['ACCOUNT_LOCKED_MSG']));
+                                $arrMessage = responseMessage([$GLOBALS['ACCOUNT_LOCKED_MSG']]);
                             } else {
                                 //user not reached max attempts
-                                $arrMessage = responseMessage(array("Login Failed. " . (constant("MAX_LOGIN_ATTEMPTS") - $iLoginAttempts) . " more attempts remaining"));
+                                $arrMessage = responseMessage(["Login Failed. " . (constant("MAX_LOGIN_ATTEMPTS") - $iLoginAttempts) . " more attempts remaining"]);
                             }
 
                             //update attempts tried
                             $update_query = "UPDATE $userAuthdetailsTable SET login_attempts = ? WHERE auth_name = ? AND dstatus = 0";
-                            $arrParams = array(
+                            $arrParams = [
                                 "iLoginAttempts" => $iLoginAttempts,
                                 "username" => $username,
-                            );
+                            ];
                             $iNum_rows = 0;
                             $this->_dbConn->ExecuteQuery($update_query, $sAction, $iNum_rows, $arrParams);
                         } else {
                             if ($isCaptchaEnable && $this->_session->getSessionKey($GLOBALS["VARIABLES_NAMES"]["SESSION"]["CAPTCHA_VALUE"]) !== $captcha) {
-                                $arrMessage = responseMessage(array($GLOBALS['INVALID_CAPTCHA']));
+                                $arrMessage = responseMessage([$GLOBALS['INVALID_CAPTCHA']]);
                             } else {
-                                $arrMessage = responseMessage(array($GLOBALS['WRONG_PASSWORD_ENTERED_MSG']));
+                                $arrMessage = responseMessage([$GLOBALS['WRONG_PASSWORD_ENTERED_MSG']]);
                             }
                         }
                     }
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['INVALID_USER']));
+                $arrMessage = responseMessage([$GLOBALS['INVALID_USER']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -288,7 +288,7 @@ class Auth
             $sAction = null;
             $iRows = 0;
             $sQuery = "SELECT user_id FROM $userAuthdetailsTable WHERE usr_email = ? AND dstatus = '0' LIMIT 1";
-            $arrParams = array($sEmail);
+            $arrParams = [$sEmail];
 
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
@@ -323,12 +323,12 @@ class Auth
 							</p>";
                 $MSG = generateMailTemplate($sub, $MSG);
                 if (sendMail($To, $sub, $MSG)) {
-                    $arrMessage = responseMessage(array($GLOBALS['PASSWORD_SENT_MSG']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['PASSWORD_SENT_MSG']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['PASSWORD_NOT_SENT_MSG']));
+                    $arrMessage = responseMessage([$GLOBALS['PASSWORD_NOT_SENT_MSG']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['USER_NOT_REGISTERED']));
+                $arrMessage = responseMessage([$GLOBALS['USER_NOT_REGISTERED']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -349,7 +349,7 @@ class Auth
             $sAction = null;
             $iRows = 0;
             $sQuery = "SELECT rec_id, user_id FROM $userSessionTokenTable WHERE csrf_token = ? AND dstatus = 0 LIMIT 1";
-            $arrParams = array($sToken);
+            $arrParams = [$sToken];
 
             $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
@@ -360,21 +360,21 @@ class Auth
                 $iUserId = $arResult["user_id"];
 
                 //delete the user from db
-                $arrParams = array(
+                $arrParams = [
                     "iTokenId" => $iTokenId,
-                );
+                ];
                 $iStatus = deleteRecord($this->_dbConn, $userSessionTokenTable, "rec_id", $iUserId, "", $arrParams);
 
                 // Regenerate session id
                 // $this->_session->regenerateSession();
 
                 if (matchValue($iStatus, 1, true)) {
-                    $arrMessage = responseMessage(array($GLOBALS['LOGOUT_SUCCESSFULL_MSG']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['LOGOUT_SUCCESSFULL_MSG']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['LOGOUT_FAILED_MSG']));
+                    $arrMessage = responseMessage([$GLOBALS['LOGOUT_FAILED_MSG']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['UNAUTHORIZED_ACCESS']));
+                $arrMessage = responseMessage([$GLOBALS['UNAUTHORIZED_ACCESS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);

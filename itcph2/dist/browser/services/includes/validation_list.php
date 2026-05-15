@@ -1,6 +1,6 @@
 <?php
 
-$VALIDATOR_LENGTH = array(
+$VALIDATOR_LENGTH = [
     'ADDRESS_MAXLENGTH' => 100,
     'CAPTCHA_MAXLENGTH' => 6,
     'CAPTCHA_MINLENGTH' => 5,
@@ -34,17 +34,17 @@ $VALIDATOR_LENGTH = array(
     "WD_CODE_MAXLENGTH" => 20,
     "TEAM_NAME_MAXLENGTH" => 50,
     "CUSTOM_USERNAME_MAXLENGTH" => 50,
-);
+];
 
-$APP_CONSTANTS = array(
+$APP_CONSTANTS = [
     "ALL_VALUE" => "all",
-);
+];
 
-$VARIABLES_NAMES = array(
-    "SESSION" => array(
+$VARIABLES_NAMES = [
+    "SESSION" => [
         "CAPTCHA_VALUE" => "captchaValue",
         "GROUP_ID_VALUE" => "groupIdValue",
-    ),
+    ],
     "BODY" => "body",
     "HEADER" => "header",
     "MORE_HEADER" => "moreHeader",
@@ -52,9 +52,9 @@ $VARIABLES_NAMES = array(
     "INFO" => "info",
     "MORE_INFO" => "moreInfo",
     "MORE_TABLE_INFO" => "moreTableInfo",
-);
+];
 
-$ARR_DELETE_STATUS = array(
+$ARR_DELETE_STATUS = [
     0 => "Active",
     1 => "Deleted"
-);
+];

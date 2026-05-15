@@ -59,7 +59,7 @@ class VanDsMailer
         $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $respTable = getRespTable(1, 1);
 
-        $arrExcelData = array("Branch", "Region", "WD Code", "DS Type", "DS Id", "DS Name", "SKU", "Total Outlets Mapped", 'Overall UOB', "Brand UOB", "Brand UOB%");
+        $arrExcelData = ["Branch", "Region", "WD Code", "DS Type", "DS Id", "DS Name", "SKU", "Total Outlets Mapped", 'Overall UOB', "Brand UOB", "Brand UOB%"];
         $arrHeaders = $arrExcelData;
 
         // Query to fetch all branches
@@ -88,7 +88,7 @@ class VanDsMailer
                     }
                     $sProductSaleColumns = implode(",", $summaryColName);
 
-                    $isType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "MDO");
+                    $isType = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "MDO"];
                     $rsAction = null;
                     $iRows = 0;
                     $sQuery = "SELECT a.capture_datetime, a.ques_0, b.team_id, b.team_name, b.is_type, b.wd_code, c.branch_name, c.main_branch, $sProductSaleColumns
@@ -110,13 +110,13 @@ class VanDsMailer
                             $teamType = $isType[$row['is_type']];
                             $wdCode = $row['wd_code'];
                             foreach ($summaryColName as $index => $colName) {
-                                $shopRoc = $this->tableUtil->getRowColumn("$respTable", "COUNT(DISTINCT ques_2) AS total", "ques_0 = 'ROC Delivery' AND dstatus = 0 AND $colName > 0 AND team_id = $teamId $dateCond", array(), true);
-                                $shopOther = $this->tableUtil->getRowColumn("$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.ques_0 = 'Other Outlet' AND a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $dateCond", array(), true);
+                                $shopRoc = $this->tableUtil->getRowColumn("$respTable", "COUNT(DISTINCT ques_2) AS total", "ques_0 = 'ROC Delivery' AND dstatus = 0 AND $colName > 0 AND team_id = $teamId $dateCond", [], true);
+                                $shopOther = $this->tableUtil->getRowColumn("$respTable AS a", "COUNT(DISTINCT a.ques_3) AS total", "a.ques_0 = 'Other Outlet' AND a.dstatus = 0 AND a.$colName > 0 AND a.team_id = $teamId $dateCond", [], true);
                                 $allShops = ($shopRoc ? $shopRoc : 0) + ($shopOther ? $shopOther : 0);
                                 $shopCount[$mainBranchName][$branchName][$teamId][$teamName][$wdCode][$teamType][$colName] = $allShops;
                             }
 
-                            $totalShopCount[$teamId] = $this->tableUtil->getRowColumn($routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", array(), true);
+                            $totalShopCount[$teamId] = $this->tableUtil->getRowColumn($routeTable, "COUNT(outlet_name) AS total", "dstatus = 0 AND team_id = $teamId", [], true);
 
                             $totalSaleColumns = [];
                             for ($i = 1; $i <= 30; $i++) {
@@ -128,7 +128,7 @@ class VanDsMailer
                                 "$respTable AS a",
                                 "COUNT(DISTINCT a.ques_2) AS total",
                                 "a.ques_0 = 'ROC Delivery' AND a.dstatus = 0 AND a.team_id = $teamId $dateCond AND ($totalSaleSum) > 0",
-                                array(),
+                                [],
                                 true
                             );
 
@@ -136,7 +136,7 @@ class VanDsMailer
                                 "$respTable AS a",
                                 "COUNT(DISTINCT a.ques_3) AS total",
                                 "a.ques_0 = 'Other Outlet' AND a.dstatus = 0 AND a.team_id = $teamId $dateCond AND ($totalSaleSum) > 0",
-                                array(),
+                                [],
                                 true
                             );
 
@@ -154,7 +154,7 @@ class VanDsMailer
                                                     $overallUob = $OverallShopCount[$teamId];
                                                     $uobPercentage = $totalShops > 0 ? ($distinctShops / $totalShops) * 100 : 0;
 
-                                                    $arrExcelData[] = array(
+                                                    $arrExcelData[] = [
                                                         'Branch' => $mainBranchName,
                                                         'Region' => $branchName,
                                                         'WD Code' => $wdCode,
@@ -166,7 +166,7 @@ class VanDsMailer
                                                         'Overall UOB' => $overallUob,
                                                         'Brand UOB' => $distinctShops,
                                                         'Brand UOB%' => number_format($uobPercentage, 2) . '%',
-                                                    );
+                                                    ];
                                                 }
                                             }
                                         }
@@ -186,7 +186,7 @@ class VanDsMailer
                 return !empty($row['DS Name']) && !empty($row['Total Outlets Mapped']);
             });
             $subject = "Van DS - Consolidated UOB report for North (MTD)";
-            $this->commonFunctions->sendMailWithAttachment($fileName, $subject, array("SMIS.RPA@ITC.IN"), array("appilary@gmail.com", "Sanjeev.Kr@itc.in", "Akhilesh.chourasia@itc.in", "Tmnd.Rpa@itc.in", "Koyel.Guha@itc.in"), $arrHeaders, $arrExcelData);
+            $this->commonFunctions->sendMailWithAttachment($fileName, $subject, ["SMIS.RPA@ITC.IN"], ["appilary@gmail.com", "Sanjeev.Kr@itc.in", "Akhilesh.chourasia@itc.in", "Tmnd.Rpa@itc.in", "Koyel.Guha@itc.in"], $arrHeaders, $arrExcelData);
         }
     }
 }

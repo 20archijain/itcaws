@@ -1,0 +1,7 @@
+parameters:
+    level: 5
+    bootstrapFiles:
+        - includes/index.php
+
+    paths:
+        - api\auth.php

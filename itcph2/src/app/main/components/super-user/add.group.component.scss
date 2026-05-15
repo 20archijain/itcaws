@@ -8,7 +8,7 @@ $border-color: #eee;
   .list {
     flex: 0 0 100%;
 
-    @media screen and (min-width: 540px) {
+    @media screen and (width >= 540px) {
       flex-basis: 49%;
 
       &:nth-child(2n + 1) {
@@ -16,7 +16,7 @@ $border-color: #eee;
       }
     }
 
-    @media screen and (min-width: 1200px) {
+    @media screen and (width >= 1200px) {
       flex-basis: 31%;
 
       &:nth-child(2n + 1) {

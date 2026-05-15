@@ -22,11 +22,11 @@ class ProductiveDashboard
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -41,10 +41,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -53,11 +53,11 @@ class ProductiveDashboard
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -77,11 +77,11 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -90,11 +90,11 @@ class ProductiveDashboard
 
     final public function getCategoryList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -108,10 +108,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['category_name'],
                     "value" => $row['category_name']
-                );
+                ];
             }
         }
 
@@ -120,11 +120,11 @@ class ProductiveDashboard
 
     final public function getProductList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -137,10 +137,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['product_name']
-                );
+                ];
             }
         }
 
@@ -149,11 +149,11 @@ class ProductiveDashboard
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -172,10 +172,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -184,11 +184,11 @@ class ProductiveDashboard
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -207,24 +207,23 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -243,24 +242,23 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -279,10 +277,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -291,11 +289,11 @@ class ProductiveDashboard
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -314,24 +312,23 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -361,24 +358,23 @@ class ProductiveDashboard
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -396,10 +392,10 @@ class ProductiveDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -430,7 +426,7 @@ class ProductiveDashboard
 
         // echo "<pre>";
         // print_r($branchList );die;
-        $arrResult = array(
+        $arrResult = [
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
             "circleList" => $this->getCircleList(),
@@ -444,9 +440,9 @@ class ProductiveDashboard
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "branchFilter" => true,
             "showMapStyleDropdown" => true,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -456,7 +452,7 @@ class ProductiveDashboard
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -468,7 +464,7 @@ class ProductiveDashboard
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -480,7 +476,7 @@ class ProductiveDashboard
         $circle = getFormData($this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -492,7 +488,7 @@ class ProductiveDashboard
         $section = getFormData($this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -504,7 +500,7 @@ class ProductiveDashboard
         $wdCode = getFormData($this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -516,7 +512,7 @@ class ProductiveDashboard
         $wdMarket = getFormData($this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -528,7 +524,7 @@ class ProductiveDashboard
         $wdPopGroup = getFormData($this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -540,7 +536,7 @@ class ProductiveDashboard
         $teamType = getFormData($this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -553,7 +549,7 @@ class ProductiveDashboard
         $dsName = getFormData($this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -570,14 +566,13 @@ class ProductiveDashboard
         return $condition;
     }
 
-
     final public function getConditionForCategoryAndProduct()
     {
         $condition = "";
         $category = getFormData($this->_data, "category");
         if ($category) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $condition .= " ";
@@ -589,7 +584,7 @@ class ProductiveDashboard
         $product = getFormData($this->_data, "product");
         if ($product) {
             if (!is_array($product)) {
-                $product = array($product);
+                $product = [$product];
             }
             if (in_array('all', $product)) {
                 $condition .= " ";
@@ -602,10 +597,9 @@ class ProductiveDashboard
         return $condition;
     }
 
-
     final public function getConditionForYearAndMonth($column = "a.activity_date")
     {
-        $monthCondArray = array();
+        $monthCondArray = [];
         $month = getFormData($this->_data, "month");
         if ($month) {
             foreach ($month as $m) {
@@ -646,14 +640,13 @@ class ProductiveDashboard
         return $totalDays;
     }
 
-
     final public function getBranch($district = "district")
     {
         $district = $this->_data['district'];
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -662,7 +655,7 @@ class ProductiveDashboard
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -673,9 +666,9 @@ class ProductiveDashboard
                 "productList" => $this->getProductList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -686,12 +679,11 @@ class ProductiveDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getProduct()
     {
@@ -699,7 +691,7 @@ class ProductiveDashboard
         $categoryCond = "";
         if (!empty($category)) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $categoryCond = ""; // No condition for 'all'
@@ -708,18 +700,17 @@ class ProductiveDashboard
                 $categoryCond = " AND b.category_name IN ($category)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getProductList($categoryCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -727,7 +718,7 @@ class ProductiveDashboard
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -736,7 +727,7 @@ class ProductiveDashboard
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -746,9 +737,9 @@ class ProductiveDashboard
                 "productList" => $this->getProductList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -758,9 +749,9 @@ class ProductiveDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -771,7 +762,7 @@ class ProductiveDashboard
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -780,26 +771,26 @@ class ProductiveDashboard
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -810,7 +801,7 @@ class ProductiveDashboard
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -820,24 +811,24 @@ class ProductiveDashboard
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -848,7 +839,7 @@ class ProductiveDashboard
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -857,18 +848,18 @@ class ProductiveDashboard
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -878,7 +869,7 @@ class ProductiveDashboard
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -886,26 +877,26 @@ class ProductiveDashboard
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getCardData()
     {
-        $arrResult = array(
+        $arrResult = [
             "monthlySalesData" => $this->getMonthlySalesData(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -920,11 +911,11 @@ class ProductiveDashboard
         if ($where) {
             $where = str_replace(" team_id", " b.team_id", $where);
         }
-        $arrResponse = array();
-        $arrSalesColumns = array(); // Reset the sales columns array here
-        $arrMonthYear = array();
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
-        $monthWiseSales = array();
+        $arrResponse = [];
+        $arrSalesColumns = []; // Reset the sales columns array here
+        $arrMonthYear = [];
+        $arrTeamType = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
+        $monthWiseSales = [];
         $totalSumDistrictLevelSale = [
             "No of Users" => 0,
             "No of Active Users" => 0,
@@ -943,8 +934,7 @@ class ProductiveDashboard
             "CFT per outlet" => 0,
             "CFT per days" => 0,
         ];
-        $finalArrayWithAvgDistrictLevelSale = array();
-
+        $finalArrayWithAvgDistrictLevelSale = [];
 
         $labelsToBePrint = [
             "No of Users",
@@ -1004,7 +994,6 @@ class ProductiveDashboard
                 $arrSalesColumns[$main_branch][] = $summary_column_name;  // Store sales columns by branch
                 $BranchIds[] = $main_branch;
             }
-
 
             // Process sales data per branch and month
             foreach ($arrSalesColumns as $main_branch => $salesColumns) {
@@ -1125,26 +1114,25 @@ class ProductiveDashboard
                             // District Level Sales
                             $districtIndex = array_search($district, array_column($monthWiseSales, "district"));
                             if ($districtIndex === false) {
-                                $monthWiseSales[] = array(
+                                $monthWiseSales[] = [
                                     "district" => $district,
-                                    "districtLevelSale" => array(),
-                                    "branchData" => array()
-                                );
+                                    "districtLevelSale" => [],
+                                    "branchData" => []
+                                ];
                                 $districtIndex = count($monthWiseSales) - 1;
                             }
                             $monthWiseSales[$districtIndex]["districtLevelSale"][$value] =
                                 round(($monthWiseSales[$districtIndex]["districtLevelSale"][$value] ?? 0) + $totalSales, 2);
 
-
                             // // Branch Level Sales
                             $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
                             if ($branchIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][] = [
                                     "branch_id" => $branch_id,
                                     "branch_name" => $branch_name,
-                                    "branchLevelSale" => array(),
-                                    "circleData" => array()
-                                );
+                                    "branchLevelSale" => [],
+                                    "circleData" => []
+                                ];
                                 $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["branchLevelSale"][$value] =
@@ -1153,11 +1141,11 @@ class ProductiveDashboard
                             // Circle Level Sales
                             $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
                             if ($circleIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = [
                                     "circle" => $circle,
-                                    "circleLevelSale" => array(),
-                                    "sectionData" => array()
-                                );
+                                    "circleLevelSale" => [],
+                                    "sectionData" => []
+                                ];
                                 $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["circleLevelSale"][$value] =
@@ -1166,11 +1154,11 @@ class ProductiveDashboard
                             // Section Level Sales
                             $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
                             if ($sectionIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = [
                                     "section" => $section,
-                                    "sectionLevelSale" => array(),
-                                    "wdData" => array(),
-                                );
+                                    "sectionLevelSale" => [],
+                                    "wdData" => [],
+                                ];
                                 $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
                             }
                             $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["sectionLevelSale"][$value] =
@@ -1179,12 +1167,12 @@ class ProductiveDashboard
                             // // WD Level Sales
                             $WDIndex = array_search($wd_code, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"], "wd_code"));
                             if ($WDIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = [
                                     "wd_code" => $wd_code,
                                     "wdCode" => $wd_code,
-                                    "wdLevelSale" => array(),
-                                    "teamData" => array(),
-                                );
+                                    "wdLevelSale" => [],
+                                    "teamData" => [],
+                                ];
                                 $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
                             }
 
@@ -1194,12 +1182,12 @@ class ProductiveDashboard
                             // Team Sales
                             $teamIndex = array_search($team_name, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"], "team_name"));
                             if ($teamIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"][] = [
                                     "team_name" => $team_name,
                                     "team_id" => $team_id,
                                     "team_type" => $team_type,
-                                    "teamLevelSale" => array(),
-                                );
+                                    "teamLevelSale" => [],
+                                ];
                                 $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamData"]) - 1;
                             }
 
@@ -1273,7 +1261,6 @@ class ProductiveDashboard
                     $minutes = ((int)$time) % 60;
                     $arrDistrictData['districtLevelSale']['Total Time'] = "{$hours} h {$minutes} m";
                 }
-
 
                 foreach ($arrDistrictData['branchData'] as &$arrBranchData) {
                     if (isset($arrBranchData['branchLevelSale']['CFT per days']) && isset($arrBranchData['branchLevelSale']['No of days present'])) {
@@ -1438,7 +1425,6 @@ class ProductiveDashboard
                             if (isset($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)']) && $arrSectionData['sectionLevelSale']['No of Users']) {
                                 $arrSectionData['sectionLevelSale']['Survey (M) (Daily Average Per User)'] = round($arrSectionData['sectionLevelSale']['Survey (M) (Daily Average)'] / $arrSectionData['sectionLevelSale']['No of Users'], 2);
                             }
-
 
                             if (isset($arrSectionData['sectionLevelSale']['Total Time'])) {
                                 $time = ($arrSectionData['sectionLevelSale']['Total Time'] / $arrSectionData['sectionLevelSale']['No of Users']) / $getDate;
@@ -1676,14 +1662,13 @@ class ProductiveDashboard
             }
         }
 
-
         // Response Data
-        $arrResponse = array(
+        $arrResponse = [
             "MonthsAndYears" => $labelsToBePrint,
             "districtData" => $monthWiseSales,
             "TotalSum" => $totalSumDistrictLevelSale,
             "Title" => "Survey"
-        );
+        ];
 
         return $arrResponse;
     }

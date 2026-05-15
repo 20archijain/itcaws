@@ -12,18 +12,17 @@ class SuperUserManagement
     private $_valErrors = [];
     private $_validationLength = [];
     private $_appConstants = [];
-    private $_loginTypeList = array(
-        array("label" => "Admin Level", "value" => "1"),
-        array("label" => "Client Level", "value" => "2"),
-        array("label" => "Project Level", "value" => "3"),
-        array("label" => "Branch Level", "value" => "4"),
-        array("label" => "WD Code Level", "value" => "5"),
-        array("label" => "Circle Level", "value" => "6"),
-        array("label" => "Section Level", "value" => "7"),
-        array("label" => "Team Level", "value" => "8"),
-        array("label" => "Team Type Level", "value" => "9"),
-    );
-
+    private $_loginTypeList = [
+        ["label" => "Admin Level", "value" => "1"],
+        ["label" => "Client Level", "value" => "2"],
+        ["label" => "Project Level", "value" => "3"],
+        ["label" => "Branch Level", "value" => "4"],
+        ["label" => "WD Code Level", "value" => "5"],
+        ["label" => "Circle Level", "value" => "6"],
+        ["label" => "Section Level", "value" => "7"],
+        ["label" => "Team Level", "value" => "8"],
+        ["label" => "Team Type Level", "value" => "9"],
+    ];
 
     public function __construct($dbConn, $data, $iUserId)
     {
@@ -110,15 +109,15 @@ class SuperUserManagement
         if ($isValidated) {
             //password criteria not match
             if (constant("STRONG_PASSWORD_CHECK_FUNC") && !strongPwdCheck($password)) {
-                $arrMessage = responseMessage(array($GLOBALS['WEAK_PASSWORD']));
+                $arrMessage = responseMessage([$GLOBALS['WEAK_PASSWORD']]);
             } elseif (!matchValue($password, $confirmPassword, true)) {
                 //new and confirm password not match
-                $arrMessage = responseMessage(array($GLOBALS['PASSWORD_MISMATCH']));
+                $arrMessage = responseMessage([$GLOBALS['PASSWORD_MISMATCH']]);
             } else {
                 //check if user exists
                 $userAuthdetailsTable = $this->_tables["USER_AUTHDETAILS_TABLE"];
                 // Don't use dstatus = 0
-                $iStatus = isRecordExist($this->_dbConn, $userAuthdetailsTable, "user_id", "auth_name = ?", array($userName));
+                $iStatus = isRecordExist($this->_dbConn, $userAuthdetailsTable, "user_id", "auth_name = ?", [$userName]);
 
                 //user not exist
                 if ($iStatus === 0) {
@@ -129,11 +128,11 @@ class SuperUserManagement
                     $usr_pwd = securePassword($password, $sauth_salt);
 
                     // get landing page
-                    $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", array($landing));
+                    $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", [$landing]);
 
                     $cols = "auth_name, group_id, landing_modc, landing_pmodc, access_type, usr_fullname, usr_email, auth_pwd, last_pwd_update, creator_id, rcd, rdt";
                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                    $arrParams = array($userName, $group, $landingPage[0], $landingPage[1], $accessType - 1, $fullName, $email, $usr_pwd, $cDT, $this->_iUserId, $cD, $cDT);
+                    $arrParams = [$userName, $group, $landingPage[0], $landingPage[1], $accessType - 1, $fullName, $email, $usr_pwd, $cDT, $this->_iUserId, $cD, $cDT];
 
                     $iStatus = addRecord($this->_dbConn, $userAuthdetailsTable, $cols, $vals, $arrParams);
 
@@ -144,12 +143,12 @@ class SuperUserManagement
 
                         $this->createAccess($user_id, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section, $team, $teamType);
 
-                        $arrMessage = responseMessage(array($GLOBALS['USER_ADDED']), 1);
+                        $arrMessage = responseMessage([$GLOBALS['USER_ADDED']], 1);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['USER_NOT_ADDED']));
+                        $arrMessage = responseMessage([$GLOBALS['USER_NOT_ADDED']]);
                     }
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['USER_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['USER_EXISTS']]);
                 }
             }
         } else {
@@ -162,7 +161,7 @@ class SuperUserManagement
     private function createAccess($user_id, $cD, $cDT, $accessType, $arrClient, $arrProject, $arrBranch, $arrWdCode, $arrCircle, $arrSection, $arrTeam, $arrTeamType)
     {
         $accessType = (int) $accessType;
-        $arrStatus = array();
+        $arrStatus = [];
 
         // Admin Login
         if ($accessType === 1) {
@@ -216,7 +215,7 @@ class SuperUserManagement
     {
         $cols = "user_id, client_id, project_id, branch_id, wd_code, circle, section, team_id, team_type, creator_id, rcd, rdt";
         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-        $arrParams = array($user_id, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection, $sTeam, $sTeamType, $this->_iUserId, $cD, $cDT);
+        $arrParams = [$user_id, $iClient, $iProject, $iBranch, $sWdCode, $sCircle, $sSection, $sTeam, $sTeamType, $this->_iUserId, $cD, $cDT];
 
         $iStatus = addRecord($this->_dbConn, $this->_tables["USER_ACCESS_TABLE"], $cols, $vals, $arrParams, false);
 
@@ -225,13 +224,13 @@ class SuperUserManagement
 
     final public function getTeamType()
     {
-        $arrTypes = array();
+        $arrTypes = [];
         global $ARR_TEAM_TYPES;
         foreach ($ARR_TEAM_TYPES as $id => $teamType) {
-            $arrTypes[] = array(
+            $arrTypes[] = [
                 "label" => $teamType,
                 "value" => $id,
-            );
+            ];
         }
 
         return $arrTypes;
@@ -239,7 +238,7 @@ class SuperUserManagement
 
     final public function getUserData($fromListing)
     {
-        $arrResult = array(
+        $arrResult = [
             "loginTypeList" => $this->_loginTypeList,
             "clientList" => getClients($this->_dbConn, 0, "dstatus = 0"),
             "projectList" => getProjectOptions($this->_dbConn, "", 0, true, "dstatus = 0"),
@@ -251,31 +250,31 @@ class SuperUserManagement
             "teamTypeList" => $this->getTeamType(),
             "groupList" => getOptions($this->_dbConn, $this->_tables["GROUPS_TABLE"], "group_name", "group_id", $fromListing ? "" : "dstatus = 0"),
             "landingPageList" => getLandingPageList($this->_dbConn, $fromListing),
-            "sortOptions" => array(
-                array("label" => "Full Name", "value" => "a.usr_fullname"),
-                array("label" => "Group Name", "value" => "b.group_name"),
-                array("label" => "Username", "value" => "a.auth_name"),
-                array("label" => "User Created - ASC", "value" => "a.rdt"),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "Full Name", "value" => "a.usr_fullname"],
+                ["label" => "Group Name", "value" => "b.group_name"],
+                ["label" => "Username", "value" => "a.auth_name"],
+                ["label" => "User Created - ASC", "value" => "a.rdt"],
+            ],
+            "viewHeader" => [
                 "app.user.user.view.userId", "app.user.user.add.fullname", "auth.login.form.username", "app.user.user.add.userType", "app.user.user.add.landingPage", "app.user.group.form.groupName"
-            ),
-            "viewBody" => array("id", "name", "username", "userType", "landingPage", "group"),
-            "unlockCondition" => array("isAccountLocked", false),
-        );
+            ],
+            "viewBody" => ["id", "name", "username", "userType", "landingPage", "group"],
+            "unlockCondition" => ["isAccountLocked", false],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function viewUsers()
     {
-        $arrResult = array();
+        $arrResult = [];
 
         // order by condition
         $sOrder_cond = getOrderByCond("a.rdt", $this->_data["sort"]);
         // filter by search query
-        $where = getFilterResult($this->_data['searchbar'], array("name" => array("a.usr_fullname", 1), "username" => array("a.auth_name", 1), "group" => array("a.group_id", -1)));
+        $where = getFilterResult($this->_data['searchbar'], ["name" => ["a.usr_fullname", 1], "username" => ["a.auth_name", 1], "group" => ["a.group_id", -1]]);
 
         $userType = getFormData($this->_data['searchbar'], "userType");
         if ($userType) {
@@ -302,123 +301,123 @@ class SuperUserManagement
                 $userType = $this->_loginTypeList[$userTypeIndex]["label"];
 
                 // all clients, projects, branches, wd codes
-                $arrAccess = array();
+                $arrAccess = [];
                 if (matchValue($arrData['access_type'], 0)) {
-                    $arrAccess = array(
-                        "client" => array(),
-                        "project" => array(),
-                        "branch" => array(),
-                        "wdCode" => array(),
-                        "circle" => array(),
-                        "section" => array(),
-                        "team" => array(),
-                        "teamType" => array(),
-                    );
+                    $arrAccess = [
+                        "client" => [],
+                        "project" => [],
+                        "branch" => [],
+                        "wdCode" => [],
+                        "circle" => [],
+                        "section" => [],
+                        "team" => [],
+                        "teamType" => [],
+                    ];
                 } else {
                     // specific clients
                     if (matchValue($arrData['access_type'], 1)) {
-                        $arrAccess = array(
+                        $arrAccess = [
                             "client" => getRowsColumn($this->_dbConn, $userAccessTable, "client_id", "dstatus = 0 AND user_id = $userId AND client_id > 0"),
-                            "project" => array(),
-                            "branch" => array(),
-                            "wdCode" => array(),
-                            "circle" => array(),
-                            "section" => array(),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "project" => [],
+                            "branch" => [],
+                            "wdCode" => [],
+                            "circle" => [],
+                            "section" => [],
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 2)) {
                         // specific projects
-                        $arrAccess = array(
-                            "client" => array(),
+                        $arrAccess = [
+                            "client" => [],
                             "project" => getRowsColumn($this->_dbConn, $userAccessTable, "project_id", "dstatus = 0 AND user_id = $userId AND project_id > 0"),
-                            "branch" => array(),
-                            "wdCode" => array(),
-                            "circle" => array(),
-                            "section" => array(),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "branch" => [],
+                            "wdCode" => [],
+                            "circle" => [],
+                            "section" => [],
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 3)) {
                         // specific branches
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
                             "branch" => getRowsColumn($this->_dbConn, $userAccessTable, "branch_id", "dstatus = 0 AND user_id = $userId AND branch_id > 0"),
-                            "wdCode" => array(),
-                            "circle" => array(),
-                            "section" => array(),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "wdCode" => [],
+                            "circle" => [],
+                            "section" => [],
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 4)) {
                         // specific wd codes
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
-                            "branch" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
+                            "branch" => [],
                             "wdCode" => getRowsColumn($this->_dbConn, $userAccessTable, "wd_code", "dstatus = 0 AND user_id = $userId AND wd_code IS NOT NULL"),
-                            "circle" => array(),
-                            "section" => array(),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "circle" => [],
+                            "section" => [],
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 5)) {
                         // specific circles
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
-                            "branch" => array(),
-                            "wdCode" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
+                            "branch" => [],
+                            "wdCode" => [],
                             "circle" => getRowsColumn($this->_dbConn, $userAccessTable, "circle", "dstatus = 0 AND user_id = $userId AND circle IS NOT NULL"),
-                            "section" => array(),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "section" => [],
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 6)) {
                         // specific circles
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
-                            "branch" => array(),
-                            "wdCode" => array(),
-                            "circle" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
+                            "branch" => [],
+                            "wdCode" => [],
+                            "circle" => [],
                             "section" => getRowsColumn($this->_dbConn, $userAccessTable, "section", "dstatus = 0 AND user_id = $userId AND section IS NOT NULL"),
-                            "team" => array(),
-                            "teamType" => array(),
-                        );
+                            "team" => [],
+                            "teamType" => [],
+                        ];
                     } elseif (matchValue($arrData['access_type'], 7)) {
                         // specific team
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
-                            "branch" => array(),
-                            "wdCode" => array(),
-                            "circle" => array(),
-                            "section" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
+                            "branch" => [],
+                            "wdCode" => [],
+                            "circle" => [],
+                            "section" => [],
                             "team" => getRowsColumn($this->_dbConn, $userAccessTable, "team_id", "dstatus = 0 AND user_id = $userId AND team_id > 0"),
-                            "teamType" => array(),
-                        );
+                            "teamType" => [],
+                        ];
                     } else {
                         // specific Team Type
-                        $arrAccess = array(
-                            "client" => array(),
-                            "project" => array(),
-                            "branch" => array(),
-                            "wdCode" => array(),
-                            "circle" => array(),
-                            "section" => array(),
-                            "team" => array(),
+                        $arrAccess = [
+                            "client" => [],
+                            "project" => [],
+                            "branch" => [],
+                            "wdCode" => [],
+                            "circle" => [],
+                            "section" => [],
+                            "team" => [],
                             "teamType" => getRowsColumn($this->_dbConn, $userAccessTable, "team_type", "dstatus = 0 AND user_id = $userId"),
 
-                        );
+                        ];
                     }
                 }
 
                 // Don't use dstatus = 0
-                $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_id, module_name", "module_code = ? AND parent_module_code = ?", array($arrData['landing_modc'], $arrData['landing_pmodc']));
+                $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_id, module_name", "module_code = ? AND parent_module_code = ?", [$arrData['landing_modc'], $arrData['landing_pmodc']]);
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $userId,
                     "name" => $arrData['usr_fullname'],
                     "username" => $arrData['auth_name'],
@@ -437,12 +436,12 @@ class SuperUserManagement
                     "team" => isset($arrAccess['team']) ? $arrAccess['team'] : "",
                     "teamType" => isset($arrAccess['teamType']) ? $arrAccess['teamType'] : "",
                     "isAccountLocked" => $arrData['login_attempts'] >= constant('MAX_LOGIN_ATTEMPTS') ? true : false,
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -475,7 +474,7 @@ class SuperUserManagement
 
             //check if another user exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $userAuthdetailsTable, "user_id", "user_id != ? AND auth_name = ?", array($userId, $username));
+            $iStatus = isRecordExist($this->_dbConn, $userAuthdetailsTable, "user_id", "user_id != ? AND auth_name = ?", [$userId, $username]);
 
             //user not exist
             if ($iStatus === 0) {
@@ -485,11 +484,11 @@ class SuperUserManagement
                     //password criteria not match
                     if (constant("STRONG_PASSWORD_CHECK_FUNC") && !strongPwdCheck($password)) {
                         $isError = true;
-                        $arrMessage = responseMessage(array($GLOBALS['WEAK_PASSWORD']));
+                        $arrMessage = responseMessage([$GLOBALS['WEAK_PASSWORD']]);
                     } elseif (!matchValue($password, $confirmPassword, true)) {
                         //new and confirm password not match
                         $isError = true;
-                        $arrMessage = responseMessage(array($GLOBALS['PASSWORD_MISMATCH']));
+                        $arrMessage = responseMessage([$GLOBALS['PASSWORD_MISMATCH']]);
                     }
                 }
 
@@ -499,15 +498,15 @@ class SuperUserManagement
                     $cDT = currentDateTime();
 
                     // get landing page
-                    $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", array($landingPageId));
+                    $landingPage = getRowColumns($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_code, parent_module_code", "dstatus = 0 AND module_id = ?", [$landingPageId]);
 
                     if (isset($landingPage, $landingPage[0]) && $landingPage) {
                         // Check if Group exist
-                        $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "dstatus = 0 AND group_id = ?", array($groupId));
+                        $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "dstatus = 0 AND group_id = ?", [$groupId]);
 
                         if ($iStatus === 1) {
                             $cols = "auth_name = ?, usr_fullname = ?, group_id = ?, landing_modc = ?, landing_pmodc = ?, access_type = ?, modif_id = ?";
-                            $arrParams = array($username, $fullname, $groupId, $landingPage[0], $landingPage[1], $accessType - 1, $this->_iUserId);
+                            $arrParams = [$username, $fullname, $groupId, $landingPage[0], $landingPage[1], $accessType - 1, $this->_iUserId];
 
                             if ($password) {
                                 $sauth_salt = pseudoRandomKey(32);
@@ -522,7 +521,7 @@ class SuperUserManagement
                             $this->_dbConn->BeginTransaction();
 
                             // Delete old records
-                            deleteRecord($this->_dbConn, $userAccessTable, "user_id", $this->_iUserId, "", array($userId));
+                            deleteRecord($this->_dbConn, $userAccessTable, "user_id", $this->_iUserId, "", [$userId]);
                             // create new access
                             $arrStatus = $this->createAccess($userId, $cD, $cDT, $accessType, $client, $project, $branch, $wdCode, $circle, $section, $team, $teamType);
 
@@ -531,20 +530,20 @@ class SuperUserManagement
                             // user modified
                             if ($iStatus == 1 || (isNonEmptyArray($arrStatus) && !in_array(0, $arrStatus))) {
                                 $this->_dbConn->CommitTransaction();
-                                $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                                $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                             } else {
                                 $this->_dbConn->RollbackTransaction();
-                                $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                                $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                             }
                         } else {
-                            $arrMessage = responseMessage(array($GLOBALS['GROUP_NO_LONGER_EXISTS']));
+                            $arrMessage = responseMessage([$GLOBALS['GROUP_NO_LONGER_EXISTS']]);
                         }
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['LANDING_PAGE_NO_LONGER_EXISTS']));
+                        $arrMessage = responseMessage([$GLOBALS['LANDING_PAGE_NO_LONGER_EXISTS']]);
                     }
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['USER_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['USER_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -561,9 +560,9 @@ class SuperUserManagement
         $iStatus = unlockUsers($this->_dbConn, $sIds);
 
         if ($iStatus > 0) {
-            $arrMessage = responseMessage(array($GLOBALS['USER_UNLOCK_SUCCESSFUL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['USER_UNLOCK_SUCCESSFUL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['USER_UNLOCK_FAILED']));
+            $arrMessage = responseMessage([$GLOBALS['USER_UNLOCK_FAILED']]);
         }
 
         echo json_encode($arrMessage);
@@ -585,21 +584,21 @@ class SuperUserManagement
     final public function getGroupData()
     {
         $isEdit = getFormData($this->_data, "isEdit");
-        $arrResult = array(
+        $arrResult = [
             "modulesList" => $this->getModulesList(),
             "groupData" => $isEdit ? $this->getGroupEditData() : null,
-            "sortOptions" => array(
-                array("label" => "Group Name", "value" => "group_name"),
-                array("label" => "Group Created - ASC", "value" => "rdt"),
-            ),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+            "sortOptions" => [
+                ["label" => "Group Name", "value" => "group_name"],
+                ["label" => "Group Created - ASC", "value" => "rdt"],
+            ],
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     private function getModulesList()
     {
-        $arrModules = array();
+        $arrModules = [];
         $sAction = null;
         $iRows = 0;
         $modulesTable = $this->_tables["MODULES_TABLE"];
@@ -609,20 +608,20 @@ class SuperUserManagement
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 if ($arrData['parent_module_code'] === '0') {
-                    $arrModules[] = array();
+                    $arrModules[] = [];
                 }
 
                 $len = count($arrModules);
 
-                $arrModules[$len - 1][] = array(
+                $arrModules[$len - 1][] = [
                     "label" => $arrData['module_name'],
                     "value" => $arrData['module_id'],
-                );
+                ];
             }
         }
 
         // sort the modules list by no of modules in ascending order
-        usort($arrModules, array($this, "sortByCount"));
+        usort($arrModules, [$this, "sortByCount"]);
         return $arrModules;
     }
 
@@ -649,7 +648,7 @@ class SuperUserManagement
 
             //check if group exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "group_name = ?", array($name));
+            $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "group_name = ?", [$name]);
 
             //group not exist
             if ($iStatus === 0) {
@@ -658,18 +657,18 @@ class SuperUserManagement
 
                 $cols = "group_name, role_permission, creator_id, rcd, rdt";
                 $vals = "?, ?, ?, ?, ?";
-                $arrParams = array($name, $items, $this->_iUserId, $cD, $cDT);
+                $arrParams = [$name, $items, $this->_iUserId, $cD, $cDT];
 
                 $iStatus = addRecord($this->_dbConn, $groupsTable, $cols, $vals, $arrParams);
 
                 // group added
                 if ($iStatus == 2) {
-                    $arrMessage = responseMessage(array($GLOBALS['GROUP_ADDED']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['GROUP_ADDED']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['GROUP_NOT_ADDED']));
+                    $arrMessage = responseMessage([$GLOBALS['GROUP_NOT_ADDED']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['GROUP_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['GROUP_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -680,12 +679,12 @@ class SuperUserManagement
 
     final public function viewGroups()
     {
-        $arrResult = array();
+        $arrResult = [];
 
         // order by condition
         $sOrder_cond = getOrderByCond("rdt", $this->_data["sort"]);
         // filter by search query
-        $where = getFilterResult($this->_data['searchbar'], array("name" => array("group_name", 1)));
+        $where = getFilterResult($this->_data['searchbar'], ["name" => ["group_name", 1]]);
 
         $groupsTable = $this->_tables["GROUPS_TABLE"];
         $sAction = null;
@@ -700,16 +699,16 @@ class SuperUserManagement
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $modules = getRowsColumn($this->_dbConn, $this->_tables["MODULES_TABLE"], "module_name", "dstatus = 0 AND module_id in ({$arrData['role_permission']})");
                 $sModules = getStringFromArray($modules, true, " | ");
-                $arrResult[] = array(
+                $arrResult[] = [
                     "name" => $arrData['group_name'],
                     "id" => $arrData['group_id'],
                     "modules" => $sModules,
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -719,10 +718,10 @@ class SuperUserManagement
         $id = getFormData($this->_data, "id");
         $group = getRowColumns($this->_dbConn, $this->_tables["GROUPS_TABLE"], "group_name, role_permission", "dstatus = 0 AND group_id = '$id'");
         if ($group && count($group)) {
-            $arrResult = array(
+            $arrResult = [
                 "name" => $group[0],
                 "items" => $group[1],
-            );
+            ];
             return $arrResult;
         }
         return null;
@@ -749,31 +748,31 @@ class SuperUserManagement
             $groupsTable = $this->_tables["GROUPS_TABLE"];
 
             //check if group exists
-            $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "dstatus = 0 AND group_id = ?", array($groupId));
+            $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "dstatus = 0 AND group_id = ?", [$groupId]);
 
             // Edit Group not exists
             if ($iStatus === 0) {
-                $arrMessage = responseMessage(array($GLOBALS['GROUP_NOT_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['GROUP_NOT_EXISTS']]);
             } else {
                 //check if same group exists
                 // Don't use dstatus = 0
-                $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "group_id != ? AND group_name = ?", array($groupId, $name));
+                $iStatus = isRecordExist($this->_dbConn, $groupsTable, "group_id", "group_id != ? AND group_name = ?", [$groupId, $name]);
 
                 //group not exist
                 if ($iStatus === 0) {
                     $cols = "group_name = ?, role_permission = ?, modif_id = ?";
-                    $arrParams = array($name, $items, $this->_iUserId, $groupId);
+                    $arrParams = [$name, $items, $this->_iUserId, $groupId];
 
                     $iStatus = updateRecord($this->_dbConn, $groupsTable, $cols, "dstatus = 0 AND group_id = ?", $arrParams);
 
                     // group modified
                     if ($iStatus == 1) {
-                        $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                        $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                        $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                     }
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['GROUP_EXISTS']));
+                    $arrMessage = responseMessage([$GLOBALS['GROUP_EXISTS']]);
                 }
             }
         } else {
@@ -809,42 +808,42 @@ class SuperUserManagement
 
     final public function getModuleData()
     {
-        $arrResult = array(
-            "moduleActionCodeList" => array(
-                array("label" => "ADD", "value" => "ADD"),
-                array("label" => "DELETE", "value" => "DEL"),
-                array("label" => "EDIT", "value" => "EDIT"),
-                array("label" => "VIEW", "value" => "VIEW"),
-                array("label" => "MAP", "value" => "MAP"),
-            ),
-            "modulePositionList" => array(
-                array("label" => "Actionbar", "value" => "actionbar"),
-                array("label" => "Leftside", "value" => "leftside"),
-                array("label" => "Navbar", "value" => "navbar"),
-                array("label" => "Topbar", "value" => "topbar"),
-            ),
-            "breadcrumbList" => array(
-                array("label" => "Yes", "value" => 1),
-                array("label" => "No", "value" => 0),
-            ),
-            "sortOptions" => array(
-                array("label" => "Module Name", "value" => "module_name"),
-                array("label" => "Module Code", "value" => "module_code"),
-                array("label" => "Module Position", "value" => "module_position"),
-                array("label" => "Module Actioncode", "value" => "module_actioncode"),
-                array("label" => "Module Added - ASC", "value" => "rdt"),
-            ),
-            "viewHeader" => array(
+        $arrResult = [
+            "moduleActionCodeList" => [
+                ["label" => "ADD", "value" => "ADD"],
+                ["label" => "DELETE", "value" => "DEL"],
+                ["label" => "EDIT", "value" => "EDIT"],
+                ["label" => "VIEW", "value" => "VIEW"],
+                ["label" => "MAP", "value" => "MAP"],
+            ],
+            "modulePositionList" => [
+                ["label" => "Actionbar", "value" => "actionbar"],
+                ["label" => "Leftside", "value" => "leftside"],
+                ["label" => "Navbar", "value" => "navbar"],
+                ["label" => "Topbar", "value" => "topbar"],
+            ],
+            "breadcrumbList" => [
+                ["label" => "Yes", "value" => 1],
+                ["label" => "No", "value" => 0],
+            ],
+            "sortOptions" => [
+                ["label" => "Module Name", "value" => "module_name"],
+                ["label" => "Module Code", "value" => "module_code"],
+                ["label" => "Module Position", "value" => "module_position"],
+                ["label" => "Module Actioncode", "value" => "module_actioncode"],
+                ["label" => "Module Added - ASC", "value" => "rdt"],
+            ],
+            "viewHeader" => [
                 "app.user.module.add.moduleId", "app.user.module.add.moduleName",
                 "app.user.module.add.moduleCode", "app.user.module.add.parentModuleCode", "app.user.module.add.moduleActionCode", "app.user.module.add.moduleComponent",
                 "app.user.module.add.moduleIcon", "app.user.module.add.moduleUrl", "app.user.module.add.moduleSort"
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id", "name", "modc", "pmodc", "moduleActionCode", "moduleComponent", "icon", "url", "sort"
-            ),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
-        print_r(json_encode($arrMessage));
+            ],
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
+        echo json_encode($arrMessage);
     }
 
     final public function addModule()
@@ -869,7 +868,7 @@ class SuperUserManagement
 
             //check if module exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $modulesTable, "module_id", "(module_name = ? OR module_code = ?)", array($name, $modc));
+            $iStatus = isRecordExist($this->_dbConn, $modulesTable, "module_id", "(module_name = ? OR module_code = ?)", [$name, $modc]);
 
             //module not exist
             if ($iStatus === 0) {
@@ -879,18 +878,18 @@ class SuperUserManagement
 
                 $cols = "module_id, module_name, module_code, parent_module_code, module_component, module_actioncode, module_url_link, module_icon, module_position, module_sort, show_breadcrumb, creator_id, rcd, rdt";
                 $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                $arrParams = array($id, $name, $modc, $pmodc, $moduleComponent, $moduleActionCode, $url, $icon, $modulePos, $sort, $breadcrumb, $this->_iUserId, $cD, $cDT);
+                $arrParams = [$id, $name, $modc, $pmodc, $moduleComponent, $moduleActionCode, $url, $icon, $modulePos, $sort, $breadcrumb, $this->_iUserId, $cD, $cDT];
 
                 $iStatus = addRecord($this->_dbConn, $modulesTable, $cols, $vals, $arrParams);
 
                 // user added
                 if ($iStatus == 2) {
-                    $arrMessage = responseMessage(array($GLOBALS['MODULE_ADDED']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['MODULE_ADDED']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['MODULE_NOT_ADDED']));
+                    $arrMessage = responseMessage([$GLOBALS['MODULE_NOT_ADDED']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['MODULE_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['MODULE_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -902,12 +901,12 @@ class SuperUserManagement
     final public function viewModules()
     {
         $modulesTable = $this->_tables["MODULES_TABLE"];
-        $arrResult = array();
+        $arrResult = [];
 
         // order by condition
         $sOrder_cond = getOrderByCond("rdt", $this->_data["sort"]);
         // filter by search query
-        $where = getFilterResult($this->_data['searchbar'], array("name" => array("module_name", 1), "moduleCode" => array("module_code", 1), "moduleUrl" => array("module_url_link", 1)));
+        $where = getFilterResult($this->_data['searchbar'], ["name" => ["module_name", 1], "moduleCode" => ["module_code", 1], "moduleUrl" => ["module_url_link", 1]]);
 
         $sAction = null;
         $iRows = 0;
@@ -919,7 +918,7 @@ class SuperUserManagement
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $arrData['module_id'],
                     "name" => $arrData['module_name'],
                     "modc" => $arrData['module_code'],
@@ -931,12 +930,12 @@ class SuperUserManagement
                     "url" => $arrData['module_url_link'],
                     "sort" => $arrData['module_sort'],
                     "breadcrumb" => (int) $arrData['show_breadcrumb'],
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -962,23 +961,23 @@ class SuperUserManagement
 
             //check if module exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $modulesTable, "module_id", "module_id != ? AND (module_name = ? OR module_code = ?)", array($moduleId, $name, $modc));
+            $iStatus = isRecordExist($this->_dbConn, $modulesTable, "module_id", "module_id != ? AND (module_name = ? OR module_code = ?)", [$moduleId, $name, $modc]);
 
             //module not exist
             if ($iStatus === 0) {
                 $cols = "module_name = ?, module_code = ?, parent_module_code = ?, module_component = ?, module_actioncode = ?, module_url_link = ?, module_icon = ?, module_position = ?, module_sort = ?, show_breadcrumb = ?, modif_id = ?";
-                $arrParams = array($name, $modc, $pmodc, $moduleComponent, $moduleActionCode, $url, $icon, $modulePos, $sort, $breadcrumb, $this->_iUserId, $moduleId);
+                $arrParams = [$name, $modc, $pmodc, $moduleComponent, $moduleActionCode, $url, $icon, $modulePos, $sort, $breadcrumb, $this->_iUserId, $moduleId];
 
                 $iStatus = updateRecord($this->_dbConn, $modulesTable, $cols, "dstatus = 0 AND module_id = ?", $arrParams);
 
                 // module modified
                 if ($iStatus == 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                    $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['MODULE_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['MODULE_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);

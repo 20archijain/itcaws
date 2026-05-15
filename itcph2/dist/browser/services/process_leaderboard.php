@@ -18,8 +18,8 @@ class ProcessLeaderBoard
     private $dbConn = null;
     private $tables = [];
     private $commonSettings = [];
-    private $arrBranchwiseFocusProducts = array();
-    private $arrBranchwiseProducts = array();
+    private $arrBranchwiseFocusProducts = [];
+    private $arrBranchwiseProducts = [];
     public function __construct($dbConn)
     {
         $this->dbConn = $dbConn;
@@ -208,7 +208,7 @@ class ProcessLeaderBoard
                     $branchProductTable,
                     "branch_id, product_name, summary_column_name",
                     "dstatus = 0 AND team_type = '$teamType' AND is_focusbrand = 1 ORDER BY product_name",
-                    array(),
+                    [],
                     true
                 );
 
@@ -264,7 +264,7 @@ class ProcessLeaderBoard
                     $branchProductTable,
                     "branch_id, product_name, summary_column_name",
                     "dstatus = 0 AND team_type = '$teamType' ORDER BY product_name",
-                    array(),
+                    [],
                     true
                 );
 

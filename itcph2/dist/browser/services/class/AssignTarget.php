@@ -69,28 +69,27 @@ class AssignTarget
             $filledMonth = $currentMonth;
         }
 
-
-        $arrStockProductsList = array();
+        $arrStockProductsList = [];
         $sAction = null;
         $iRows = 0;
         $sQuery = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
             " AND a.team_type = 5 AND a.is_focusbrand != 0 AND a.month = '$filledMonth' AND a.year = '$filledYear' $tempBranchCond $where ORDER BY a.is_focusbrand limit 3";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-        $arrProductColumns = array();
-        $arrColumns = array();
-        $arrProducts = array();
+        $arrProductColumns = [];
+        $arrColumns = [];
+        $arrProducts = [];
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $arrProductColumns[] = "SUM({$row["summary_column_name"]}) AS {$row["summary_column_name"]}";
                 $arrColumns[] = "{$row["summary_column_name"]}";
                 $arrProducts[] = $row["product_name"];
 
-                $arrStockProductsList[] = array(
+                $arrStockProductsList[] = [
                     "label" => $row["product_name"],
                     "value" => $row["summary_column_name"],
                     "brand" => $row["category_name"],
-                );
+                ];
             }
         }
 
@@ -105,9 +104,9 @@ class AssignTarget
         // echo $sQueryPrevious;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryPrevious, $sActionPrevious, $iRowsPrevious);
 
-        $arrProductColumnsPrevious = array();
-        $arrColumnsPrevious = array();
-        $arrProductsPrevious = array();
+        $arrProductColumnsPrevious = [];
+        $arrColumnsPrevious = [];
+        $arrProductsPrevious = [];
         if ($iRowsPrevious > 0) {
             while ($rowPrevious = $this->_dbConn->GetData($sActionPrevious)) {
                 $arrProductColumnsPrevious[] = "SUM({$rowPrevious["summary_column_name"]}) AS {$rowPrevious["summary_column_name"]}";
@@ -122,7 +121,6 @@ class AssignTarget
 
         // echo $skuColumnPrevious;die;
 
-
         $sActionCurrent = null;
         $iRowsCurrent = 0;
         $sQueryCurrent = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
@@ -130,9 +128,9 @@ class AssignTarget
         // echo $sQueryCurrent;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryCurrent, $sActionCurrent, $iRowsCurrent);
 
-        $arrProductColumnsCurrent = array();
-        $arrColumnsCurrent = array();
-        $arrProductsCurrent = array();
+        $arrProductColumnsCurrent = [];
+        $arrColumnsCurrent = [];
+        $arrProductsCurrent = [];
         if ($iRowsCurrent > 0) {
             while ($rowCurrent = $this->_dbConn->GetData($sActionCurrent)) {
                 $arrProductColumnsCurrent[] = "SUM({$rowCurrent["summary_column_name"]}) AS {$rowCurrent["summary_column_name"]}";
@@ -145,7 +143,6 @@ class AssignTarget
             return "sum($c) as $c";
         }, $arrColumnsCurrent));
 
-
         $sActionNext = null;
         $iRowsNext = 0;
         $sQueryNext = "SELECT DISTINCT a.summary_column_name, a.category_name, a.product_name FROM tblbranch_products_month_wise as a, tblproject_team as b WHERE a.branch_id = b.branch_id AND a.dstatus = 0" .
@@ -153,9 +150,9 @@ class AssignTarget
         // echo $sQueryNext;die;
         $this->_dbConn->ExecuteSelectQuery($sQueryNext, $sActionNext, $iRowsNext);
 
-        $arrProductColumnsNext = array();
-        $arrColumnsNext = array();
-        $arrProductsNext = array();
+        $arrProductColumnsNext = [];
+        $arrColumnsNext = [];
+        $arrProductsNext = [];
         if ($iRowsNext > 0) {
             while ($rowNext = $this->_dbConn->GetData($sActionNext)) {
                 $arrProductColumnsNext[] = "SUM({$rowNext["summary_column_name"]}) AS {$rowNext["summary_column_name"]}";
@@ -174,8 +171,8 @@ class AssignTarget
             " AND a.team_type = 5 $tempBranchCond $where ORDER BY a.category_name, a.product_name";
         $this->_dbConn->ExecuteSelectQuery($sQuery3, $sAction3, $iRows3);
 
-        $arrProductColumnsAllProduct = array();
-        $arrColumnsAllProduct = array();
+        $arrProductColumnsAllProduct = [];
+        $arrColumnsAllProduct = [];
         if ($iRows3 > 0) {
             while ($row3 = $this->_dbConn->GetData($sAction3)) {
                 $arrProductColumnsAllProduct[] = "SUM({$row3["summary_column_name"]}) AS {$row3["summary_column_name"]}";
@@ -184,7 +181,7 @@ class AssignTarget
         }
 
         $skuColumnAllProduct = implode(" + ", $arrColumnsAllProduct);
-        $arrTeamList = array();
+        $arrTeamList = [];
 
         $sAction2 = null;
         $iRows2 = 0;
@@ -274,7 +271,6 @@ class AssignTarget
                     $productTwocurrentMonthAchieve = 0;
                 }
 
-
                 if (isset($overallPreviousMonthArrAchieve[0]) && $overallPreviousMonthArrAchieve[0]) {
                     $overallPreviousMonthAchieve = $overallPreviousMonthArrAchieve[0];
                 } else {
@@ -319,7 +315,7 @@ class AssignTarget
                     $overAllNextMonthTarget = 0;
                 }
 
-                $arrTeamList[] = array(
+                $arrTeamList[] = [
                     "label" => $row2["team_name"],
                     "value" => $row2["team_id"],
                     "wd_code" => $row2["wd_code"],
@@ -339,11 +335,11 @@ class AssignTarget
                     "productTwoNextMonthTarget" => round((float) $productTwoNextMonthTarget, 2),
                     "overAllNextMonthTarget" => round((float) $overAllNextMonthTarget, 2),
                     "existTeamTableCond" => (int) 0
-                );
+                ];
             }
         }
 
-        $arrResult = array(
+        $arrResult = [
             "stockProductsList" => $arrTeamList,
             "teamsList" => $arrStockProductsList,
             "previousMonthProduct1" => $arrProductsPrevious[0] ?? "Not Confirmed",
@@ -352,8 +348,8 @@ class AssignTarget
             "product2" => $arrProductsCurrent[1] ?? "Not Confirmed",
             "nextMonthProduct1" => $arrProductsNext[0] ?? "Not Confirmed",
             "nextMonthProduct2" => $arrProductsNext[1] ?? "Not Confirmed",
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -384,11 +380,10 @@ class AssignTarget
             $year = currentDate("", "Y");
             $month = currentDate("", "m");
         }
-        $arrTeamwiseQty = array();
+        $arrTeamwiseQty = [];
 
         $currentDate = currentDate();
         $currentDateTime = currentDateTime();
-
 
         // foreach ($arrQty as $arrTeamProductwiseQty) {
         //     foreach ($arrTeamProductwiseQty as $sTeamProduct => $qty) {
@@ -426,8 +421,8 @@ class AssignTarget
             }
         }
 
-        $arrKeys = array();
-        $arrValues = array();
+        $arrKeys = [];
+        $arrValues = [];
 
         // Loop through all indexes (1, 2, 3, 4)
         foreach ($arrTeamwiseQty as $index => $items) {
@@ -442,7 +437,7 @@ class AssignTarget
                 if (isset($arrKeys) && isset($arrValues) && $arrKeys && $arrValues) {
                     $cols = "team_id, year, month, rcd, rdt, ";
                     $vals = "?, ?, ?, ?, ?, ";
-                    $arrParams = array($index, $year, $month, $currentDate, $currentDateTime);
+                    $arrParams = [$index, $year, $month, $currentDate, $currentDateTime];
                     $cols .= implode(', ', $arrKeys);
                     $vals .= implode(', ', array_fill(0, count($arrKeys), '?'));
                     $arrParams = array_merge($arrParams, $arrValues);
@@ -451,7 +446,7 @@ class AssignTarget
             } else {
                 if (isset($arrKeys) && isset($arrValues) && $arrKeys && $arrValues) {
                     $cols = "rcd = ?, rdt = ?, ";
-                    $arrParams = array($currentDate, $currentDateTime);
+                    $arrParams = [$currentDate, $currentDateTime];
 
                     $cols .= implode(", ", array_map(function ($v) {
                         return "$v = ?";
@@ -464,9 +459,9 @@ class AssignTarget
         }
 
         if (isset($iNum_rows) && $iNum_rows == 2 || isset($iUpdate) && $iUpdate == 1) {
-            $arrMessage = responseMessage(array($GLOBALS['TARGET_ASSIGNED']), 1);
+            $arrMessage = responseMessage([$GLOBALS['TARGET_ASSIGNED']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['TARGET_NOT_ASSIGNED']));
+            $arrMessage = responseMessage([$GLOBALS['TARGET_NOT_ASSIGNED']]);
         }
         echo json_encode($arrMessage);
     }
@@ -497,8 +492,6 @@ class AssignTarget
     //             }
     //         }
     //     }
-
-
 
     //     $arrKeys = array();
     //     $arrValues = array();

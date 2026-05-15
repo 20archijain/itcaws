@@ -101,7 +101,7 @@ class VanDsReporting
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -113,7 +113,7 @@ class VanDsReporting
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -166,11 +166,11 @@ class VanDsReporting
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -185,10 +185,10 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -197,11 +197,11 @@ class VanDsReporting
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -221,11 +221,11 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -234,11 +234,11 @@ class VanDsReporting
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -257,10 +257,10 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -269,11 +269,11 @@ class VanDsReporting
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -292,24 +292,23 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -328,24 +327,23 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -364,10 +362,10 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -376,11 +374,11 @@ class VanDsReporting
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -399,24 +397,23 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -446,24 +443,23 @@ class VanDsReporting
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -481,10 +477,10 @@ class VanDsReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -512,7 +508,7 @@ class VanDsReporting
         //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
         //     $branchFilter = true;
         // }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -530,9 +526,9 @@ class VanDsReporting
             "binderReportDownloadDays" => 5,
             "transactionReportDownloadDays" => 31,
             "summaryReportDownloadDays" => 31,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -542,7 +538,7 @@ class VanDsReporting
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -551,7 +547,7 @@ class VanDsReporting
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -560,9 +556,9 @@ class VanDsReporting
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -571,12 +567,11 @@ class VanDsReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -584,7 +579,7 @@ class VanDsReporting
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -593,7 +588,7 @@ class VanDsReporting
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -601,9 +596,9 @@ class VanDsReporting
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -611,9 +606,9 @@ class VanDsReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -624,7 +619,7 @@ class VanDsReporting
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -633,26 +628,26 @@ class VanDsReporting
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -663,7 +658,7 @@ class VanDsReporting
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -673,24 +668,24 @@ class VanDsReporting
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -701,7 +696,7 @@ class VanDsReporting
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -710,18 +705,18 @@ class VanDsReporting
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -731,7 +726,7 @@ class VanDsReporting
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -739,16 +734,16 @@ class VanDsReporting
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -837,7 +832,6 @@ class VanDsReporting
         }
     }
 
-
     private function getWeekNumber($date)
     {
         $day = (int)date('j', strtotime($date)); // Get day of the month
@@ -865,16 +859,16 @@ class VanDsReporting
         $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
         $partialQuery = "FROM $respTable AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = '99' $where";
 
         // Don't use b.dstatus = 0 AND c.dstatus = 0
-        $arrData = array();
+        $arrData = [];
         $rsAction = null;
         $iRows = 0;
         // use a.pro_id > 0 to include primary column as index while calculating no of rows
@@ -891,10 +885,10 @@ class VanDsReporting
                 $shopId = $row["ques_3"];
                 $branchId = $row["branch_id"];
                 if ($branchId == 40) {
-                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, "tblroute_details_delhi", "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, "tblroute_details_delhi", "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : ["", ""];
                 } else {
                     // Don't use dstatus = 0
-                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : array("", "");
+                    $shopDetails = is_numeric($shopId) ? getRowColumns($this->_dbConn, $routeDetailsTable, "shop_type, outlet_name, outlet_mobile", "rec_id = $shopId") : ["", ""];
                 }
                 $shopType = $shopDetails[0] ?? "";
                 $shopName = isset($shopDetails[1]) ? removeSpecialCharFromString($shopDetails[1]) : "";
@@ -907,15 +901,15 @@ class VanDsReporting
                     $this->_dbConn,
                     $row["uni_id"],
                     "",
-                    array(
+                    [
                         $shopFrontPicture => "Outlet front Picture Lt: {$row["lt"]} Lg: {$row["lg"]}",
-                    )
+                    ]
                 );
 
                 // PRE-COMPUTE TIMESTAMP FOR SORTING (convert once, sort faster)
                 $row['_timestamp'] = strtotime($row["capture_datetime"]);
 
-                $arrData[$i] = array(
+                $arrData[$i] = [
                     "reportingType" => $row["ques_0"],
                     "wdCode" => $row["wd_code"],
                     "route" => json_decode($row["ques_1"], true)[0],
@@ -933,7 +927,7 @@ class VanDsReporting
                     "lg" => $row["lg"],
                     "images" => $arrImages,
                     "_timestamp" => $row['_timestamp'],
-                );
+                ];
 
                 $i++;
             }
@@ -950,12 +944,12 @@ class VanDsReporting
             unset($item);
         }
 
-        $arrResponse = array(
+        $arrResponse = [
             "total" => $limit["total"],
             "listingData" => $arrData,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+        $arrMessage = responseMessage([], 1, $arrResponse, true);
         echo json_encode($arrMessage);
     }
 
@@ -1080,10 +1074,9 @@ class VanDsReporting
         return $mdoCache;
     }
 
-
     final public function getDownloadData()
     {
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "TOWN SWD", 5 => "NPSR");
+        $arrTeamType = [0 => "VAN DS", 1 => "Niche", 2 => "TOWN SWD", 5 => "NPSR"];
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -1091,9 +1084,9 @@ class VanDsReporting
         $where = $this->getCondition();
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         // $branch = array();
@@ -1110,14 +1103,14 @@ class VanDsReporting
         // $stockSummaryTable = $this->_tables["STOCK_SUMMARY_TABLE"];
 
         // create 2 arrays for sale and competition so that Products and Competition columns can be clubbed together
-        $arrDownload = array(
-            "sale" => array(
-                array(),    // header
-            ),
+        $arrDownload = [
+            "sale" => [
+                [],    // header
+            ],
             // "competition" => array(
             //     array(),
             // ),
-        );
+        ];
 
         // create header
         $arrDownload["sale"][0][] = "ProId";
@@ -1155,7 +1148,7 @@ class VanDsReporting
         $iStartofProductsColumn = count($arrDownload["sale"][0]);
 
         // Store index of each product and competition to increment quantity in that column
-        $arrProductIndex = array();
+        $arrProductIndex = [];
         //$arrCompetitionIndex = array();
 
         $this->getBranchWiseProducts(null, $teamType);
@@ -1426,7 +1419,7 @@ class VanDsReporting
         $fp = fopen($filename, 'w');
 
         if ($fp === false) {
-            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            $arrMessage = responseMessage(["Failed to create CSV file"], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -1457,18 +1450,18 @@ class VanDsReporting
 
         fclose($fp);
 
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
     private function writeCsvRow($fileHandle, $data)
     {
-        $escapedData = array();
+        $escapedData = [];
 
         foreach ($data as $field) {
             // Convert to string
@@ -1492,7 +1485,7 @@ class VanDsReporting
 
     final public function getDownloadSummary()
     {
-        $arrTeamType = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $arrTeamType = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -1512,18 +1505,18 @@ class VanDsReporting
         $where2 .= $this->getCondition(true);
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.activity_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.activity_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
-        $stockWhere = str_replace(array("a.activity_date", "a.team_id"), array("capture_date", "team_id"), $where);
+        $stockWhere = str_replace(["a.activity_date", "a.team_id"], ["capture_date", "team_id"], $where);
 
         // prepare missing team condition
         $sTeamCond = getFilterResult(
             $this->_data['searchbar'],
-            array("dsName" => array("team_id", 0, true, true)),
+            ["dsName" => ["team_id", 0, true, true]],
             $this->_dbConn
         );
         // $branch = array();
@@ -1538,14 +1531,14 @@ class VanDsReporting
         // $minQualifiedAttendanceTimeInSec = $minQualifiedAttendanceTimeInMin * 60;
 
         // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
-        $arrSummary = array(
-            "sale" => array(
-                array(),    // header
-            ),
-            "stock" => array(
-                array(),
-            ),
-        );
+        $arrSummary = [
+            "sale" => [
+                [],    // header
+            ],
+            "stock" => [
+                [],
+            ],
+        ];
 
         // create header
         $arrSummary["sale"][0][] = "District";
@@ -1596,8 +1589,8 @@ class VanDsReporting
         // $this->getBranchWiseStockPickupProducts(null, $teamType);
 
         // Store index of each product and stock to increment quantity in that column
-        $arrProductIndex = array();
-        $arrStockIndex = array();
+        $arrProductIndex = [];
+        $arrStockIndex = [];
 
         // Loop through each brach data
         foreach ($branch as $branchId) {
@@ -1648,7 +1641,7 @@ class VanDsReporting
             }
 
             // get sales first; stock loaded only for (team_id, capture_date) in result (fast: chunked IN)
-            $arrTeamWiseStock = array();
+            $arrTeamWiseStock = [];
             // Don't use b.dstatus = 0
             // $where .= getFilterResult(
             //     $this->_data['searchbar'],
@@ -1683,7 +1676,7 @@ class VanDsReporting
                     $stockChunkSize = 200;
                     $stockChunks = array_chunk($teamDatePairs, $stockChunkSize);
                     foreach ($stockChunks as $chunk) {
-                        $inList = array();
+                        $inList = [];
                         foreach ($chunk as $p) {
                             $tid = (int) $p['team_id'];
                             $d = addslashes($p['date']);
@@ -1699,7 +1692,7 @@ class VanDsReporting
                                 $teamId = $rowStock["team_id"];
                                 $captureDate = $rowStock["capture_date"];
                                 $stockType = $rowStock["stock_type"];
-                                $arrTeamWiseStock[$captureDate][$teamId][$stockType] = array();
+                                $arrTeamWiseStock[$captureDate][$teamId][$stockType] = [];
                                 foreach ($arrStockProducts as $product) {
                                     $arrTeamWiseStock[$captureDate][$teamId][$stockType][$product[1]] = $rowStock[$product[1]];
                                 }
@@ -1757,7 +1750,7 @@ class VanDsReporting
                     if ($branchId == 40) {
                         $idealRoute = $dayOfWeek;
                         // $arrPlannedOutlet = getRowColumn($this->_dbConn, "tblroute_details_delhi", "COUNT(shop_uniq_code)", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
-                        $arrPlannedOutletBeatDay = array(1 => $dayOfWeek);
+                        $arrPlannedOutletBeatDay = [1 => $dayOfWeek];
 
                         $routeDays = explode('-', strtolower($row["route"]));
                         // $arrLtLg = getRowsColumns(
@@ -1816,7 +1809,7 @@ class VanDsReporting
                     // $isQualifiedAttendance = $totalShops >= $minTotalShops && $timeSpentInSec >= $minQualifiedAttendanceTimeInSec ? "1" : "0";
                     $isQualifiedAttendance = (string) $row["is_qualified"];
 
-                    $arrSummary["stock"][$index] = array();
+                    $arrSummary["stock"][$index] = [];
                     $arrSummary["sale"][$index][] = $district;
                     $arrSummary["sale"][$index][] = $mainBranch;
                     $arrSummary["sale"][$index][] = $branchName;
@@ -1863,7 +1856,6 @@ class VanDsReporting
                             // Accumulate the product sale
                             $totalProductSale += $iSale;
 
-
                             // get index of product
                             $iProductIndex = $arrProductIndex[$productName];
                             $arrSummary["sale"][$index][$iProductIndex] = floatval($iSale);
@@ -1873,7 +1865,7 @@ class VanDsReporting
                     $totalReadyStockPickup = 0; // Initialize total ready stock pickup
                     // insert pickup stock Qty and Avg sale
                     foreach ($arrStockProducts as $stockProduct) {
-                        $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : array();
+                        $arrStock = isset($arrTeamWiseStock[$date][$teamId]) ? $arrTeamWiseStock[$date][$teamId] : [];
                         $iStockQty = isset($arrStock[0][$stockProduct[1]]) ? $arrStock[0][$stockProduct[1]] : 0;
 
                         // Accumulate the ready stock pickup
@@ -1911,16 +1903,16 @@ class VanDsReporting
                 $index = count($arrSummary["sale"]);
                 $date = $startDate->format('Y-m-d'); // Format the current date
                 $week = $this->getWeekNumber($date);
-                $arrDates = array();
+                $arrDates = [];
 
                 if (!in_array($date, $arrDates)) {
                     $arrDates[] = $date;
 
                     $teamTypeCon = getFilterResult(
                         $this->_data['searchbar'],
-                        array(
-                            "dsType" => array("a.is_type", 0, true, true),
-                        )
+                        [
+                            "dsType" => ["a.is_type", 0, true, true],
+                        ]
                     );
                     // Query to get teams who have not uploaded any record on that date
                     $iTeamRows = 0;
@@ -1931,7 +1923,7 @@ class VanDsReporting
 
                     if ($iTeamRows) {
                         while ($rowTeam = $this->_dbConn->GetData($rsTeamAction)) {
-                            $arrSummary["stock"][$index] = array();
+                            $arrSummary["stock"][$index] = [];
                             $arrSummary["sale"][$index][] = $rowTeam["district"];
                             $arrSummary["sale"][$index][] = $rowTeam["main_branch"];
                             $arrSummary["sale"][$index][] = $rowTeam["branch_name"];
@@ -1969,7 +1961,7 @@ class VanDsReporting
 
         $fp = fopen($filename, 'w');
         if ($fp === false) {
-            $arrMessage = responseMessage(array("Failed to create CSV file"), 0);
+            $arrMessage = responseMessage(["Failed to create CSV file"], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -1979,7 +1971,7 @@ class VanDsReporting
 
         foreach ($arrSummary["sale"] as $index => $arrBody) {
             if ($index === 0) {
-                $arrValues = array();
+                $arrValues = [];
                 foreach ($arrBody as $body) {
                     $arrValues[] = $body;
                 }
@@ -2005,11 +1997,11 @@ class VanDsReporting
 
         fclose($fp);
 
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        ];
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         echo json_encode($arrMessage);
     }
 
@@ -2022,9 +2014,9 @@ class VanDsReporting
         // Filter query
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
@@ -2261,7 +2253,7 @@ class VanDsReporting
         }
 
         $arrResult = formatDownloadData("BINDER_REPORT", $header, $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 
@@ -2270,7 +2262,7 @@ class VanDsReporting
     {
         global  $CUST_FOLDER_PATH;
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrTeamType = [0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS"];
         // $arrInfraType = array(7 => "MDO", 10 => "FSO");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
@@ -2279,9 +2271,9 @@ class VanDsReporting
         $where = $this->getCondition();
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
@@ -2295,7 +2287,7 @@ class VanDsReporting
 
         // Create title page
         $pdf->createPage();
-        $pdf->addTitle("VAN DS REPORT", 28, array(138, 51, 255));
+        $pdf->addTitle("VAN DS REPORT", 28, [138, 51, 255]);
 
         $hasData = false;
         $recordCount = 0;
@@ -2381,7 +2373,7 @@ class VanDsReporting
                     $WdName = "";
                     $WdMarket = "";
                     $WdPopGroup = "";
-                    $allImages = array();
+                    $allImages = [];
                     $rsAllImages = null;
                     $iAllRows = 0;
                     $sImageQuery = "SELECT b.mob_img_id, b.file_name as name, b.file_path as filepath, b.file_domain FROM tblsurvey_response_file_new AS b WHERE b.dstatus = '0' AND b.uni_id = '$uniId' AND b.mob_img_id = '$shopFrontPicture' ORDER BY b.mob_img_id";
@@ -2389,7 +2381,7 @@ class VanDsReporting
 
                     if ($iAllRows > 0) {
                         if (!isset($allImages[$uniId])) {
-                            $allImages[$uniId] = array();
+                            $allImages[$uniId] = [];
                         }
                         while ($imgRow = $this->_dbConn->GetData($rsAllImages)) {
                             $allImages[$uniId][$imgRow['mob_img_id']] = $imgRow;
@@ -2501,8 +2493,8 @@ class VanDsReporting
                     //         }
                     //     }
                     // }
-                    $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
-                    $images = array();
+                    $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : [];
+                    $images = [];
 
                     if (isset($shopFrontPicture) && $shopFrontPicture) {
                         $storePhoto = $getCorrectImage($arrImages2, $shopFrontPicture);
@@ -2545,19 +2537,19 @@ class VanDsReporting
                         $pdf->createPage();
 
                         // First table
-                        $tableData1 = array(
-                            array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "VAN DS ID", "VAN DS NAME", "DS TYPE", "DATE", "WEEK"),
-                            array($district, $mainBranch, $branchName, $circle, $section, $team_id, $mdoName, $dsTypeValue, $captureDate, $week)
-                        );
-                        $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                        $tableData1 = [
+                            ["DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "VAN DS ID", "VAN DS NAME", "DS TYPE", "DATE", "WEEK"],
+                            [$district, $mainBranch, $branchName, $circle, $section, $team_id, $mdoName, $dsTypeValue, $captureDate, $week]
+                        ];
+                        $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, [138, 51, 255], [255, 255, 255], [0, 0, 0]);
                         $pdf->Ln(3);
 
                         // Second table
-                        $tableData2 = array(
-                            array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"),
-                            array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $shopId, $outlet_name, $captureDateTime, $totalProductSale, $totalULC)
-                        );
-                        $pdf->addTable($tableData2, 2, 9, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                        $tableData2 = [
+                            ["WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"],
+                            [$workWdCode, $WdName, $WdMarket, $WdPopGroup, $shopId, $outlet_name, $captureDateTime, $totalProductSale, $totalULC]
+                        ];
+                        $pdf->addTable($tableData2, 2, 9, 5, $pdf->GetY(), 287, 7, [138, 51, 255], [255, 255, 255], [0, 0, 0]);
 
                         $imageY = $pdf->GetY() + 5;
                         $imgWidth = 130;
@@ -2594,7 +2586,7 @@ class VanDsReporting
 
         // Check if we have data to generate PDF
         if (!$hasData) {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
             echo json_encode($arrMessage);
             return;
         }
@@ -2605,12 +2597,12 @@ class VanDsReporting
         $fileName = "VANDS_$currentDateTime.pdf";
 
         $fileDetails = $pdf->savePdf($fileName, false);
-        $arrResponse = array(
+        $arrResponse = [
             "filePath" => $fileDetails["downloadUrl"],
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $arrResponse);
         echo json_encode($arrMessage);
     }
 }

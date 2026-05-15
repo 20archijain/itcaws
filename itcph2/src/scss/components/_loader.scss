@@ -1,6 +1,6 @@
 @use "sass:math";
 
-$loader-blockui-color: rgba(255, 255, 255, .5);
+$loader-blockui-color: rgb(255 255 255 / 50%);
 $loader-size: 50px;
 $loader-color: #337ab7;
 
@@ -25,18 +25,18 @@ $loader-color: #337ab7;
 }
 
 .spinner {
-  -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
   z-index: 100;
 
   .circle {
-    -webkit-animation: dash 3s ease-in-out infinite;
     animation: dash 3s ease-in-out infinite;
     stroke: $loader-color;
+
     // defining the pattern of dashes and gaps used to paint the outline of the shape i.e
     // creating dashes in the stroke of SVG shapes.
     // The higher the number, the more space in between dashes in the stroke.
     stroke-dasharray: 1, 150;
+
     // defines the location along an SVG path where the dash of a stroke will begin
     // higher the number, the further along the path the dashes will begin.
     stroke-dashoffset: 0;
@@ -45,12 +45,14 @@ $loader-color: #337ab7;
 }
 
 @keyframes spin {
+
   100% {
     transform: rotate(360deg);
   }
 }
 
 @keyframes dash {
+
   0% {
     stroke-dasharray: 1, 150;
     stroke-dashoffset: 0;
@@ -67,13 +69,15 @@ $loader-color: #337ab7;
   }
 }
 
-@-webkit-keyframes spin {
+@keyframes spin {
+
   100% {
     transform: rotate(360deg);
   }
 }
 
-@-webkit-keyframes dash {
+@keyframes dash {
+
   0% {
     stroke-dasharray: 1, 150;
     stroke-dashoffset: 0;

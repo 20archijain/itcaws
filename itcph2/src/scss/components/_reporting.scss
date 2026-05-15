@@ -1,3 +1,4 @@
+// stylelint-disable no-descending-specificity
 $red-bg-color: #b93127;
 $white-color: #fff;
 $viewmore-color: #fbfafc;
@@ -7,8 +8,16 @@ $purple-color: #7b5ff8;
 $vertical-border-color: #ddd;
 
 .listing-row {
+
+  .view-more {
+    color: $purple-color;
+    font-weight: 700;
+  }
+
   &.bg-red {
+
     .card-body {
+
       &:not(.no-bg):first-child {
         background-color: $red-bg-color;
         color: $white-color;
@@ -21,7 +30,9 @@ $vertical-border-color: #ddd;
   }
 
   &.bg-green {
+
     .card-body {
+
       &:not(.no-bg):first-child {
         background-color: $green-bg-color;
         color: $white-color;
@@ -34,7 +45,9 @@ $vertical-border-color: #ddd;
   }
 
   .card-body {
+
     &:not(.no-bg-on-hover):first-child {
+
       &:hover {
         background-color: $blue-bg-color;
         color: $white-color;
@@ -47,15 +60,11 @@ $vertical-border-color: #ddd;
   }
 
   .listing-row-content {
+
     .heading {
       font-size: 15px;
       font-weight: 700;
     }
-  }
-
-  .view-more {
-    color: $purple-color;
-    font-weight: 700;
   }
 
   .v-border {
@@ -70,7 +79,7 @@ $vertical-border-color: #ddd;
       margin-right: 5px;
     }
 
-    @media screen and (min-width: 768px) {
+    @media screen and (width >= 768px) {
       flex-direction: column;
 
       .first {

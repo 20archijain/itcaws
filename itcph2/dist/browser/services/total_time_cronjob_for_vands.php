@@ -55,7 +55,7 @@ class UpdateDataCronjob
                         "tblvands_summary",
                         "total_time = ?",
                         "summary_id = $summary_id",
-                        array($total_time_in_min)
+                        [$total_time_in_min]
                     );
                 }
             }

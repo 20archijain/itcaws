@@ -23,26 +23,25 @@ class SystemOfflineManagement
         $this->_validationLength = $GLOBALS['VALIDATOR_LENGTH'];
     }
 
-
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "projectList" => getProjectOptions($this->_dbConn, "", 0, true, "dstatus = 0"),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getTeam()
     {
         $project = $this->_data['project'];
-        $arrResult = array(
-            "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", " project_id = '$project' AND team_name is not null", array()),
+        $arrResult = [
+            "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", " project_id = '$project' AND team_name is not null", []),
 
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -58,9 +57,9 @@ class SystemOfflineManagement
             $this->_dbConn->ExecuteSelectQuery($sql, $rsAction, $iRows);
 
             if ($iRows > 0) {
-                $arrMessage = responseMessage(array($GLOBALS['TEAM_DELETED_SUCCESSFULLY']), 1);
+                $arrMessage = responseMessage([$GLOBALS['TEAM_DELETED_SUCCESSFULLY']], 1);
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['TEAM_NOT_FOUND_IN_OFFLINE']));
+                $arrMessage = responseMessage([$GLOBALS['TEAM_NOT_FOUND_IN_OFFLINE']]);
             }
         }
         echo json_encode($arrMessage);

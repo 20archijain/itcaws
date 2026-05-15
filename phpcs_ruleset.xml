@@ -1,18 +1,96 @@
 <?xml version="1.0"?>
-<ruleset name="Custom Standard">
-    <rule ref="PSR12">
-        <exclude name="Generic.Files.LineEndings" />
-        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
-        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
-        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+<ruleset name="Professional PHP Standards">
+
+    <description>
+        Enterprise-grade PHP_CodeSniffer configuration
+    </description>
+
+    <!-- Scan paths -->
+    <file>dist</file>
+
+    <!-- Ignore paths -->
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>storage/*</exclude-pattern>
+    <exclude-pattern>bootstrap/cache/*</exclude-pattern>
+
+    <!-- PHP version -->
+    <config name="php_version" value="80200" />
+
+    <!-- Output -->
+    <arg value="sp" />
+    <arg name="colors" />
+    <arg name="parallel" value="8" />
+    <arg name="cache" />
+
+    <!-- Base standard -->
+    <rule ref="PSR12" />
+
+    <!-- Generic Quality Rules -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
+    <rule ref="Generic.Formatting.DisallowMultipleStatements" />
+    <rule ref="Generic.Functions.FunctionCallArgumentSpacing" />
+    <rule ref="Generic.NamingConventions.UpperCaseConstantName" />
+    <rule ref="Generic.PHP.DisallowShortOpenTag" />
+
+    <!-- Squiz Rules -->
+    <rule ref="Squiz.ControlStructures.ControlSignature" />
+    <rule ref="Squiz.Functions.FunctionDeclaration" />
+    <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
+
+    <!-- Optional stricter formatting -->
+    <rule ref="Squiz.Arrays.ArrayBracketSpacing" />
+    <rule ref="Squiz.PHP.NonExecutableCode" />
+
+    <!-- Modern PHP -->
+    <rule ref="PSR12.Properties.ConstantVisibility" />
+
+    <!-- Forbidden functions -->
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <element key="var_dump" value="null" />
+                <element key="print_r" value="null" />
+                <element key="die" value="null" />
+                <element key="exit" value="null" />
+            </property>
+        </properties>
     </rule>
+
+    <!-- Line length -->
     <rule ref="Generic.Files.LineLength">
         <properties>
             <property name="lineLimit" value="300" />
             <property name="absoluteLineLimit" value="300" />
+            <property name="ignoreComments" value="true" />
         </properties>
     </rule>
+
+    <!-- Enforce Unix line endings (recommended for cross-platform repos) -->
+    <rule ref="Generic.Files.LineEndings">
+        <properties>
+            <property name="eolChar" value="\n" />
+        </properties>
+    </rule>
+
+    <!-- Exclude only what is commonly acceptable in real projects -->
+    <rule ref="PSR1.Files.SideEffects">
+        <exclude name="PSR1.Files.SideEffects.FoundWithSymbols" />
+    </rule>
+
+    <!-- Allow classes without namespace ONLY if you're not fully namespacing legacy code -->
+    <rule ref="PSR1.Classes">
+        <exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace" />
+    </rule>
+
+    <!-- Do NOT enforce underscore properties rule (PSR-12 already prefers modern visibility usage) -->
+    <rule ref="PSR2.Classes.PropertyDeclaration">
+        <exclude name="PSR2.Classes.PropertyDeclaration.Underscore" />
+    </rule>
+
+    <!-- Hide “no code found” noise in empty files -->
     <rule ref="Internal.NoCodeFound">
         <severity>0</severity>
     </rule>
+
 </ruleset>

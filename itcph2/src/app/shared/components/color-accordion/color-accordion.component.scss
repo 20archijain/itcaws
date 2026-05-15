@@ -69,6 +69,7 @@ i {
 }
 
 // sass-lint:disable class-name-format
+
 .wdCode {
   background: $color4;
   color: $white;
@@ -145,13 +146,13 @@ i {
   padding: 0 !important;
 }
 
-.section-row>td {
-  padding: 0;
-}
-
 th,
 td {
   border: 1px solid $black;
+}
+
+.section-row>td {
+  padding: 0;
 }
 
 .container {
@@ -165,6 +166,7 @@ td {
 }
 
 // Responsive Table Wrapper
+
 .table-responsive {
   -webkit-overflow-scrolling: touch;
   overflow-x: auto;
@@ -172,6 +174,7 @@ td {
 }
 
 // Base Table Styling
+
 .table-custom {
   border-collapse: collapse;
   min-width: 1400px;
@@ -201,6 +204,7 @@ td {
 
 // sass-lint:disable class-name-format
 // Fixed Column Widths
+
 .district,
 .district-cell,
 .branch,
@@ -223,7 +227,7 @@ td {
 }
 
 // Responsive Adjustments
-@media (max-width: 768px) {
+@media (width <= 768px) {
 
   .table-custom {
 

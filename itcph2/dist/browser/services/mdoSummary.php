@@ -26,12 +26,10 @@ class mdoSummary
 
     final public function processSummary()
     {
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $arrInfraType = [7 => "MDO", 10 => "FSO"];
         $currentDate = currentDate();
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable = $this->_tables["BRANCH_TABLE"];
-        $routeTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $respTable = $this->_tables["RESPONSE_DETAILS_TABLE"];
         $branchPickupStockTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
 
@@ -66,7 +64,7 @@ class mdoSummary
                     $sellInShop = 0;
                     $totalSale = 0;
                     $totalUlc = 0;
-                    $arrMdoSurveyedOutlets = array();
+                    $arrMdoSurveyedOutlets = [];
                     $mdoSurveyedOutlets = 0;
                     $sellbByDsMdoSurveyed = 0;
                 } else {
@@ -75,7 +73,7 @@ class mdoSummary
                     $orderShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                     $addShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                     $totalShops = $orderShop + $addShop;
-                    $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                    $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", [], true);
                     $productCols = [];
                     $productNames = [];
 
@@ -200,17 +198,17 @@ class mdoSummary
                 if ($istatus == 1) {
                     $cols = "qualified = ?, start_time = ?, end_time = ?, resp_startdatetime = ?, resp_enddatetime = ?, total_time_spent = ?, time_in_market = ?, total_km_travelled = ?, planned_outlets = ?, surveyed_outlets_mdo = ?, survey_vol = ?, survey_val = ?, line_cut = ?" .
                         ", outlet_visited = ?, sales_vol = ?, sales_val = ?, visited_outlets = ?, billed_outlets = ?, total_sale = ?, sale = ?, total_line_cut = ?";
-                    $arrParams = array(
+                    $arrParams = [
                         $qualified, isset($startTime) ? $startTime : null, isset($endTime) ? $endTime : null, isset($firstOutletTime) ? $firstOutletTime : null, isset($lastOutletTime) ? $lastOutletTime : null, $timeSpent, $timeInMarket, $distanceInKm, $pannedOutlets, $coverdOutlets,
                         $surveyVol, $surveyVal, $lineCut, $dayEndOutlet, $salesVol, $salesValue, $totalShops, $sellInShop ?? 0, $totalSale ?? 0, $sellbByDsMdoSurveyed ?? 0, $totalUlc, $teamId, $date
-                    );
+                    ];
 
                     updateRecord($this->_dbConn, "tblmdo_summary", $cols, "mdo_id = ? AND capture_date = ?", $arrParams);
                 } else {
                     $addCols = "capture_date, district, branch_id, main_branch, branch_name, circle, section, mdo_type, mdo_id, mdo_name, week, qualified, present, type_of_work, wd_code, wd_name, wd_market, pop_group, ds_id, type, ds_name, route_name, start_time, end_time, resp_startdatetime" .
                         ", resp_enddatetime, total_time_spent, time_in_market, total_km_travelled, planned_outlets, surveyed_outlets_mdo, survey_vol, survey_val, line_cut, outlet_visited, sales_vol, sales_val, visited_outlets, billed_outlets, total_sale, sale, total_line_cut";
                     $addVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                    $arrAddParams = array(
+                    $arrAddParams = [
                         $date,
                         $row["district"],
                         $branchId,
@@ -253,7 +251,7 @@ class mdoSummary
                         $totalSale ?? 0,
                         $sellbByDsMdoSurveyed ?? 0,
                         $totalUlc
-                    );
+                    ];
                     addRecord($this->_dbConn, "tblmdo_summary", $addCols, $addVals, $arrAddParams);
                 }
             }
@@ -270,7 +268,7 @@ class mdoSummary
             $week = $this->getWeekNumber($date);
             $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
             $branchTable = $this->_tables["BRANCH_TABLE"];
-            $infraTypeArr = array(7 => "MDO", 10 => "FSO");
+            $infraTypeArr = [7 => "MDO", 10 => "FSO"];
 
             $iTeamRows = 0;
             $rsTeamAction = null;
@@ -321,8 +319,8 @@ class mdoSummary
                                 $attDsNameOnly = $parts[0] ?? "";
                                 $attDsType = $parts[1] ?? "";
                                 $dsId = getRowColumn($this->_dbConn, "tblmdo_offline_data", "ds_id", "dstatus = 0 AND wd_code = '$wdCode' AND ds_name = '$attDsNameOnly'");
-                                break;
                                 $routeName = $dsDetails[2];
+                                break;
                             case 1:
                                 $typeOfWork = "Market work with AE";
                                 $wdCode = $dsDetails[1] ?? "";

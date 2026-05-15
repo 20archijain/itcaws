@@ -1,5 +1,5 @@
-$scroll-bar-shadow-color: rgba(0, 0, 0, .3);
-$scroll-bar-bg-color: rgba(156, 165, 210, .7);
+$scroll-bar-shadow-color: rgb(0 0 0 / 30%);
+$scroll-bar-bg-color: rgb(156 165 210 / 70%);
 
 @mixin scrollbar($element) {
   #{$element}::-webkit-scrollbar {

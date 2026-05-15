@@ -64,16 +64,16 @@ class DownloadTable
         // Define the path and URL to save the file
         $filePath = $GLOBALS["UPROOTS_PATH"] . "/database" . "/$fileName";
         $downloadFileLocation = $GLOBALS["SITE_URL"] . "/database" . "/$fileName";
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
 
         // Open the file for writing
         $output = fopen($filePath, 'w');
 
         if (!$output) {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
             echo json_encode($arrMessage);
             return;
         }
@@ -155,7 +155,7 @@ class DownloadTable
 
                     $rowCount = 0;
                     $batchSize = 100; // Number of rows per INSERT statement
-                    $allRows = array($firstRow); // Include the first row we already fetched
+                    $allRows = [$firstRow]; // Include the first row we already fetched
 
                     // Fetch all remaining rows
                     while ($row = $this->_dbConn->GetData($rsAction)) {
@@ -217,9 +217,9 @@ class DownloadTable
 
         // Set appropriate message based on what was exported
         if ($hasStructure || $hasData) {
-            $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+            $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
@@ -324,7 +324,7 @@ class DownloadTable
         $conditions = getFormData($this->_data, 'conditions');
 
         if (!$database || !$table) {
-            $arrMessage = responseMessage(array('Database and table are required'), 0);
+            $arrMessage = responseMessage(['Database and table are required'], 0);
             echo json_encode($arrMessage);
             return;
         }
@@ -356,14 +356,14 @@ class DownloadTable
             $totalRows = $row['total'];
         }
 
-        $previewData = array(
+        $previewData = [
             'query' => $previewQuery,
             'estimatedRows' => $totalRows,
             'database' => $database,
             'table' => $table
-        );
+        ];
 
-        $arrMessage = responseMessage(array('Query preview generated successfully'), 1, $previewData);
+        $arrMessage = responseMessage(['Query preview generated successfully'], 1, $previewData);
         echo json_encode($arrMessage);
     }
 
@@ -381,36 +381,36 @@ class DownloadTable
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "dataBaseList" => $this->getDatabaseName(),
             "projectList" => getOptions($this->_dbConn, "tblprojects", "project_name", "project_id"),
-            "typeList" => array(
-                array("label" => "Download Structure Only", "value" => "structure"),
-                array("label" => "Download Data Only", "value" => "data"),
-                array("label" => "Download Structure And Data", "value" => ""),
-            ),
-            "operatorList" => array(
-                array("label" => "Equals", "value" => "="),
-                array("label" => "Not Equals", "value" => "!="),
-                array("label" => "Greater Than", "value" => ">"),
-                array("label" => "Less Than", "value" => "<"),
-                array("label" => "Greater Than or Equal", "value" => ">="),
-                array("label" => "Less Than or Equal", "value" => "<="),
-                array("label" => "LIKE", "value" => "LIKE"),
-                array("label" => "NOT LIKE", "value" => "NOT LIKE"),
-                array("label" => "IN", "value" => "IN"),
-                array("label" => "NOT IN", "value" => "NOT IN"),
-                array("label" => "BETWEEN", "value" => "BETWEEN"),
-                array("label" => "IS NULL", "value" => "IS NULL"),
-                array("label" => "IS NOT NULL", "value" => "IS NOT NULL"),
-            ),
-            "logicalOperatorList" => array(
-                array("label" => "AND", "value" => "AND"),
-                array("label" => "OR", "value" => "OR"),
-            ),
-        );
+            "typeList" => [
+                ["label" => "Download Structure Only", "value" => "structure"],
+                ["label" => "Download Data Only", "value" => "data"],
+                ["label" => "Download Structure And Data", "value" => ""],
+            ],
+            "operatorList" => [
+                ["label" => "Equals", "value" => "="],
+                ["label" => "Not Equals", "value" => "!="],
+                ["label" => "Greater Than", "value" => ">"],
+                ["label" => "Less Than", "value" => "<"],
+                ["label" => "Greater Than or Equal", "value" => ">="],
+                ["label" => "Less Than or Equal", "value" => "<="],
+                ["label" => "LIKE", "value" => "LIKE"],
+                ["label" => "NOT LIKE", "value" => "NOT LIKE"],
+                ["label" => "IN", "value" => "IN"],
+                ["label" => "NOT IN", "value" => "NOT IN"],
+                ["label" => "BETWEEN", "value" => "BETWEEN"],
+                ["label" => "IS NULL", "value" => "IS NULL"],
+                ["label" => "IS NOT NULL", "value" => "IS NOT NULL"],
+            ],
+            "logicalOperatorList" => [
+                ["label" => "AND", "value" => "AND"],
+                ["label" => "OR", "value" => "OR"],
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -437,18 +437,18 @@ class DownloadTable
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
         if ($iRows > 0) {
-            $arrData = array();
+            $arrData = [];
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['Field'],
                     "value" => $row['Field'],
                     "type" => $row['Type']
-                );
+                ];
             }
-            $arrResult = array("columnList" => $arrData);
+            $arrResult = ["columnList" => $arrData];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -461,13 +461,13 @@ class DownloadTable
         $sQuery = "Show DATABASES like '%itcawsportal_itcph2%'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
         if ($iRows > 0) {
-            $arrData = array();
+            $arrData = [];
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $dataBases = $row['Database (%itcawsportal_itcph2%)'];
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $dataBases,
                     "value" => $dataBases
-                );
+                ];
             }
         }
         return $arrData;
@@ -482,28 +482,28 @@ class DownloadTable
         $sQuery = "SELECT table_name FROM information_schema.tables WHERE table_schema = '$database' AND table_name LIKE '%tbl%'";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
         if ($iRows > 0) {
-            $arrData = array();
+            $arrData = [];
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $tables = $row['table_name'];
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $tables,
                     "value" => $tables
-                );
+                ];
             }
-            $arrResult = array("tableList" => $arrData);
+            $arrResult = ["tableList" => $arrData];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getProjectList()
     {
         $database = getFormData($this->_data, 'database');
-        $arrResult = array(
+        $arrResult = [
             "projectList" => getOptions($this->_dbConn, $database . "." . "tblprojects", "project_name", "project_id")
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 }

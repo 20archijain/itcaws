@@ -6,6 +6,7 @@
 
 // main framework
 @use "bootstrap/scss/functions" as *;
+
 // @use "bootstrap/scss/variables" as *;
 @use "settings/custom-variables" as *;
 @use "settings/theme-variables" as *;
@@ -28,7 +29,6 @@
 @use "themes/bootstrap-overlay/radiobox-checkbox" as *;
 @use "themes/bootstrap-overlay/switches" as *;
 @use "themes/bootstrap-overlay/badge" as *;
-
 @use "themes/general" as *;
 @use "themes/generic" as *;
 @use "themes/plugin/animate" as *;

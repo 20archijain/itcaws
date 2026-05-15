@@ -41,12 +41,12 @@ class GetAIResult
             while ($row = $this->dbConn->GetData($sAction)) {
                 $proId = $row["pro_id"];
 
-                $arrData = array(
+                $arrData = [
                     // "https://itccampaign.com/13.jpg"
                     "url" => $row["file_domain"] . "/prods/any" . $row["file_path"] . $row["file_name"],
                     "event_id" => 77,
                     "seq" => "default"
-                );
+                ];
                 $sAiResult = $this->callApi($row["pro_id"], "http://147.189.195.124:5000/api/yolo", $arrData);
 
                 $arrGetProcessedResult = $this->getProcessedResult($sAiResult);
@@ -56,7 +56,7 @@ class GetAIResult
                     "tblsurvey_response_details",
                     "is_ai_result_processed = 1, ai_result_org = ?, ai_result = ?",
                     "pro_id = $proId",
-                    array($sAiResult, $arrGetProcessedResult ? json_encode($arrGetProcessedResult) : null)
+                    [$sAiResult, $arrGetProcessedResult ? json_encode($arrGetProcessedResult) : null]
                 );
             }
         }
@@ -64,10 +64,10 @@ class GetAIResult
 
     private function getProcessedResult($sAiResult)
     {
-        $arrMaterial = array(
+        $arrMaterial = [
             "888" => "Gold Flake Superstar",
             "999" => "Wills Flake Special Filter",
-        );
+        ];
 
         $arrResult = null;
         if ($sAiResult) {
@@ -77,13 +77,13 @@ class GetAIResult
                 $arrAiResult && isset($arrAiResult["packet_Counts"]) &&
                 isNonEmptyArray($arrAiResult["packet_Counts"])
             ) {
-                $arrResult = array();
+                $arrResult = [];
                 foreach ($arrAiResult["packet_Counts"] as $matId => $matAiDetectedQty) {
-                    $arrResult[] = array(
+                    $arrResult[] = [
                         "matId" => $matId,
                         "matName" => $arrMaterial[$matId],
                         "ai_detected_qty" => $matAiDetectedQty,
-                    );
+                    ];
                 }
             }
         }
@@ -101,10 +101,10 @@ class GetAIResult
 
         $username = "bat-portal";
         $password = "access@granted";
-        $arrHeaders = array(
+        $arrHeaders = [
             'Content-Type: application/json',
             'Authorization: Basic ' . base64_encode("$username:$password")
-        );
+        ];
         curl_setopt($ch, CURLOPT_HTTPHEADER, $arrHeaders);
         // curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 1200);
         curl_setopt($ch, CURLOPT_POST, true);

@@ -547,7 +547,7 @@ class generatePDFCronjob
 
         try {
             $pdf->Output('F', $filePath);
-            $istatus = updateRecord($this->_dbConn, "tblvands_summary", "pdf_generated = ?", "summary_id = $summaryId", array(1));
+            $istatus = updateRecord($this->_dbConn, "tblvands_summary", "pdf_generated = ?", "summary_id = $summaryId", [1]);
             if ($istatus == 1) {
                 $currentDateTime = date("Y-m-d H:i:s");
                 $downloadPath = $GLOBALS["SAVE_PDF_URL"] . "/" . $currentDate . "/" . $fileName;
@@ -555,7 +555,7 @@ class generatePDFCronjob
                 //     "\r\nPDF Generated Successfully for Summary ID: $summaryId , Team ID: $teamId\r\n",
                 //     $this->logFilename
                 // );
-                return array(1, $downloadPath, $summaryId);
+                return [1, $downloadPath, $summaryId];
             } else {
                 // debug_log(
                 //     "\r\nError: PDF Generated but Database Update Failed for Summary ID: $summaryId\r\n",
@@ -618,14 +618,14 @@ class generatePDFCronjob
                         // Add summary_id to the notification record
                         $cols = "team_id, summary_id, notification_type, notification_title, notification_text, notification_date, notification_datetime, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParams = array($team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT);
+                        $arrParams = [$team_id, $summary_id, 1, $notificationTitle, $notificationText, $cD, $cDT, $cD, $cDT];
                         $iStatus = addRecord($this->_dbConn, $notificationTable, $cols, $vals, $arrParams);
                         // Send the QR code image via WhatsApp
                         $resp = $this->sendWhatsAppMessage('91' . $ae_number, $actualPdfUrl, $team_name, 'vnsai');
-                        updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", array(1));
+                        updateRecord($this->_dbConn, "tblvands_summary", "pdf_sent = ?", "summary_id = $summaryId", [1]);
                         $cols = "ae_name, ae_number, team_id, api_response, capture_date";
                         $vals = "?, ?, ?, ?, ?";
-                        $arrParams = array($ae_name, $ae_number, $team_id, $resp, $currentDate);
+                        $arrParams = [$ae_name, $ae_number, $team_id, $resp, $currentDate];
                         addRecord($this->_dbConn, "tblwhatsapp_pdf_logs", $cols, $vals, $arrParams);
                     } else {
                         // debug_log(

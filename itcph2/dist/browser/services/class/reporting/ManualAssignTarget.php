@@ -15,7 +15,6 @@ class ManualAssignTarget
     private $_arrAccessInfo = [];
     private $_tables = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
@@ -27,7 +26,7 @@ class ManualAssignTarget
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
+        $arrData = [];
         $where = "";
 
         if ($cond) {
@@ -43,10 +42,10 @@ class ManualAssignTarget
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
-                );
+                ];
             }
         }
 
@@ -67,30 +66,27 @@ class ManualAssignTarget
 
         $branchList = $this->getBranchList($cond);
 
-        $arrResult = array(
+        $arrResult = [
             "branchList" => $branchList,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getProductList()
     {
         $month = date('m');
         $year = date('Y');
         $branch = $this->_data['branch'];
-        $productList = getRowsColumns($this->_dbConn, "tblbranch_products_month_wise", "product_name, summary_column_name", " branch_id = '$branch' AND month = '$month' AND year = '$year' order by is_focusbrand", array(), true);
-        $arrResult = array(
+        $productList = getRowsColumns($this->_dbConn, "tblbranch_products_month_wise", "product_name, summary_column_name", " branch_id = '$branch' AND month = '$month' AND year = '$year' order by is_focusbrand", [], true);
+        $arrResult = [
             "productList" => $productList,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
-
 
     final public function submitData()
     {
@@ -106,14 +102,13 @@ class ManualAssignTarget
         $arrAllTeamsAfterCheck = array_diff($arrTotalTeams, $arrTotalAlreadySubmiitedTeams);
         $arrAllTeamsAfterCheck = array_values($arrAllTeamsAfterCheck);
 
-
         if (count($arrTotalTeams) != count($arrTotalAlreadySubmiitedTeams) && isset($quantity)) {
             $status = 0;
             if (isset($arrAllTeamsAfterCheck)) {
                 foreach ($arrAllTeamsAfterCheck as $teamId) {
                     $col = "";
                     $val = "";
-                    $arrParams = array();
+                    $arrParams = [];
                     foreach ($quantity as $product => $value) {
                         $col .= $product . ",";
                         $val .= "?,";
@@ -122,7 +117,7 @@ class ManualAssignTarget
 
                     $col .= "team_id, month, year";
                     $val .= "?, ?, ?";
-                    $arrParamsNext = array($teamId, $month, $year);
+                    $arrParamsNext = [$teamId, $month, $year];
 
                     $arrParams = array_merge($arrParams, $arrParamsNext);
 
@@ -133,10 +128,10 @@ class ManualAssignTarget
             if ($status == 2) {
                 $arrMessage = responseMessage([$GLOBALS['TARGET_ASSIGNED']], 1);
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['TARGET_NOT_ASSIGNED']), 0);
+                $arrMessage = responseMessage([$GLOBALS['TARGET_NOT_ASSIGNED']], 0);
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['TARGET_ALREADY_ASSIGNED']), 0);
+            $arrMessage = responseMessage([$GLOBALS['TARGET_ALREADY_ASSIGNED']], 0);
         }
         echo json_encode($arrMessage);
     }

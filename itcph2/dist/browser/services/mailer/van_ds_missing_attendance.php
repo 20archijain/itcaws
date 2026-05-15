@@ -26,7 +26,7 @@ class VanDsMailer
     final public function sendMissingAttendanceList()
     {
         $currentDate = currentDate();
-        $arrHeader = array("S.No", "WD Code", "District", "Team Name");
+        $arrHeader = ["S.No", "WD Code", "District", "Team Name"];
         $fileName = "VanDS_MissingAttendance_" . $currentDate . ".xlsx";
 
         $branchTable = $this->_tables["BRANCH_TABLE"];
@@ -42,8 +42,8 @@ class VanDsMailer
             while ($branchRow = $this->_dbConn->GetData($sBranchAction)) {
                 $branchId = $branchRow["branch_id"];
                 $branchName = $branchRow["branch_name"];
-                $arrTo = isset($branchRow["to_email"]) && $branchRow["to_email"] ? explode(",", $branchRow["to_email"]) : array();
-                $arrCc = isset($branchRow["cc_email"]) && $branchRow["cc_email"] ? explode(",", $branchRow["cc_email"]) : array();
+                $arrTo = isset($branchRow["to_email"]) && $branchRow["to_email"] ? explode(",", $branchRow["to_email"]) : [];
+                $arrCc = isset($branchRow["cc_email"]) && $branchRow["cc_email"] ? explode(",", $branchRow["cc_email"]) : [];
 
                 if (isNonEmptyArray($arrTo) || isNonEmptyArray($arrCc)) {
                     $sAction = null;
@@ -52,18 +52,18 @@ class VanDsMailer
                         " AND a.team_id NOT IN (SELECT DISTINCT team_id FROM $attendanceTable WHERE dstatus = 0 AND project_id = 1 AND call_type = '0' AND capture_date = '$currentDate')";
                     $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
-                    $arrData = array();
+                    $arrData = [];
                     if ($iRows > 0) {
                         $i = 1;
                         while ($row = $this->_dbConn->GetData($sAction)) {
-                            $arrData[] = array($i, $row["wd_code"], $row["district"], $row["team_name"]);
+                            $arrData[] = [$i, $row["wd_code"], $row["district"], $row["team_name"]];
                             $i++;
                         }
                     }
 
                     if (isNonEmptyArray($arrData)) {
                         $subject = "$branchName - Van DS Missing Attendance report for " . currentDate($currentDate, "d-m-Y");
-                        sendMail(array("pns29397@gmail.com"), $subject, "I am testing right now", array());
+                        sendMail(["pns29397@gmail.com"], $subject, "I am testing right now", []);
                     }
                 }
             }

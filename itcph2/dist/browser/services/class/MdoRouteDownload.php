@@ -97,7 +97,7 @@ class MdoRouteDownload
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -109,7 +109,7 @@ class MdoRouteDownload
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -160,11 +160,11 @@ class MdoRouteDownload
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -179,10 +179,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -191,11 +191,11 @@ class MdoRouteDownload
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -215,11 +215,11 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -228,11 +228,11 @@ class MdoRouteDownload
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -251,10 +251,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -263,11 +263,11 @@ class MdoRouteDownload
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -286,10 +286,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -298,11 +298,11 @@ class MdoRouteDownload
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -321,10 +321,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -333,11 +333,11 @@ class MdoRouteDownload
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -356,10 +356,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -368,11 +368,11 @@ class MdoRouteDownload
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -391,10 +391,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -403,11 +403,11 @@ class MdoRouteDownload
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -442,10 +442,10 @@ class MdoRouteDownload
                 } elseif ($row['is_type'] == 10) {
                     $teamType = "FSO";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -454,11 +454,11 @@ class MdoRouteDownload
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -477,10 +477,10 @@ class MdoRouteDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -508,7 +508,7 @@ class MdoRouteDownload
         //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
         //     $branchFilter = true;
         // }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -523,9 +523,9 @@ class MdoRouteDownload
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -535,7 +535,7 @@ class MdoRouteDownload
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -544,7 +544,7 @@ class MdoRouteDownload
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -553,9 +553,9 @@ class MdoRouteDownload
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -564,9 +564,9 @@ class MdoRouteDownload
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -576,7 +576,7 @@ class MdoRouteDownload
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -585,7 +585,7 @@ class MdoRouteDownload
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -593,9 +593,9 @@ class MdoRouteDownload
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -603,9 +603,9 @@ class MdoRouteDownload
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -616,7 +616,7 @@ class MdoRouteDownload
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -625,26 +625,26 @@ class MdoRouteDownload
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -655,7 +655,7 @@ class MdoRouteDownload
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -665,24 +665,24 @@ class MdoRouteDownload
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -693,7 +693,7 @@ class MdoRouteDownload
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -702,18 +702,18 @@ class MdoRouteDownload
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -724,7 +724,7 @@ class MdoRouteDownload
         if ($dsType) {
             if ($dsType) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $typeCond = ""; // No condition for 'all'
@@ -733,24 +733,24 @@ class MdoRouteDownload
                     $typeCond = " AND b.is_type IN ($dsType)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($typeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getDownloadData()
     {
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $arrTeamType = [0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS"];
+        $arrInfraType = [7 => "MDO", 10 => "FSO"];
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -758,9 +758,9 @@ class MdoRouteDownload
         $where = $this->getCondition();
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         $branch = getFormData($this->_data['searchbar'], "branch");
@@ -874,8 +874,8 @@ class MdoRouteDownload
             }
         }
 
-        $arrResult = formatDownloadData("MDO_ROUTE_DATA", array($header), $arrDataHolder);
-        $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+        $arrResult = formatDownloadData("MDO_ROUTE_DATA", [$header], $arrDataHolder);
+        $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         echo json_encode($arrMessage);
     }
 

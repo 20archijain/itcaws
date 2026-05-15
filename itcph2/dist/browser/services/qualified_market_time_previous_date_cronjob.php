@@ -89,6 +89,84 @@ class processUpdateQualifiedMarketTime
             }
         }
     }
+
+    final public function processUpdateOutletCount()
+    {
+        $summaryTable = $this->tables["VANDS_SUMMARY_TABLE"];
+        $respTable = $this->tables["RESPONSE_DETAILS_TABLE"];
+        $routeTable = $this->tables["ROUTE_DETAILS_TABLE"];
+        $projectTeamTable = $this->tables["PROJECT_TEAM_TABLE"];
+        $branchPickupStockTable = $this->tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
+        $previousDate = date("Y-m-d", strtotime("-1 day")); // yesterday's date
+        $cond = "AND activity_date = '$previousDate'";
+
+        $rsAction = null;
+        $iRows = 0;
+        $sQuery = "SELECT summary_id, team_id, activity_date, route, is_route_updated FROM $summaryTable WHERE dstatus = 0 $cond";
+        $this->dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
+
+        if ($iRows > 0) {
+            while ($row = $this->dbConn->GetData($rsAction)) {
+                $summaryId = $row["summary_id"];
+                $date = $row["activity_date"];
+                $dayOfWeek = date('D', strtotime($date));
+                $teamId = $row["team_id"];
+                $routeName = $row["route"];
+                $updated = $row["is_route_updated"];
+                $callTime = getRowsColumn($this->dbConn, $respTable, "call_time", "ques_0 IN ('Outlet Order', 'Add Outlet') AND dstatus = '0' AND capture_date = '$date' AND team_id = '$teamId'");
+                $totalTimeSpent = "";
+                $totalMinutes = 0;
+                $time = 0;
+                if (!empty($callTime)) {
+                    $totalTime = array_sum($callTime); // Sum all time values
+                    $time = $totalTime / 1000;
+                    // Convert time to H:i:s format
+                    $totalTimeSpent = gmdate("H:i:s", (int) round($time));
+                    $totalMinutes = floor($time / 60);
+                }
+                $orderShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                $addShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $teamId");
+                $totalShops = $orderShop + $addShop;
+                $branchId = getRowColumn($this->dbConn, $projectTeamTable, "branch_id", "team_id = $teamId");
+                if ($branchId == 40) {
+                    $table = "tblroute_details_delhi";
+                } else {
+                    $table = $routeTable;
+                }
+                $allBrandCols = getRowsColumns($this->dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", [], true);
+                $productCols = [];
+                $productNames = [];
+
+                foreach ($allBrandCols as $colRow) {
+                    $productCols[] = $colRow[0];
+                    $productNames[] = $colRow[1];
+                }
+                $summaryColumns = implode(") + SUM(", $productCols);
+                $sumColumns = "SUM($summaryColumns)";
+                // $sellInShop = getRowColumn($this->dbConn, $respTable, "COUNT(DISTINCT ques_3)", "dstatus = '0' AND capture_date = '$date' AND team_id = $teamId HAVING $sumColumns > 0");
+                $sellInShop = getRowColumn($this->dbConn, "(SELECT ques_3 FROM $respTable WHERE team_id = $teamId and capture_date = '$date' GROUP BY ques_3 HAVING $sumColumns > 0 ) AS t", "COUNT(*) AS total_customers");
+                // "(SELECT ques_2 FROM tblsurvey_response_details_kunal WHERE team_id = $teamId and capture_date = '$date' GROUP BY ques_2 HAVING $sumColumns > 0 ) AS t", "COUNT(*) AS total_customers"
+                $idealRoute = getRowColumn($this->dbConn, $table, "route_name", "dstatus = '0' AND beat_day = '$dayOfWeek' AND team_id = '$teamId'");
+                $beatDay = getRowColumn($this->dbConn, $table, "beat_day", "dstatus = '0' AND route_name = '$routeName' AND team_id = $teamId");
+                $routeNameLower = strtolower($routeName);
+                $beatDayLower   = $beatDay ? strtolower($beatDay) : '';
+                if (strpos($routeNameLower, $beatDayLower) !== false) {
+                    $showDay = $beatDay;   // Beat day exists inside the route name
+                } else {
+                    $showDay = $dayOfWeek; // Fallback to current day of week
+                }
+                if ($updated == 0) {
+                    $updateValues = "ideal_route = ?, route_day = ?, uni_total_sales_deliveries = ?, uni_total_other_shops = ?, uni_total_sellin_shops = ?, uni_total_shops = ?, total_cft = ?, cft_time_sec = ?, is_route_updated = ?";
+                    $condition = "summary_id = ?";
+                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$idealRoute, $showDay, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, 1, $summaryId]);
+                } else {
+                    $updateValues = "route_day = ?, uni_total_sales_deliveries = ?, uni_total_other_shops = ?, uni_total_sellin_shops = ?, uni_total_shops = ?, total_cft = ?, cft_time_sec = ?";
+                    $condition = "summary_id = ?";
+                    updateRecord($this->dbConn, $summaryTable, $updateValues, $condition, [$showDay, $orderShop, $addShop, $sellInShop ?? 0, $totalShops, round($totalMinutes, 2), $time, $summaryId]);
+                }
+            }
+        }
+    }
 }
 
 $processResponse = new processUpdateQualifiedMarketTime($dbConn);

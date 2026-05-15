@@ -14,7 +14,7 @@ class SitesOnMapManagement
     private $_iUserId = null;
     private $arrBranchwiseProducts = [];
 
-    public function __construct($dbConn, $data, $arrAccessInfo = array(), $iUserId = null)
+    public function __construct($dbConn, $data, $arrAccessInfo = [], $iUserId = null)
     {
         $this->_data = $data;
         $this->_dbConn = $dbConn;
@@ -155,7 +155,7 @@ class SitesOnMapManagement
         if ($teamList) {
             $where .= " AND team_id IN $teamList";
         }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => getBranchList($this->_dbConn, false, "", "", 1, false, true, "mainBranch"),
@@ -165,19 +165,19 @@ class SitesOnMapManagement
             "sectionList" => $this->getSectionList(),
             "wdCodeList" => $this->getWdCodeList(),
             "branchFilter" => $branchFilter,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -192,10 +192,10 @@ class SitesOnMapManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -204,11 +204,11 @@ class SitesOnMapManagement
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -227,10 +227,10 @@ class SitesOnMapManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -239,11 +239,11 @@ class SitesOnMapManagement
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -262,10 +262,10 @@ class SitesOnMapManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -274,11 +274,11 @@ class SitesOnMapManagement
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -297,10 +297,10 @@ class SitesOnMapManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -309,11 +309,11 @@ class SitesOnMapManagement
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -331,10 +331,10 @@ class SitesOnMapManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -343,11 +343,11 @@ class SitesOnMapManagement
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -377,10 +377,10 @@ class SitesOnMapManagement
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -394,7 +394,7 @@ class SitesOnMapManagement
         $districtAllCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtAllCond = ""; // No condition for 'all'
@@ -404,17 +404,17 @@ class SitesOnMapManagement
                 $districtAllCond = "district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => getBranchList($this->_dbConn, false, "$districtAllCond", "", 1, false, true, "mainBranch"),
-                "teamType" => getTeamType($this->_dbConn, $district),
+                // "teamType" => getTeamType($this->_dbConn, $district),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
                 "wdCodeList" => $this->getWdCodeList($districtCond),
                 "teamList" => $this->getTeamsList($districtCond),
                 "teamType" => $this->getDsTypeList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -425,9 +425,9 @@ class SitesOnMapManagement
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -437,7 +437,7 @@ class SitesOnMapManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -446,24 +446,24 @@ class SitesOnMapManagement
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
                 "teamType" => $this->getDsTypeList($branchCond),
                 "teamList" => $this->getTeamsList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -474,7 +474,7 @@ class SitesOnMapManagement
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -483,23 +483,23 @@ class SitesOnMapManagement
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -510,7 +510,7 @@ class SitesOnMapManagement
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -520,21 +520,21 @@ class SitesOnMapManagement
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -545,7 +545,7 @@ class SitesOnMapManagement
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -554,19 +554,19 @@ class SitesOnMapManagement
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -585,7 +585,7 @@ class SitesOnMapManagement
         if ($dsType >= 0  || $wdCode || $branch || $circle || $section) {
             if (isset($dsType) && $dsType != "" && $dsType >= 0) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $dsTypeCond = ""; // No condition for 'all'
@@ -596,7 +596,7 @@ class SitesOnMapManagement
             }
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -607,7 +607,7 @@ class SitesOnMapManagement
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -618,7 +618,7 @@ class SitesOnMapManagement
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -629,7 +629,7 @@ class SitesOnMapManagement
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -639,27 +639,27 @@ class SitesOnMapManagement
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getLocationCoveredData()
     {
         global $ARR_TEAM_TYPES;
-        $arrData = array();
+        $arrData = [];
         $arrData["columnSize"] = 12; // size of map column, values can be 1 to 12
         $arrData["repeatMapBy"] = 1; // times to repeat same map, values can be >=1
-        $arrData["markers"] = array();
+        $arrData["markers"] = [];
         $respTable = getRespTable(1, $this->_projectId);
         $attendanceTable = $this->_tables["ATTENDANCE_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -676,9 +676,9 @@ class SitesOnMapManagement
         // filter by search query and Condition
         $where = getFilterResult(
             $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         $where .= $this->getSitesOnMapCondition();
@@ -691,7 +691,7 @@ class SitesOnMapManagement
             " AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND a.lt != 0 $where GROUP BY a.team_id, a.call_type, a.capture_date";
         $this->_dbConn->ExecuteSelectQuery($sQueryAtt, $sActionAtt, $iRowsAtt);
 
-        $types = array(0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD");
+        $types = [0 => "VAN DS", 1 => "Hybrid", 2 => "Town SWD"];
         if ($iRowsAtt > 0) {
             while ($arDataAtt = $this->_dbConn->GetData($sActionAtt)) {
                 $uniId = $arDataAtt["uni_id"];
@@ -723,14 +723,14 @@ class SitesOnMapManagement
                 }
                 $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $attTime . "</b>" . "<br> Date - " . $attDate . "<br>" . "</p> <p class='attendance-label'>" . $arDataAtt["team_name"] . "<br>" . "Time - " . $time .
                     "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arDataAtt["circle"] . "<br>" . "Section - " . $arDataAtt["section"] . "<br>" . "WDCode - " . $arDataAtt["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] . "</p></div>";
-                $arrData["markers"][] = array(
+                $arrData["markers"][] = [
                     "date" => $arDataAtt["capture_datetime"],
                     "latitude" => $arDataAtt["lt"],
                     "longitude" => $arDataAtt["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $flagColor, // default icon is green
                     "markerTitle" => "", // text to display on hover of marker
                     "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                ];
             }
         }
 
@@ -771,23 +771,23 @@ class SitesOnMapManagement
                 }
                 $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . " Outlet Name - " . $OutletName . "</b> <br>" . "Date - " . $respDate . "<br>" . "</p> <p class='attendance-label'>" . $arData["team_name"] . "<br>" . "Time - " . $time .
                     "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arData["circle"] . "<br>" . "Section - " . $arData["section"] . "<br>" . "WDCode - " . $arData["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] . "</p></div>";
-                $arrData["markers"][] = array(
+                $arrData["markers"][] = [
                     "date" => $arData["capture_datetime"],
                     "latitude" => $arData["lt"],
                     "longitude" => $arData["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $greenDot, //  Assigning Pin Colours
                     "markerTitle" => "", // text to display on click of marker
                     "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                ];
                 // $i++;
             }
         }
 
         if (isNonEmptyArray($arrData["markers"])) {
             usort($arrData["markers"], "sortArrayByDate");
-            $arrMessage = responseMessage(array(), 1, $arrData, true);
+            $arrMessage = responseMessage([], 1, $arrData, true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
@@ -796,10 +796,10 @@ class SitesOnMapManagement
     final public function getRouteTrackerData()
     {
         global $ARR_TEAM_TYPES;
-        $arrData = array();
+        $arrData = [];
         $arrData["columnSize"] = 12;
         $arrData["repeatMapBy"] = 1;
-        $arrData["markers"] = array();
+        $arrData["markers"] = [];
         $respTable = $this->_tables["RESPONSE_TABLE"];
         $attendanceTable = $this->_tables["ATTENDANCE_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -858,14 +858,14 @@ class SitesOnMapManagement
                 $branchName = getRowColumn($this->_dbConn, $branchTable, "main_branch", "dstatus = 0 AND branch_id = '$attbranchId' ");
                 $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $attTime . "</b>" . "<br>" . "</p> <p class='attendance-label'>" . $arDataAtt["team_name"] . "<br>" . "Time - " . $time .
                     "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arDataAtt["circle"] . "<br>" . "Section - " . $arDataAtt["section"] . "<br>" . "WDCode - " . $arDataAtt["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] . "</p></div>";
-                $arrData["markers"][] = array(
+                $arrData["markers"][] = [
                     "date" => $arDataAtt["capture_datetime"],
                     "latitude" => $arDataAtt["lt"],
                     "longitude" => $arDataAtt["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $flagColor, // default icon is green
                     "markerTitle" => "", // text to display on hover of marker
                     "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                ];
             }
         }
 
@@ -928,25 +928,24 @@ class SitesOnMapManagement
                 }
                 $trackerDescription = "<div class='attendance-marker'><p class='attendance-label'>" . "<b>" . $shopCount . "- " . $OutletName . "</b> <br>" . "Sales (M) - " . $productSaleSum[0] . "<br></p> <p class='attendance-label'>" . $arData["team_name"] . "<br>" . "Time - " . $time .
                     "<br> Branch - " . $branchName . "<br>" . "Circle - " . $arData["circle"] . "<br>" . "Section - " . $arData["section"] . "<br>" . "WDCode - " . $arData["wd_code"] . "<br>" . "DS Type - " . $ARR_TEAM_TYPES[$dsType] . "</p></div>";
-                $arrData["markers"][] = array(
+                $arrData["markers"][] = [
                     "date" => $arData["capture_datetime"],
                     "latitude" => $arData["lt"],
                     "longitude" => $arData["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $icon, //  Assigning Pin Colours
                     "markerTitle" => "", // text to display on click of marker
                     "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                ];
                 $i++;
                 $shopCount++;
             }
         }
 
-
         if (isNonEmptyArray($arrData["markers"])) {
             usort($arrData["markers"], "sortArrayByDate");
-            $arrMessage = responseMessage(array(), 1, $arrData, true);
+            $arrMessage = responseMessage([], 1, $arrData, true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);
@@ -958,7 +957,7 @@ class SitesOnMapManagement
         if ($branchId) {
             if ($productsList) {
                 return isset($this->arrBranchwiseProducts[$branchId]) ?
-                    $this->arrBranchwiseProducts[$branchId] : array();
+                    $this->arrBranchwiseProducts[$branchId] : [];
             }
         } else {
             $branchProductsTable = $this->_tables["BRANCH_PICKUPSTOCK_PRODUCTS_TABLE"];
@@ -974,9 +973,9 @@ class SitesOnMapManagement
                     $branchId = $rowProduct["branch_id"];
 
                     if (!isset($this->arrBranchwiseProducts[$branchId])) {
-                        $this->arrBranchwiseProducts[$branchId] = array();
+                        $this->arrBranchwiseProducts[$branchId] = [];
                     }
-                    $this->arrBranchwiseProducts[$branchId][] = array($rowProduct["product_name"], $rowProduct["summary_column_name"]);
+                    $this->arrBranchwiseProducts[$branchId][] = [$rowProduct["product_name"], $rowProduct["summary_column_name"]];
                 }
             }
         }
@@ -985,10 +984,10 @@ class SitesOnMapManagement
     final public function getUniverseData()
     {
         global $ARR_TEAM_TYPES;
-        $arrData = array();
+        $arrData = [];
         $arrData["columnSize"] = 12; // size of map column, values can be 1 to 12
         $arrData["repeatMapBy"] = 1; // times to repeat same map, values can be >=1
-        $arrData["markers"] = array();
+        $arrData["markers"] = [];
         $respTable = getRespTable(1, $this->_projectId);
         $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -1062,20 +1061,20 @@ class SitesOnMapManagement
                 </p>
                 </div>";
 
-                $arrData["markers"][] = array(
+                $arrData["markers"][] = [
                     "latitude" => $arDataAtt["lt"],
                     "longitude" => $arDataAtt["lg"],
                     "markerUrl" => $GLOBALS['MARKER_URL'] . $flagColor, // default icon is green
                     "markerTitle" => "", // text to display on hover of marker
                     "windowTitle" => $trackerDescription, // text to display on click of marker (can contain HTML)
-                );
+                ];
             }
         }
 
         if (isNonEmptyArray($arrData["markers"])) {
-            $arrMessage = responseMessage(array(), 1, $arrData, true);
+            $arrMessage = responseMessage([], 1, $arrData, true);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
         }
 
         echo json_encode($arrMessage);

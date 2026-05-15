@@ -99,7 +99,6 @@ $TEAM_EXISTS = "Team already exists";
 $USERNAME_EXISTS = "Username already exists";
 $NO_TEAM_FOUND = "No team found";
 
-
 // Product
 $PRODUCT_ADDED = "Product added";
 $PRODUCT_NOT_ADDED = "Product not added";
@@ -118,7 +117,6 @@ $DATA_TYPE_NOT_MATCH = "Data types do not match for excel column ";
 $SPECIAL_CHAR_PRESENT = "Speacial charater is present in excel column ";
 $INCORRECT_OUTLET_TYPES = "Incorrect outlet type ";
 $INCORRECT_BEAT_DAY = "Incorrect beat type ";
-
 
 $UPDATE_SUCCESS = "Updated Successfully";
 

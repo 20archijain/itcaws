@@ -83,26 +83,26 @@ class MdoRouteUpload
                             }
                         }
 
-                        $arrResult = array(
+                        $arrResult = [
                             "excelHeader" => $headers,
                             "excelData" => $groupedData,
                             "tableColumns" => $filteredColumns,
-                        );
+                        ];
 
-                        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+                        $arrMessage = responseMessage([], 1, $arrResult, true);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS["INVALID_EXCEL_FILE"]));
+                        $arrMessage = responseMessage([$GLOBALS["INVALID_EXCEL_FILE"]]);
                     }
                 }
             } else {
                 if (!isNonEmptyArray($columns)) {
-                    $arrMessage = responseMessage(array($GLOBALS["NO_COLUMN_FOUND"]));
+                    $arrMessage = responseMessage([$GLOBALS["NO_COLUMN_FOUND"]]);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS["NO_FILE_SELECTED"]));
+                    $arrMessage = responseMessage([$GLOBALS["NO_FILE_SELECTED"]]);
                 }
             }
         } else {
-            $arrMessage = responseMessage(array($GLOBALS["NO_COLUMN_FOUND"]));
+            $arrMessage = responseMessage([$GLOBALS["NO_COLUMN_FOUND"]]);
         }
 
         echo json_encode($arrMessage);
@@ -121,12 +121,12 @@ class MdoRouteUpload
 
         $columns = $this->_data['columns'];
 
-        $arrColumnTypesMapping = array(
-            1 => array("int", "bigint", "double", "decimal", "float", "tinyint", "smallint", "mediumint", "numeric", "real", "serial", "boolean"),
-            2 => array("datetime", "timestamp"),
-            3 => array("date"),
-            4 => array("time"),
-            5 => array("char", "varchar", "text", "nchar", "nvarchar", "binary", "varbinary", "blob", "clob", "json", "enum"),
+        $arrColumnTypesMapping = [
+            1 => ["int", "bigint", "double", "decimal", "float", "tinyint", "smallint", "mediumint", "numeric", "real", "serial", "boolean"],
+            2 => ["datetime", "timestamp"],
+            3 => ["date"],
+            4 => ["time"],
+            5 => ["char", "varchar", "text", "nchar", "nvarchar", "binary", "varbinary", "blob", "clob", "json", "enum"],
 
             "bigint" => 1,
             "int" => 1,
@@ -160,7 +160,7 @@ class MdoRouteUpload
             "json" => 5,
             "enum" => 5,
 
-        );
+        ];
 
         // Get columns in which data has to be inserted
         if (isset($this->_data['columns']) && is_array($this->_data['columns'])) {
@@ -179,7 +179,7 @@ class MdoRouteUpload
 
             // Loop through each row
             foreach ($arrExcelData[$arrExcelDataColumnHeader[0]] as $index => $data) {
-                $arrSubData = array();
+                $arrSubData = [];
                 $isAnyDataFound = false;
                 if ($index > 0) {
                     // -----------------------------------------
@@ -228,7 +228,7 @@ class MdoRouteUpload
                                 $errorMessage = "$reqCol cannot be empty (Row: $index). Please check the Excel.";
                                 $arrMessage = responseMessage([$errorMessage]);
                                 echo json_encode($arrMessage);
-                                exit();
+                                return;
                             }
                         }
                     }
@@ -328,13 +328,13 @@ class MdoRouteUpload
             }
 
             $errorMessage = $GLOBALS["DATA_TYPE_NOT_MATCH"] . strtolower(implode(', ', $errorColumns));
-            $arrMessage = responseMessage(array($errorMessage));
+            $arrMessage = responseMessage([$errorMessage]);
             echo json_encode($arrMessage);
-            exit();
+            return;
         }
 
         $this->_dbConn->BeginTransaction();
-        $arrStatus = array();
+        $arrStatus = [];
 
         foreach ($arrData as $arrEachRow) {
             $arrStatus[] = addRecord($this->_dbConn, "tblroute_details_breeze", $sSelectedColumns, $sValues, $arrEachRow);
@@ -342,10 +342,10 @@ class MdoRouteUpload
 
         if (count($arrStatus) == 0 || in_array(0, $arrStatus)) {
             $this->_dbConn->RollbackTransaction();
-            $arrMessage = responseMessage(array($GLOBALS["DATA_NOT_UPLOADED"]));
+            $arrMessage = responseMessage([$GLOBALS["DATA_NOT_UPLOADED"]]);
         } else {
             $this->_dbConn->CommitTransaction();
-            $arrMessage = responseMessage(array($GLOBALS["DATA_UPLOADED"]), 1);
+            $arrMessage = responseMessage([$GLOBALS["DATA_UPLOADED"]], 1);
         }
 
         echo json_encode($arrMessage);

@@ -54,7 +54,7 @@ class ProcessResponse
 
         if ($iRows > 0) {
             // Store team branch id to avoid query to fetch branch id of same team
-            $arrTeamBranch = array();
+            $arrTeamBranch = [];
             while ($row = $this->_dbConn->GetData($sAction)) {
                 $respId = $row["resp_id"];
                 $uniId = $row["uni_id"];
@@ -86,15 +86,15 @@ class ProcessResponse
                 }
 
                 $arrResponse = json_decode($resString, true);
-                usort($arrResponse, array($this, "sortPages"));
+                usort($arrResponse, [$this, "sortPages"]);
 
-                $arrData = array();
+                $arrData = [];
 
                 $clientSettings = isset($this->_projectSpecificSettings[$clientId]) ? $this->_projectSpecificSettings[$clientId] : null;
                 $projectSettings = $clientSettings && isset($clientSettings[$projectId], $clientSettings[$projectId][$jsonId]) ? $clientSettings[$projectId][$jsonId] : $this->_commonSettings;
 
                 // Get process settings based on skip logic
-                $processBasedOnSkipLogic = $projectSettings ? (isset($projectSettings["PROCESS_BASED_ON_SKIP_LOGIC"]) ? $projectSettings["PROCESS_BASED_ON_SKIP_LOGIC"] : array()) : array();
+                $processBasedOnSkipLogic = $projectSettings ? (isset($projectSettings["PROCESS_BASED_ON_SKIP_LOGIC"]) ? $projectSettings["PROCESS_BASED_ON_SKIP_LOGIC"] : []) : [];
 
                 // Get number of questions in each page/form
                 $arrNoOfQuestions = $projectSettings["NO_OF_QUESTIONS"];
@@ -103,9 +103,9 @@ class ProcessResponse
                 foreach ($arrResponse as $page) {
                     $pageId = $page["pageId"];
 
-                    $quesList = isset($page["quesList"]) ? $page["quesList"] : array();  // Questions/Controls in that page
+                    $quesList = isset($page["quesList"]) ? $page["quesList"] : [];  // Questions/Controls in that page
                     if (isNonEmptyArray($quesList)) {
-                        $arrData[$pageId] = array();
+                        $arrData[$pageId] = [];
                         // No of questions in page (This is required since some questions might be optional)
                         $iNoOfQuestions = $arrNoOfQuestions[$pageId - 1];
 
@@ -118,12 +118,12 @@ class ProcessResponse
                                 $ansMultiChoice = isset($quesList[$quesIndex]["ansMultiChoice"]) ? $quesList[$quesIndex]["ansMultiChoice"] : null;  // Dropdown
                                 $fileUniqueId = isset($quesList[$quesIndex]["fileUniqueId"]) ? $quesList[$quesIndex]["fileUniqueId"] : null;    // Image
                                 $ansGrid = isset($quesList[$quesIndex]["ansGrid"]) ? $quesList[$quesIndex]["ansGrid"] : null;   // Grid
-                                $ansMatched = isset($quesList[$quesIndex]["ansMatched"]) ? array("ansMatched" => $quesList[$quesIndex]["ansMatched"], "quesId" => $quesList[$quesIndex]["quesId"]) : null; // Quiz
+                                $ansMatched = isset($quesList[$quesIndex]["ansMatched"]) ? ["ansMatched" => $quesList[$quesIndex]["ansMatched"], "quesId" => $quesList[$quesIndex]["quesId"]] : null; // Quiz
                                 $netAmount = isset($quesList[$quesIndex]["net_amount"]) ? $quesList[$quesIndex]["net_amount"] : null;
                                 $discount = isset($quesList[$quesIndex]["discount"]) ? $quesList[$quesIndex]["discount"] : null;
                                 // Separate ansGrid and financial data
                                 $netAmountDiscount = isset($netAmount) || isset($discount)
-                                    ? array("netAmount" => $netAmount, "discount" => $discount)
+                                    ? ["netAmount" => $netAmount, "discount" => $discount]
                                     : null;
                                 $arrData[$pageId][$i] = isset($ansMatched) ?
                                     $ansMatched : (isset($singleAns) ? $singleAns : (isset($ansMultiChoice) ? $ansMultiChoice : (isset($fileUniqueId) ? $fileUniqueId : (isset($netAmountDiscount) ? ['ansGrid' => $ansGrid, 'netAmountDiscount' => $netAmountDiscount] : $ansGrid))));
@@ -144,18 +144,18 @@ class ProcessResponse
                     // get settings
                     // Attendance
                     $processAttendance = isset($projectSettings["PROCESS_ATTENDANCE"]) ? $projectSettings["PROCESS_ATTENDANCE"] : false;
-                    $attendanceForm = $processAttendance ? $projectSettings["ATTENDANCE_FORM"] : array();
-                    $attendanceMobImgIdForm = $processAttendance ? $projectSettings["ATTENDANCE_MOBIMGID_FORM"] : array();
+                    $attendanceForm = $processAttendance ? $projectSettings["ATTENDANCE_FORM"] : [];
+                    $attendanceMobImgIdForm = $processAttendance ? $projectSettings["ATTENDANCE_MOBIMGID_FORM"] : [];
 
                     // Dayend
                     $processDayend = isset($projectSettings["PROCESS_DAYEND"]) ? $projectSettings["PROCESS_DAYEND"] : false;
-                    $dayendForm = $processDayend ? $projectSettings["DAYEND_FORM"] : array();
-                    $dayendMobImgIdForm = $dayendForm ? $projectSettings["DAYEND_MOBIMGID_FORM"] : array();
+                    $dayendForm = $processDayend ? $projectSettings["DAYEND_FORM"] : [];
+                    $dayendMobImgIdForm = $dayendForm ? $projectSettings["DAYEND_MOBIMGID_FORM"] : [];
 
                     // Other than Attendance and Dayend
                     $processOther = isset($projectSettings["PROCESS_OTHER"]) ? $projectSettings["PROCESS_OTHER"] : false;
                     $arrStoreOptype23Separately = isset($projectSettings["STORE_OPTYPE_23_OPTIONS_SEPARATELY"]) ?
-                        $projectSettings["STORE_OPTYPE_23_OPTIONS_SEPARATELY"] : array();
+                        $projectSettings["STORE_OPTYPE_23_OPTIONS_SEPARATELY"] : [];
 
                     // Attendance
                     $attendanceValue = isNonEmptyArray($attendanceForm) ? $arrData[$attendanceForm[0]][$attendanceForm[1]] : null;
@@ -171,7 +171,7 @@ class ProcessResponse
                         $isAttendanceRecord = true;
                         $cols = "resp_id, client_id, project_id, team_id, s_id, uni_id, mob_img_id, distance, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParams = array(
+                        $arrParams = [
                             $respId,
                             $clientId,
                             $projectId,
@@ -186,12 +186,12 @@ class ProcessResponse
                             $lg,
                             $rcd,
                             $rdt
-                        );
+                        ];
 
                         // Check if JSON contains other data that should be stored in attendance table
-                        $attendanceData = isset($projectSettings["ATTENDANCE_DATA"]) ? $projectSettings["ATTENDANCE_DATA"] : array();
+                        $attendanceData = isset($projectSettings["ATTENDANCE_DATA"]) ? $projectSettings["ATTENDANCE_DATA"] : [];
                         if (isNonEmptyArray($attendanceData)) {
-                            $arrAttendanceData = array();
+                            $arrAttendanceData = [];
                             foreach ($attendanceData as $data) {
                                 $arrAttendanceData[$data["label"]] = isset($arrData[$data["valueIndex"][0]][$data["valueIndex"][1]]) ? $arrData[$data["valueIndex"][0]][$data["valueIndex"][1]] : "";
                             }
@@ -219,7 +219,7 @@ class ProcessResponse
                             $this->_dbConn->GetLastInsertId($lastRecId);
                             $this->updateProcessStatus($processTable, $respId, $jsonId);
                             if ($jsonId == 10) {
-                                $arrType = array("VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
+                                $arrType = ["VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9];
                                 $this->getAttendanceAddress($attendanceTable, $lt, $lg, $lastRecId);
                                 $attendanceDetails = getRowColumn($this->_dbConn, $attendanceTable, "other_details", "call_type = '0' AND att_id = $lastRecId");
                                 $arrOtherDetails = json_decode($attendanceDetails, true);
@@ -246,9 +246,9 @@ class ProcessResponse
                                     $vanDs = trim(end($parts));
                                 }
                                 if ($workingWith == 'Market work with AE' || $workingWith == 'Market work with GT TL' || $workingWith == 'Independent market work') {
-                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?", "att_id = $lastRecId", array($workWith));
+                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?", "att_id = $lastRecId", [$workWith]);
                                 } else {
-                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?, type = ?, ds_name = ?, wd_code = ?", "att_id = $lastRecId", array($workWith, $arrType[$vanDs], $dsName, $wdCode));
+                                    updateRecord($this->_dbConn, $attendanceTable, "work_with = ?, type = ?, ds_name = ?, wd_code = ?", "att_id = $lastRecId", [$workWith, $arrType[$vanDs], $dsName, $wdCode]);
                                 }
                             }
                         }
@@ -265,7 +265,7 @@ class ProcessResponse
                         }
                         $cols = "resp_id, client_id, project_id, team_id, s_id, uni_id, mob_img_id, distance, call_type, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParams = array(
+                        $arrParams = [
                             $respId,
                             $clientId,
                             $projectId,
@@ -281,12 +281,12 @@ class ProcessResponse
                             $lg,
                             $rcd,
                             $rdt
-                        );
+                        ];
 
                         // Check if JSON contains other data that can should be stored in table
-                        $dayendData = isset($projectSettings["DAYEND_DATA"]) ? $projectSettings["DAYEND_DATA"] : array();
+                        $dayendData = isset($projectSettings["DAYEND_DATA"]) ? $projectSettings["DAYEND_DATA"] : [];
                         if (isNonEmptyArray($dayendData)) {
-                            $arrDayendData = array();
+                            $arrDayendData = [];
                             foreach ($dayendData as $data) {
                                 $arrDayendData[$data["label"]] = isset($arrData[$data["valueIndex"][0]][$data["valueIndex"][1]]) ? $arrData[$data["valueIndex"][0]][$data["valueIndex"][1]] : null;
                             }
@@ -321,14 +321,14 @@ class ProcessResponse
                         }
                         $cols = "resp_id, uni_id, client_id, project_id, team_id, s_id, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
+                        $arrParams = [$respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt];
 
                         $orderCols = "resp_id, uni_id, client_id, project_id, team_id, s_id, call_time, capture_date, capture_datetime, lt, lg, rcd, rdt";
                         $orderVals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
-                        $arrOrderParams = array($respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt);
+                        $arrOrderParams = [$respId, $uniId, $clientId, $projectId, $teamId, $jsonId, $callTime, $captureDate, $captureDatetime, $lt, $lg, $rcd, $rdt];
 
                         // Find page Ids to process based on skip logic if any
-                        $arrPageIds = array();
+                        $arrPageIds = [];
                         if (isNonEmptyArray($processBasedOnSkipLogic)) {
                             foreach ($processBasedOnSkipLogic as $pageId => $quesInfo) {
                                 $iQuesId = $quesInfo["QUES_ID"];
@@ -351,7 +351,7 @@ class ProcessResponse
                         // create query params
                         $i = 0;
                         // keep some values in last
-                        $arrLast = array();
+                        $arrLast = [];
                         foreach ($arrData as $pageId => $quesList) {
                             if (!isNonEmptyArray($arrPageIds) || in_array($pageId, $arrPageIds)) {
                                 foreach ($quesList as $quesId => $answer) {
@@ -439,7 +439,7 @@ class ProcessResponse
                                                 $routeDetailsTable,
                                                 "wd_code, section_code, state, district, sub_district_goi, beat_day, market_name, goi_market_id, wd_town, goi_pop_group, sort_order",
                                                 "route_name = ? AND team_id = ?",
-                                                array($route, $teamId)
+                                                [$route, $teamId]
                                             );
                                             $wdcode = $arrRouteInfo[0] ? $arrRouteInfo[0] : "";
                                             $sectionCode = $arrRouteInfo[1] ? $arrRouteInfo[1] : "";
@@ -455,7 +455,7 @@ class ProcessResponse
                                             $sort_order = $arrRouteInfo[10] ? $arrRouteInfo[10] : 0;
                                             $kycDone = 1;
                                             $swdWest = in_array($branchId, [42, 43]) ? 1 : 0;
-                                            $arrOtherParams = array(
+                                            $arrOtherParams = [
                                                 $respId,
                                                 $teamId,
                                                 $route,
@@ -479,13 +479,13 @@ class ProcessResponse
                                                 $sort_order,
                                                 $kycDone,
                                                 $swdWest
-                                            );
+                                            ];
                                             $existingShopId = getRowColumn(
                                                 $this->_dbConn,
                                                 $routeDetailsTable,
                                                 "rec_id",
                                                 "team_id = ? AND route_name = ? AND outlet_name = ? AND outlet_mobile = ? AND wd_code = ? AND shop_type = ?",
-                                                array($teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $shopType)
+                                                [$teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $shopType]
                                             );
 
                                             if (!(isset($existingShopId) && $existingShopId)) {
@@ -497,11 +497,11 @@ class ProcessResponse
                                                 $routeDetailsTable,
                                                 "rec_id",
                                                 "team_id = ? AND route_name = ? AND outlet_name = ? AND outlet_mobile = ? AND wd_code = ? AND shop_type = ?",
-                                                array($teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $shopType)
+                                                [$teamId, $route, $shopName, $ownerMobileNumber, $wdcode, $shopType]
                                             );
                                         } else {
                                             // delete record since not a valid shop
-                                            deleteRecord($this->_dbConn, $processTable, "resp_id", 1, "", array($respId));
+                                            deleteRecord($this->_dbConn, $processTable, "resp_id", 1, "", [$respId]);
                                             continue;
                                         }
 
@@ -547,7 +547,7 @@ class ProcessResponse
                                                 $routeDetailsTable,
                                                 "lt = ?, lg = ?",
                                                 "rec_id = $shopId",
-                                                array($lt, $lg)
+                                                [$lt, $lg]
                                             );
                                         }
                                     }
@@ -605,7 +605,7 @@ class ProcessResponse
                                 }
                             } elseif ($jsonId == 100) {
                                 $productsBought = $arrParams[13];
-                                $arrBranchIsTypeWdcode = getRowColumns($this->_dbConn, $projectTeamTable, "branch_id, is_type, wd_code", "dstatus = 0 AND team_id = ?", array($teamId));
+                                $arrBranchIsTypeWdcode = getRowColumns($this->_dbConn, $projectTeamTable, "branch_id, is_type, wd_code", "dstatus = 0 AND team_id = ?", [$teamId]);
 
                                 // Add each product bought Qty in separate rows
                                 if ($productsBought) {
@@ -636,7 +636,7 @@ class ProcessResponse
                                                     $vals = "?, ?, ?, ?, ?, ?, ?, ?, ?, ?";
 
                                                     // Prepare the array for each product’s parameters
-                                                    $arrParams = array(
+                                                    $arrParams = [
                                                         $arrBranchIsTypeWdcode[0],  // branch_id
                                                         $arrBranchIsTypeWdcode[2],  // wd_code
                                                         $jsonId,                    // json_id
@@ -647,7 +647,7 @@ class ProcessResponse
                                                         $productSummaryColumn,      // summary_column_name
                                                         $iSale,                     // Set the sale value to the net_rate column
                                                         $sortOrder                        // sort_order (provide actual value)
-                                                    );
+                                                    ];
 
                                                     // Insert data into the table for each product inside the loop
                                                     $iStatus = addRecord($this->_dbConn, $responseTable, $cols, $vals, $arrParams);
@@ -682,12 +682,11 @@ class ProcessResponse
                                 $this->_dbConn->GetLastInsertId($lastRecId);
                                 $this->updateProcessStatus($processTable, $respId, $jsonId);
 
-
                                 // add each Products Bought stock in separate column if not exists in stock summary table
                                 if ($projectId == 1) {
                                     if ($jsonId == 10) {
                                         if ($arrParams[13] == 'Outlet Survey' || $arrParams[13] == 'InfraDetails') {
-                                            $arrType = array("VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9);
+                                            $arrType = ["VAN DS" => 0, "NPSR" => 5, "SCP DS" => 8, "SWD" => 2, "RMD" => 6, "Common FMCG Lite DS" => 9];
                                             $arrDetails = json_decode($arrParams[15], true);
                                             if ($arrDetails[0] == 'Market work with DS') {
                                                 $wdCode = $arrDetails[1];
@@ -707,7 +706,7 @@ class ProcessResponse
                                                 $responseTable,
                                                 "wd_code = ?, ds_name = ?, route_name = ?, month = ?, type = ?, distance_in_meter = ?",
                                                 "pro_id = $lastRecId",
-                                                array($wdCode, $dsName, $route, $currentMonth, $arrType[$vanDs], $distanceTravelledInKm)
+                                                [$wdCode, $dsName, $route, $currentMonth, $arrType[$vanDs], $distanceTravelledInKm]
                                             );
                                         }
                                         //DayEnd
@@ -735,7 +734,7 @@ class ProcessResponse
                                         if ($productsBought && $jsonId = 99) {
                                             $stockColumns = "team_id, capture_date, stock_type, rec_id, rcd, rdt";
                                             $stockValues = "?, ?, ?, ?, ?, ?";
-                                            $arrStockParams = array($teamId, $captureDate, 2, $lastRecId, $rcd, $rdt);
+                                            $arrStockParams = [$teamId, $captureDate, 2, $lastRecId, $rcd, $rdt];
 
                                             // Get branch products
                                             $arrProductSummaryColumns = $this->getBranchWiseProducts($branchId, $jsonId);
@@ -774,7 +773,7 @@ class ProcessResponse
 
     private function updateProcessStatus($processTable, $respId, $jsonId, $isInvalid = 0)
     {
-        updateRecord($this->_dbConn, $processTable, "processed = '1', s_id = ?, is_invalid = ?", "dstatus = 0 AND resp_id = ?", array($jsonId, $isInvalid, $respId));
+        updateRecord($this->_dbConn, $processTable, "processed = '1', s_id = ?, is_invalid = ?", "dstatus = 0 AND resp_id = ?", [$jsonId, $isInvalid, $respId]);
     }
 
     private function updateSummary($lastRecId, $jsonId, $teamId, $captureDate, $captureDatetime, $lt, $lg, $activityType, $arrData, $isOtherRecord, $branchId, $isAttendanceRecord, $isDayendRecord, $distanceTravelledInKm, $isUnAdherence, $reasonForNoBeatAdherence, $route, $userType)
@@ -785,8 +784,7 @@ class ProcessResponse
 
         $arrProductSummaryColumns = $this->getBranchWiseProducts($branchId, $jsonId, $userType);
 
-
-        $arrSummary = getRowColumns($this->_dbConn, $summaryTable, "summary_id, attendance_datetime, dayend_datetime, resp_startdatetime, last_rec_lt, last_rec_lg", "dstatus = 0 AND team_id = $teamId AND activity_date = ?", array($captureDate));
+        $arrSummary = getRowColumns($this->_dbConn, $summaryTable, "summary_id, attendance_datetime, dayend_datetime, resp_startdatetime, last_rec_lt, last_rec_lg", "dstatus = 0 AND team_id = $teamId AND activity_date = ?", [$captureDate]);
 
         // Summary exist, update
         if (isset($arrSummary, $arrSummary[0]) && $arrSummary[0]) {
@@ -800,7 +798,7 @@ class ProcessResponse
             // Update only if first attendance record or first dayend record or other record
             if (($isAttendanceRecord && !$attendanceDatetime) || ($isDayendRecord && !$dayendDatetime) || $isOtherRecord) {
                 $values = "team_id = ?";
-                $arrParams = array($teamId);
+                $arrParams = [$teamId];
                 $condition = "dstatus = 0 AND summary_id = $summaryId";
 
                 // Outlet Order OR Add Outlet
@@ -831,7 +829,7 @@ class ProcessResponse
                         }
 
                         // update sales values in correct columns
-                        $arrSalesValues = array();
+                        $arrSalesValues = [];
                         if (isNonEmptyArray($arrProductSummaryColumns)) {
                             foreach ($arrProductSummaryColumns as $productIndex => $productSummaryColumn) {
                                 $values .= ", $productSummaryColumn = ($productSummaryColumn + ?)";
@@ -908,10 +906,10 @@ class ProcessResponse
         } else {
             // Summary not exist, create
             // for planned outlets count don't use dstatus condition
-            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "dstatus = 0 AND team_id = $teamId  AND route_name = ?", array($route));
+            $plannedOutlets = getRowColumn($this->_dbConn, "tblroute_details", "COUNT(DISTINCT shop_uniq_code)", "dstatus = 0 AND team_id = $teamId  AND route_name = ?", [$route]);
             $columns = "team_id, activity_date, start_datetime, end_datetime, planned_outlets, rcd, rdt";
             $values = "?, ?, ?, ?, ?, ?, ?";
-            $arrParams = array($teamId, $captureDate, $captureDatetime, $captureDatetime, $plannedOutlets, $currentDate, $currentDatetime);
+            $arrParams = [$teamId, $captureDate, $captureDatetime, $captureDatetime, $plannedOutlets, $currentDate, $currentDatetime];
 
             // Update attendance datetime
             if ($isAttendanceRecord) {
@@ -973,7 +971,7 @@ class ProcessResponse
                 }
 
                 // insert sales values in correct columns
-                $arrSalesValues = array();
+                $arrSalesValues = [];
                 if (isNonEmptyArray($arrProductSummaryColumns) && isNonEmptyArray($arrSale)) {
                     foreach ($arrProductSummaryColumns as $productIndex => $productSummaryColumn) {
                         $columns .= ", $productSummaryColumn";
@@ -1002,11 +1000,11 @@ class ProcessResponse
 
                 $arrParams = array_merge(
                     $arrParams,
-                    array(
+                    [
                         ($activityType === 'Outlet Survey' || $activityType === 'Outlet Order') ? 1 : 0,
                         ($arrData[17] === 'Yes' && $total > 0) ? 1 : 0,
                         $activityType === 'Add Outlet' ? 1 : 0,
-                    ),
+                    ],
                     $arrSalesValues
                 );
             }
@@ -1049,7 +1047,7 @@ class ProcessResponse
                 $pincode = $component["long_name"];
             }
         }
-        updateRecord($this->_dbConn, $attendanceTable, "google_address = ?, state = ?, district = ?, city = ?, pincode = ?", "att_id = $lastRecId", array($formattedAddress, $state, $district, $city, $pincode));
+        updateRecord($this->_dbConn, $attendanceTable, "google_address = ?, state = ?, district = ?, city = ?, pincode = ?", "att_id = $lastRecId", [$formattedAddress, $state, $district, $city, $pincode]);
         curl_close($ch);
     }
 
@@ -1093,7 +1091,7 @@ class ProcessResponse
                     $branchProductsTable,
                     "branch_id, json_id, summary_column_name",
                     "dstatus = 0 AND team_type = '$teamType' AND branch_id = '$branchId' ORDER BY json_id, sort_order",
-                    array(),
+                    [],
                     true
                 );
 
@@ -1103,7 +1101,7 @@ class ProcessResponse
                     $summaryColumnName = $arrBranchColumns[2];
 
                     if (!isset($this->_jsonWiseAndbranchWiseProductsColumns[$jsonId][$branchId][$teamType])) {
-                        $this->_jsonWiseAndbranchWiseProductsColumns[$jsonId][$branchId][$teamType] = array();
+                        $this->_jsonWiseAndbranchWiseProductsColumns[$jsonId][$branchId][$teamType] = [];
                     }
                     $this->_jsonWiseAndbranchWiseProductsColumns[$jsonId][$branchId][$teamType][] = $summaryColumnName;
                 }

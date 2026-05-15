@@ -49,7 +49,7 @@ class ClientManagement
             //check if client exists
             $clientsTable = $this->_tables["CLIENTS_TABLE"];
             // Don't use dstatus = 0
-            $status = isRecordExist($this->_dbConn, $clientsTable, "client_id", "client_name = ?", array($clientname));
+            $status = isRecordExist($this->_dbConn, $clientsTable, "client_id", "client_name = ?", [$clientname]);
 
             //client not exist so add
             if ($status === 0) {
@@ -78,7 +78,7 @@ class ClientManagement
                 $cD = currentDate();
                 $cols = "client_name, client_desc, creator_id, rcd, rdt";
                 $vals = "?, ?, ?, ?, ?";
-                $arrParams = array($clientname, $desc, $this->_iUserId, $cD, $cDT);
+                $arrParams = [$clientname, $desc, $this->_iUserId, $cD, $cDT];
 
                 //no errors
                 if ($errors === 0) {
@@ -110,15 +110,15 @@ class ClientManagement
                         mkdir($sClient_Folder . "/" . constant("CLIENTS_UPLOAD_IMAGE_FOLDER"));
                         mkdir($sClient_Folder . "/" . constant("CLIENTS_JSON_FOLDER"));
                         mkdir($sClient_Folder . "/" . constant("CLIENTS_RES_FOLDER"), 0777, true);
-                        $arrMessage = responseMessage(array($GLOBALS['CLIENT_ADDED']), 1);
+                        $arrMessage = responseMessage([$GLOBALS['CLIENT_ADDED']], 1);
                     } else {
-                        $arrMessage = responseMessage(array($GLOBALS['CLIENT_NOT_ADDED']));
+                        $arrMessage = responseMessage([$GLOBALS['CLIENT_NOT_ADDED']]);
                     }
                 } else {
                     $arrMessage = responseMessage($result["messages"]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['CLIENT_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['CLIENT_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);
@@ -129,27 +129,27 @@ class ClientManagement
 
     final public function getData()
     {
-        $arrResult = array(
-            "sortOptions" => array(
-                array("label" => "Client Name", "value" => "client_name"),
-                array("label" => "Description", "value" => "client_desc"),
-            ),
-            "viewHeader" => array("app.client.view.id", "app.client.add.name", "app.client.add.desc"),
-            "viewBody" => array("id", "name", "desc"),
-        );
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrResult = [
+            "sortOptions" => [
+                ["label" => "Client Name", "value" => "client_name"],
+                ["label" => "Description", "value" => "client_desc"],
+            ],
+            "viewHeader" => ["app.client.view.id", "app.client.add.name", "app.client.add.desc"],
+            "viewBody" => ["id", "name", "desc"],
+        ];
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function viewClients()
     {
         $clientsTable = $this->_tables["CLIENTS_TABLE"];
-        $arrResult = array();
+        $arrResult = [];
 
         // order by condition
         $sOrderCond = getOrderByCond("rdt", $this->_data["sort"]);
         // filter by search query
-        $where = getFilterResult($this->_data['searchbar'], array("name" => array("client_name", 1)));
+        $where = getFilterResult($this->_data['searchbar'], ["name" => ["client_name", 1]]);
 
         $clientList = $this->_arrAccessInfo["user_clients"];
         if ($clientList) {
@@ -168,19 +168,19 @@ class ClientManagement
             $logo_path = $GLOBALS["UPLOAD_URL"] . "/" . constant("CUSTOMER_FOLDER") . "/" . constant('CLIENT_LOGO_FOLDER') . "/";
 
             while ($arrData = $this->_dbConn->GetData($sAction)) {
-                $arrResult[] = array(
+                $arrResult[] = [
                     "name" => $arrData['client_name'],
-                    "images" => array(
+                    "images" => [
                         formatListingImage($logo_path, $arrData['image_name'], true),
-                    ),
+                    ],
                     "desc" => $arrData['client_desc'],
                     "id" => $arrData['client_id'],
-                );
+                ];
             }
         }
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -198,23 +198,23 @@ class ClientManagement
 
             //check if client exists
             // Don't use dstatus = 0
-            $iStatus = isRecordExist($this->_dbConn, $clientsTable, "client_id", "client_id != ? AND client_name = ?", array($clientId, $clientName));
+            $iStatus = isRecordExist($this->_dbConn, $clientsTable, "client_id", "client_id != ? AND client_name = ?", [$clientId, $clientName]);
 
             // Client not exist
             if ($iStatus === 0) {
                 $cols = "client_name = ?, client_desc = ?, modif_id = ?";
-                $arrParams = array($clientName, $clientDesc, $this->_iUserId, $clientId);
+                $arrParams = [$clientName, $clientDesc, $this->_iUserId, $clientId];
 
                 $iStatus = updateRecord($this->_dbConn, $clientsTable, $cols, "dstatus = 0 AND client_id = ?", $arrParams);
 
                 // client modified
                 if ($iStatus == 1) {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_EDITED_SUCCESSFULL']), 1);
+                    $arrMessage = responseMessage([$GLOBALS['DATA_EDITED_SUCCESSFULL']], 1);
                 } else {
-                    $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_EDITED']));
+                    $arrMessage = responseMessage([$GLOBALS['DATA_NOT_EDITED']]);
                 }
             } else {
-                $arrMessage = responseMessage(array($GLOBALS['CLIENT_EXISTS']));
+                $arrMessage = responseMessage([$GLOBALS['CLIENT_EXISTS']]);
             }
         } else {
             $arrMessage = responseMessage($this->_valErrors);

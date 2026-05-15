@@ -119,18 +119,18 @@ class MasterDataDownload
         // filter query
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
-            array(
+            [
                 // "dateFrom" => array($capDate, 4, "dateTo", true),
-                "district" => array("c.district", 0, true, true),
-                "branch" => array("b.branch_id", 0, true, true),
-                "circle" => array("b.circle", 0, true, true),
-                "section" => array("b.section", 0, true, true),
-                "dsName" => array("b.team_id", 0, true, true),
-                "wdCode" => array("b.wd_code", 0, true, true),
-                "wdMarket" => array("d.wd_market", 0, true, true),
-                "wdPopGroup" => array("d.wd_pop_group", 0, true, true),
+                "district" => ["c.district", 0, true, true],
+                "branch" => ["b.branch_id", 0, true, true],
+                "circle" => ["b.circle", 0, true, true],
+                "section" => ["b.section", 0, true, true],
+                "dsName" => ["b.team_id", 0, true, true],
+                "wdCode" => ["b.wd_code", 0, true, true],
+                "wdMarket" => ["d.wd_market", 0, true, true],
+                "wdPopGroup" => ["d.wd_pop_group", 0, true, true],
                 // "dsType" => array("a.is_type", ),
-            ),
+            ],
             $this->_dbConn
         );
 
@@ -150,14 +150,13 @@ class MasterDataDownload
         return $searchCond;
     }
 
-
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -172,10 +171,10 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -184,11 +183,11 @@ class MasterDataDownload
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -208,11 +207,11 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -221,11 +220,11 @@ class MasterDataDownload
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -244,10 +243,10 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -256,11 +255,11 @@ class MasterDataDownload
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -279,24 +278,23 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -315,24 +313,23 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -351,10 +348,10 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -363,11 +360,11 @@ class MasterDataDownload
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -386,24 +383,23 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -433,24 +429,23 @@ class MasterDataDownload
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -468,10 +463,10 @@ class MasterDataDownload
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -484,7 +479,7 @@ class MasterDataDownload
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -493,7 +488,7 @@ class MasterDataDownload
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -502,9 +497,9 @@ class MasterDataDownload
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -513,12 +508,11 @@ class MasterDataDownload
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -526,7 +520,7 @@ class MasterDataDownload
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -535,7 +529,7 @@ class MasterDataDownload
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -543,9 +537,9 @@ class MasterDataDownload
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -553,9 +547,9 @@ class MasterDataDownload
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -566,7 +560,7 @@ class MasterDataDownload
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -575,26 +569,26 @@ class MasterDataDownload
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -605,7 +599,7 @@ class MasterDataDownload
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -615,24 +609,24 @@ class MasterDataDownload
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -643,7 +637,7 @@ class MasterDataDownload
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -652,18 +646,18 @@ class MasterDataDownload
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -673,7 +667,7 @@ class MasterDataDownload
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -681,16 +675,16 @@ class MasterDataDownload
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -740,7 +734,7 @@ class MasterDataDownload
         //     $branchFilter = false;
         // }
 
-        $arrResult = array(
+        $arrResult = [
             "branchFilter" => true,
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -753,9 +747,9 @@ class MasterDataDownload
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "monthList" => getMonthList(),
             "yearList" => getYearList(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -775,7 +769,7 @@ class MasterDataDownload
         $month = $month ? $month : "";
         $year = getFormData($this->_data, "year");
 
-        $arrHeader = array(
+        $arrHeader = [
             "Rec Id",
             "DS Id",
             "DS Type",
@@ -808,7 +802,7 @@ class MasterDataDownload
             "Outlet Last Visited",
             "Billed in last 30 days",
             "Billed in Last 3 months"
-        );
+        ];
 
         $captureDateCondition = "";
         if ($year && $month) {
@@ -886,7 +880,7 @@ class MasterDataDownload
                 $billedInLast30Days = ($billingCountLast30Days > 0) ? "Yes" : "No";
                 $billedInLast3Months = ($billingCountLast3Months > 0) ? "Yes" : "No";
 
-                $rowData = array(
+                $rowData = [
                     cleanCSVValue($row["rec_id"]),
                     cleanCSVValue($row["team_id"]),
                     cleanCSVValue($ARR_TEAM_TYPES[$row["is_type"]]),
@@ -919,7 +913,7 @@ class MasterDataDownload
                     cleanCSVValue(isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : ""),
                     cleanCSVValue($billedInLast30Days),
                     cleanCSVValue($billedInLast3Months)
-                );
+                ];
 
                 if ($captureDateCondition) {
                     $rowData[] = cleanCSVValue($noOfTimesVisited);
@@ -931,9 +925,9 @@ class MasterDataDownload
 
         if (!empty($arrDataHolder)) {
             $arrResult = formatDownloadData("Route_Report", $header, $arrDataHolder);
-            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+            $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']], 0);
         }
 
         echo json_encode($arrMessage);

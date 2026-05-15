@@ -27,9 +27,9 @@ class BinderReport
 
     private function getCondition()
     {
-        $arrSearchParams = array(
-            "dateFrom" => array("capture_date", 4, "dateTo", true),
-        );
+        $arrSearchParams = [
+            "dateFrom" => ["capture_date", 4, "dateTo", true],
+        ];
 
         // filter query
         $where = getFilterResult(
@@ -78,7 +78,7 @@ class BinderReport
             $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
             $branchFilter = true;
         }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "branchList" => $branchList,
             // "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "team_id IS NOT NULL AND s_id = '99' $where"),
@@ -90,12 +90,11 @@ class BinderReport
             // "showSummaryDownloadBtn" => true,
             "branchFilter" => $branchFilter,
             "userBranch" => $userBranch,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -103,7 +102,7 @@ class BinderReport
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -112,24 +111,24 @@ class BinderReport
                 $branchCond = " AND branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $branch),
                 "circleList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "circle", "circle", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99'  $branchCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -142,7 +141,7 @@ class BinderReport
         if ($circle || $branch) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -153,7 +152,7 @@ class BinderReport
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -175,23 +174,23 @@ class BinderReport
                     }
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $where),
                 "sectionList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "section", "section", "team_id IS NOT NULL AND s_id = '99' $branchCond  $circleCond"),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -206,7 +205,7 @@ class BinderReport
         if ($section || $branch || $section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -217,7 +216,7 @@ class BinderReport
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -228,7 +227,7 @@ class BinderReport
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -251,21 +250,21 @@ class BinderReport
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $where),
                 "wdCodeList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "wd_code", "wd_code", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond"),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -282,7 +281,7 @@ class BinderReport
         if ($wdCode || $branch || $circle || $section) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -293,7 +292,7 @@ class BinderReport
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -304,7 +303,7 @@ class BinderReport
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -315,7 +314,7 @@ class BinderReport
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -338,19 +337,19 @@ class BinderReport
                     }
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "dsType" => getTeamType($this->_dbConn, $branch, $wdCode, $where),
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -374,7 +373,7 @@ class BinderReport
         if (isset($dsType) && $dsType != "" && $dsType >= 0 || $wdCode || $branch || $circle || $section) {
             if ($dsType) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $dsTypeCond = ""; // No condition for 'all'
@@ -385,7 +384,7 @@ class BinderReport
             }
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -396,7 +395,7 @@ class BinderReport
             }
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -407,7 +406,7 @@ class BinderReport
             }
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -418,7 +417,7 @@ class BinderReport
             }
             if ($branch) {
                 if (!is_array($branch)) {
-                    $branch = array($branch);
+                    $branch = [$branch];
                 }
                 if (in_array('all', $branch)) {
                     $branchCond = ""; // No condition for 'all'
@@ -428,35 +427,35 @@ class BinderReport
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 // Don't use dstatus = 0
                 "teamList" => getOptions($this->_dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", "team_id IS NOT NULL  AND s_id = '99' $branchCond $circleCond $sectionCond  $wdCodeCond $dsTypeCond $where"),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getBranchTeamTypeList()
     {
         if ($this->_data["branch"]) {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => getTeamType($this->_dbConn, $this->_data["branch"]),
                 "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"]),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "dsType" => "",
                 "productList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
 
         echo json_encode($arrMessage);
     }
@@ -485,7 +484,6 @@ class BinderReport
     {
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
-
 
         // Filter query
         $where = $this->getCondition();
@@ -523,7 +521,6 @@ class BinderReport
                 $branch = $this->getBranches();
             }
         }
-
 
         $circleCond = "";
         if ($circle) {

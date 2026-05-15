@@ -36,7 +36,7 @@ class AiInsights
         $parentValue = trim(getFormData($this->_data, 'parent_value'));
 
         if (isEmptyString($type)) {
-            echo json_encode(responseMessage(array('type is required')));
+            echo json_encode(responseMessage(['type is required']));
             return;
         }
 
@@ -48,10 +48,10 @@ class AiInsights
             ]);
 
             $options = $this->fetchScopeOptions($pdo, $type, $parentType, $parentValue);
-            echo json_encode(responseMessage(array(), 1, ['options' => $options], true));
+            echo json_encode(responseMessage([], 1, ['options' => $options], true));
         } catch (Exception $e) {
             error_log('AiInsights getScopeOptions error: ' . $e->getMessage());
-            echo json_encode(responseMessage(array('An error occurred: ' . $e->getMessage())));
+            echo json_encode(responseMessage(['An error occurred: ' . $e->getMessage()]));
         }
     }
 
@@ -274,7 +274,7 @@ class AiInsights
     {
         $query = getFormData($this->_data, "query");
         if (isEmptyString($query)) {
-            $arrMessage = responseMessage(array("Query is required"));
+            $arrMessage = responseMessage(["Query is required"]);
             echo json_encode($arrMessage);
             return;
         }
@@ -319,11 +319,11 @@ class AiInsights
                 $result['context_note'] = $contextNote;
             }
 
-            $arrMessage = responseMessage(array(), 1, $result, true);
+            $arrMessage = responseMessage([], 1, $result, true);
             echo json_encode($arrMessage);
         } catch (Exception $e) {
             error_log("AiInsights bridge error: " . $e->getMessage());
-            $arrMessage = responseMessage(array("An error occurred: " . $e->getMessage()));
+            $arrMessage = responseMessage(["An error occurred: " . $e->getMessage()]);
             echo json_encode($arrMessage);
         }
     }

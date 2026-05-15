@@ -8,6 +8,11 @@ i {
   font-weight: bold;
 }
 
+th,
+td {
+  border: 1px solid $black;
+}
+
 .table-header {
 
   th,
@@ -51,12 +56,8 @@ i {
   padding: 0;
 }
 
-th,
-td {
-  border: 1px solid $black;
-}
-
 // Ensure container is centered
+
 .container {
   align-items: center;
   display: flex;

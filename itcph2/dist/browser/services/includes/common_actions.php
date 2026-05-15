@@ -3,7 +3,7 @@
 require_once $include_path . "defined_index.php";
 
 // check if record exists
-function isRecordExist($dbConn, $table, $existCol, $existCond = "", $arrParams = array(), $cloud = false)
+function isRecordExist($dbConn, $table, $existCol, $existCond = "", $arrParams = [], $cloud = false)
 {
     global $DB_DBNAME_CLOUD;
     $rsAction = null;
@@ -27,7 +27,7 @@ function isRecordExist($dbConn, $table, $existCol, $existCond = "", $arrParams =
 }
 
 // update record
-function updateRecord($dbConn, $tblName, $values, $condition = "", $arrParams = array(), $cloud = false)
+function updateRecord($dbConn, $tblName, $values, $condition = "", $arrParams = [], $cloud = false)
 {
     global $DB_DBNAME_CLOUD;
     $sAction = null;
@@ -53,7 +53,7 @@ function updateRecord($dbConn, $tblName, $values, $condition = "", $arrParams = 
 }
 
 // temporary delete record
-function deleteRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $arrParams = array(), $cloud = false, $containMultipleIds = false, $paramKey = "")
+function deleteRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $arrParams = [], $cloud = false, $containMultipleIds = false, $paramKey = "")
 {
     global $DB_DBNAME_CLOUD;
     $sAction = null;
@@ -64,7 +64,7 @@ function deleteRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "",
     if (!isEmptyString($column)) {
         if ($containMultipleIds) {
             $sQuery = "UPDATE $tblName SET dstatus = 1, modif_id = $iUserId WHERE dstatus = 0 AND $column IN ($arrParams[$paramKey])";
-            $arrParams = array();
+            $arrParams = [];
         } else {
             $sQuery = "UPDATE $tblName SET dstatus = 1, modif_id = $iUserId WHERE dstatus = 0 AND $column = ?";
         }
@@ -85,7 +85,7 @@ function deleteRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "",
 // temporary delete record from response table
 function deleteListingRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $data = "", $paramKey = "", $cloud = false, $printMsg = true)
 {
-    $arrParams = array();
+    $arrParams = [];
     if (!isEmptyString($paramKey)) {
         $arrParams[$paramKey] = getStringFromArray($data[$paramKey]);
     }
@@ -94,9 +94,9 @@ function deleteListingRecord($dbConn, $tblName, $column, $iUserId = 0, $conditio
 
     if ($printMsg) {
         if (matchValue($iStatus, 1, true)) {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_DELETED_SUCCESSFULL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['DATA_DELETED_SUCCESSFULL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_DELETED']));
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_DELETED']]);
         }
 
         echo json_encode($arrMessage);
@@ -106,7 +106,7 @@ function deleteListingRecord($dbConn, $tblName, $column, $iUserId = 0, $conditio
 }
 
 // restore deleted record
-function restoreRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $arrParams = array(), $cloud = false, $containMultipleIds = false, $paramKey = "")
+function restoreRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $arrParams = [], $cloud = false, $containMultipleIds = false, $paramKey = "")
 {
     global $DB_DBNAME_CLOUD;
     $sAction = null;
@@ -117,7 +117,7 @@ function restoreRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = ""
     if (!isEmptyString($column)) {
         if ($containMultipleIds) {
             $sQuery = "UPDATE $tblName SET dstatus = 0, modif_id = $iUserId WHERE dstatus = 1 AND $column IN ($arrParams[$paramKey])";
-            $arrParams = array();
+            $arrParams = [];
         } else {
             $sQuery = "UPDATE $tblName SET dstatus = 0, modif_id = $iUserId WHERE dstatus = 1 AND $column = ?";
         }
@@ -138,7 +138,7 @@ function restoreRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = ""
 // retore deleted record from response table
 function restoreListingRecord($dbConn, $tblName, $column, $iUserId = 0, $condition = "", $data = "", $paramKey = "", $cloud = false, $printMsg = true)
 {
-    $arrParams = array();
+    $arrParams = [];
     if (!isEmptyString($paramKey)) {
         $arrParams[$paramKey] = getStringFromArray($data[$paramKey]);
     }
@@ -147,9 +147,9 @@ function restoreListingRecord($dbConn, $tblName, $column, $iUserId = 0, $conditi
 
     if ($printMsg) {
         if (matchValue($iStatus, 1, true)) {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_RESTORED_SUCCESSFULL']), 1);
+            $arrMessage = responseMessage([$GLOBALS['DATA_RESTORED_SUCCESSFULL']], 1);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['DATA_NOT_RESTORED']));
+            $arrMessage = responseMessage([$GLOBALS['DATA_NOT_RESTORED']]);
         }
 
         echo json_encode($arrMessage);
@@ -159,7 +159,7 @@ function restoreListingRecord($dbConn, $tblName, $column, $iUserId = 0, $conditi
 }
 
 //Add new record in table
-function addRecord($dbConn, $table, $cols, $vals, $arrParams = array(), $cloud = false, $checkExist = 0, $existCol = "id", $existCond = "", $arrExistParams = array())
+function addRecord($dbConn, $table, $cols, $vals, $arrParams = [], $cloud = false, $checkExist = 0, $existCol = "id", $existCond = "", $arrExistParams = [])
 {
 
     global $DB_DBNAME_CLOUD;
@@ -192,16 +192,16 @@ function addRecord($dbConn, $table, $cols, $vals, $arrParams = array(), $cloud =
 }
 
 //Options list for select box
-function getOptions($dbConn, $table, $label, $value = "", $where = "", $arrParams = array(), $all = 0, $allLabel = "All", $isNoRecord = false, $labelKey = "label", $valueKey = "value")
+function getOptions($dbConn, $table, $label, $value = "", $where = "", $arrParams = [], $all = 0, $allLabel = "All", $isNoRecord = false, $labelKey = "label", $valueKey = "value")
 {
-    $arrData = array();
+    $arrData = [];
 
     //Only All option
     if ($all == 2) {
-        $arrData[] = array(
+        $arrData[] = [
             $valueKey => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
             $labelKey => $allLabel,
-        );
+        ];
     } else {
         // check if multi column
         $iIsMultiColumn = false;
@@ -241,10 +241,10 @@ function getOptions($dbConn, $table, $label, $value = "", $where = "", $arrParam
         if ($iNoRows > 0) {
             //include all option
             if ($all == 1) {
-                $arrData[] = array(
+                $arrData[] = [
                     $valueKey => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
                     $labelKey => $allLabel,
-                );
+                ];
             }
 
             while ($row = $dbConn->GetData($rsRes)) {
@@ -264,32 +264,32 @@ function getOptions($dbConn, $table, $label, $value = "", $where = "", $arrParam
                 }
 
                 $columns = explode(".", $value);
-                $arrData[] = array(
+                $arrData[] = [
                     $valueKey => $value === "" ? $sLabel : $row[count($columns) === 1 ? $value : $columns[1]],
                     $labelKey => $sLabel,
-                );
+                ];
             }
         } elseif ($isNoRecord) {
-            $arrData[] = array(
+            $arrData[] = [
                 $valueKey => "",
                 $labelKey => "No Record",
-            );
+            ];
         }
     }
     return $arrData;
 }
 
 //Options list for with Null Options
-function getOptionsWithNull($dbConn, $table, $label, $value = "", $where = "", $arrParams = array(), $null = 0, $all = 0, $allLabel = "NULL", $isNoRecord = false, $labelKey = "label", $valueKey = "value")
+function getOptionsWithNull($dbConn, $table, $label, $value = "", $where = "", $arrParams = [], $null = 0, $all = 0, $allLabel = "NULL", $isNoRecord = false, $labelKey = "label", $valueKey = "value")
 {
-    $arrData = array();
+    $arrData = [];
 
     // Include only Null option
     if ($all == 2) {
-        $arrData[] = array(
+        $arrData[] = [
             $valueKey => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
             $labelKey => $allLabel,
-        );
+        ];
     } else {
         $iIsMultiColumn = false;
         $arrColumns = explode(",", $label);
@@ -323,10 +323,10 @@ function getOptionsWithNull($dbConn, $table, $label, $value = "", $where = "", $
 
         if ($iNoRows > 0) {
             if ($all == 1) {
-                $arrData[] = array(
+                $arrData[] = [
                     $valueKey => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
                     $labelKey => $allLabel,
-                );
+                ];
             }
 
             while ($row = $dbConn->GetData($rsRes)) {
@@ -350,32 +350,32 @@ function getOptionsWithNull($dbConn, $table, $label, $value = "", $where = "", $
 
                 // Ensure both label and value are not NULL or empty
                 if (!empty($sLabel) && !empty($sValue)) {
-                    $arrData[] = array(
+                    $arrData[] = [
                         $valueKey => $sValue,
                         $labelKey => $sLabel,
-                    );
+                    ];
                 }
             }
         } elseif ($isNoRecord) {
-            $arrData[] = array(
+            $arrData[] = [
                 $valueKey => "",
                 $labelKey => "No Record",
-            );
+            ];
         }
     }
     // Include NULL option if $null == 1
     if ($null == 1) {
-        $arrData[] = array(
+        $arrData[] = [
             $valueKey => "",
             $labelKey => "NULL",
-        );
+        ];
     }
 
     return $arrData;
 }
 
 //Get selected row and column from table
-function getRowColumn($dbConn, $table, $column, $where = "", $arrParams = array())
+function getRowColumn($dbConn, $table, $column, $where = "", $arrParams = [])
 {
     $arrData = null;
     $rsRes = null;
@@ -400,9 +400,9 @@ function getRowColumn($dbConn, $table, $column, $where = "", $arrParams = array(
 }
 
 //Get selected rows and column from table
-function getRowsColumn($dbConn, $table, $column, $where = "", $arrParams = array(), $distinct = false, $keytype = 0)
+function getRowsColumn($dbConn, $table, $column, $where = "", $arrParams = [], $distinct = false, $keytype = 0)
 {
-    $arrData = array();
+    $arrData = [];
     $rsRes = null;
     $iNoRows = 0;
 
@@ -435,7 +435,7 @@ function getRowsColumn($dbConn, $table, $column, $where = "", $arrParams = array
 }
 
 //Get selected row and columns from table
-function getRowColumns($dbConn, $table, $columns, $where = "", $arrParams = array(), $keytype = 0)
+function getRowColumns($dbConn, $table, $columns, $where = "", $arrParams = [], $keytype = 0)
 {
     $arrData = null;
     $rsRes = null;
@@ -451,7 +451,7 @@ function getRowColumns($dbConn, $table, $columns, $where = "", $arrParams = arra
 
         if ($iNoRows > 0) {
             $row = $dbConn->GetData($rsRes);
-            $array = array();
+            $array = [];
             $i = 0;
 
             $columns = explode(",", trim($columns));
@@ -475,9 +475,9 @@ function getRowColumns($dbConn, $table, $columns, $where = "", $arrParams = arra
 }
 
 //Get selected rows and columns from table
-function getRowsColumns($dbConn, $table, $columns, $where = "", $arrParams = array(), $distinct = false, $keytype = 0)
+function getRowsColumns($dbConn, $table, $columns, $where = "", $arrParams = [], $distinct = false, $keytype = 0)
 {
-    $arrData = array();
+    $arrData = [];
 
     if (!isEmptyString($table) && !isEmptyString($columns)) {
         $columnCond = $columns;
@@ -498,7 +498,7 @@ function getRowsColumns($dbConn, $table, $columns, $where = "", $arrParams = arr
             $columns = explode(",", trim($columns));
 
             while ($row = $dbConn->GetData($rsRes)) {
-                $array = array();
+                $array = [];
                 $i = 0;
 
                 foreach ($columns as $column) {
@@ -527,7 +527,7 @@ function getRowsColumns($dbConn, $table, $columns, $where = "", $arrParams = arr
 //get allowed modules of a user
 function getAllowedModules($dbConn, $sModules)
 {
-    $arrModules = array();
+    $arrModules = [];
 
     $modulesTable = $GLOBALS["TABLES"]["MODULES_TABLE"];
     $sMenuAction = null;
@@ -564,13 +564,13 @@ function getAllowedModules($dbConn, $sModules)
 //get login info including allowed branches, wd codes
 function getAccessInfo($dbConn, $iUserId)
 {
-    $arrInfo = array();
+    $arrInfo = [];
 
     $userAuthdetailsTable = $GLOBALS["TABLES"]["USER_AUTHDETAILS_TABLE"];
     $sAction = null;
     $iRows = 0;
     $sQuery = "SELECT access_type FROM $userAuthdetailsTable WHERE user_id = ? AND dstatus = 0 LIMIT 1";
-    $arrParams = array($iUserId);
+    $arrParams = [$iUserId];
     $dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows, $arrParams);
 
     if ($iRows === 1) {
@@ -595,15 +595,15 @@ function getAccessInfo($dbConn, $iUserId)
             }
         }
 
-        $arrInfo = array(
+        $arrInfo = [
             "access_type" => $arrData["access_type"],
             "user_clients" => $user_clients,
             "user_projects" => $user_projects,
             "user_teams" => $user_teams,
-            "clients" => $clients ? explode(",", $clients) : array(),
-            "projects" => $projects ? explode(",", $projects) : array(),
-            "teams" => $teams ? explode(",", $teams) : array(),
-        );
+            "clients" => $clients ? explode(",", $clients) : [],
+            "projects" => $projects ? explode(",", $projects) : [],
+            "teams" => $teams ? explode(",", $teams) : [],
+        ];
     }
     return $arrInfo;
 }
@@ -648,7 +648,7 @@ function getUserAccessList($dbConn, $iUserId, $access_type)
     $dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iActionRows);
 
     if ($iActionRows > 0) {
-        $arrClient = $arrProject = $arrTeam = array();
+        $arrClient = $arrProject = $arrTeam = [];
         while ($row = $dbConn->GetData($rsAction)) {
             $iClientId = isset($row['client_id']) ? $row['client_id'] : "";
             $iProjectId = isset($row['project_id']) ? $row['project_id'] : "";
@@ -665,9 +665,9 @@ function getUserAccessList($dbConn, $iUserId, $access_type)
             }
         }
 
-        return array(implode(",", $arrClient), implode(",", $arrProject), implode(",", $arrTeam));
+        return [implode(",", $arrClient), implode(",", $arrProject), implode(",", $arrTeam)];
     } else {
-        return array("", "", "");
+        return ["", "", ""];
     }
 }
 
@@ -717,7 +717,7 @@ function returnIfAllSelected($value)
 
     // return only ALL
     if ($matchAll) {
-        return array($GLOBALS['APP_CONSTANTS']['ALL_VALUE']);
+        return [$GLOBALS['APP_CONSTANTS']['ALL_VALUE']];
     }
 
     return $value;

@@ -101,7 +101,7 @@ class MdoReporting
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -113,7 +113,7 @@ class MdoReporting
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -164,11 +164,11 @@ class MdoReporting
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -183,10 +183,10 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -195,11 +195,11 @@ class MdoReporting
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -219,11 +219,11 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -232,11 +232,11 @@ class MdoReporting
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -255,10 +255,10 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -267,11 +267,11 @@ class MdoReporting
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -290,24 +290,23 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -326,24 +325,23 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -362,10 +360,10 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -374,11 +372,11 @@ class MdoReporting
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -397,10 +395,10 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -409,11 +407,11 @@ class MdoReporting
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -448,10 +446,10 @@ class MdoReporting
                 } elseif ($row['is_type'] == 10) {
                     $teamType = "FSO";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -460,11 +458,11 @@ class MdoReporting
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -483,10 +481,10 @@ class MdoReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -514,7 +512,7 @@ class MdoReporting
         //     $branchList = getBranchList($this->_dbConn, false, "", "", 0, false, true, "mainBranch");
         //     $branchFilter = true;
         // }
-        $arrResult = array(
+        $arrResult = [
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
@@ -529,9 +527,9 @@ class MdoReporting
             "showSummaryDownloadBtn" => true,
             "branchFilter" => true,
             "userBranch" => $userBranch,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -541,7 +539,7 @@ class MdoReporting
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -550,7 +548,7 @@ class MdoReporting
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -559,9 +557,9 @@ class MdoReporting
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -570,12 +568,11 @@ class MdoReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -583,7 +580,7 @@ class MdoReporting
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -592,7 +589,7 @@ class MdoReporting
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -600,9 +597,9 @@ class MdoReporting
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -610,9 +607,9 @@ class MdoReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -623,7 +620,7 @@ class MdoReporting
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -632,26 +629,26 @@ class MdoReporting
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -662,7 +659,7 @@ class MdoReporting
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -672,24 +669,24 @@ class MdoReporting
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -700,7 +697,7 @@ class MdoReporting
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -709,18 +706,18 @@ class MdoReporting
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -731,7 +728,7 @@ class MdoReporting
         if ($dsType) {
             if ($dsType) {
                 if (!is_array($dsType)) {
-                    $dsType = array($dsType);
+                    $dsType = [$dsType];
                 }
                 if (in_array('all', $dsType)) {
                     $typeCond = ""; // No condition for 'all'
@@ -740,16 +737,16 @@ class MdoReporting
                     $typeCond = " AND b.is_type IN ($dsType)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($typeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -778,16 +775,16 @@ class MdoReporting
         $routeDetailsTable = $this->_tables["ROUTE_DETAILS_TABLE"];
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
         $partialQuery = "FROM tblsurvey_response_details_mdo AS a, $projectTeamTable AS b, $branchTable AS c WHERE a.dstatus = 0 AND a.team_id = b.team_id AND b.branch_id = c.branch_id AND b.s_id = '10' $where";
 
         // Don't use b.dstatus = 0 AND c.dstatus = 0
-        $arrData = array();
+        $arrData = [];
         $rsAction = null;
         $iRows = 0;
         // use a.pro_id > 0 to include primary column as index while calculating no of rows
@@ -823,13 +820,13 @@ class MdoReporting
                     $this->_dbConn,
                     $row["uni_id"],
                     "",
-                    array(
+                    [
                         $visibilityPicture => "Outlet Visibility Picture Lt: {$row["lt"]} Lg: {$row["lg"]}",
                         $outletPicture => "Outlet Photo Lt: {$row["lt"]} Lg: {$row["lg"]}",
-                    )
+                    ]
                 );
 
-                $arrData[$i] = array(
+                $arrData[$i] = [
                     "reportingType" => $row["ques_0"],
                     "workType" => $row["ques_1"],
                     "wdCode" => $wdcode,
@@ -847,26 +844,26 @@ class MdoReporting
                     "lt" => $row["lt"],
                     "lg" => $row["lg"],
                     "images" => $arrImages,
-                );
+                ];
 
                 $i++;
             }
         }
 
-        $arrResponse = array(
+        $arrResponse = [
             "total" => $limit["total"],
             "listingData" => $arrData,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+        $arrMessage = responseMessage([], 1, $arrResponse, true);
         echo json_encode($arrMessage);
     }
 
     final public function getDownloadData()
     {
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $arrTeamType = [0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS"];
+        $arrInfraType = [7 => "MDO", 10 => "FSO"];
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
 
@@ -874,9 +871,9 @@ class MdoReporting
         $where = $this->getCondition();
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
@@ -1053,13 +1050,13 @@ class MdoReporting
         }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
 
         echo json_encode($arrMessage);
     }
@@ -1071,8 +1068,8 @@ class MdoReporting
 
     final public function getDownloadSummary()
     {
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $arrTeamType = [0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS"];
+        $arrInfraType = [7 => "MDO", 10 => "FSO"];
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
@@ -1086,16 +1083,16 @@ class MdoReporting
         $where .= $this->getCondition(true);
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         $where2 .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
@@ -1103,7 +1100,7 @@ class MdoReporting
         $branch = getFormData($this->_data['searchbar'], "branch");
 
         // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
-        $arrExcelData = array();
+        $arrExcelData = [];
 
         // create header
         $arrExcelData[] = [
@@ -1244,7 +1241,7 @@ class MdoReporting
                         $sellInShop = "";
                         $totalSale = "";
                         $totalUlc = "";
-                        $arrMdoSurveyedOutlets = array();
+                        $arrMdoSurveyedOutlets = [];
                         $mdoSurveyedOutlets = "";
                         $sellbByDsMdoSurveyed = "";
                         $unacompaniedULCPerDay = "";
@@ -1271,7 +1268,7 @@ class MdoReporting
                         $orderShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Outlet Order' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                         $addShop = $dsId ? getRowColumn($this->_dbConn, $respTable, "COUNT(DISTINCT ques_3)", "ques_0 = 'Add Outlet' AND dstatus = '0' AND capture_date = '$date' AND team_id = $dsId") : 0;
                         $totalShops = $orderShop + $addShop;
-                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", array(), true);
+                        $allBrandCols = getRowsColumns($this->_dbConn, $branchPickupStockTable, "summary_column_name, product_name", "dstatus = 0 AND branch_id = $branchId", [], true);
                         $productCols = [];
                         $productNames = [];
 
@@ -1402,7 +1399,6 @@ class MdoReporting
                     $unacompaniedOutletPerDay     = $unaccompaniedDays > 0 ? round($unacompaniedOutlets / $unaccompaniedDays) : 0;
                     $unacompaniedSellOutletPerDay = $unaccompaniedDays > 0 ? round($unacompaniedSellOutlets / $unaccompaniedDays) : 0;
 
-
                     $dsName = isset($row["ds_name"]) ? (string)$row["ds_name"] : "";
                     $parts = explode(" - ", $dsName, 2);
                     $dsNameOnly = $parts[0];
@@ -1519,7 +1515,7 @@ class MdoReporting
             while ($startDate <= $endDate) {
                 $date = $startDate->format('Y-m-d'); // Format the current date
                 $week = $this->getWeekNumber($date);
-                $arrDates = array();
+                $arrDates = [];
 
                 if (!in_array($date, $arrDates)) {
                     $arrDates[] = $date;
@@ -1669,7 +1665,7 @@ class MdoReporting
                     // prepare missing team condition
                     $sTeamCond = getFilterResult(
                         $this->_data['searchbar'],
-                        array("dsName" => array("a.team_id", 0, true, true)),
+                        ["dsName" => ["a.team_id", 0, true, true]],
                         $this->_dbConn
                     );
 
@@ -1728,9 +1724,9 @@ class MdoReporting
         $styleHeader->getAlignment()->setWrapText(true);   // wrap text
 
         $allStyle = [
-            'alignment' => array(
+            'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ),
+            ],
         ];
         $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
@@ -1739,21 +1735,21 @@ class MdoReporting
         }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
 
         echo json_encode($arrMessage);
     }
 
     final public function attendanceDayEndReport()
     {
-        $arrInfraType = array(7 => "MDO", 10 => "FSO");
+        $arrInfraType = [7 => "MDO", 10 => "FSO"];
         // $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "Stokiest DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
@@ -1766,16 +1762,16 @@ class MdoReporting
         $where .= $this->getCondition(true);
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
         // $branch = array();
         $branch = getFormData($this->_data['searchbar'], "branch");
 
         // create 2 arrays for sale and pickup stock so that pickup stock columns can be appended after sale columns
-        $arrExcelData = array();
+        $arrExcelData = [];
 
         // create header
         $arrExcelData[] = [
@@ -1874,7 +1870,7 @@ class MdoReporting
                         $dsType = "";
                         $parts = "";
                         $dsNameOnly = "";
-                        $arrWdDetails = array();
+                        $arrWdDetails = [];
                     }
                     $startTime = $row['capture_datetime'];
                     $googleAddress = $row['google_address'];
@@ -1974,9 +1970,9 @@ class MdoReporting
         $styleHeader->getAlignment()->setWrapText(true);   // wrap text
 
         $allStyle = [
-            'alignment' => array(
+            'alignment' => [
                 'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
-            ),
+            ],
         ];
         $sheet->getStyle('A1:' . $sheet->getHighestDataColumn() . $sheet->getHighestDataRow())->applyFromArray($allStyle);
 
@@ -1985,14 +1981,14 @@ class MdoReporting
         }
         $filename = $GLOBALS["SAVE_SPREADSHEET_PATH"] . "/$fileName";
         $downloadFileLocation = $GLOBALS["SAVE_SPREADSHEET_URL"] . "/$fileName";
-        $fileDetails = array(
+        $fileDetails = [
             "filePath" => $downloadFileLocation,
             "fileName" => $fileName,
-        );
+        ];
         $writer = new Xlsx($spreadsheet);
         $writer->save($filename);
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $fileDetails);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $fileDetails);
 
         echo json_encode($arrMessage);
     }
@@ -2001,7 +1997,7 @@ class MdoReporting
     {
         global  $CUST_FOLDER_PATH;
         global  $UPLOAD_URL;
-        $arrTeamType = array(0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS");
+        $arrTeamType = [0 => "VAN DS", 5 => "NPSR", 8 => "SCP DS", 2 => "SWD", 6 => "RMD", 9 => "Common FMCG Lite DS"];
         // $arrInfraType = array(7 => "MDO", 10 => "FSO");
         $currentDateTime = currentDateTime();
         $currentDateTime = preg_replace("/\s+|[:]+/", "_", $currentDateTime);
@@ -2010,9 +2006,9 @@ class MdoReporting
         $where = $this->getCondition();
         $where .= getFilterResult(
             isset($this->_data["searchbar"]) ? $this->_data["searchbar"] : $this->_data,
-            array(
-                "dateFrom" => array("a.capture_date", 2, "dateTo"),
-            ),
+            [
+                "dateFrom" => ["a.capture_date", 2, "dateTo"],
+            ],
             $this->_dbConn
         );
 
@@ -2026,11 +2022,11 @@ class MdoReporting
 
         // Create title page
         $pdf->createPage();
-        $pdf->addTitle("MDO REPORT", 28, array(138, 51, 255));
+        $pdf->addTitle("MDO REPORT", 28, [138, 51, 255]);
 
         // First pass: collect all uni_ids and their image IDs
-        $imageMap = array(); // [uniId => [image_ids]]
-        $allRecords = array(); // Store all records for second pass
+        $imageMap = []; // [uniId => [image_ids]]
+        $allRecords = []; // Store all records for second pass
         $totalRecords = 0;
 
         // Loop through each branch data
@@ -2076,17 +2072,17 @@ class MdoReporting
 
                     // Only process records where itcVisibility == 'Yes' OR implementVisibility == 'Yes'
                     if ($itcVisibility == 'Yes' || $implementVisibility == 'Yes') {
-                        $imageIds = array();
+                        $imageIds = [];
                         if (!empty($visibilityPic)) {
-                            $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $visibilityPic);
+                            $imageIds[] = ['uni_id' => $uniId, 'mob_img_id' => $visibilityPic];
                         }
                         if (!empty($outletPic)) {
-                            $imageIds[] = array('uni_id' => $uniId, 'mob_img_id' => $outletPic);
+                            $imageIds[] = ['uni_id' => $uniId, 'mob_img_id' => $outletPic];
                         }
 
                         if (!empty($imageIds)) {
                             if (!isset($imageMap[$uniId])) {
-                                $imageMap[$uniId] = array();
+                                $imageMap[$uniId] = [];
                             }
                             foreach ($imageIds as $imgData) {
                                 $imageMap[$uniId][] = $imgData['mob_img_id'];
@@ -2094,21 +2090,21 @@ class MdoReporting
                         }
 
                         // Store record for second pass
-                        $allRecords[] = array(
+                        $allRecords[] = [
                             'row' => $row,
                             'uniId' => $uniId,
                             'visibilityPic' => $visibilityPic,
                             'outletPic' => $outletPic,
                             'itcVisibility' => $itcVisibility,
                             'implementVisibility' => $implementVisibility
-                        );
+                        ];
                     }
                 }
             }
         }
 
-        $allImages = array(); // [uniId][mob_img_id] => image data
-        $imagesByMobId = array();
+        $allImages = []; // [uniId][mob_img_id] => image data
+        $imagesByMobId = [];
 
         foreach ($imageMap as $uniId => $mobImgIds) {
             if (!empty($mobImgIds)) {
@@ -2122,7 +2118,7 @@ class MdoReporting
 
                 if ($iAllRows > 0) {
                     if (!isset($allImages[$uniId])) {
-                        $allImages[$uniId] = array();
+                        $allImages[$uniId] = [];
                     }
                     while ($imgRow = $this->_dbConn->GetData($rsAllImages)) {
                         $allImages[$uniId][$imgRow['mob_img_id']] = $imgRow;
@@ -2187,20 +2183,20 @@ class MdoReporting
             $lg = $row["lg"];
 
             // Get images from pre-fetched array
-            $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : array();
+            $arrImages2 = isset($allImages[$uniId]) ? $allImages[$uniId] : [];
 
             // Prepare images for PDF
-            $images = array();
+            $images = [];
 
             if (isset($visibilityPic) && $visibilityPic) {
                 $storePhoto = $getCorrectImage($arrImages2, $visibilityPic);
                 if ($storePhoto && !empty($storePhoto['filepath']) && !empty($storePhoto['name'])) {
                     $destImage = $storePhoto['domain'] . constant("PRODS_ANY_FOLDER") . $storePhoto['filepath'] . $storePhoto['name'];
                     if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
-                        $images[] = array(
+                        $images[] = [
                             'path' => $destImage,
                             'label' => "Outlet Visibility Picture"
-                        );
+                        ];
                     }
                 }
             }
@@ -2210,10 +2206,10 @@ class MdoReporting
                 if ($brandingPhoto && !empty($brandingPhoto['filepath']) && !empty($brandingPhoto['name'])) {
                     $destImage = $brandingPhoto['domain'] . constant("PRODS_ANY_FOLDER") . $brandingPhoto['filepath'] . $brandingPhoto['name'];
                     if (file_exists($destImage) && is_file($destImage) && is_readable($destImage)) {
-                        $images[] = array(
+                        $images[] = [
                             'path' => $destImage,
                             'label' => "Outlet Photo"
-                        );
+                        ];
                     }
                 }
             }
@@ -2224,22 +2220,22 @@ class MdoReporting
                 $pdf->createPage();
 
                 // First table - Match Excel hierarchy
-                $tableData1 = array(
-                    array("DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WEEK"),
-                    array($district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $week)
-                );
+                $tableData1 = [
+                    ["DISTRICT", "BRANCH", "REGION", "CIRCLE", "SECTION", "MDO ID", "MDO NAME", "DATE", "WEEK"],
+                    [$district, $mainBranch, $branchName, $circle, $section, $row["team_id"], $mdoName, $captureDate, $week]
+                ];
 
-                $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                $pdf->addTable($tableData1, 2, 9, 5, 10, 287, 7, [138, 51, 255], [255, 255, 255], [0, 0, 0]);
 
                 $pdf->Ln(3);
 
                 // Second table - Continue Excel hierarchy
-                $tableData2 = array(
-                    array("WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "DS ID", "DS NAME", "DS TYPE", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"),
-                    array($workWdCode, $WdName, $WdMarket, $WdPopGroup, $dsId, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", $shopId, isset($arrRoute[1]) ? $arrRoute[1] : "", $captureDateTime, $surveyVol, $lineCut)
-                );
+                $tableData2 = [
+                    ["WD CODE", "WD NAME", "WD MARKET", "WD POP GROUP", "DS ID", "DS NAME", "DS TYPE", "OUTLET ID", "OUTLET NAME", "TIMESTAMP", "SALES(M)", "ULC"],
+                    [$workWdCode, $WdName, $WdMarket, $WdPopGroup, $dsId, $dsNameOnly, isset($dsType) ? $arrTeamType[$dsType] : "", $shopId, isset($arrRoute[1]) ? $arrRoute[1] : "", $captureDateTime, $surveyVol, $lineCut]
+                ];
 
-                $pdf->addTable($tableData2, 2, 12, 5, $pdf->GetY(), 287, 7, array(138, 51, 255), array(255, 255, 255), array(0, 0, 0));
+                $pdf->addTable($tableData2, 2, 12, 5, $pdf->GetY(), 287, 7, [138, 51, 255], [255, 255, 255], [0, 0, 0]);
 
                 $imageY = $pdf->GetY() + 5;
 
@@ -2263,7 +2259,7 @@ class MdoReporting
 
         // Check if we have data to generate PDF
         if (!$hasData) {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']));
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']]);
             echo json_encode($arrMessage);
             return;
         }
@@ -2274,12 +2270,12 @@ class MdoReporting
         $fileName = "MDO_$currentDateTime.pdf";
 
         $fileDetails = $pdf->savePdf($fileName, false);
-        $arrResponse = array(
+        $arrResponse = [
             "filePath" => $fileDetails["downloadUrl"],
             "fileName" => $fileName,
-        );
+        ];
 
-        $arrMessage = responseMessage(array($GLOBALS['FILE_DOWNLOADING']), 1, $arrResponse);
+        $arrMessage = responseMessage([$GLOBALS['FILE_DOWNLOADING']], 1, $arrResponse);
         echo json_encode($arrMessage);
     }
 
@@ -2312,7 +2308,6 @@ class MdoReporting
 
         $projectTeamTable = $this->_tables["PROJECT_TEAM_TABLE"];
         $branchTable      = $this->_tables["BRANCH_TABLE"];
-
 
         $allBranchIds = [];
         foreach ((array)$branch as $branchId) {

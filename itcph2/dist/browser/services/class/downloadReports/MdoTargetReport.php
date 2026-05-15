@@ -13,7 +13,6 @@ class MdoTargetReport
     private $_arrAccessInfo = [];
     private $arrBranchwiseProducts = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo)
     {
         $this->_data = $data;
@@ -21,7 +20,6 @@ class MdoTargetReport
         $this->_tables = $GLOBALS['TABLES'];
         $this->_arrAccessInfo = $arrAccessInfo;
     }
-
 
     final public function getConditionFilter($andCondition = true)
     {
@@ -95,7 +93,7 @@ class MdoTargetReport
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (!in_array('all', $wdMarket)) {
                 $wdMarket = "'" . implode("','", $wdMarket) . "'";
@@ -106,7 +104,7 @@ class MdoTargetReport
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (!in_array('all', $wdPopGroup)) {
                 $wdPopGroup = "'" . implode("','", $wdPopGroup) . "'";
@@ -140,7 +138,6 @@ class MdoTargetReport
             }
         }
 
-
         $where = $condition ? $condition : "";
 
         $teamList = $this->_arrAccessInfo["user_teams"];
@@ -153,7 +150,7 @@ class MdoTargetReport
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "districtList"   => $this->getDistrictList(),
             "branchList"     => $this->getBranchList(),
             "circleList"     => $this->getCircleList(),
@@ -164,9 +161,9 @@ class MdoTargetReport
             "wdMarketList"   => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "monthList"      => $this->monthLabelAndValue(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -221,29 +218,29 @@ class MdoTargetReport
 
     final public function getProducts()
     {
-        $arrResult = array(
+        $arrResult = [
             "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"], $this->_data["type"]),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getBranchTeamTypeList()
     {
         if ($this->_data["branch"]) {
-            $arrResult = array(
+            $arrResult = [
                 "teamType"    => getTeamType($this->_dbConn, $this->_data["branch"]),
                 "productList" => getBranchWiseProducts($this->_dbConn, $this->_data["branch"]),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType"    => "",
                 "productList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -779,14 +776,13 @@ class MdoTargetReport
         return $arrData;
     }
 
-
     final public function getBranch()
     {
         $district     = $this->_data['district'];
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (!in_array('all', $district)) {
                 $district     = "'" . implode("','", $district) . "'";
@@ -814,7 +810,7 @@ class MdoTargetReport
                 "wdPopGroupList" => "",
             ];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getCircle()
@@ -823,7 +819,7 @@ class MdoTargetReport
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (!in_array('all', $branch)) {
                 $branch     = "'" . implode("','", $branch) . "'";
@@ -849,7 +845,7 @@ class MdoTargetReport
                 "wdPopGroupList" => "",
             ];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getSection()
@@ -858,7 +854,7 @@ class MdoTargetReport
         $circleCond = "";
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (!in_array('all', $circle)) {
                 $circle     = "'" . implode("','", $circle) . "'";
@@ -882,7 +878,7 @@ class MdoTargetReport
                 "wdPopGroupList" => "",
             ];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getWDCode()
@@ -891,7 +887,7 @@ class MdoTargetReport
         $sectionCond = "";
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (!in_array('all', $section)) {
                 $section     = "'" . implode("','", $section) . "'";
@@ -913,7 +909,7 @@ class MdoTargetReport
                 "wdPopGroupList" => "",
             ];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getTeamType()
@@ -922,7 +918,7 @@ class MdoTargetReport
         $wdCodeCond = "";
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (!in_array('all', $wdCode)) {
                 $wdCode     = "'" . implode("','", $wdCode) . "'";
@@ -935,7 +931,7 @@ class MdoTargetReport
         } else {
             $arrResult = ["teamType" => "", "teamList" => ""];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getTeamList()
@@ -944,7 +940,7 @@ class MdoTargetReport
         $typeCond = "";
         if (isset($dsType) && $dsType !== "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (!in_array('all', $dsType)) {
                 $dsType   = "'" . implode("','", $dsType) . "'";
@@ -954,7 +950,7 @@ class MdoTargetReport
         } else {
             $arrResult = ["teamList" => ""];
         }
-        echo json_encode(responseMessage(array(), 1, $arrResult, true));
+        echo json_encode(responseMessage([], 1, $arrResult, true));
     }
 
     final public function getResult($table, $products, $where)

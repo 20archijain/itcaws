@@ -1,14 +1,16 @@
 // You can add global styles to this file, and also import other style files */
 @use 'scss/style' as *;
 
-$black1: rgba(0, 0, 0, .2);
-$black2: rgba(0, 0, 0, .15);
+$black1: rgb(0 0 0 / 20%);
+$black2: rgb(0 0 0 / 15%);
 $leaflet-control-zoom-link: #374151;
 $leaflet-popup-title: #1e293b;
 $leaflet-popup-text: #64748b;
 
 // ── Leaflet + Bootstrap compatibility ──
+
 .leaflet-container {
+
   img {
     border: 0 !important;
     max-height: none !important;
@@ -22,6 +24,7 @@ $leaflet-popup-text: #64748b;
   }
 
   .leaflet-tile-pane {
+
     img {
       display: block;
     }

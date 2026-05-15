@@ -54,7 +54,7 @@ class AddFocusBrand
                     while ($row1 = $this->_dbConn->GetData($sAction1)) {
                         $summary_column_name = $row1['summary_column_name'];
                         $team_type = $row1['team_type'];
-                        $arrList = array(
+                        $arrList = [
                             $row1['json_id'],
                             $row1['team_type'],
                             $row1['is_focusbrand'],
@@ -67,7 +67,7 @@ class AddFocusBrand
                             $branch_id,
                             $currentMonth,
                             $currentYear
-                        );
+                        ];
 
                         $recId = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_history", "rec_id", "dstatus = 0 AND branch_id = $branch_id AND month = '$currentMonth' AND year = '$currentYear' AND team_type = '$team_type' AND summary_column_name = '$summary_column_name'");
 

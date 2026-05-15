@@ -32,7 +32,7 @@ class DashboardManagement
         $district = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -44,7 +44,7 @@ class DashboardManagement
         $branch = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -56,7 +56,7 @@ class DashboardManagement
         $circle = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -68,7 +68,7 @@ class DashboardManagement
         $section = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -80,7 +80,7 @@ class DashboardManagement
         $wdCode = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -92,7 +92,7 @@ class DashboardManagement
         $wdMarket = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -104,7 +104,7 @@ class DashboardManagement
         $wdPopGroup = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -116,7 +116,7 @@ class DashboardManagement
         $teamType = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -129,7 +129,7 @@ class DashboardManagement
         $dsName = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -163,7 +163,7 @@ class DashboardManagement
 
         if ($category) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $condition .= " ";
@@ -175,7 +175,7 @@ class DashboardManagement
         $product = getFormData(isset($this->_data['searchbar']) ? $this->_data['searchbar'] : $this->_data, "product");
         if ($product) {
             if (!is_array($product)) {
-                $product = array($product);
+                $product = [$product];
             }
             if (in_array('all', $product)) {
                 $condition .= " ";
@@ -188,14 +188,13 @@ class DashboardManagement
         return $condition;
     }
 
-
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -210,10 +209,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -222,11 +221,11 @@ class DashboardManagement
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -246,11 +245,11 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -259,11 +258,11 @@ class DashboardManagement
 
     final public function getCategoryList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -277,10 +276,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['category_name'],
                     "value" => $row['category_name']
-                );
+                ];
             }
         }
 
@@ -289,11 +288,11 @@ class DashboardManagement
 
     final public function getProductList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -306,10 +305,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['product_name']
-                );
+                ];
             }
         }
 
@@ -318,11 +317,11 @@ class DashboardManagement
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -341,10 +340,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -353,11 +352,11 @@ class DashboardManagement
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -376,10 +375,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -388,11 +387,11 @@ class DashboardManagement
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -411,10 +410,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -423,11 +422,11 @@ class DashboardManagement
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -446,10 +445,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -458,11 +457,11 @@ class DashboardManagement
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -481,10 +480,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -493,11 +492,11 @@ class DashboardManagement
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -527,10 +526,10 @@ class DashboardManagement
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -539,11 +538,11 @@ class DashboardManagement
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -561,10 +560,10 @@ class DashboardManagement
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -590,7 +589,7 @@ class DashboardManagement
         // if ($teamList) {
         //     $where .= " AND team_id IN $teamList";
         // }
-        $arrResult = array(
+        $arrResult = [
             "branchFilter" => true,
             "monthList" => getMonthList(),
             "yearList" => getYearList(),
@@ -603,9 +602,9 @@ class DashboardManagement
             "teamList" => $this->getTeamsList(),
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -615,7 +614,7 @@ class DashboardManagement
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -624,7 +623,7 @@ class DashboardManagement
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -635,9 +634,9 @@ class DashboardManagement
                 "productList" => $this->getProductList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -648,9 +647,9 @@ class DashboardManagement
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -660,7 +659,7 @@ class DashboardManagement
         $categoryCond = "";
         if (!empty($category)) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $categoryCond = ""; // No condition for 'all'
@@ -669,15 +668,15 @@ class DashboardManagement
                 $categoryCond = " AND b.category_name IN ($category)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getProductList($categoryCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -687,7 +686,7 @@ class DashboardManagement
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -696,7 +695,7 @@ class DashboardManagement
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -706,9 +705,9 @@ class DashboardManagement
                 "productList" => $this->getProductList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -718,9 +717,9 @@ class DashboardManagement
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -731,7 +730,7 @@ class DashboardManagement
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -740,26 +739,26 @@ class DashboardManagement
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -770,7 +769,7 @@ class DashboardManagement
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -780,24 +779,24 @@ class DashboardManagement
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -808,7 +807,7 @@ class DashboardManagement
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -817,18 +816,18 @@ class DashboardManagement
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -838,7 +837,7 @@ class DashboardManagement
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -846,16 +845,16 @@ class DashboardManagement
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -946,8 +945,8 @@ class DashboardManagement
             $percentageFocusBilled = 0;
         }
 
-        $cardsData = array(
-            array(
+        $cardsData = [
+            [
                 'value1' => isset($planned) ? $planned : 0,
                 'text1' => 'Target',
                 'value1Class' => 'text-c-black',
@@ -961,8 +960,8 @@ class DashboardManagement
                 'title' => 'Outlets Visited',
                 'color' => 'light-grey',
                 'color1' => ''
-            ),
-            array(
+            ],
+            [
                 'value1' => isset($planned) ? $planned : 0,
                 'text1' => 'Target',
                 'value1Class' => 'text-c-black',
@@ -976,8 +975,8 @@ class DashboardManagement
                 'title' => 'Outlets Billed',
                 'color' => 'light-grey',
                 'color1' => ''
-            ),
-            array(
+            ],
+            [
                 'value1' => isset($planned) ? $planned : 0,
                 'text1' => 'Target',
                 'value1Class' => 'text-c-black',
@@ -991,8 +990,8 @@ class DashboardManagement
                 'title' => 'Focus Brands Billed',
                 'color' => 'text-black',
                 'color1' => ''
-            ),
-        );
+            ],
+        ];
 
         return $cardsData;
     }
@@ -1000,7 +999,7 @@ class DashboardManagement
     // Dashboard  Data
     public function getDashboardData()
     {
-        $arrResponse = array(
+        $arrResponse = [
             "attCardData" => $this->getAttendanceCardData(),
             "beatAdherenceCardData" => $this->getBeatAdherenceCardData(),
             // "todaySalesAmountCardData" => $this->getTodaySalesAmountCardData(),
@@ -1009,7 +1008,7 @@ class DashboardManagement
             // "todayOutletVisitedCardData" => $this->getTodayOutletVisitedCardData(),
             "focusVisitTillDateAmountCardData" => $this->getFocusVisitTillDateAmountCardData(),
             "slideCardData" => $this->getSlideCardData(),
-            "graphs" => array(
+            "graphs" => [
                 "outletVisitedMonthlyComparisonData" => $this->getShopVisitedComparisonData(),
                 "getOutletBilledComparisonData" => $this->getShopBilledComparisonData(),
                 "getShopVisitedSPLYComparisonData" => $this->getShopVisitedSPLYComparisonData(),
@@ -1018,14 +1017,13 @@ class DashboardManagement
                 "getShopBilledYTDLYTDComparisonData" => $this->getShopBilledYTDLYTDComparisonData(),
                 "getFocusCMLMOutletBilledComparisonData" => $this->getFocusCMLMOutletBilledComparisonData(),
                 "getFocusSPLYOutletBilledComparisonData" => $this->getFocusSPLYOutletBilledComparisonData(),
-            ),
+            ],
             // $this->getCardsData(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResponse, true);
+        $arrMessage = responseMessage([], 1, $arrResponse, true);
         echo json_encode($arrMessage);
     }
-
 
     // ATTENDANCE CARD DATA
     public function getAttendanceCardData()
@@ -1047,12 +1045,12 @@ class DashboardManagement
         } else {
         }
 
-        $attCardData = array(
+        $attCardData = [
             "allTeams" => $allTeams,
             "morningAttData" => $morningAttData,
             "percentAttendance" => $percentAttendance,
             "notPresent" => $notPresent,
-        );
+        ];
         // print_r($attCardData);die;
         return $attCardData;
     }
@@ -1091,12 +1089,12 @@ class DashboardManagement
             $avgCompRoute = 0;
         }
 
-        $beatAdhrerenceCardData = array(
+        $beatAdhrerenceCardData = [
             "todayActiveDS" => $todayActiveDS,
             "adherence" => $adherence,
             "unAdherence" => $unAdherence,
             "avgCompRoute" => $avgCompRoute,
-        );
+        ];
         return $beatAdhrerenceCardData;
     }
 
@@ -1140,12 +1138,12 @@ class DashboardManagement
             $avgQualified = 0;
         }
 
-        $qualifiedAttCardData = array(
+        $qualifiedAttCardData = [
             "todayActiveDS" => $mornAttendance,
             "qualifiedCount" => $qualifiedCount,
             "UnqualifiedCount" => $UnqualifiedCount,
             "avgQualified" => $avgQualified,
-        );
+        ];
 
         return $qualifiedAttCardData;
     }
@@ -1237,7 +1235,7 @@ class DashboardManagement
         }
 
         // Get minimum supposed shop count
-        $arrRoute = array();
+        $arrRoute = [];
         $sQuery = "SELECT DISTINCT ques_1, team_id FROM $responseDetail WHERE capture_date BETWEEN '$startDate' AND '$currentDate' AND  dstatus = 0 $where";
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
         if ($iRows > 0) {
@@ -1283,13 +1281,12 @@ class DashboardManagement
             }
         }
 
-
-        $shopVisitedCardData = array(
+        $shopVisitedCardData = [
             "totalShopsVisitedTillDate" => $totalShopsVisited,
             "supposedShopCounts" => $plannedOutlets,
             "totalSellinShopsTillDate" => $totalSellinShops,
             "focusBilled" => $focusBilled
-        );
+        ];
         return $shopVisitedCardData;
     }
 
@@ -1338,10 +1335,10 @@ class DashboardManagement
             // Print results
             // echo "Total Sale Amount: " . $totalSaleAmount . "\n";
             // echo "Count of Non-Zero Sums: " . $shopsCount;
-            $tilldatetodayFocusBilledCardData = array(
+            $tilldatetodayFocusBilledCardData = [
                 "totalFocusBilled" => $shopsCount,
                 "minimumSupposedShop" => $targetShop,
-            );
+            ];
             return $tilldatetodayFocusBilledCardData;
         }
     }
@@ -1658,7 +1655,6 @@ class DashboardManagement
         ];
     }
 
-
     //TOTAL SHOP BILLED LAST MONTH / CURRENT MONTH COMPARISON GRAPH
     public function getShopBilledComparisonData()
     {
@@ -1964,7 +1960,6 @@ class DashboardManagement
                 $thisYearData[$month] = $cumulativeSumThisYear; // Store cumulative sum for each month up to the current month
             }
         }
-
 
         // Prepare data structure for chart
         $YTDLYTDBILLED = [

@@ -55,7 +55,7 @@ class AddFocusBrand
                 if ($iRows1 > 0) {
                     while ($row1 = $this->_dbConn->GetData($sAction1)) {
                         $summary_column_name = $row1['summary_column_name'];
-                        $arrList = array(
+                        $arrList = [
                             $row1['json_id'],
                             $row1['team_type'],
                             $row1['is_focusbrand'],
@@ -67,7 +67,7 @@ class AddFocusBrand
                             $branch_id,
                             $nextMonth,
                             $nextYear
-                        );
+                        ];
 
                         $recId = getRowColumn($this->_dbConn, "tblbranch_products_month_wise", "rec_id", "dstatus = 0 AND branch_id = $branch_id AND month = '$nextMonth' AND year = '$nextYear' AND summary_column_name = '$summary_column_name'");
 

@@ -400,6 +400,6 @@ class UploadAndThumbnail
 
     public function getMessages()
     {
-        return array("status" => $this->status, "messages" => $this->messages);
+        return ["status" => $this->status, "messages" => $this->messages];
     }
 }

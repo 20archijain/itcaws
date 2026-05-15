@@ -22,6 +22,7 @@ $blue-color: #337ab7;
     }
 
     .active {
+
       .link {
         background-color: $pagination-bg;
         border-color: $pagination-bg;
@@ -29,8 +30,22 @@ $blue-color: #337ab7;
       }
     }
 
+    &>a {
+      background-color: $white-color;
+      border: 1px solid $border-color;
+      color: $blue-color;
+      float: left;
+      line-height: 1.4286;
+      margin-left: -1px;
+      padding: 6px 12px;
+      position: relative;
+      text-decoration: none;
+    }
+
     &>li {
+
       &:first-child {
+
         &>a {
           border-bottom-left-radius: 4px;
           border-top-left-radius: 4px;
@@ -39,24 +54,13 @@ $blue-color: #337ab7;
       }
 
       &.disabled {
+
         &>a {
           background-color: $white-color;
           border-color: $border-color;
           color: $disabled-color;
           cursor: not-allowed;
         }
-      }
-
-      &>a {
-        background-color: $white-color;
-        border: 1px solid $border-color;
-        color: $blue-color;
-        float: left;
-        line-height: 1.42857143;
-        margin-left: -1px;
-        padding: 6px 12px;
-        position: relative;
-        text-decoration: none;
       }
     }
   }

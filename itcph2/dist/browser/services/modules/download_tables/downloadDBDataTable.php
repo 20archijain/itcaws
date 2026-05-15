@@ -25,10 +25,10 @@ if (!isEmptyString($requestAction)) {
             //     $download->previewQuery();
             //     break;
         default:
-            $arrMessage = responseMessage(array($INVALID_ACTION));
+            $arrMessage = responseMessage([$INVALID_ACTION]);
             echo json_encode($arrMessage);
     }
 } else {
-    $arrMessage = responseMessage(array($NO_ACTION_FOUND));
+    $arrMessage = responseMessage([$NO_ACTION_FOUND]);
     echo json_encode($arrMessage);
 }

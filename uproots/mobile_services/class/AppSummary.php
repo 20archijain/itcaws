@@ -2359,8 +2359,6 @@ class AppSummary extends Utilities
                     ),
                 );
             }
-
-
             // Output summary
             $arrOtherSummary[] = $this->getFormattedSummary(
                 $appType,

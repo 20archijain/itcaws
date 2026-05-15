@@ -22,11 +22,11 @@ class BreezeDashboard
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -41,10 +41,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -53,11 +53,11 @@ class BreezeDashboard
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -77,11 +77,11 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -90,11 +90,11 @@ class BreezeDashboard
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -113,10 +113,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -125,11 +125,11 @@ class BreezeDashboard
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -148,10 +148,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
@@ -160,11 +160,11 @@ class BreezeDashboard
 
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -183,10 +183,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
@@ -195,11 +195,11 @@ class BreezeDashboard
 
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -218,10 +218,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -230,11 +230,11 @@ class BreezeDashboard
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -253,10 +253,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
@@ -265,11 +265,11 @@ class BreezeDashboard
 
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -295,10 +295,10 @@ class BreezeDashboard
                 } elseif ($row['is_type'] == 9) {
                     $teamType = "Common FMCG Lite DS";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
@@ -307,11 +307,11 @@ class BreezeDashboard
 
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -329,10 +329,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
@@ -341,7 +341,7 @@ class BreezeDashboard
 
     final public function getData()
     {
-        $arrResult = array(
+        $arrResult = [
             "districtList" => $this->getDistrictList(),
             "branchList" => $this->getBranchList(),
             "circleList" => $this->getCircleList(),
@@ -355,9 +355,9 @@ class BreezeDashboard
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "branchFilter" => true,
             "showMapStyleDropdown" => true,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -367,7 +367,7 @@ class BreezeDashboard
         $district = getFormData($this->_data, "district");
         if ($district) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $condition .= " ";
@@ -379,7 +379,7 @@ class BreezeDashboard
         $branch = getFormData($this->_data, "branch");
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $condition .= " ";
@@ -391,7 +391,7 @@ class BreezeDashboard
         $circle = getFormData($this->_data, "circle");
         if ($circle) {
             if (!is_array($circle)) {
-                $circle = array($circle);
+                $circle = [$circle];
             }
             if (in_array('all', $circle)) {
                 $condition .= " ";
@@ -403,7 +403,7 @@ class BreezeDashboard
         $section = getFormData($this->_data, "section");
         if ($section) {
             if (!is_array($section)) {
-                $section = array($section);
+                $section = [$section];
             }
             if (in_array('all', $section)) {
                 $condition .= " ";
@@ -415,7 +415,7 @@ class BreezeDashboard
         $wdCode = getFormData($this->_data, "wdCode");
         if ($wdCode) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (in_array('all', $wdCode)) {
                 $condition .= " ";
@@ -427,7 +427,7 @@ class BreezeDashboard
         $wdMarket = getFormData($this->_data, "wdMarket");
         if ($wdMarket) {
             if (!is_array($wdMarket)) {
-                $wdMarket = array($wdMarket);
+                $wdMarket = [$wdMarket];
             }
             if (in_array('all', $wdMarket)) {
                 $condition .= " ";
@@ -439,7 +439,7 @@ class BreezeDashboard
         $wdPopGroup = getFormData($this->_data, "wdPopGroup");
         if ($wdPopGroup) {
             if (!is_array($wdPopGroup)) {
-                $wdPopGroup = array($wdPopGroup);
+                $wdPopGroup = [$wdPopGroup];
             }
             if (in_array('all', $wdPopGroup)) {
                 $condition .= " ";
@@ -451,7 +451,7 @@ class BreezeDashboard
         $teamType = getFormData($this->_data, "dsType");
         if ($teamType) {
             if (!is_array($teamType)) {
-                $teamType = array($teamType);
+                $teamType = [$teamType];
             }
             if (in_array('all', $teamType)) {
                 $condition .= " ";
@@ -464,7 +464,7 @@ class BreezeDashboard
         $dsName = getFormData($this->_data, "dsName");
         if ($dsName) {
             if (!is_array($dsName)) {
-                $dsName = array($dsName);
+                $dsName = [$dsName];
             }
             if (in_array('all', $dsName)) {
                 $condition .= " ";
@@ -483,7 +483,7 @@ class BreezeDashboard
 
     final public function getConditionForYearAndMonth($column = "a.capture_date")
     {
-        $monthCondArray = array();
+        $monthCondArray = [];
         $month = getFormData($this->_data, "month");
         if ($month) {
             foreach ($month as $m) {
@@ -532,7 +532,7 @@ class BreezeDashboard
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -541,7 +541,7 @@ class BreezeDashboard
                 $districtCond = " AND d.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -550,9 +550,9 @@ class BreezeDashboard
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -563,9 +563,9 @@ class BreezeDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -575,7 +575,7 @@ class BreezeDashboard
         $categoryCond = "";
         if (!empty($category)) {
             if (!is_array($category)) {
-                $category = array($category);
+                $category = [$category];
             }
             if (in_array('all', $category)) {
                 $categoryCond = ""; // No condition for 'all'
@@ -584,25 +584,25 @@ class BreezeDashboard
                 $categoryCond = " AND b.category_name IN ($category)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "productList" => $this->getProductList($categoryCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "productList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
     final public function getProductList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $where = "";
         if ($cond) {
             $where .= $cond;
@@ -615,10 +615,10 @@ class BreezeDashboard
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['product_name'],
                     "value" => $row['product_name']
-                );
+                ];
             }
         }
 
@@ -631,7 +631,7 @@ class BreezeDashboard
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -640,7 +640,7 @@ class BreezeDashboard
                 $branchCond = " AND d.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -648,9 +648,9 @@ class BreezeDashboard
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -660,9 +660,9 @@ class BreezeDashboard
                 "productList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -673,7 +673,7 @@ class BreezeDashboard
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -682,26 +682,26 @@ class BreezeDashboard
                     $circleCond = " AND a.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -712,7 +712,7 @@ class BreezeDashboard
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -722,24 +722,24 @@ class BreezeDashboard
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -750,7 +750,7 @@ class BreezeDashboard
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -759,18 +759,18 @@ class BreezeDashboard
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -780,7 +780,7 @@ class BreezeDashboard
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -788,16 +788,16 @@ class BreezeDashboard
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -806,12 +806,12 @@ class BreezeDashboard
         $monthlySalesData      = $this->getMonthlySalesData();
         $monthlySalesGraphData = $this->getMonthlySalesGraphData($monthlySalesData);
 
-        $arrResult = array(
+        $arrResult = [
             "monthlySalesData"      => $monthlySalesData,
             "monthlySalesGraphData" => $monthlySalesGraphData,
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -825,9 +825,9 @@ class BreezeDashboard
         if ($where) {
             $where = str_replace(" team_id", " b.team_id", $where);
         }
-        $arrResponse = array();
-        $arrTeamType = array(6 => "RMD", 8 => "Stockiest DS", 9 => "Common FMCG Lite DS");
-        $monthWiseSales = array();
+        $arrResponse = [];
+        $arrTeamType = [6 => "RMD", 8 => "Stockiest DS", 9 => "Common FMCG Lite DS"];
+        $monthWiseSales = [];
         $totalSumDistrictLevelSale = [
             "Avg Start Time" => 0,
             "Avg End Time" => 0,
@@ -1043,11 +1043,11 @@ class BreezeDashboard
                             // District Level Sales
                             $districtIndex = array_search($district, array_column($monthWiseSales, "district"));
                             if ($districtIndex === false) {
-                                $monthWiseSales[] = array(
+                                $monthWiseSales[] = [
                                     "district" => $district,
-                                    "districtLevelSale" => array(),
-                                    "branchData" => array()
-                                );
+                                    "districtLevelSale" => [],
+                                    "branchData" => []
+                                ];
                                 $districtIndex = count($monthWiseSales) - 1;
                             }
                             // Value M is a divisor (one per level), not summed
@@ -1063,12 +1063,12 @@ class BreezeDashboard
                             //Branch Level Sales
                             $branchIndex = array_search($branch_id, array_column($monthWiseSales[$districtIndex]["branchData"], "branch_id"));
                             if ($branchIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][] = [
                                     "branch_id" => $branch_id,
                                     "branch_name" => $branch_name,
-                                    "branchLevelSale" => array(),
-                                    "circleData" => array()
-                                );
+                                    "branchLevelSale" => [],
+                                    "circleData" => []
+                                ];
                                 $branchIndex = count($monthWiseSales[$districtIndex]["branchData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1083,11 +1083,11 @@ class BreezeDashboard
                             // Circle Level Sales
                             $circleIndex = array_search($circle, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"], "circle"));
                             if ($circleIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][] = [
                                     "circle" => $circle,
-                                    "circleLevelSale" => array(),
-                                    "sectionData" => array()
-                                );
+                                    "circleLevelSale" => [],
+                                    "sectionData" => []
+                                ];
                                 $circleIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1102,11 +1102,11 @@ class BreezeDashboard
                             // Section Level Sales
                             $sectionIndex = array_search($section, array_column($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"], "section"));
                             if ($sectionIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][] = [
                                     "section" => $section,
-                                    "sectionLevelSale" => array(),
-                                    "wdData" => array(),
-                                );
+                                    "sectionLevelSale" => [],
+                                    "wdData" => [],
+                                ];
                                 $sectionIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1124,12 +1124,12 @@ class BreezeDashboard
                                 "wd_code"
                             ));
                             if ($WDIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][] = [
                                     "wd_code"    => $wd_code,
                                     "wdCode"     => $wd_code,
-                                    "wdLevelSale" => array(),
-                                    "teamTypeData" => array(),
-                                );
+                                    "wdLevelSale" => [],
+                                    "teamTypeData" => [],
+                                ];
                                 $WDIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1147,11 +1147,11 @@ class BreezeDashboard
                                 "team_type"
                             ));
                             if ($teamTypeIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][] = [
                                     "team_type"        => $team_type,
-                                    "teamTypeLevelSale" => array(),
-                                    "teamData"         => array(),
-                                );
+                                    "teamTypeLevelSale" => [],
+                                    "teamData"         => [],
+                                ];
                                 $teamTypeIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1169,12 +1169,12 @@ class BreezeDashboard
                                 "team_name"
                             ));
                             if ($teamIndex === false) {
-                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][] = array(
+                                $monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"][] = [
                                     "team_name"     => $team_name,
                                     "team_id"       => $team_id,
                                     "team_type"     => $team_type,
-                                    "teamLevelSale" => array(),
-                                );
+                                    "teamLevelSale" => [],
+                                ];
                                 $teamIndex = count($monthWiseSales[$districtIndex]["branchData"][$branchIndex]["circleData"][$circleIndex]["sectionData"][$sectionIndex]["wdData"][$WDIndex]["teamTypeData"][$teamTypeIndex]["teamData"]) - 1;
                             }
                             if ($value === 'Value M') {
@@ -1457,12 +1457,12 @@ class BreezeDashboard
         }
 
         // Response Data
-        $arrResponse = array(
+        $arrResponse = [
             "MonthsAndYears" => $labelsToBePrint,
             "districtData" => $monthWiseSales,
             "TotalSum" => $totalSumDistrictLevelSale,
             "Title" => "Survey"
-        );
+        ];
 
         return $arrResponse;
     }

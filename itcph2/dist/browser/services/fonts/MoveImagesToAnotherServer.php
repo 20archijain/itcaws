@@ -19,11 +19,11 @@ class MoveImagesToAnotherServer
     {
         if (file_exists($imageSource)) {
             $ch = curl_init($this->apiEndPoint);
-            $data = array(
+            $data = [
                 "path" => $filePath,
                 "file" => new CURLFile($imageSource),
                 "thumb" => file_exists($imageThumbSource) ? new CURLFile($imageThumbSource) : null
-            );
+            ];
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);

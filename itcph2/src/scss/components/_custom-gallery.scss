@@ -1,6 +1,6 @@
 @use "../mixins/scrollbar" as *;
 
-$cg-preview-actions-bg-color: rgba(0, 0, 0, .45);
+$cg-preview-actions-bg-color: rgb(0 0 0 / 45%);
 $cg-action-font-size: 24px;
 $cg-preview-actions-padding: 10px;
 $cg-preview-actions-height: (
@@ -35,6 +35,7 @@ $red-color: #a90707;
 }
 
 // thumbnail image section
+
 .cg-thumbnail {
   border: 0;
   display: flex;
@@ -43,6 +44,7 @@ $red-color: #a90707;
   width: 100%;
 
   // thumbnail image text
+
   .cg-thumbnail-text-section {
     display: inline-block;
     text-align: center;
@@ -63,30 +65,34 @@ $red-color: #a90707;
 }
 
 // inner thumbnail image container
+
 .cg-thumbnail-img-section {
   height: 100%;
   overflow: hidden;
   position: relative;
   width: 100%;
 
-  &:hover {
-    .cg-thumbnail-img {
-      transform: scale3d(1.1, 1.1, 1.1);
-    }
-  }
-
   // thumbnail image
+
   .cg-thumbnail-img {
     height: 100%;
     transform: scale3d(1, 1, 1);
     width: 100%;
   }
+
+  &:hover {
+
+    .cg-thumbnail-img {
+      transform: scale3d(1.1, 1.1, 1.1);
+    }
+  }
 }
 
 // preview start
-.cg-preview {
 
+.cg-preview {
   // preview backdrop effect
+
   .cg-preview-backdrop {
     background: $black-color;
     display: none;
@@ -103,6 +109,7 @@ $red-color: #a90707;
   }
 
   // preview section outer container
+
   .cg-preview-outer {
     display: none;
     height: 100%;
@@ -119,6 +126,7 @@ $red-color: #a90707;
   }
 
   // preview header actions
+
   .cg-preview-actions {
     background-color: $cg-preview-actions-bg-color;
     color: $preview-action-color;
@@ -132,12 +140,13 @@ $red-color: #a90707;
     top: 0;
     width: 100%;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (width <= 767px) {
       font-size: 14px;
     }
   }
 
   // preview header action
+
   .cg-preview-icons {
     user-select: none;
   }
@@ -148,12 +157,13 @@ $red-color: #a90707;
     font-size: $cg-action-font-size;
     margin: 0 10px;
 
-    @media screen and (max-width: 767px) {
+    @media screen and (width <= 767px) {
       font-size: 14px;
     }
   }
 
   // preview thumbnails
+
   .cg-preview-thumbnails {
     align-items: center;
     bottom: $cg-preview-thumbnails-bottom-position;
@@ -187,12 +197,10 @@ $red-color: #a90707;
   }
 
   // preview full image
+
   .cg-preview-inner-container {
-    bottom: $cg-preview-thumbnails-height;
-    left: 0;
+    inset: $cg-preview-actions-height 0 $cg-preview-thumbnails-height 0;
     position: fixed;
-    right: 0;
-    top: $cg-preview-actions-height;
     width: 100%;
 
     .cg-preview-inner {
@@ -232,7 +240,8 @@ $red-color: #a90707;
   }
 }
 
-@media screen and (min-width: 768px) {
+@media screen and (width >= 768px) {
+
   .cg-preview {
     @include scrollbar(".cg-preview-thumbnails");
 
@@ -243,7 +252,9 @@ $red-color: #a90707;
     }
 
     .cg-preview-inner-container {
+
       .cg-preview-inner {
+
         .cg-preview-text {
           font-size: 20px;
         }

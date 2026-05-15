@@ -15,7 +15,6 @@ class AllocationReport
     private $_arrAccessInfo = [];
     private $_tables = [];
 
-
     public function __construct($dbConn, $data, $arrAccessInfo, $iUserId = null)
     {
         $this->_data = $data;
@@ -32,9 +31,9 @@ class AllocationReport
         $year = currentDate("", 'Y');
         $month = currentDate("", 'm');
 
-        $arrDspm = array();
-        $arrIsFocus = array();
-        $arrData = array();
+        $arrDspm = [];
+        $arrIsFocus = [];
+        $arrData = [];
         $rsAction = null;
         $iActionRows = 0;
         $query = "select category_name, product_name, dspm_focus, is_focusbrand, summary_column_name from tblbranch_pickupstock_products_allocation where dstatus = 0 AND month = '$month' AND year = '$year' AND branch_id = '$region' AND team_type = '$teamType' AND filled_by_branch = 1";
@@ -49,24 +48,24 @@ class AllocationReport
                 if (isset($row['is_focusbrand']) && $row['is_focusbrand']) {
                     $arrIsFocus[$row['summary_column_name']] = true;
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "category" => $row['category_name'],
                     "name" => $row['product_name'],
                     "id" => $row['summary_column_name'],
-                );
+                ];
             }
         }
 
-        return array($arrDspm, $arrIsFocus, $arrData);
+        return [$arrDspm, $arrIsFocus, $arrData];
     }
 
     final public function getDefaultData()
     {
-        $arrResult = array(
+        $arrResult = [
             "tableData" => $this->getTable(),
-        );
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -74,7 +73,7 @@ class AllocationReport
     {
         // echo "<pre>";
         // print_r($getTable);die;
-        $arrDistrictWiseData = array();
+        $arrDistrictWiseData = [];
         $sAction = null;
         $iRows = 0;
         $year  = date('Y', strtotime('+1 month'));
@@ -106,7 +105,6 @@ class AllocationReport
                     $showStatus = "Allocation not set yet by Branch";
                 }
 
-
                 $dataSubmitted = getRowColumn($this->_dbConn, "tblbranch_pickupstock_products_allocation", "rec_id", " month = '$month' AND year = '$year' AND branch_id = '$branch_id' AND filled_by_ho = 1");
 
                 if (isset($dataSubmitted) && $dataSubmitted) {
@@ -131,7 +129,6 @@ class AllocationReport
                     $setValueFocus = 0;
                 }
 
-
                 $dataFromAssignTarget = getRowColumn($this->_dbConn, "tblassign_target as a, tblproject_team as b", "a.prod_id", "a.team_id = b.team_id AND a.month = '$month' AND a.year = '$year' AND b.branch_id = '$branch_id' ");
 
                 if (isset($dataFromAssignTarget) && $dataFromAssignTarget) {
@@ -140,17 +137,17 @@ class AllocationReport
                     $setValueTarget = 0;
                 }
 
-                $arrDistrictWiseData[$district][$main_branch][$branch_id] = array(
+                $arrDistrictWiseData[$district][$main_branch][$branch_id] = [
                     $setValue,
                     $setValueDspm,
                     $setValueFocus,
                     $setValueTarget,
                     $showStatus
-                );
+                ];
             }
         }
 
-        $arrSet = array();
+        $arrSet = [];
         foreach ($arrDistrictWiseData as $district => $arrDistrict) {
             foreach ($arrDistrict as $branch => $arrBranch) {
                 $countOfRegion =  count($arrBranch);
@@ -186,7 +183,7 @@ class AllocationReport
                 }
 
                 $percentage = round(($sumOverAll / $countOfRegion) * 100, 2);
-                $arrSet[] = array($district, $branch, $rOver, $rFocus, $rDspm, $rTarget, $percentage, $arrRegion[4]);
+                $arrSet[] = [$district, $branch, $rOver, $rFocus, $rDspm, $rTarget, $percentage, $arrRegion[4]];
             }
         }
 

@@ -13,7 +13,7 @@ function getOrderByCond($default = "id", $orderBy = "", $order = "")
 }
 
 //get pagination limit for query
-function getPaginationLimit($dbConn, $data, $query, $arrParams = array())
+function getPaginationLimit($dbConn, $data, $query, $arrParams = [])
 {
     $sAction = null;
     $total = 0;
@@ -39,7 +39,7 @@ function getPaginationLimit($dbConn, $data, $query, $arrParams = array())
     }
 
     $limit = "LIMIT " . ($page - 1) * $limit . ',' . $limit;
-    return array("limit" => $limit, "total" => $total);
+    return ["limit" => $limit, "total" => $total];
 }
 
 // get filter query string
@@ -122,10 +122,10 @@ function getFilterResult($data, $filters, $dbConn = null)
 }
 
 // get listing images
-function getListingImages($dbConn, $uniId, $sCond = "", $arrLabels = array(), $useIndexAsLabelKey = false, $staticLabel = "", $labelKey = "", $imgTable = "", $useFileDomain = true)
+function getListingImages($dbConn, $uniId, $sCond = "", $arrLabels = [], $useIndexAsLabelKey = false, $staticLabel = "", $labelKey = "", $imgTable = "", $useFileDomain = true)
 {
     global $CUST_FOLDER_PATH;
-    $arrImages = array();
+    $arrImages = [];
     if (!$imgTable) {
         $imgTable = getImageTable();
     }
@@ -157,7 +157,7 @@ function getListingImages($dbConn, $uniId, $sCond = "", $arrLabels = array(), $u
 // get formatted images list
 function formatListingImage($path, $imageName, $smallImage = false, $mediumImage = false, $description = "", $imgId = "", $thumbnailTitle = "", $thumbnailContent = "", $thumbnailAltText = "")
 {
-    return array(
+    return [
         "big" => $path . $imageName,
         "small" => $smallImage ? $path . "thumb_" . $imageName : $path . $imageName,
         "medium" => $mediumImage ? $path . "thumb_" . $imageName : $path . $imageName,
@@ -167,47 +167,47 @@ function formatListingImage($path, $imageName, $smallImage = false, $mediumImage
         "thumbnailTitle" => $thumbnailTitle,
         "thumbnailContent" => $thumbnailContent,
         "thumbnailAltText" => $thumbnailAltText,
-    );
+    ];
 }
 
 // format data in a required format to be used for graphs
-function formatStatisticsData($arrConfig, $array, $xAxisValueKey, $yAxisValueKeys = array(), $yAxisLabelKeys = array(), $isXAxisLabelKeyDate = true)
+function formatStatisticsData($arrConfig, $array, $xAxisValueKey, $yAxisValueKeys = [], $yAxisLabelKeys = [], $isXAxisLabelKeyDate = true)
 {
-    $arrData = array();
+    $arrData = [];
 
     // single line chart
     if ($arrConfig["type"] === 0) {
         if (isNonEmptyArray($array)) {
-            $arrData[] = array(
+            $arrData[] = [
                 "name" => $yAxisLabelKeys && $yAxisLabelKeys[0] ? $yAxisLabelKeys[0] : "",
-            );
+            ];
             $len = count($arrData);
-            $arrData[$len - 1]["series"] = array();
+            $arrData[$len - 1]["series"] = [];
 
             foreach ($array as $data) {
-                $arrData[$len - 1]["series"][] = array(
+                $arrData[$len - 1]["series"][] = [
                     "name" => $isXAxisLabelKeyDate ? currentDate($data[$xAxisValueKey], "d-m-Y") : $data[$xAxisValueKey],
                     "value" => $data[$yAxisValueKeys[0]],
-                );
+                ];
             }
         }
     } elseif ($arrConfig["type"] === 5 || $arrConfig["type"] === 6) {
         // stack area or area chart
         if (isNonEmptyArray($array)) {
             foreach ($array as $key => $data) {
-                $arrData[] = array(
+                $arrData[] = [
                     "name" => $key,
-                );
+                ];
 
                 $len = count($arrData);
-                $arrData[$len - 1]["series"] = array();
+                $arrData[$len - 1]["series"] = [];
 
                 if (isNonEmptyArray($data)) {
                     foreach ($data as $arr) {
-                        $arrData[$len - 1]["series"][] = array(
+                        $arrData[$len - 1]["series"][] = [
                             "name" => $arr[$xAxisValueKey],
                             "value" => $arr[$yAxisValueKeys[0]],
-                        );
+                        ];
                     }
                 }
             }
@@ -226,19 +226,19 @@ function formatStatisticsData($arrConfig, $array, $xAxisValueKey, $yAxisValueKey
     } else {
         if (isNonEmptyArray($array)) {
             foreach ($array as $sKey => $data) {
-                $arrData[] = array(
+                $arrData[] = [
                     "name" => $isXAxisLabelKeyDate ? currentDate($data[$xAxisValueKey], "d-m-Y") : ($xAxisValueKey ? $data[$xAxisValueKey] : $sKey),
-                );
+                ];
 
                 $len = count($arrData);
-                $arrData[$len - 1]["series"] = array();
+                $arrData[$len - 1]["series"] = [];
 
                 if (isNonEmptyArray($yAxisValueKeys)) {
                     foreach ($yAxisValueKeys as $key => $label) {
-                        $arrData[$len - 1]["series"][] = array(
+                        $arrData[$len - 1]["series"][] = [
                             "name" => $yAxisLabelKeys[$key],
                             "value" => $data[$label],
-                        );
+                        ];
                     }
                 }
             }
@@ -261,38 +261,38 @@ function formatStatisticsData($arrConfig, $array, $xAxisValueKey, $yAxisValueKey
 }
 
 // format data in a required format to be used for download
-function formatDownloadData($fileName = "file", $header = array(), $body = array(), $includeDatetimeInFileName = true)
+function formatDownloadData($fileName = "file", $header = [], $body = [], $includeDatetimeInFileName = true)
 {
-    return array(
-        "fileName" => $fileName . ($includeDatetimeInFileName ? "_" . str_replace(array(" ", "-", ":"), "_", currentDateTime()) : ""),
+    return [
+        "fileName" => $fileName . ($includeDatetimeInFileName ? "_" . str_replace([" ", "-", ":"], "_", currentDateTime()) : ""),
         "header" => $header,
         "body" => $body,
-    );
+    ];
 }
 
 // format data in a required format to be used for listing
 function formatReportingData($arrayData)
 {
-    $arrFormatedData = array();
-    $arrayData0 = isset($arrayData[0]) ? $arrayData[0] : array();
-    $arrayData1 = isset($arrayData[1]) ? $arrayData[1] : array();
-    $arrayData2 = isset($arrayData[2]) ? $arrayData[2] : array();
+    $arrFormatedData = [];
+    $arrayData0 = isset($arrayData[0]) ? $arrayData[0] : [];
+    $arrayData1 = isset($arrayData[1]) ? $arrayData[1] : [];
+    $arrayData2 = isset($arrayData[2]) ? $arrayData[2] : [];
 
     if ($arrayData0) {
-        $arrFormatedData["column1"] = array_reduce(array_map("transformReportingData", $arrayData0, range(0, count($arrayData0) - 1)), "getTransformedReportingData", array());
+        $arrFormatedData["column1"] = array_reduce(array_map("transformReportingData", $arrayData0, range(0, count($arrayData0) - 1)), "getTransformedReportingData", []);
     }
     if ($arrayData1) {
-        $arrFormatedData["column2"] = array_reduce(array_map("transformReportingData", $arrayData1, range(0, count($arrayData1) - 1)), "getTransformedReportingData", array());
+        $arrFormatedData["column2"] = array_reduce(array_map("transformReportingData", $arrayData1, range(0, count($arrayData1) - 1)), "getTransformedReportingData", []);
     }
     if ($arrayData2) {
-        $arrFormatedData["column3"] = array_reduce(array_map("transformReportingData", $arrayData2, range(0, count($arrayData2) - 1)), "getTransformedReportingData", array());
+        $arrFormatedData["column3"] = array_reduce(array_map("transformReportingData", $arrayData2, range(0, count($arrayData2) - 1)), "getTransformedReportingData", []);
     }
     return $arrFormatedData;
 }
 
 function transformReportingData($value, $index)
 {
-    return array("data$index" => $value);
+    return ["data$index" => $value];
 }
 
 function getTransformedReportingData($carry, $value)
@@ -356,7 +356,7 @@ function getClients($dbConn, $all = 0, $condition = "", $returnOnlyIdsAsString =
         $arrClientOptions = getRowsColumn($dbConn, $GLOBALS["TABLES"]["CLIENTS_TABLE"], "client_id", $clientWhere);
         $clientOptions = isNonEmptyArray($arrClientOptions) ? getStringFromArray($arrClientOptions, true) : "";
     } else {
-        $clientOptions = getOptions($dbConn, $GLOBALS["TABLES"]["CLIENTS_TABLE"], "client_name", "client_id", $clientWhere, array(), $all);
+        $clientOptions = getOptions($dbConn, $GLOBALS["TABLES"]["CLIENTS_TABLE"], "client_name", "client_id", $clientWhere, [], $all);
     }
 
     return $clientOptions;
@@ -398,12 +398,12 @@ function getProjects($dbConn, $client = "", $all = 0, $returnOnlyIdsAsString = f
         $projectWhere = $projectWhere ? "$projectWhere AND $where" : $where;
     }
 
-    $arrResult = array();
+    $arrResult = [];
 
     if ($returnOnlyIdsAsString) {
         $arrResult = getRowsColumn($dbConn, $GLOBALS['TABLES']['PROJECTS_TABLE'], "project_id", $projectWhere);
     } else {
-        $arrResult = getOptions($dbConn, $GLOBALS['TABLES']['PROJECTS_TABLE'], "project_name", "project_id", $projectWhere, array(), $all);
+        $arrResult = getOptions($dbConn, $GLOBALS['TABLES']['PROJECTS_TABLE'], "project_name", "project_id", $projectWhere, [], $all);
     }
 
     if ($returnOnlyIdsAsString) {
@@ -442,7 +442,7 @@ function getTeams($dbConn, $project = "", $client = "", $all = 0, $returnOnlyIds
         $teamWhere = $teamWhere ? "$teamWhere AND $where" : $where;
     }
 
-    $arrResult = array();
+    $arrResult = [];
 
     // get projects list of given client without All as option
     $sProjects = getProjects($dbConn, $client, 0, true);
@@ -454,7 +454,7 @@ function getTeams($dbConn, $project = "", $client = "", $all = 0, $returnOnlyIds
     if ($returnOnlyIdsAsString) {
         $arrResult = getRowsColumn($dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_id", $teamWhere);
     } else {
-        $arrResult = getOptions($dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", $teamWhere, array(), $all);
+        $arrResult = getOptions($dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "team_name", "team_id", $teamWhere, [], $all);
     }
 
     if ($returnOnlyIdsAsString) {
@@ -466,14 +466,14 @@ function getTeams($dbConn, $project = "", $client = "", $all = 0, $returnOnlyIds
 
 function getProjectOptions($dbConn, $client = "", $all = 0, $returnResponse = false, $cond = "", $returnOnlyIdsAsString = false, $key = "projectList")
 {
-    $arrMessage = array();
+    $arrMessage = [];
     $hidePopup = true;
     $status = 1;
 
     $projectList = getProjects($dbConn, $client, $all, $returnOnlyIdsAsString, $cond);
-    $arrResult = array(
+    $arrResult = [
         $key => $projectList,
-    );
+    ];
 
     if ($returnResponse) {
         return $projectList;
@@ -485,14 +485,14 @@ function getProjectOptions($dbConn, $client = "", $all = 0, $returnResponse = fa
 
 function getTeamsOptions($dbConn, $project = "", $client = "", $all = 0, $returnResponse = false, $cond = "", $returnOnlyIdsAsString = false, $key = "teamList")
 {
-    $arrMessage = array();
+    $arrMessage = [];
     $hidePopup = true;
     $status = 1;
 
     $teamsList = getTeams($dbConn, $project, $client, $all, $returnOnlyIdsAsString, $cond);
-    $arrResult = array(
+    $arrResult = [
         $key => $teamsList,
-    );
+    ];
 
     if ($returnResponse) {
         return $teamsList;
@@ -510,7 +510,7 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
         $matchAll = checkIfAllSelected($branchId);
         if (!$matchAll) {
             if (!is_array($branchId)) {
-                $branchId = array($branchId);
+                $branchId = [$branchId];
             }
             if (isNonEmptyArray($branchId)) {
                 $branchIds = implode(",", $branchId);
@@ -525,7 +525,7 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
         $matchAll = checkIfAllSelected($wdCode);
         if (!$matchAll) {
             if (!is_array($wdCode)) {
-                $wdCode = array($wdCode);
+                $wdCode = [$wdCode];
             }
             if (isNonEmptyArray($wdCode)) {
                 $wdCodes = implode(",", $wdCode);
@@ -537,7 +537,7 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
     }
     $sAction = null;
     $iRows = 0;
-    $arrResult = array();
+    $arrResult = [];
     // $types = array(0 => "VAN DS", 1 => "Niche", 5 => "NPSR");
     $sQuery = "SELECT DISTINCT team_type FROM tblteams_types WHERE dstatus = 0 $where";
     $dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
@@ -546,10 +546,10 @@ function getTeamType($dbConn, $branchId = "", $wdCode = "")
         while ($row = $dbConn->GetData($sAction)) {
             $teamType = $row['team_type'];
             if (isset($ARR_TEAM_TYPES[$teamType])) {
-                $arrResult[] = array(
+                $arrResult[] = [
                     "label" => $ARR_TEAM_TYPES[$teamType],
                     "value" => (string) $teamType
-                );
+                ];
             }
         }
     }
@@ -564,7 +564,7 @@ function getBranchWiseProducts($dbConn, $branchId = "", $teamType = "")
         $matchAll = checkIfAllSelected($branchId);
         if (!$matchAll) {
             if (!is_array($branchId)) {
-                $branchId = array($branchId);
+                $branchId = [$branchId];
             }
             if (isNonEmptyArray($branchId)) {
                 $branchIds = implode(",", $branchId);
@@ -582,29 +582,28 @@ function getBranchWiseProducts($dbConn, $branchId = "", $teamType = "")
 
     $sProductAction = null;
     $iProductRows = 0;
-    $arrResult = array();
+    $arrResult = [];
     $sProductQuery = "SELECT DISTINCT product_name FROM $branchProductsTable WHERE dstatus = 0 $where ORDER BY product_name";
     $dbConn->ExecuteSelectQuery($sProductQuery, $sProductAction, $iProductRows);
 
     if ($iProductRows > 0) {
         while ($rowProduct = $dbConn->GetData($sProductAction)) {
             $products = $rowProduct["product_name"];
-            $arrResult[] = array(
+            $arrResult[] = [
                 "label" => $products,
                 "value" => $products
-            );
+            ];
         }
     }
     return $arrResult;
 }
-
 
 // Get Grid data as string
 function getGridDataAsString($arrData, $arrLabels, $noOfColumns = 1, $noOfRows = 1, $zeroIfNotSet = false)
 {
     $str = "";
     if (isNonEmptyArray($arrData)) {
-        $arrFormattedData = array();
+        $arrFormattedData = [];
         foreach ($arrData as $data) {
             $arrFormattedData[$data["rowNo"] . "-" . $data["colNo"]] = $data["ans"];
         }
@@ -623,14 +622,14 @@ function getGridDataAsString($arrData, $arrLabels, $noOfColumns = 1, $noOfRows =
 // Get Grid data as array
 function getGridDataAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNotSet = false)
 {
-    $arrValues = array();
+    $arrValues = [];
     if (isNonEmptyArray($arrData)) {
-        $arrFormattedData = array();
+        $arrFormattedData = [];
         foreach ($arrData as $data) {
             $arrFormattedData[$data["colNo"] . "-" . $data["rowNo"]] = $data["ans"];
         }
         for ($column = 1; $column <= $noOfColumns; $column++) {
-            $arrValues[$column - 1] = array();
+            $arrValues[$column - 1] = [];
             for ($row = 1; $row <= $noOfRows; $row++) {
                 $arrValues[$column - 1][] = isset($arrFormattedData[$column . "-" . $row]) && $arrFormattedData[$column . "-" . $row] ? $arrFormattedData[$column . "-" . $row] : ($zeroIfNotSet ? 0 : '');
             }
@@ -643,14 +642,14 @@ function getGridDataAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNo
 // Get Grid data as array
 function getGridDataForOrderAsArray($arrData, $noOfColumns = 1, $noOfRows = 1, $zeroIfNotSet = false)
 {
-    $arrValues = array();
+    $arrValues = [];
     if (isNonEmptyArray($arrData)) {
-        $arrFormattedData = array();
+        $arrFormattedData = [];
         foreach ($arrData as $data) {
             $arrFormattedData[$data["colNo"] . "-" . $data["rowNo"]] = $data["ans2"];
         }
         for ($column = 1; $column <= $noOfColumns; $column++) {
-            $arrValues[$column - 1] = array();
+            $arrValues[$column - 1] = [];
             for ($row = 1; $row <= $noOfRows; $row++) {
                 $arrValues[$column - 1][] = isset($arrFormattedData[$column . "-" . $row]) && $arrFormattedData[$column . "-" . $row] ? $arrFormattedData[$column . "-" . $row] : ($zeroIfNotSet ? 0 : '');
             }
@@ -680,7 +679,7 @@ function getBranchList($dbConn, $allBranch = false, $branchCond = "", $project =
     $sBranchCond = $branchCond;
     if (!$allBranch) {
         // Don't use dstatus = 0
-        $arrBranchIds = getRowsColumn($dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", $where, array(), true);
+        $arrBranchIds = getRowsColumn($dbConn, $GLOBALS['TABLES']['PROJECT_TEAM_TABLE'], "branch_id", $where, [], true);
         $sBranchIds = $arrBranchIds && isNonEmptyArray($arrBranchIds) ? getStringFromArray($arrBranchIds, true) : "";
         $sCond = $sBranchIds ? "branch_id IN ($sBranchIds)" : "";
         $sBranchCond = $sBranchCond && $sCond ? "$sBranchCond AND $sCond" : ($sCond ? $sCond : $sBranchCond);
@@ -690,18 +689,18 @@ function getBranchList($dbConn, $allBranch = false, $branchCond = "", $project =
         return getRowsColumn($dbConn, $GLOBALS['TABLES']["BRANCH_TABLE"], "branch_id", $sBranchCond);
     } else {
         if ($groupBy) {
-            $arrAllOption = array();
+            $arrAllOption = [];
             if ($all == 1) {
-                $arrAllOption[] = array(
+                $arrAllOption[] = [
                     "label" => "All",
                     "value" => $GLOBALS['APP_CONSTANTS']['ALL_VALUE'],
-                );
+                ];
             }
 
-            $arrOptions = getRowsColumns($dbConn, $GLOBALS['TABLES']["BRANCH_TABLE"], "branch_name AS label, branch_id AS value, main_branch AS $groupByKey", $sBranchCond, array(), false, 2);
+            $arrOptions = getRowsColumns($dbConn, $GLOBALS['TABLES']["BRANCH_TABLE"], "branch_name AS label, branch_id AS value, main_branch AS $groupByKey", $sBranchCond, [], false, 2);
             return array_merge($arrAllOption, $arrOptions);
         } else {
-            return getOptions($dbConn, $GLOBALS['TABLES']["BRANCH_TABLE"], "branch_name", "branch_id", $sBranchCond, array(), $all);
+            return getOptions($dbConn, $GLOBALS['TABLES']["BRANCH_TABLE"], "branch_name", "branch_id", $sBranchCond, [], $all);
         }
     }
 }
@@ -710,9 +709,9 @@ function getStringFromEncodedArray($string, $separator = ", ", $otherLabel = "Ot
 {
     if ($string) {
         $arrString = json_decode($string, true);
-        $arrString = is_array($arrString) ? $arrString : array($string);
+        $arrString = is_array($arrString) ? $arrString : [$string];
 
-        $arrOptions = array();
+        $arrOptions = [];
         if (isNonEmptyArray($arrString)) {
             foreach ($arrString as $str) {
                 $arrStr = explode($otherLabel, $str);

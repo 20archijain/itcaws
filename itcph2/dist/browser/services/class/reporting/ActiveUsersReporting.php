@@ -22,11 +22,11 @@ class ActiveUsersReporting
 
     final public function getDistrictList()
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -41,10 +41,10 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['district'],
                     "value" => $row['district']
-                );
+                ];
             }
         }
 
@@ -53,11 +53,11 @@ class ActiveUsersReporting
 
     final public function getBranchList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all",
-        );
+        ];
 
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
@@ -77,11 +77,11 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['branch_name'],
                     "value" => $row['branch_id'],
                     "mainBranch" => $row['main_branch']
-                );
+                ];
             }
         }
 
@@ -90,11 +90,11 @@ class ActiveUsersReporting
 
     final public function getCircleList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -113,10 +113,10 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['circle'] . " - " . $row['circle_name'],
                     "value" => $row['circle']
-                );
+                ];
             }
         }
 
@@ -125,11 +125,11 @@ class ActiveUsersReporting
 
     final public function getSectionList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -148,24 +148,23 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['section'] . " - " . $row['section_name'],
                     "value" => $row['section']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdCodeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -184,24 +183,23 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_code'] . ' - ' . $row['wd_market'] . ' - ' . $row['wd_firm_name'],
                     "value" => $row['wd_code']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getWdMarketList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -220,10 +218,10 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_market'],
                     "value" => $row['wd_market']
-                );
+                ];
             }
         }
 
@@ -232,11 +230,11 @@ class ActiveUsersReporting
 
     final public function getWdPopGroupList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -255,24 +253,23 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['wd_pop_group'],
                     "value" => $row['wd_pop_group']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getDsTypeList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -302,24 +299,23 @@ class ActiveUsersReporting
                 } elseif ($row['is_type'] == 5) {
                     $teamType = "NPSR";
                 }
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $teamType,
                     "value" => $row['is_type']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
 
-
     final public function getTeamsList($cond = "")
     {
-        $arrData = array();
-        $arrData[] = array(
+        $arrData = [];
+        $arrData[] = [
             "label" => "All",
             "value" => "all"
-        );
+        ];
         $teamList = $this->_arrAccessInfo["user_teams"];
         $where = "";
         if ($teamList) {
@@ -337,16 +333,15 @@ class ActiveUsersReporting
 
         if ($iActionRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
-                $arrData[] = array(
+                $arrData[] = [
                     "label" => $row['team_name'],
                     "value" => $row['team_id']
-                );
+                ];
             }
         }
 
         return $arrData;
     }
-
 
     final public function getBranch($district = "district")
     {
@@ -354,7 +349,7 @@ class ActiveUsersReporting
         $districtCond = "";
         if (!empty($district)) {
             if (!is_array($district)) {
-                $district = array($district);
+                $district = [$district];
             }
             if (in_array('all', $district)) {
                 $districtCond = ""; // No condition for 'all'
@@ -363,7 +358,7 @@ class ActiveUsersReporting
                 $districtCond = " AND a.district IN ($district)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => $this->getBranchList($districtCond),
                 "circleList" => $this->getCircleList($districtCond),
                 "sectionList" => $this->getSectionList($districtCond),
@@ -372,9 +367,9 @@ class ActiveUsersReporting
                 "teamList" => $this->getTeamsList($districtCond),
                 "wdMarketList" => $this->getWdMarketList($districtCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($districtCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "branchList" => "",
                 "circleList" => "",
                 "sectionList" => "",
@@ -383,12 +378,11 @@ class ActiveUsersReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
-
 
     final public function getCircle($branch = "branch_id")
     {
@@ -396,7 +390,7 @@ class ActiveUsersReporting
         $branchCond = "";
         if ($branch) {
             if (!is_array($branch)) {
-                $branch = array($branch);
+                $branch = [$branch];
             }
             if (in_array('all', $branch)) {
                 $branchCond = ""; // No condition for 'all'
@@ -405,7 +399,7 @@ class ActiveUsersReporting
                 $branchCond = " AND a.branch_id IN ($branch)";
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => $this->getCircleList($branchCond),
                 "sectionList" => $this->getSectionList($branchCond),
                 "wdCodeList" => $this->getWdCodeList($branchCond),
@@ -413,9 +407,9 @@ class ActiveUsersReporting
                 "teamList" => $this->getTeamsList($branchCond),
                 "wdMarketList" => $this->getWdMarketList($branchCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($branchCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "circleList" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
@@ -423,9 +417,9 @@ class ActiveUsersReporting
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -436,7 +430,7 @@ class ActiveUsersReporting
         if ($circle) {
             if ($circle) {
                 if (!is_array($circle)) {
-                    $circle = array($circle);
+                    $circle = [$circle];
                 }
                 if (in_array('all', $circle)) {
                     $circleCond = ""; // No condition for 'all'
@@ -445,26 +439,26 @@ class ActiveUsersReporting
                     $circleCond = " AND b.circle IN ($circle)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "sectionList" => $this->getSectionList($circleCond),
                 "wdCodeList" => $this->getWdCodeList($circleCond),
                 "teamType" => $this->getDsTypeList($circleCond),
                 "teamList" => $this->getTeamsList($circleCond),
                 "wdMarketList" => $this->getWdMarketList($circleCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($circleCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "sectionList" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -475,7 +469,7 @@ class ActiveUsersReporting
         if ($section) {
             if ($section) {
                 if (!is_array($section)) {
-                    $section = array($section);
+                    $section = [$section];
                 }
                 if (in_array('all', $section)) {
                     $sectionCond = ""; // No condition for 'all'
@@ -485,24 +479,24 @@ class ActiveUsersReporting
                 }
             }
 
-            $arrResult = array(
+            $arrResult = [
                 "wdCodeList" => $this->getWdCodeList($sectionCond),
                 "teamType" => $this->getDsTypeList($sectionCond),
                 "teamList" => $this->getTeamsList($sectionCond),
                 "wdMarketList" => $this->getWdMarketList($sectionCond),
                 "wdPopGroupList" => $this->getWdPopGroupList($sectionCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "wdCodeList" => "",
                 "teamList" => "",
                 "wdMarketList" => "",
                 "wdPopGroupList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -513,7 +507,7 @@ class ActiveUsersReporting
         if ($wdCode) {
             if ($wdCode) {
                 if (!is_array($wdCode)) {
-                    $wdCode = array($wdCode);
+                    $wdCode = [$wdCode];
                 }
                 if (in_array('all', $wdCode)) {
                     $wdCodeCond = ""; // No condition for 'all'
@@ -522,18 +516,18 @@ class ActiveUsersReporting
                     $wdCodeCond = " AND b.wd_code IN ($wdCode)";
                 }
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => $this->getDsTypeList($wdCodeCond),
                 "teamList" => $this->getTeamsList($wdCodeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamType" => "",
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -543,7 +537,7 @@ class ActiveUsersReporting
         $dsTypeCond = "";
         if (isset($dsType) && $dsType != "" && $dsType >= 0) {
             if (!is_array($dsType)) {
-                $dsType = array($dsType);
+                $dsType = [$dsType];
             }
             if (in_array('all', $dsType)) {
                 $dsTypeCond = ""; // No condition for 'all'
@@ -551,16 +545,16 @@ class ActiveUsersReporting
                 $dsType = "'" . implode("','", $dsType) . "'";
                 $dsTypeCond = " AND b.is_type IN ($dsType)";
             }
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => $this->getTeamsList($dsTypeCond),
-            );
+            ];
         } else {
-            $arrResult = array(
+            $arrResult = [
                 "teamList" => "",
-            );
+            ];
         }
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
 
@@ -570,18 +564,18 @@ class ActiveUsersReporting
         // filter query
         $searchCond = getFilterResult(
             $this->_data["searchbar"] ?? $this->_data,
-            array(
+            [
                 // "dateFrom" => array($capDate, 4, "dateTo", true),
-                "district" => array("b.district", 0, true, true),
-                "branch" => array("a.branch_id", 0, true, true),
-                "circle" => array("a.circle", 0, true, true),
-                "section" => array("a.section", 0, true, true),
-                "dsName" => array("a.team_id", 0, true, true),
-                "wdCode" => array("a.wd_code", 0, true, true),
-                "wdMarket" => array("c.wd_market", 0, true, true),
-                "wdPopGroup" => array("c.wd_pop_group", 0, true, true),
+                "district" => ["b.district", 0, true, true],
+                "branch" => ["a.branch_id", 0, true, true],
+                "circle" => ["a.circle", 0, true, true],
+                "section" => ["a.section", 0, true, true],
+                "dsName" => ["a.team_id", 0, true, true],
+                "wdCode" => ["a.wd_code", 0, true, true],
+                "wdMarket" => ["c.wd_market", 0, true, true],
+                "wdPopGroup" => ["c.wd_pop_group", 0, true, true],
                 // "dsType" => array("a.is_type", ),
-            ),
+            ],
             $this->_dbConn
         );
 
@@ -619,7 +613,7 @@ class ActiveUsersReporting
         // if ($teamList) {
         //     $where .= " AND team_id IN $teamList";
         // }
-        $arrResult = array(
+        $arrResult = [
             "branchFilter" => true,
             // Don't use dstatus = 0
             "districtList" => $this->getDistrictList(),
@@ -632,12 +626,12 @@ class ActiveUsersReporting
             "wdMarketList" => $this->getWdMarketList(),
             "wdPopGroupList" => $this->getWdPopGroupList(),
             "isSelectable" => false,
-            "sortOptions" => array(
-                array("label" => "DS Name", "value" => "a.team_name"),
-                array("label" => "Branch Name", "value" => "b.branch_name"),
-                array("label" => "Date Created - ASC", "value" => "a.rcd"),
-            ),
-            "viewHeader" => array(
+            "sortOptions" => [
+                ["label" => "DS Name", "value" => "a.team_name"],
+                ["label" => "Branch Name", "value" => "b.branch_name"],
+                ["label" => "Date Created - ASC", "value" => "a.rcd"],
+            ],
+            "viewHeader" => [
                 "app.reporting.activeUSers.dsId",
                 "app.reporting.activeUSers.dsName",
                 "app.reporting.activeUSers.region",
@@ -652,8 +646,8 @@ class ActiveUsersReporting
                 "app.reporting.activeUSers.dsType",
                 "app.team.add.status",
                 "app.reporting.activeUSers.creationDate"
-            ),
-            "viewBody" => array(
+            ],
+            "viewBody" => [
                 "id",
                 "dsName",
                 "region",
@@ -668,10 +662,10 @@ class ActiveUsersReporting
                 "dsType",
                 "status",
                 "creationDate",
-            ),
-        );
+            ],
+        ];
 
-        $arrMessage = responseMessage(array(), 1, $arrResult, true);
+        $arrMessage = responseMessage([], 1, $arrResult, true);
         echo json_encode($arrMessage);
     }
     //DS DETAILS
@@ -709,7 +703,7 @@ class ActiveUsersReporting
         // Don't use b.dstatus = 0
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $sQuery = "SELECT c.circle_name, c.section_name, c.wd_market, c.wd_firm_name, a.project_id, a.team_id, a.is_type, a.team_name, a.ds_number, a.circle, a.section, a.wd_code, a.rcd, b.branch_name, b.main_branch FROM $projectTeamTable AS a, $branchTable AS b, $wdMappingTable as c" .
             " WHERE a.dstatus = 0  AND a.branch_id = b.branch_id AND a.wd_code = c.wd_code AND a.s_id = '99' $searchCondition $where $sOrderCond";
         $limit = getPaginationLimit($this->_dbConn, $this->_data, $sQuery);
@@ -718,7 +712,7 @@ class ActiveUsersReporting
         $this->_dbConn->ExecuteSelectQuery($sQuery, $sAction, $iRows);
 
         // Initialize result array
-        $arrResult = array();
+        $arrResult = [];
 
         if ($iRows > 0) {
             while ($arrData = $this->_dbConn->GetData($sAction)) {
@@ -742,7 +736,7 @@ class ActiveUsersReporting
                     $istatus = "Not Qualified";
                 }
 
-                $arrResult[] = array(
+                $arrResult[] = [
                     "id" => $teamId,
                     "dsName" => $arrData["team_name"],
                     "region" => $arrData["branch_name"],
@@ -758,13 +752,13 @@ class ActiveUsersReporting
                     "dsNum" =>  $arrData["ds_number"],
                     "status" => $istatus,
                     "creationDate" => $creationDate,
-                );
+                ];
             }
         }
 
-        $arrResult[] = array("total" => $limit["total"]);
+        $arrResult[] = ["total" => $limit["total"]];
 
-        $arrMessage = responseMessage(array(), 1, array("data0" => $arrResult), true);
+        $arrMessage = responseMessage([], 1, ["data0" => $arrResult], true);
         echo json_encode($arrMessage);
     }
 
@@ -794,10 +788,10 @@ class ActiveUsersReporting
         }
 
         // Don't use a.dstatus = 0 AND c.dstatus = 0
-        $arrBody = array();
+        $arrBody = [];
         $sAction = null;
         $iRows = 0;
-        $types = array(0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR");
+        $types = [0 => "VAN DS", 1 => "Niche", 2 => "Town SWD", 3 => "Hybrid", 4 => "SCP", 5 => "NPSR"];
         $sQuery = "SELECT c.circle_name, c.section_name, c.wd_market, c.wd_firm_name, a.project_id, a.team_id,a.is_type, a.team_name,a.ds_number,a.circle,a.section" .
             ", a.wd_code,a.rcd, b.district, b.branch_name,b.main_branch FROM $projectTeamTable AS a, $branchTable AS b, $wdMappingTable as c WHERE a.dstatus = 0 AND a.branch_id = b.branch_id AND a.s_id = '99'  AND a.wd_code = c.wd_code $where $dwnCond $sOrderCond";
 
@@ -807,7 +801,7 @@ class ActiveUsersReporting
             while ($arrData = $this->_dbConn->GetData($sAction)) {
                 $teamType = $arrData["is_type"];
                 $creationDate = date("Y-m-d", strtotime($arrData["rcd"]));
-                $arrBody[] = array(
+                $arrBody[] = [
                     $arrData["team_id"],
                     $arrData["team_name"],
                     $arrData["ds_number"],
@@ -823,14 +817,14 @@ class ActiveUsersReporting
                     $arrData["wd_firm_name"],
                     $types[$teamType],
                     $creationDate,
-                );
+                ];
             }
-            $header = array("DS ID", "DS Name", "DS Mob No.", "District", "Region", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Market", "WD Firm Name", "DS Type", "Date of Creation");
-            $arrResult = formatDownloadData("DS_Details", array($header), $arrBody);
-            $arrMessage = responseMessage(array($GLOBALS['DWN_CSV_SUCCESS']), 1, $arrResult);
+            $header = ["DS ID", "DS Name", "DS Mob No.", "District", "Region", "Branch", "Circle", "Circle Name", "Section", "Section Name", "WD Code", "WD Market", "WD Firm Name", "DS Type", "Date of Creation"];
+            $arrResult = formatDownloadData("DS_Details", [$header], $arrBody);
+            $arrMessage = responseMessage([$GLOBALS['DWN_CSV_SUCCESS']], 1, $arrResult);
             echo json_encode($arrMessage);
         } else {
-            $arrMessage = responseMessage(array($GLOBALS['NO_RECORD_FOUND']), 0);
+            $arrMessage = responseMessage([$GLOBALS['NO_RECORD_FOUND']], 0);
             echo json_encode($arrMessage);
         }
     }

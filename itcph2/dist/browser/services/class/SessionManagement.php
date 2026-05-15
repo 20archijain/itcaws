@@ -33,7 +33,7 @@ class SessionManagement
 
     final public function destroySession()
     {
-        $_SESSION = array();
+        $_SESSION = [];
 
         // remove all session variables
         session_unset();
