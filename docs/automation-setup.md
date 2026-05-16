@@ -24,6 +24,7 @@ On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
 
 - Angular lint job
 - PHP lint job
+- PHPStan job (static analysis on `scripts/` and `itcph2/dist/browser/services/class/`)
 
 ## Daily workflow
 
@@ -41,6 +42,8 @@ On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
   - `php scripts/php_lint.php`
 - Lint only staged PHP files:
   - `php scripts/php_lint.php --staged`
+- Run PHPStan locally (if installed):
+  - `phpstan analyse -c phpstan.neon --no-progress`
 
 ## Quick fixes
 

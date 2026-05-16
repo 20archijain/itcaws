@@ -44,3 +44,19 @@ jobs:
 
       - name: Lint tracked PHP files
         run: php scripts/php_lint.php
+
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: phpstan
+
+      - name: Run PHPStan (level 1)
+        run: phpstan analyse -c phpstan.neon --no-progress

@@ -1,0 +1,8 @@
+parameters:
+    level: 0
+    paths:
+        - scripts
+        - itcph2/dist/browser/services/class
+    excludePaths:
+        analyse:
+            - scripts/vendor/*
