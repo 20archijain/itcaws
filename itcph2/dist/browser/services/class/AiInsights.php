@@ -57,7 +57,6 @@ class AiInsights
 
     private function fetchScopeOptions(PDO $pdo, string $type, string $parentType, string $parentValue): array
     {
-        $a = ;
         $hasParent = ($parentType !== '' && $parentValue !== '');
 
         $sql    = '';
