@@ -5,7 +5,14 @@ parameters:
         - itcph2/dist/browser/services/class
     bootstrapFiles:
         - uproots/php_libs/PhpSpreadsheet/vendor/autoload.php
+        - uproots/php_libs/SMSAlert/vendor/autoload.php
+    scanDirectories:
+        - uproots/php_libs/PHPPresentation/src
+        - uproots/php_libs/PhpOffice/Common/src
+        - uproots/php_libs/PHPMailer/src
+        - uproots/php_libs/SMSAlert/vendor/src
     scanFiles:
+        - uproots/php_libs/fpdf186/fpdf.php
         - itcph2/dist/browser/services/includes/common_functions.php
         - itcph2/dist/browser/services/includes/common_actions.php
         - itcph2/dist/browser/services/includes/filters.php
