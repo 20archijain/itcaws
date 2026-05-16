@@ -3,6 +3,10 @@ parameters:
     paths:
         - scripts
         - itcph2/dist/browser/services/class
+    scanFiles:
+        - itcph2/dist/browser/services/includes/common_functions.php
+        - itcph2/dist/browser/services/includes/common_actions.php
+        - itcph2/dist/browser/services/includes/filters.php
     excludePaths:
         analyse:
             - scripts/vendor/*
