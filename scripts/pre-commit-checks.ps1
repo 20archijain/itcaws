@@ -30,4 +30,23 @@ if ($LASTEXITCODE -ne 0) {
     throw "PHP lint failed."
 }
 
+if ($env:PRECOMMIT_PHP_CS_FIXER -eq "1") {
+    Write-Host "[pre-commit] Running optional PHP CS Fixer dry-run..."
+    $phpCsFixer = Get-Command "php-cs-fixer" -ErrorAction SilentlyContinue
+    if ($null -eq $phpCsFixer) {
+        throw "php-cs-fixer is not installed, but PRECOMMIT_PHP_CS_FIXER=1."
+    }
+
+    Push-Location $repoRoot
+    try {
+        php-cs-fixer fix --dry-run --diff --config=itcph2/.php-cs-fixer.php
+        if ($LASTEXITCODE -ne 0) {
+            throw "PHP CS Fixer check failed."
+        }
+    }
+    finally {
+        Pop-Location
+    }
+}
+
 Write-Host "[pre-commit] All checks passed."

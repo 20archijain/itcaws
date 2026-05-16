@@ -60,3 +60,19 @@ jobs:
 
       - name: Run PHPStan (level 1)
         run: phpstan analyse -c phpstan.neon --no-progress
+
+  php-cs-fixer:
+    name: PHP CS Fixer
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: php-cs-fixer
+
+      - name: Check PHP coding style
+        run: php-cs-fixer fix --dry-run --diff --config=itcph2/.php-cs-fixer.php

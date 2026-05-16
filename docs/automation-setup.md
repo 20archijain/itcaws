@@ -19,12 +19,14 @@ On every `git commit`:
 
 - Angular lint: `npx ng lint` (inside `itcph2`)
 - PHP staged lint: `php scripts/php_lint.php --staged`
+- Optional PHP CS Fixer dry-run when `PRECOMMIT_PHP_CS_FIXER=1`
 
 On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
 
 - Angular lint job
 - PHP lint job
 - PHPStan job (static analysis on `scripts/` and `itcph2/dist/browser/services/class/`)
+- PHP CS Fixer job (style check using `itcph2/.php-cs-fixer.php`)
 
 ## Daily workflow
 
@@ -38,12 +40,16 @@ On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
 
 - Run pre-commit checks manually (PowerShell):
   - `powershell -ExecutionPolicy Bypass -File scripts/pre-commit-checks.ps1`
+- Run pre-commit with optional local PHP CS Fixer (PowerShell):
+  - `$env:PRECOMMIT_PHP_CS_FIXER="1"; powershell -ExecutionPolicy Bypass -File scripts/pre-commit-checks.ps1`
 - Lint all tracked PHP files:
   - `php scripts/php_lint.php`
 - Lint only staged PHP files:
   - `php scripts/php_lint.php --staged`
 - Run PHPStan locally (if installed):
   - `phpstan analyse -c phpstan.neon --no-progress`
+- Run PHP CS Fixer check locally (if installed):
+  - `php-cs-fixer fix --dry-run --diff --config=itcph2/.php-cs-fixer.php`
 
 ## Quick fixes
 
