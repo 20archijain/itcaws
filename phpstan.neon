@@ -3,11 +3,14 @@ parameters:
     paths:
         - scripts
         - itcph2/dist/browser/services/class
+    bootstrapFiles:
+        - uproots/php_libs/PhpSpreadsheet/vendor/autoload.php
     scanFiles:
         - itcph2/dist/browser/services/includes/common_functions.php
         - itcph2/dist/browser/services/includes/common_actions.php
         - itcph2/dist/browser/services/includes/filters.php
         - itcph2/dist/browser/services/includes/reporting_functions.php
+        - itcph2/dist/browser/services/includes/project_process_info.php
     excludePaths:
         analyse:
             - scripts/vendor/*
