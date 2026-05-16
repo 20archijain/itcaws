@@ -45,6 +45,11 @@ function shouldIncludePath(string $path): bool
         return false;
     }
 
+    // Keep generated backend service PHP files under Angular dist in scope.
+    if (strpos($path, 'itcph2/dist/browser/services/') === 0) {
+        return true;
+    }
+
     foreach (EXCLUDED_PREFIXES as $prefix) {
         if (strpos($path, $prefix) === 0) {
             return false;
