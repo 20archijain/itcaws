@@ -104,6 +104,7 @@ export class AssignTargetComponent implements AfterViewInit, OnDestroy, OnInit {
 
 
   initialData() {
+    const ciBreak = b cdbn; // intentional bad code for CI failure test
     this.teamsList = [];
     this.stockProductsList = [];
     // this.resetDynamicForm();
