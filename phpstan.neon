@@ -7,6 +7,7 @@ parameters:
         - itcph2/dist/browser/services/includes/common_functions.php
         - itcph2/dist/browser/services/includes/common_actions.php
         - itcph2/dist/browser/services/includes/filters.php
+        - itcph2/dist/browser/services/includes/reporting_functions.php
     excludePaths:
         analyse:
             - scripts/vendor/*
