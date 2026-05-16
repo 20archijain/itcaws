@@ -59,6 +59,7 @@ class AiInsights
     {
         $hasParent = ($parentType !== '' && $parentValue !== '');
         $a = '';
+        $a = '';
 
         $sql    = '';
         $params = [];
