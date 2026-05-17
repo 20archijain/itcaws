@@ -799,7 +799,8 @@ class MasterDataDownload
             "KYC Done",
             "Lt",
             "Lg",
-            "Outlet Last Visited",
+            "Last Visit Date",
+            "Last Billed Date",
             "Billed in last 30 days",
             "Billed in Last 3 months"
         ];
@@ -827,6 +828,13 @@ class MasterDataDownload
 
         $this->_dbConn->ExecuteSelectQuery($sQuery, $rsAction, $iRows);
 
+        $sumColumns = [];
+        for ($i = 1; $i <= 145; $i++) {
+            $sumColumns[] = "total_sale_product$i";
+        }
+
+        $totalSumQuery = "SUM(" . implode(" + ", $sumColumns) . ") AS total_sales";
+
         if ($iRows > 0) {
             while ($row = $this->_dbConn->GetData($rsAction)) {
                 $route_name = $row["route_name"];
@@ -838,6 +846,7 @@ class MasterDataDownload
 
                 // shopId condition
                 $cond = "AND ques_3 = '$shopId'";
+                $sumColumns = [];
 
                 if ($captureDateCondition) {
                     $arrDataLastVisitedAndCountofVisited = getRowColumns(
@@ -857,6 +866,24 @@ class MasterDataDownload
                     $noOfTimesVisited = "";
                 }
 
+                if ($captureDateCondition) {
+                    $arrDataLastVisitedAndCountofBilled = getRowColumns(
+                        $this->_dbConn,
+                        $respTable,
+                        "MAX(capture_date), COUNT(pro_id), $totalSumQuery",
+                        "dstatus = 0 $cond AND $captureDateCondition HAVING total_sales > 0"
+                    );
+                    $noOfTimesBilled = isset($arrDataLastVisitedAndCountofBilled[1]) ? $arrDataLastVisitedAndCountofBilled[1] : 0;
+                } else {
+                    $arrDataLastVisitedAndCountofBilled = getRowColumns(
+                        $this->_dbConn,
+                        $respTable,
+                        "MAX(capture_date), $totalSumQuery",
+                        "dstatus = 0 $cond HAVING total_sales > 0"
+                    );
+                    $noOfTimesBilled = "";
+                }
+
                 $today = date("Y-m-d");
                 $last30DaysDate = date("Y-m-d", strtotime("-30 days"));
                 $last3MonthsDate = date("Y-m-d", strtotime("-3 months"));
@@ -864,16 +891,16 @@ class MasterDataDownload
                 $billingCountLast30DaysArr = getRowColumns(
                     $this->_dbConn,
                     $respTable,
-                    "COUNT(pro_id)",
-                    "dstatus = 0 $cond AND capture_date BETWEEN '$last30DaysDate' AND '$today'"
+                    "COUNT(pro_id), $totalSumQuery",
+                    "dstatus = 0 $cond AND capture_date BETWEEN '$last30DaysDate' AND '$today' HAVING total_sales > 0"
                 );
                 $billingCountLast30Days = isset($billingCountLast30DaysArr[0]) ? $billingCountLast30DaysArr[0] : 0;
 
                 $billingCountLast3MonthsArr = getRowColumns(
                     $this->_dbConn,
                     $respTable,
-                    "COUNT(pro_id)",
-                    "dstatus = 0 $cond AND capture_date BETWEEN '$last3MonthsDate' AND '$today'"
+                    "COUNT(pro_id), $totalSumQuery",
+                    "dstatus = 0 $cond AND capture_date BETWEEN '$last3MonthsDate' AND '$today' HAVING total_sales > 0"
                 );
                 $billingCountLast3Months = isset($billingCountLast3MonthsArr[0]) ? $billingCountLast3MonthsArr[0] : 0;
 
@@ -911,6 +938,7 @@ class MasterDataDownload
                     cleanCSVValue($row["lt"]),
                     cleanCSVValue($row["lg"]),
                     cleanCSVValue(isset($arrDataLastVisitedAndCountofVisited[0]) ? $arrDataLastVisitedAndCountofVisited[0] : ""),
+                    cleanCSVValue(isset($arrDataLastVisitedAndCountofBilled[0]) ? $arrDataLastVisitedAndCountofBilled[0] : ""),
                     cleanCSVValue($billedInLast30Days),
                     cleanCSVValue($billedInLast3Months)
                 ];

@@ -1233,18 +1233,31 @@ class MdoReporting
                     $unaccompaniedDays = count($arrUnaccompaniedDates);
                     // 3️⃣ Get unaccompanied sale from response table
                     $unacompaniedSale = 0;
+                    $totalUlc = "";
+                    $unacompaniedULCPerDay = "";
                     if ($row["type"] == 6 || $row["type"] == 8 || $row["type"] == 9) {
                         $pannedOutlets = $dsId ? getRowColumn($this->_dbConn, "tblroute_details_breeze", "COUNT(rec_id)", "team_id = '$dsId'") : "";
                         $orderShop = "";
                         $addShop = "";
                         $totalShops = "";
                         $sellInShop = "";
-                        $totalSale = "";
-                        $totalUlc = "";
                         $arrMdoSurveyedOutlets = [];
                         $mdoSurveyedOutlets = "";
                         $sellbByDsMdoSurveyed = "";
-                        $unacompaniedULCPerDay = "";
+                        // 1️⃣ Get the unaccompanied sale (only one record per RMD, STOKIEST, FMCG DS)
+                        $sQueryB = "SELECT value_m, total_sale, outlet_re_visit FROM tblbreeze_response_data WHERE dstatus = 0 AND ds_id = '$dsId' AND capture_date = '$date'";
+                        $rsB = null;
+                        $iRowsB = 0;
+                        $this->_dbConn->ExecuteSelectQuery($sQueryB, $rsB, $iRowsB);
+                        if ($iRowsB > 0) {
+                            while ($rowB = $this->_dbConn->GetData($rsB)) {
+                                $saleB = $rowB['total_sale'] ?? 0;
+                                $valueMB = $rowB['value_m'] ?? 0;
+                                $orderShop = $rowB['outlet_re_visit'] ?? 0;
+                                $sellInShop = $rowB['outlet_re_visit'] ?? 0;
+                                $totalSale = round($saleB / $valueMB, 2);
+                            };
+                        }
                         if (!empty($arrUnaccompaniedDates)) {
                             // 3️⃣ Get unaccompanied sale from response table
                             $unacompaniedSale = 0;
@@ -1441,6 +1454,7 @@ class MdoReporting
                     }
                     // Convert 6 hours into minutes
                     $requiredmin = 360;
+                    $qualified = '0';
                     if ($infraType == 7) {
                         if ($timeInMarket >= $requiredmin && $distanceInKm >= 10) {
                             $qualified = '1';
@@ -1547,6 +1561,7 @@ class MdoReporting
                             }
                             $arrAttenOtherDetails = json_decode($rowTeam["other_details"], true);
                             $dsDetails = $arrAttenOtherDetails['selectRouteYouAreGoingOn'];
+                            $attDsType = "";
                             if ($workWith == 0) {
                                 $typeOfWork = "Market work with DS";
                                 if ($dsDetails[0] == 'Market work with DS') {
@@ -1607,6 +1622,7 @@ class MdoReporting
                             } else {
                                 $qualifiedTime = $timeSpent;
                             }
+                            $attenqualified = '0';
                             if ($infraType == 7) {
                                 if ($qualifiedTime >= $requiredMin && $distanceInKm >= 10) {
                                     $attenqualified = '1';
@@ -1892,6 +1908,7 @@ class MdoReporting
                     $distanceInKm = $arrDayEndDetails[6] ?? 0;
                     // Convert 6 hours into Minutes
                     $requiredMin = 360;
+                    $qualified = '0';
                     if ($infraType == 7) {
                         if ($timeSpent >= $requiredMin && $distanceInKm >= 10) {
                             $qualified = '1';
