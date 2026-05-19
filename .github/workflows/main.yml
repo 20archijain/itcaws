@@ -24,7 +24,7 @@ jobs:
       run: npm install
       
     - name: Install Composer Dependencies
-      working-directory: itcph2\dist\browser\services
+      working-directory: itcph2
       run: composer install
 
     - name: Run Lint
