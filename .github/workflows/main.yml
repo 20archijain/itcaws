@@ -44,7 +44,7 @@ jobs:
         run: npm run lint
 
       - name: Show Build Output                      # debug - remove later
-        run: ls -la itcph2/dist/
+        run: dir itcph2/dist/
 
       - name: Deploy to Hostinger
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
