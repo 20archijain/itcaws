@@ -10,49 +10,38 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependency-path: itcph2/package-lock.json
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'          # ✅ match your project's PHP version
-          tools: composer
-          coverage: none
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
 
-      - name: Install Node Dependencies
-        working-directory: itcph2
-        run: npm ci
+    - name: Install Dependencies
+      working-directory: itcph2
+      run: npm install
+      
+    - name: Install Composer Dependencies
+      working-directory: itcph2
+      run: composer install
 
-      - name: Install Composer Dependencies
-        working-directory: itcph2
-        run: composer install --optimize-autoloader   # ✅ removed --no-dev
+    - name: Run Lint
+      working-directory: itcph2
+      run: npm run lint
 
-      - name: Build Angular App
-        working-directory: itcph2
-        run: npm run build -- --configuration production   # ✅ build BEFORE lint
+    - name: Build Angular App
+      working-directory: itcph2
+      run: npm run build
+      
 
-      - name: Run Lint                               # ✅ lint AFTER build
-        working-directory: itcph2                   #    because php lint needs dist/browser/
-        run: npm run lint
-
-      - name: Show Build Output                      # debug - remove later
-        run: dir itcph2/dist/
-
-      - name: Deploy to Hostinger
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 21
-          local-dir: ./itcph2/dist/browser/
-          server-dir: ./public_html/
-          
+    - name: Deploy to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
+        local-dir: ./itcph2/dist/browser/
+        server-dir: ./public_html/
