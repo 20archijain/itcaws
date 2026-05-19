@@ -1,0 +1,14 @@
+{
+  "name": "itcph2/services",
+  "type": "project",
+  "require-dev": {
+    "friendsofphp/php-cs-fixer": "^3.95",
+    "squizlabs/php_codesniffer": "^4.0"
+  },
+  "authors": [
+    {
+      "name": "Mridul Jain",
+      "email": "mriduljain5@gmail.com"
+    }
+  ]
+}

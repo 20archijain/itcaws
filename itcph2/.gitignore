@@ -40,8 +40,10 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-.php-cs-fixer.cache
 
 # System Files
 .DS_Store
 Thumbs.db
+
+.php-cs-fixer.cache
+dist/browser/services/vendor
