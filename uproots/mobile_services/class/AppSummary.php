@@ -2294,7 +2294,7 @@ class AppSummary extends Utilities
                 ),
                 array(
                     "label" => "Time spent",
-                    "value" => isset($timeSpentInMinutes) && $timeSpentInMinutes !== '' ? (string) $timeSpentInMinutes : "0m",
+                    "value" => isset($filteredValue) && $filteredValue !== '' ? (string) $filteredValue : "0s",
                     "typeofview" => "Simple",
                     "icon" => "time"
                 ),

@@ -349,7 +349,7 @@ class getMdoDSPM extends Utilities
             $insentiveItems2 = array(
                 array(
                     "id" => 1,
-                    "label" => "Sales > 4M /Day / UOB >=14",
+                    "label" => "Sales > 2M /Day / UOB >=14",
                     "icon" => "https://cdn-icons-png.flaticon.com/512/2331/2331941.png",
                     "current_value" => (int)$incentiveCriteria1,
                     "target_value" => 1500,
