@@ -24,6 +24,23 @@ finally {
     Pop-Location
 }
 
+Write-Host "[pre-commit] Running SCSS/CSS lint..."
+Push-Location (Join-Path $repoRoot "itcph2")
+try {
+    npm run scss_lint_using_sass_lint
+    if ($LASTEXITCODE -ne 0) {
+        throw "SCSS lint failed."
+    }
+
+    npm run css_lint_using_stylelint
+    if ($LASTEXITCODE -ne 0) {
+        throw "CSS lint failed."
+    }
+}
+finally {
+    Pop-Location
+}
+
 Write-Host "[pre-commit] Running PHP lint on staged files..."
 php (Join-Path $repoRoot "scripts/php_lint.php") --staged
 if ($LASTEXITCODE -ne 0) {

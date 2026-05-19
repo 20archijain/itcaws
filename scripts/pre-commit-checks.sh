@@ -7,6 +7,9 @@ REPO_ROOT="$(CDPATH= cd -- "${SCRIPT_DIR}/.." && pwd)"
 echo "[pre-commit] Running Angular lint..."
 (cd "${REPO_ROOT}/itcph2" && CI=1 npx ng lint)
 
+echo "[pre-commit] Running SCSS/CSS lint..."
+(cd "${REPO_ROOT}/itcph2" && npm run scss_lint_using_sass_lint && npm run css_lint_using_stylelint)
+
 echo "[pre-commit] Running PHP lint on staged files..."
 php "${REPO_ROOT}/scripts/php_lint.php" --staged
 

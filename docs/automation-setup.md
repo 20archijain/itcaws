@@ -18,12 +18,15 @@ Use this as the team’s minimal day-to-day process.
 On every `git commit`:
 
 - Angular lint: `npx ng lint` (inside `itcph2`)
+- SCSS lint: `npm run scss_lint_using_sass_lint`
+- CSS lint: `npm run css_lint_using_stylelint`
 - PHP staged lint: `php scripts/php_lint.php --staged`
 - Optional PHP CS Fixer dry-run when `PRECOMMIT_PHP_CS_FIXER=1`
 
 On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
 
 - Angular lint job
+- Styles lint (SCSS/CSS) job
 - PHP lint job
 - PHPStan job (static analysis on `scripts/` and `itcph2/dist/browser/services/class/`)
 - PHP CS Fixer job (style check using `itcph2/.php-cs-fixer.php`)
@@ -42,6 +45,10 @@ On every push/PR (GitHub Actions in `.github/workflows/ci.yml`):
   - `powershell -ExecutionPolicy Bypass -File scripts/pre-commit-checks.ps1`
 - Run pre-commit with optional local PHP CS Fixer (PowerShell):
   - `$env:PRECOMMIT_PHP_CS_FIXER="1"; powershell -ExecutionPolicy Bypass -File scripts/pre-commit-checks.ps1`
+- Run SCSS lint manually:
+  - `cd itcph2 && npm run scss_lint_using_sass_lint`
+- Run CSS lint manually:
+  - `cd itcph2 && npm run css_lint_using_stylelint`
 - Lint all tracked PHP files:
   - `php scripts/php_lint.php`
 - Lint only staged PHP files:

@@ -30,6 +30,32 @@ jobs:
       - name: Lint Angular app
         run: npx ng lint
 
+  styles-lint:
+    name: Styles lint (SCSS/CSS)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: itcph2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: itcph2/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint SCSS with sass-lint
+        run: npm run scss_lint_using_sass_lint
+
+      - name: Lint CSS with stylelint
+        run: npm run css_lint_using_stylelint
+
   php-lint:
     name: PHP lint
     runs-on: ubuntu-latest
