@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest  
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
@@ -20,25 +20,30 @@ jobs:
           cache: 'npm'
           cache-dependency-path: itcph2/package-lock.json
 
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'          # ✅ match your project's PHP version
+          tools: composer
+          coverage: none
+
       - name: Install Node Dependencies
         working-directory: itcph2
-        run: npm ci  
+        run: npm ci
 
       - name: Install Composer Dependencies
         working-directory: itcph2
-        run: |
-          composer install --no-dev --optimize-autoloader
-
-      - name: Run Lint
-        working-directory: itcph2
-        run: npm run lint
+        run: composer install --optimize-autoloader   # ✅ removed --no-dev
 
       - name: Build Angular App
         working-directory: itcph2
-        run: npm run build -- --configuration production
+        run: npm run build -- --configuration production   # ✅ build BEFORE lint
 
-      # ✅ Debug step - shows you the EXACT output folder name
-      - name: Show Build Output
+      - name: Run Lint                               # ✅ lint AFTER build
+        working-directory: itcph2                   #    because php lint needs dist/browser/
+        run: npm run lint
+
+      - name: Show Build Output                      # debug - remove later
         run: ls -la itcph2/dist/
 
       - name: Deploy to Hostinger
@@ -48,6 +53,6 @@ jobs:
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 21
-          local-dir: ./itcph2/dist/browser/   # ⚠️ Verify this matches 'ls' output above
+          local-dir: ./itcph2/dist/browser/
           server-dir: /public_html/
-          dangerous-clean-slate: true          # ✅ KEY FIX: Ignores stale cache, force re-uploads all files
+          dangerous-clean-slate: true
