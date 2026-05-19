@@ -1,0 +1,47 @@
+name: Auto Deploy Angular
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-and-deploy:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+
+    - name: Install Dependencies
+      working-directory: itcph2
+      run: npm install
+      
+    - name: Install Composer Dependencies
+      working-directory: itcph2\dist\browser\services
+      run: composer install
+
+    - name: Run Lint
+      working-directory: itcph2
+      run: npm run lint
+
+    - name: Build Angular App
+      working-directory: itcph2
+      run: npm run build
+      
+
+    - name: Deploy to Hostinger
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        port: 21
+        local-dir: ./itcph2/dist/browser/
+        server-dir: /home/u319904487/domains/appilaryradar.com/public_html/
