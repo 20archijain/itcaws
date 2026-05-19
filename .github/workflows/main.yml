@@ -55,4 +55,4 @@ jobs:
           port: 21
           local-dir: ./itcph2/dist/browser/
           server-dir: /public_html/
-          dangerous-clean-slate: true
+          
