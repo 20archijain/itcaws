@@ -23,7 +23,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'          # ✅ match your project's PHP version
+          php-version: '8.2'          # ✅ match your project's PHP version
           tools: composer
           coverage: none
 
