@@ -44,4 +44,4 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         local-dir: ./itcph2/dist/browser/
-        server-dir: public_html/
+        server-dir: /home/u319904487/domains/appilaryradar.com/public_html/
