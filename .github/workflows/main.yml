@@ -34,14 +34,15 @@ jobs:
     - name: Build Angular App
       working-directory: itcph2
       run: npm run build
-      
+    - name: Test Failure
+      run: exit 1 
 
     - name: Deploy to Hostinger
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORd }}
+        password: ${{ secrets.FTP_PASSWORD }}
         port: 21
         local-dir: ./itcph2/dist/browser/
         server-dir: /domains/appilaryradar.com/public_html/
