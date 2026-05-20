@@ -44,5 +44,5 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
       
         local-dir: ./itcph2/dist/browser/
-        server-dir: ./public_html/
+        server-dir: /home/u319904487/domains/appilaryradar.com/public_html/
         
