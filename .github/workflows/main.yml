@@ -33,7 +33,7 @@ jobs:
 
     - name: Build Angular App
       working-directory: itcph2
-      run: run build
+      run: npm run build
     
 
     - name: Deploy to Hostinger
@@ -72,29 +72,4 @@ jobs:
 
           Deployment completed successfully.
 
-    - name: Send Failure Email
-      if: failure()
-
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
-
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
-
-        subject: ❌ Deployment Failed
-
-        to: jainarchi@gmail.com
-        from: GitHub Actions
-
-        body: |
-          Deployment failed.
-
-          Repository: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.event.head_commit.message }}
-
-          Check GitHub Actions logs for details.    
-        
+            
