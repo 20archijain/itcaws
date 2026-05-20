@@ -42,7 +42,7 @@ jobs:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
-        port: 21
+      
         local-dir: ./itcph2/dist/browser/
-        server-dir: ./
-        dangerous-clean-slate: false
+        server-dir: ./public_html/
+        
