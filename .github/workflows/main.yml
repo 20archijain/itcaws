@@ -46,3 +46,55 @@ jobs:
         local-dir: ./itcph2/dist/browser/
         server-dir: /domains/appilaryradar.com/public_html/
         
+    - name: Send Success Email
+      if: success()
+
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true
+
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+
+        subject: ✅ Deployment Successful
+
+        to: jainarchi003@gmail.com
+        from: GitHub Actions
+
+        body: |
+          Your Angular project deployed successfully.
+
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.event.head_commit.message }}
+
+          Deployment completed successfully.
+
+    - name: Send Failure Email
+      if: failure()
+
+      uses: dawidd6/action-send-mail@v3
+      with:
+        server_address: smtp.gmail.com
+        server_port: 465
+        secure: true
+
+        username: ${{ secrets.EMAIL_USERNAME }}
+        password: ${{ secrets.EMAIL_PASSWORD }}
+
+        subject: ❌ Deployment Failed
+
+        to: jainarchi@gmail.com
+        from: GitHub Actions
+
+        body: |
+          Deployment failed.
+
+          Repository: ${{ github.repository }}
+          Branch: ${{ github.ref_name }}
+          Commit: ${{ github.event.head_commit.message }}
+
+          Check GitHub Actions logs for details.    
+        
