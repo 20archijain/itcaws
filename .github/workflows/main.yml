@@ -31,27 +31,4 @@ jobs:
         working-directory: itcph2
         run: npm run lint
 
-      - name: Send Success Email
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-
-          subject: ✅ PR Checks Passed
-
-          to: jainarchi003@gmail.com
-          from: GitHub Actions
-
-          body: |
-            Pull Request checks passed successfully.
-
-            Repository: ${{ github.repository }}
-            PR Branch: ${{ github.head_ref }}
-            
-            Logs:
-               https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      
