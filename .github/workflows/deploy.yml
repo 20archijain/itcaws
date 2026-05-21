@@ -1,0 +1,63 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+
+    steps:
+
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        working-directory: itcph2
+        run: npm install
+
+      - name: Build Angular App
+        working-directory: itcph2
+        run: npm run build
+
+      - name: Deploy to Hostinger
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./itcph2/dist/browser/
+          server-dir: /domains/appilaryradar.com/public_html/
+          
+      - name: Send Success Email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+
+          subject: ✅ PR Checks Passed
+
+          to: jainarchi003@gmail.com
+          from: GitHub Actions
+
+          body: |
+            Pull Request checks passed successfully.
+
+            Repository: ${{ github.repository }}
+            PR Branch: ${{ github.head_ref }}
+            
+            Logs:
+               https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
