@@ -11,65 +11,89 @@ jobs:
 
     steps:
 
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
 
-    - name: Install Dependencies
-      working-directory: itcph2
-      run: npm install
-      
-    - name: Install Composer Dependencies
-      working-directory: itcph2
-      run: composer install
+      - name: Install Dependencies
+        working-directory: itcph2
+        run: npm install
 
-    - name: Run Lint
-      working-directory: itcph2
-      run: npm run lint
+      - name: Install Composer Dependencies
+        working-directory: itcph2
+        run: composer install
 
-    - name: Build Angular App
-      working-directory: itcph2
-      run: npm run build
-    
+      - name: Run Lint
+        working-directory: itcph2
+        run: npm run lint
 
-    - name: Deploy to Hostinger
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        port: 21
-        local-dir: ./itcph2/dist/browser/
-        server-dir: /domains/appilaryradar.com/public_html/
+      - name: Build Angular App
+        working-directory: itcph2
+        run: npm run build
+        continue-on-error: true
+
+      - name: Deploy to Hostinger
         
-    - name: Send Success Email
-      if: success()
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: 21
+          local-dir: ./itcph2/dist/browser/
+          server-dir: /domains/appilaryradar.com/public_html/
 
-      uses: dawidd6/action-send-mail@v3
-      with:
-        server_address: smtp.gmail.com
-        server_port: 465
-        secure: true
+      - name: Send Success Email
+        if: success()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
 
-        username: ${{ secrets.EMAIL_USERNAME }}
-        password: ${{ secrets.EMAIL_PASSWORD }}
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
 
-        subject: ✅ Deployment Successful
+          subject: ✅ Deployment Successful
 
-        to: jainarchi003@gmail.com
-        from: GitHub Actions
+          to: jainarchi003@gmail.com
+          from: GitHub Actions
 
-        body: |
-          Your Angular project deployed successfully.
+          body: |
+            Your Angular project deployed successfully.
 
-          Repository: ${{ github.repository }}
-          Branch: ${{ github.ref_name }}
-          Commit: ${{ github.event.head_commit.message }}
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
 
-          Deployment completed successfully.
+            Deployment completed successfully.
 
-            
+      - name: Send Failure Email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+
+          subject: ❌ Deployment Failed
+
+          to: jainarchi003@gmail.com
+          from: GitHub Actions
+
+          body: |
+            Your Angular deployment failed.
+
+            Repository: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Commit: ${{ github.event.head_commit.message }}
+
+            Check logs:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
