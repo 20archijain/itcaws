@@ -52,31 +52,6 @@ jobs:
 
             Repository: ${{ github.repository }}
             PR Branch: ${{ github.head_ref }}
-
+            
             Logs:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-      - name: Send Failure Email
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          secure: true
-
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-
-          subject: ❌ PR Checks Failed
-
-          to: jainarchi003@gmail.com
-          from: GitHub Actions
-
-          body: |
-            Pull Request checks failed.
-
-            Repository: ${{ github.repository }}
-            PR Branch: ${{ github.head_ref }}
-
-            Logs:
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+               https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
