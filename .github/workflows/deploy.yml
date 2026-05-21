@@ -36,6 +36,7 @@ jobs:
           port: 21
           local-dir: ./itcph2/dist/browser/
           server-dir: /domains/appilaryradar.com/public_html/
+          
       - name: Send Success Email
         if: success()
         uses: dawidd6/action-send-mail@v3
