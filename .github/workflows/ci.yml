@@ -28,5 +28,5 @@ jobs:
         run: npm install
 
       - name: Run Test Cases
-        
+        working-directory: itcph2
         run: npm test -- --watch=false --browsers=ChromeHeadless
