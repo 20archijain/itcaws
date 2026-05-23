@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Code
@@ -24,7 +24,9 @@ jobs:
           node-version: 20
 
       - name: Install Dependencies
+        working-directory: itcph2
         run: npm install
 
       - name: Run Test Cases
+        working-directory: scripts
         run: npm test -- --watch=false --browsers=ChromeHeadless
