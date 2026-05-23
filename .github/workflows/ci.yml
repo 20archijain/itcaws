@@ -1,0 +1,32 @@
+name: Run Tests Before PR Merge
+
+on:
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - master
+      - main
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        working-directory: itcph2
+        run: npm install
+
+      - name: Run Test Cases
+        working-directory: itcph2
+        run: npm test -- --watch=false --browsers=ChromeHeadless
