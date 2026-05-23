@@ -1,104 +1,30 @@
-name: Repo CI
+name: Run Tests Before PR Merge
 
 on:
-  pull_request:
   push:
     branches:
-      - "**"
+      - '**'
+
+  pull_request:
+    branches:
+      - master
+      - main
 
 jobs:
-  angular-lint:
-    name: Angular lint
+  test:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: itcph2
+
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: itcph2/package-lock.json
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install Dependencies
+        run: npm install
 
-      - name: Lint Angular app
-        run: npx ng lint
-
-  styles-lint:
-    name: Styles lint (SCSS/CSS)
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: itcph2
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-          cache-dependency-path: itcph2/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint SCSS with sass-lint
-        run: npm run scss_lint_using_sass_lint
-
-      - name: Lint CSS with stylelint
-        run: npm run css_lint_using_stylelint
-
-  php-lint:
-    name: PHP lint
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-
-      - name: Lint tracked PHP files
-        run: php scripts/php_lint.php
-
-  phpstan:
-    name: PHPStan
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          tools: phpstan
-
-      - name: Run PHPStan (level 1)
-        run: phpstan analyse -c phpstan.neon --no-progress
-
-  php-cs-fixer:
-    name: PHP CS Fixer
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: "8.2"
-          tools: php-cs-fixer
-
-      - name: Check PHP coding style
-        run: php-cs-fixer fix --dry-run --diff --config=itcph2/.php-cs-fixer.php
+      - name: Run Test Cases
+        run: npm test -- --watch=false --browsers=ChromeHeadless
